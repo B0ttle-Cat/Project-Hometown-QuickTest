@@ -1,0 +1,62 @@
+﻿using System;
+
+using UnityEngine;
+
+[Serializable]
+public partial class Faction
+{
+	public Faction(StrategyStartSetterData.FactionData data)
+	{
+		factionID = data.factionID;
+		factionName = data.factionName;
+		factionColor = data.factionColor;
+		factionIcon = data.factionIcon;
+		defaultUnitPrefab = data.defaultUnitPrefab;
+
+		MaxManpower = data.maxManpower;
+
+		occupationSpeed = 1f;
+		suppletionSpeed = 1f;
+	}
+
+	public int FactionID { get => factionID; }
+	public string FactionName { get => factionName; set => factionName = value; }
+	public Color FactionColor { get => factionColor; set => factionColor = value; }
+	public Sprite FactionIcon { get => factionIcon; set => factionIcon = value; }
+	public GameObject DefaultUnitPrefab { get => defaultUnitPrefab; set => defaultUnitPrefab = value; }
+
+	public int MaxManpower { get => maxManpower; set => maxManpower = value; }
+	public float SuppletionSpeed { get => suppletionSpeed; set => suppletionSpeed = value; }
+	public float OccupationSpeed { get => occupationSpeed; set => occupationSpeed = value; }
+
+	private readonly int factionID;
+	private string factionName;
+
+	private Color factionColor;
+	private Sprite factionIcon;
+	private GameObject defaultUnitPrefab;
+
+	private int maxManpower;
+	private float occupationSpeed;
+	private float suppletionSpeed;
+
+
+	public static bool TryFindFaction(string factionName, out Faction find)
+	{
+		return StrategyGameManager.Collector.TryFindElement<Faction>(f => f.factionName == factionName, out find);
+	}
+	public static bool FindFaction(int factionID, out Faction find)
+	{
+		return StrategyGameManager.Collector.TryFindElement<Faction>(f => f.factionID == factionID, out find);
+	}
+}
+public partial class Faction : IStrategyElement
+{
+	public bool IsInCollector { get; set; }
+	public void InStrategyCollector()
+	{
+	}
+	public void OutStrategyCollector()
+	{
+	}
+}

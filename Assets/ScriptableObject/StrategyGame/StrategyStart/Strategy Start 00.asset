@@ -1,0 +1,110 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8566450cadb43ab448ccba3a14363d1f, type: 3}
+  m_Name: Strategy Start 00
+  m_EditorClassIdentifier: Assembly-CSharp::StrategyStartSetterData
+  data:
+    playerFactionName: Faction_00
+    factionDatas:
+    - factionName: Faction_00
+      factionColor: {r: 1, g: 0, b: 0, a: 1}
+      factionIcon: {fileID: 0}
+      maxManpower: 50
+      defaultUnitPrefab: {fileID: 2460545361625872358, guid: 47ee3d89ec6dbf842b177734ea94c8d2, type: 3}
+    - factionName: Faction_01
+      factionColor: {r: 0, g: 0, b: 1, a: 1}
+      factionIcon: {fileID: 0}
+      maxManpower: 100
+      defaultUnitPrefab: {fileID: 2460545361625872358, guid: 47ee3d89ec6dbf842b177734ea94c8d2, type: 3}
+    controlPointDatas:
+    - controlPointName: ControlPoint_00
+      maxManpower: 0
+      maxSupply: 1000
+      localRechargeSupplySpeed: 100
+      defenseAddition: 0
+      defenseMultiplication: 1
+      attackAddition: 0
+      attackMultiplication: 1
+      hpRecoveryAddition: 0
+      hpRecoveryMultiplication: 1
+      moraleRecoveryAddition: 0
+      moraleRecoveryMultiplication: 1
+    - controlPointName: ControlPoint_01
+      maxManpower: 0
+      maxSupply: 1000
+      localRechargeSupplySpeed: 100
+      defenseAddition: 0
+      defenseMultiplication: 1
+      attackAddition: 0
+      attackMultiplication: 1
+      hpRecoveryAddition: 0
+      hpRecoveryMultiplication: 1
+      moraleRecoveryAddition: 0
+      moraleRecoveryMultiplication: 1
+    - controlPointName: ControlPoint_02
+      maxManpower: 0
+      maxSupply: 1000
+      localRechargeSupplySpeed: 100
+      defenseAddition: 0
+      defenseMultiplication: 1
+      attackAddition: 0
+      attackMultiplication: 1
+      hpRecoveryAddition: 0
+      hpRecoveryMultiplication: 1
+      moraleRecoveryAddition: 0
+      moraleRecoveryMultiplication: 1
+    - controlPointName: ControlPoint_03
+      maxManpower: 0
+      maxSupply: 1000
+      localRechargeSupplySpeed: 100
+      defenseAddition: 0
+      defenseMultiplication: 1
+      attackAddition: 0
+      attackMultiplication: 1
+      hpRecoveryAddition: 0
+      hpRecoveryMultiplication: 1
+      moraleRecoveryAddition: 0
+      moraleRecoveryMultiplication: 1
+    - controlPointName: ControlPoint_04
+      maxManpower: 0
+      maxSupply: 1000
+      localRechargeSupplySpeed: 100
+      defenseAddition: 0
+      defenseMultiplication: 1
+      attackAddition: 0
+      attackMultiplication: 1
+      hpRecoveryAddition: 0
+      hpRecoveryMultiplication: 1
+      moraleRecoveryAddition: 0
+      moraleRecoveryMultiplication: 1
+    unitDatas:
+    - unitName: Unit
+      unitID: 0
+      factionName: Faction_00
+      unitProfile: {fileID: 11400000, guid: ef441d73e230ad44d8ad139f1663ba71, type: 2}
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0}
+    - unitName: Unit
+      unitID: 1
+      factionName: Faction_01
+      unitProfile: {fileID: 11400000, guid: ef441d73e230ad44d8ad139f1663ba71, type: 2}
+      position: {x: 0, y: 0, z: 40}
+      rotation: {x: 0, y: 0, z: 0}
+    occupationDatas:
+    - occupyingControlPoint: ControlPoint_00
+      occupyingFaction: Faction_00
+      occupationProgress: 1
+      suppliesQuantity: 0
+    - occupyingControlPoint: ControlPoint_02
+      occupyingFaction: Faction_01
+      occupationProgress: 1
+      suppliesQuantity: 0
