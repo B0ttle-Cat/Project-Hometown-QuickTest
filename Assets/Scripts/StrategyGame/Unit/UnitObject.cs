@@ -1,79 +1,144 @@
 ﻿using UnityEngine;
 
+using static StrategyGamePlayData;
 using static StrategyStartSetterData;
 
 public partial class UnitObject : MonoBehaviour
 {
-	private string unitName;
-	private int unitID;
-	private int factionID;
-	public string UnitName { get => unitName; set => unitName = value; }
-	public int UnitID { get => unitID; set => unitID = value; }
-	public Faction OccupyingFaction
+	private UnitBaseData unitBaseData;
+	private UnitProfileData unitProfileData;
+
+	public UnitBaseData UnitBaseData { get => unitBaseData; set => unitBaseData = value; }
+	public UnitProfileData UnitProfileData { get => unitProfileData; set => unitProfileData = value; }
+
+	public string UnitName => unitBaseData.GetData().unitName;
+	public int UnitID => unitBaseData.GetData().unitID;
+	public int FactionID => unitBaseData.GetData().factionID;
+	public Faction Faction
 	{
-		get => StrategyGameManager.Collector.FindFaction(factionID);
-		set => factionID = value == null ? -1 : value.FactionID;
+		get => StrategyGameManager.Collector.FindFaction(FactionID);
 	}
 
-	public void Init(string unitName = "" , int unitID = -1)
+	public void Init(string unitName = "", int unitID = -1)
 	{
-		this.unitName = unitName;
-		this.unitID = unitID;
+		unitBaseData = new UnitBaseData(new UnitBaseData.Data()
+		{
+			unitName = unitName,
+			unitID = unitID,
+			factionID = -1,
+			weaponType = UnitBaseData.WeaponType.None,
+			protectType = UnitBaseData.ProtectionType.None,
+		});
 	}
 	public void Init(UnitData data) // UnitData
 	{
-		unitName = data.unitName;
-		unitID = data.unitID;
-		factionID = StrategyGameManager.Collector.FactionNameToID(data.factionName);
+		UnitBaseData.SetData(new UnitBaseData.Data()
+		{
+			unitName = data.unitName,
+			unitID = data.unitID,
+			factionID = StrategyGameManager.Collector.FactionNameToID(data.factionName),
+			weaponType = (UnitBaseData.WeaponType)data.weaponType,
+			protectType = (UnitBaseData.ProtectionType)data.protectType,
+		});
+
+		var profile = data.unitProfile;
+		UnitProfileData = new UnitProfileData(new UnitProfileData.Data()
+		{
+			manpower = profile.manpower,
+			durability = profile.durability,
+
+			attack = profile.attack,
+			defense = profile.defense,
+			heal = profile.heal,
+
+			piercingLevel = profile.piercingLevel,
+			protectingLevel = profile.protectingLevel,
+
+			EMPProtectionLevel = profile.EMPProtectionLevel,
+
+			attackHitPoint = profile.attackHitPoint,
+			attackMissPoint = profile.attackMissPoint,
+
+			criticalHitPoint = profile.criticalHitPoint,
+			criticalMissPoint = profile.criticalMissPoint,
+
+			attackDelay = profile.attackDelay,
+			firingCount = profile.firingCount,
+			firingDelay = profile.firingDelay,
+
+			electricPerAttack = profile.electricPerAttack,
+			suppliePerAttack = profile.suppliePerAttack,
+
+			attackange = profile.attackange,
+			actionRange = profile.actionRange,
+			viewRange = profile.viewRange,
+
+			moveSpeed = profile.moveSpeed,
+
+			occupationPoint = profile.occupationPoint,
+		});
 	}
 }
 public partial class UnitObject : MonoBehaviour // ProfileData
 {
-	private int manpower;
-	private int healthPoint;     // 보유한 채력량
-	private int suppliePoint;    // 보유한 물자량
-	private int electricPoint;   // 보유한 전력량
-	private int attack;
-	private int defense;
-	private int speed;
-	private int range;
-	private int vision;
 	private SkillProfile[] connectSkill;
-	private OccupationPoint occupationPoint;
+	private OccupationTag occupationTag;
 
-	public int Manpower { get => manpower; set => manpower = value; }
-	public int HealthPoint { get => healthPoint; set => healthPoint = value; }
-	public int SuppliePoint { get => suppliePoint; set => suppliePoint = value; }
-	public int ElectricPoint { get => electricPoint; set => electricPoint = value; }
-	public int Attack { get => attack; set => attack = value; }
-	public int Defense { get => defense; set => defense = value; }
-	public int Speed { get => speed; set => speed = value; }
-	public int Range { get => range; set => range = value; }
-	public int Vision { get => vision; set => vision = value; }
+	public int Manpower => UnitProfileData.GetData().manpower;
+	public int Durability => UnitProfileData.GetData().durability;
+
+	public int Attack => UnitProfileData.GetData().attack;
+	public int Defense => UnitProfileData.GetData().defense;
+	public int Heal => UnitProfileData.GetData().heal;
+
+	public int PiercingLevel => UnitProfileData.GetData().piercingLevel;
+	public int ProtectingLevel => UnitProfileData.GetData().protectingLevel;
+
+	public int EMPProtectionLevel => UnitProfileData.GetData().EMPProtectionLevel;
+
+	public int AttackHitPoint => UnitProfileData.GetData().attackHitPoint;
+	public int AttackMissPoint => UnitProfileData.GetData().attackMissPoint;
+
+	public int CriticalHitPoint => UnitProfileData.GetData().criticalHitPoint;
+	public int CriticalMissPoint => UnitProfileData.GetData().criticalMissPoint;
+
+	public float AttackDelay => UnitProfileData.GetData().attackDelay;
+	public int FiringCount => UnitProfileData.GetData().firingCount;
+	public float FiringDelay => UnitProfileData.GetData().firingDelay;
+
+	public int ElectricPerAttack => UnitProfileData.GetData().electricPerAttack;
+	public int SuppliePerAttack => UnitProfileData.GetData().suppliePerAttack;
+
+	public float Attackange => UnitProfileData.GetData().attackange;
+	public float ActionRange => UnitProfileData.GetData().actionRange;
+	public float ViewRange => UnitProfileData.GetData().viewRange;
+
+	public float MoveSpeed => UnitProfileData.GetData().moveSpeed;
+	public int OccupationPoint => UnitProfileData.GetData().occupationPoint;
+
 	public SkillProfile[] ConnectSkill { get => connectSkill; set => connectSkill = value; }
-	public OccupationPoint OccupationPoint { get => occupationPoint; set => occupationPoint = value; }
+	public OccupationTag OccupationTag { get => occupationTag; set => occupationTag = value; }
 
 	public void Init(UnitProfile data)
 	{
-		Manpower = data.manpower;
-
-		HealthPoint = data.healthPoint;
-		SuppliePoint = data.suppliePoint;
-		ElectricPoint = data.electricPoint;
-
-		Attack = data.attack;
-		Defense = data.defense;
-		Speed = data.speed;
-		Range = data.range;
-		Vision = data.vision;
-
 		ConnectSkill = data.connectSkill;
 
-		if (OccupationPoint == null) OccupationPoint = GetComponentInChildren<OccupationPoint>();
-		if (OccupationPoint == null) OccupationPoint = gameObject.AddComponent<OccupationPoint>();
+		if (OccupationPoint > 0)
+		{
+			if (OccupationTag == null) OccupationTag = GetComponentInChildren<OccupationTag>();
+			if (OccupationTag == null) OccupationTag = gameObject.AddComponent<OccupationTag>();
 
-		OccupationPoint.factionID = factionID;
-		OccupationPoint.pointValue = data.occupationPoint;
+			OccupationTag.factionID = FactionID;
+			OccupationTag.pointValue = data.occupationPoint;
+		}
+		else
+		{
+			if (OccupationTag != null)
+			{
+				Destroy(OccupationTag);
+				OccupationTag = null;
+			}
+		}
 	}
 }
 public partial class UnitObject : IStrategyElement

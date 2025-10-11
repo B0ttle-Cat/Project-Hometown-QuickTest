@@ -62,7 +62,7 @@ public partial class ControlBase // OccupationData
 	{
 		currentFactionID = StrategyGameManager.Collector.FactionNameToID(data.occupyingFaction);
 		occupationProgress = data.occupationProgress;
-		suppliesQuantity = data.suppliesQuantity;
+		currentSuppliePoint = data.suppliesQuantity;
 
 		if (controlBaseOccupation == null) controlBaseOccupation = GetComponent<ControlBaseOccupation>();
 		if (controlBaseOccupation != null) controlBaseOccupation.SetOccupation(currentFactionID);
@@ -73,11 +73,11 @@ public partial class ControlBase // OccupationData
 		set => currentFactionID = value == null ? -1 : value.FactionID;
 	}
 	public float OccupationProgress { get => occupationProgress; set => occupationProgress = Mathf.Clamp01(value); }
-	public int SuppliesQuantity { get => suppliesQuantity; set => suppliesQuantity = value; }
+	public int CurrentSuppliePoint { get => currentSuppliePoint; set => currentSuppliePoint = value; }
 
 	private int currentFactionID = -1;
 	private float occupationProgress;
-	private int suppliesQuantity;
+	private int currentSuppliePoint;
 }
 public partial class ControlBase : MonoBehaviour
 {

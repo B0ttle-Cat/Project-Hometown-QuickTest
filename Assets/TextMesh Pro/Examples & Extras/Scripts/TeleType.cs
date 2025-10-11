@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 
@@ -35,8 +35,8 @@ namespace TMPro.Examples
             //    gameObject.transform.SetParent(canvas.transform);
             //    canvas.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
 
-            //    // Set RectTransform Size
-            //    gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(500, 300);
+            //    // Set newUI Size
+            //    gameObject.GetComponent<newUI>().sizeDelta = new Vector2(500, 300);
             //    m_textMeshPro.fontSize = 48;
             //}
 

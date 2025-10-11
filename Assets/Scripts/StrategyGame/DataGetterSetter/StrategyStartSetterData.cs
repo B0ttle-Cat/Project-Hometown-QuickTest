@@ -60,6 +60,9 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		public string factionName;
 		public UnitProfile unitProfile;
 
+		public int weaponType;
+		public int protectType;
+
 		public Vector3 position;
 		public Vector3 rotation;
 	}

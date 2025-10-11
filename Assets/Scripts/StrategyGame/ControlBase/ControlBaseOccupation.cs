@@ -54,7 +54,7 @@ public class ControlBaseOccupation : MonoBehaviour
 
 			foreach (UnitObject unit in unitObject)
 			{
-				OccupationPoint[] pointElements = unit.GetComponentsInChildren<OccupationPoint>();
+				OccupationTag[] pointElements = unit.GetComponentsInChildren<OccupationTag>();
 
 				foreach (var pointElement in pointElements)
 				{

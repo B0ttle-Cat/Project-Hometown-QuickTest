@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class OccupationPoint : MonoBehaviour
+public class OccupationTag : MonoBehaviour
 {
 	public int factionID;
 	public int pointValue;
