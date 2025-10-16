@@ -15,7 +15,7 @@ public partial class Faction
 
 		MaxManpower = data.maxManpower;
 
-		occupationSpeed = 1f;
+		captureSpeed = 1f;
 		suppletionSpeed = 1f;
 	}
 
@@ -27,7 +27,7 @@ public partial class Faction
 
 	public int MaxManpower { get => maxManpower; set => maxManpower = value; }
 	public float SuppletionSpeed { get => suppletionSpeed; set => suppletionSpeed = value; }
-	public float OccupationSpeed { get => occupationSpeed; set => occupationSpeed = value; }
+	public float CaptureSpeed { get => captureSpeed; set => captureSpeed = value; }
 
 	private readonly int factionID;
 	private string factionName;
@@ -37,17 +37,17 @@ public partial class Faction
 	private GameObject defaultUnitPrefab;
 
 	private int maxManpower;
-	private float occupationSpeed;
+	private float captureSpeed;
 	private float suppletionSpeed;
 
 
 	public static bool TryFindFaction(string factionName, out Faction find)
 	{
-		return StrategyGameManager.Collector.TryFindElement<Faction>(f => f.factionName == factionName, out find);
+		return StrategyManager.Collector.TryFindElement<Faction>(f => f.factionName == factionName, out find);
 	}
 	public static bool FindFaction(int factionID, out Faction find)
 	{
-		return StrategyGameManager.Collector.TryFindElement<Faction>(f => f.factionID == factionID, out find);
+		return StrategyManager.Collector.TryFindElement<Faction>(f => f.factionID == factionID, out find);
 	}
 }
 public partial class Faction : IStrategyElement

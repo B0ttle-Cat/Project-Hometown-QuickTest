@@ -1,16 +1,20 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class StrategyGameUI : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+	private StrategyDetailsPanelUI detailsPanelUI;
 
-    // Update is called once per frame
-    void Update()
+    private void Awake()
     {
-        
-    }
+		detailsPanelUI = GetComponent<StrategyDetailsPanelUI>();
+	}
+
+    public void OpenDetailsPanel_FieldInfo_Overview()
+	{
+		if (detailsPanelUI == null) return;
+		detailsPanelUI.OpenUI(StrategyDetailsPanelUI.StrategyDetailsPanelType.FieldInfo_Overview);
+	}
+	public void CloseDetailsPanel() 
+	{
+	}
 }

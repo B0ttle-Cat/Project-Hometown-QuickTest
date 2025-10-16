@@ -1,44 +1,60 @@
 ﻿using System;
+using System.Collections.Generic;
+
+using Sirenix.OdinInspector;
 
 using TMPro;
 
 using UnityEngine;
-using UnityEngine.UI;
 
-using static RectUIBuilder;
-using static RectUIBuilder.UILayoutBuilder;
-using static StrategyGamePlayData;
+using static StrategyMissionTree;
 
 public partial class StrategyDetailsPanelUI : DetailsPanelUI // // FieldInfo UI
 {
+#if UNITY_EDITOR
+	[ShowInInspector, InlineButton(nameof(_Select),"Open UI"),  HideLabel]
+	private StrategyDetailsPanelType _select;
+	private void _Select() => OpenUI(_select);
+#endif
 	public enum StrategyDetailsPanelType
 	{
 		None,
-		FieldInfo,
-		ControlBase,
-		BattleUnit,
-		BattleSkill,
+
+		[HideInInspector]
+		FieldInfo = 100,
+		FieldInfo_Overview,
+		FieldInfo_MainMission,
+		FieldInfo_Statistics,
+		FieldInfo_Storyboard,
+
+		[HideInInspector]
+		ControlBase = 200,
+
+		[HideInInspector]
+		BattleUnit = 300,
+
+		[HideInInspector]
+		BattleSkill= 400,
 	}
 	public void OpenUI(StrategyDetailsPanelType openContent)
 	{
 		ClearAllContent();
+		Init();
 		switch (openContent)
 		{
 			case StrategyDetailsPanelType.None:
 			break;
-			case StrategyDetailsPanelType.FieldInfo:
-			OnShow_FieldInfoUI();
+			case > StrategyDetailsPanelType.FieldInfo and < StrategyDetailsPanelType.ControlBase:
+			OnShow_FieldInfoUI(openContent);
 			break;
-			case StrategyDetailsPanelType.ControlBase:
-			OnShow_ControlBaseUI();
+			case > StrategyDetailsPanelType.ControlBase and < StrategyDetailsPanelType.BattleUnit:
+			OnShow_ControlBaseUI(openContent);
 			break;
-			case StrategyDetailsPanelType.BattleUnit:
-			OnShow_BattleUnitUI();
+			case > StrategyDetailsPanelType.BattleUnit and < StrategyDetailsPanelType.BattleSkill:
+			OnShow_BattleUnitUI(openContent);
 			break;
-			case StrategyDetailsPanelType.BattleSkill:
-			OnShow_BattleSkillUI();
-			break;
-			default:
+			case > StrategyDetailsPanelType.BattleSkill:
+			OnShow_BattleSkillUI(openContent);
 			break;
 		}
 	}
@@ -54,299 +70,202 @@ public partial class StrategyDetailsPanelUI : DetailsPanelUI // // FieldInfo UI
 
 }
 
-public partial class StrategyDetailsPanelUI : DetailsPanelUI // // FieldInfo UI
+public partial class StrategyDetailsPanelUI : DetailsPanelUI // FieldInfo UI
 {
-	private const string FieldInfoTabName = "전장 정보";
-	private const string MissionObjectiveTabName = "목표";
-	public void OnShow_FieldInfoUI()
+	[Serializable]
+	public struct FieldInfoUISample
 	{
-		OnShow_OverviewAndStatistics();
-		OnShow_MissionObjective();
+		public RectTransform overview;
+		public RectTransform statistics;
+		public RectTransform mission;
+		public RectTransform storyboard;
+	}
+	[SerializeField, FoldoutGroup("전장 정보 UI"), InlineProperty, HideLabel]
+	private FieldInfoUISample fieldInfoUISample;
 
-		OnShow_Storyboard("Test", "Test StoryboardText");
+
+	public void OnShow_FieldInfoUI(StrategyDetailsPanelType openContent)
+	{
+		ContentTitleText("전장 정보");
+		OnShow_Overview(openContent == StrategyDetailsPanelType.FieldInfo_Overview);
+		OnShow_Statistics(openContent == StrategyDetailsPanelType.FieldInfo_Statistics);
+		OnShow_MissionObjective(openContent == StrategyDetailsPanelType.FieldInfo_Overview);
+
+		// OnShow_Storyboard("","",openContent == StrategyDetailsPanelType.FieldInfo_Overview);
 	}
 	public void OnHide_FieldInfoUI()
 	{
 
 	}
-	// 개요 및 통개화면
-	private void OnShow_OverviewAndStatistics()
+	// 개요 화면
+	private void OnShow_Overview(bool isOn = false)
 	{
-		string contentName = $"{FieldInfoTabName}_content";
-		AddContnet(FieldInfoTabName, new RectUIBuilder(contentName, contentPanel, Build));
-
-		void Build(GameObject uiObj, UILayoutBuilder layout)
+		AddContnet("개요", fieldInfoUISample.overview, OnStartShow, isOn);
+		void OnStartShow(RectTransform layout)
 		{
-			layout
-				.Root().Child("Overview")
-					.RectUISize(Diraction.Top, 0f, 300f)
-					.VerticalLayout(Overview)
-				.Root().Child("Statistics")
-					.RectUISize(300f, 0f, 0f, 0f)
-					.VerticalLayout(Statistics);
+			var data = StrategyGamePlayData.PreparedData.GetData();
+			var overviewData = data.overview;
 
-			void Overview(UILayoutBuilder building)
+			if (layout.gameObject.TryFindPair<TMP_Text>("Title", out var title))
 			{
-				building
-					.Root().Child("TITLE")
-						.LayoutElementHeight(minHeight: 300)
-						.Component<TMP_Text>((text) =>
-						{
-							text.text = "TITLE";
-						})
-					.Root().Child("Line")
-						.Component<Image>((i) => i.color = Color.black)
-						.LayoutElementHeight(minHeight: 4)
-					.Root().Child("Overview")
-						.LayoutElementHeight(flexibleHeight: 100000)
-						.Scroll_VerticalLayout(ScrollView);
-
-				void ScrollView(ScrollUILayoutBuilder scrollBuilder)
-				{
-					var contentLayout = scrollBuilder.ContentLayout;
-					contentLayout
-						.Root().Component<TMP_Text>(text =>
-						{
-							text.text = "Overview";
-						}).ContentSizeFitter(false);
-				}
+				title.text = overviewData.title;
 			}
-			void Statistics(UILayoutBuilder building)
+
+			if (layout.gameObject.TryFindPair<TMP_Text>("Content", out var overview))
 			{
-				building.RectUISize(300f, 0f, 0f, 0f)
-					.Scroll_VerticalLayout(ScrollView);
-				void ScrollView(ScrollUILayoutBuilder scrollBuilder)
+				overview.text = overviewData.description;
+			}
+		}
+	}
+	// 통개 화면
+	private void OnShow_Statistics(bool isOn = false)
+	{
+		AddContnet("통계", null, OnStartShow, isOn);
+		void OnStartShow(RectTransform layout)
+		{
+			if (!layout.gameObject.TryFindPair("Content", out var contentParent)) return;
+			if (!layout.gameObject.TryFindPair("Group", out var groupPrefab)) return;
+			if (!layout.gameObject.TryFindPair("Item", out var itemPrefab)) return;
+
+			NewGroup("파괴한 적 유닛");
+			NewItems(StatsCatagory(StatsKey.InGamePlay.DestroyCount_Unit, "Enemy"));
+
+			NewGroup("파괴된 플레이어 유닛");
+			NewItems(StatsCatagory(StatsKey.InGamePlay.DestroyCount_Unit, "Player"));
+
+			void NewGroup(string text)
+			{
+				var newObject = GameObject.Instantiate(groupPrefab, contentParent.transform);
+				newObject.SetActive(true);
+				TMP_Text textUI = newObject.GetComponentInChildren<TMP_Text>();
+				if (textUI == null)
 				{
-					var contentLayout = scrollBuilder.ContentLayout;
-					contentLayout
-						.Root().Component<TMP_Text>(text =>
-						{
-							text.text = "Statistics List";
-						}).ContentSizeFitter(false);
+					Destroy(newObject);
+					return;
 				}
+				textUI.text = text;
+			}
+			List<(string, string)> StatsCatagory(params string[] args)
+			{
+				string catagory = StatsKey.JoinPath(args);
+				return StrategyManager.Statistics.SelectKeyList(key =>
+				{
+					return key.catagory.Equals(catagory);
+				});
+			}
+			void NewItems(IEnumerable<(string catagory, string itemID)> keys)
+			{
+				foreach ((string catagory, string itemID) key in keys) NewItem(key);
+			}
+			void NewItem((string catagory, string itemID) key)
+			{
+				var newObject = GameObject.Instantiate(itemPrefab, contentParent.transform);
+				newObject.SetActive(true);
+				TMP_Text textUI = newObject.GetComponentInChildren<TMP_Text>();
+				if (textUI == null)
+				{
+					Destroy(newObject);
+					return;
+				}
+
+				string text ="<indent=20%><line-height=0>통계 요소 명\n<align=right>통계 값";
+				StrategyManager.Statistics.AddListener_ToString(key.catagory, key.itemID, toString =>
+				{
+					textUI.text = 
+						$"<indent=20%><line-height=0>{StrategyManager.ID2Name.DisplayName(key.itemID)}" +
+						$"\n<align=right>{toString}";
+				}, true);
 			}
 		}
 	}
 	// 미션 정보 화면
-	private void OnShow_MissionObjective()
+	private void OnShow_MissionObjective(bool isOn = false)
 	{
-		string contentName = $"{MissionObjectiveTabName}_content";
-
-		AddContnet(FieldInfoTabName, new RectUIBuilder(contentName, contentPanel, Build));
-
-		void Build(GameObject uiObj, UILayoutBuilder layout)
+		AddContnet("임무", null, OnStartShow, isOn);
+		void OnStartShow(RectTransform layout)
 		{
-			layout.Child("StrategicObjectives")
-				.Child("VictoryConditions").Parent()
-				.Child("DefeatConditions").Root();
+			if (!layout.gameObject.TryFindPair("Item", out TMP_Text itemPrefab))
+			{
+				return;
+			}
+			GameObject itemParent = null;
+			if (layout.gameObject.TryFindPair("Victory", out GameObject victory))
+			{
+				itemParent = victory;
+				MissionTree mission = StrategyManager.Mission.VictoryMission;
+				string missionName = mission.name;
+				string description = mission.description;
+				mission.Foreach(NodeUI, false);
+			}
+			if (layout.gameObject.TryFindPair("Defeat", out GameObject defeat))
+			{
+				itemParent = defeat;
+				MissionTree mission = StrategyManager.Mission.VictoryMission;
+				string missionName = mission.name;
+				string description = mission.description;
+				mission.Foreach(NodeUI, false);
+			}
+			void NodeUI(Node item)
+			{
+				int indent = item.indent;
+				var result = item.IsCmplete();
+				string text = item.Description;
+				bool enable = item.enable;
 
-			layout.Child("SecondaryObjective").Root();
+				var itemText = GameObject.Instantiate(itemPrefab, itemParent.transform);
+				itemPrefab.gameObject.SetActive(true);
+				itemPrefab.text = ItemText(indent, result, text);
+			}
+			string ItemText(int indent, StrategyGamePlayData.MissionTreeData.ResultTyoe result, string text)
+			{
+				bool isDarkBackground = true;
+				int checkBoxIndex = result switch
+				{
+					StrategyGamePlayData.MissionTreeData.ResultTyoe.Wait => isDarkBackground ? 0 : 1,
+					StrategyGamePlayData.MissionTreeData.ResultTyoe.Succeed => isDarkBackground ? 2 : 3,
+					StrategyGamePlayData.MissionTreeData.ResultTyoe.Failed => isDarkBackground ? 4 : 5,
+					_ => isDarkBackground ? 0 : 1
+				};
+
+				return $"<indent={indent}em><sprite=\"icon_checkbox\" index={checkBoxIndex}><indent={indent + 1}.2em>{text}";
+			}
 		}
 	}
 	// 미션중에 진행된 스토리 기록 화면
-	private void OnShow_Storyboard(string storyName, string storyboardText)
+	private void OnShow_Storyboard(string storyName, string storyboardText, bool isOn = false)
 	{
-		string contentName = $"{storyName}_content";
-		AddContnet(storyName, new RectUIBuilder(contentName, contentPanel, Build));
-
-		void Build(GameObject uiObj, UILayoutBuilder layout)
+		AddContnet($"{storyName}", null, OnStartShow, isOn);
+		void OnStartShow(RectTransform layout)
 		{
-			TMP_Text text = uiObj.AddComponent<TMP_Text>();
-			text.text = storyboardText;
+
 		}
 	}
 }
 
 public partial class StrategyDetailsPanelUI : DetailsPanelUI // ControlBase UI
 {
-	private ControlBaseData controlBaseData;
-	private ControlBaseBuildingData controlBaseBuildingData;
-	private Action<ControlBaseData.Data, ControlBaseBuildingData.Data> repaintTarget_ControlBase;
-	public void OnShow_ControlBaseUI()
+	public void OnShow_ControlBaseUI(StrategyDetailsPanelType openContent)
 	{
-		var tempData = StrategyGamePlayData.TempData;
 
-		if (!tempData.TryGetValue(nameof(ControlBaseData), out controlBaseData)) return;
-		if (!tempData.TryGetValue(nameof(ControlBaseBuildingData), out controlBaseBuildingData)) return;
-
-		repaintTarget_ControlBase = null;
-
-		OnShowControlBaseInfo();
-
-		controlBaseData.AddListener(RepaintUI);
-		controlBaseBuildingData.AddListener(RepaintUI);
-
-		RepaintUI(controlBaseData.GetData());
-		RepaintUI(controlBaseBuildingData.GetData());
 	}
 	public void OnHide_ControlBaseUI()
 	{
-		if (controlBaseData != null)
-		{
-			controlBaseData.RemoveListener(RepaintUI);
-			controlBaseData = null;
-		}
-		repaintTarget_ControlBase = null;
-	}
-	private void RepaintUI(ControlBaseData.Data data)
-	{
-		repaintTarget_ControlBase?.Invoke(data, controlBaseBuildingData.GetData());
-	}
-	private void RepaintUI(ControlBaseBuildingData.Data data)
-	{
-		repaintTarget_ControlBase?.Invoke(controlBaseData.GetData(), data);
-	}
 
+	}
 	// 선택한 거점의 기본 정보 보기
 	private void OnShowControlBaseInfo()
 	{
-		string tabName = "거점 정보";
-		string contentName = $"{tabName}_content";
-		AddContnet(tabName, new RectUIBuilder(contentName, contentPanel, Build));
-		void Build(GameObject uiObj, UILayoutBuilder layout)
+		AddContnet("거점 정보", null, OnStartShow);
+		void OnStartShow(RectTransform layout)
 		{
-			layout.Root().Child("TopView")
-				.LayoutElementHeight(minHeight: 300)
-				.HorizontalLayout(TopView_HorizontalLayout);
 
-
-			void TopView_HorizontalLayout(UILayoutBuilder builder)
-			{
-				builder.Child("Icon Rect")
-					.Component<RectMask2D>()
-					.Child("Icon Image")
-					.AspectRatioFitter(AspectRatioFitter.AspectMode.EnvelopeParent, 1f)
-					.Component<Image>(Draw_IconImage)
-				.Root().Child("Building Rect")
-					.Component<RectMask2D>()
-					.Child("Building Image")
-					.AspectRatioFitter(AspectRatioFitter.AspectMode.EnvelopeParent, 1f)
-					.Component<Image>(Draw_BuildingImage)
-				.Root().Child("ControlBase Status Rect")
-					.VerticalLayout(StatusLayout_VerticalLayout);
-				void Draw_IconImage(Image i)
-				{
-					i.color = Color.white;
-					i.sprite = null;
-					i.type = Image.Type.Simple;
-					repaintTarget_ControlBase += (cpData, buildingData) =>
-					{
-						i.sprite = cpData.iconImage;
-					};
-				}
-				void Draw_BuildingImage(Image i)
-				{
-					i.color = Color.white;
-					i.sprite = null;
-					i.type = Image.Type.Simple;
-					repaintTarget_ControlBase += (cpData, buildingData) =>
-					{
-						i.sprite = buildingData.buildingImage;
-					};
-				}
-				void StatusLayout_VerticalLayout(UILayoutBuilder builder, VerticalLayoutGroup layout)
-				{
-					builder
-						.Root().Child("Manpower Text")
-							.Component<TMP_Text>(ManpowerText)
-						.Root().Child("Manpower Bar")
-							.Component<Image>(ManpowerBar)
-						
-						.Root().Child("SuppliePoint Text")
-							.Component<TMP_Text>(SuppliePointText)
-						.Root().Child("SuppliePoint Bar")
-							.Component<Image>(SuppliePointBar)
-
-						.Root().Child("ElectricPoint Text")
-							.Component<TMP_Text>(ElectricPointText)
-						.Root().Child("ElectricPoint Bar")
-							.Component<Image>(ElectricPointBar)
-						;
-						   // TODO) 아이콘 집어 넣어 야 함.
-					void ManpowerText(TMP_Text text)
-					{
-						repaintTarget_ControlBase += (cpData, buildingData) =>
-						{
-							float value = cpData.reservesManpower;
-							float maxValue = cpData.maxManpower + buildingData.maxManpower;
-
-							text.text = $"{value} / {maxValue}";
-						};
-					}
-					void SuppliePointText(TMP_Text text)
-					{
-						repaintTarget_ControlBase += (cpData, buildingData) =>
-						{
-							float value = cpData.reservesSupplie;
-							float maxValue = cpData.maxSuppliePoint + buildingData.maxSuppliePoint;
-
-							text.text = $"{value} / {maxValue}";
-						};
-					}
-					void ElectricPointText(TMP_Text text)
-					{
-						repaintTarget_ControlBase += (cpData, buildingData) =>
-						{
-							float value = cpData.reservesElectric;
-							float maxValue = cpData.maxElectricPoint + buildingData.maxElectricPoint;
-
-							text.text = $"{value} / {maxValue}";
-						};
-					}
-					void ManpowerBar(Image bar)
-					{
-						bar.type = Image.Type.Filled; 
-						bar.fillMethod = Image.FillMethod.Horizontal;
-						bar.fillOrigin = 0;
-
-						repaintTarget_ControlBase += (cpData, buildingData) =>
-						{
-							float value = cpData.reservesManpower;
-							float maxValue = cpData.maxManpower + buildingData.maxManpower;
-
-							float fillArmount = maxValue <=0 ? 0 : value / maxValue;
-							bar.fillAmount = fillArmount;
-						};
-					}
-					void SuppliePointBar(Image bar)
-					{
-						bar.type = Image.Type.Filled;
-						bar.fillMethod = Image.FillMethod.Horizontal;
-						bar.fillOrigin = 0;
-
-						repaintTarget_ControlBase += (cpData, buildingData) =>
-						{
-							float value = cpData.reservesSupplie;
-							float maxValue = cpData.maxSuppliePoint + buildingData.maxSuppliePoint;
-
-							float fillArmount = maxValue <=0 ? 0 : value / maxValue;
-							bar.fillAmount = fillArmount;
-						};
-					}
-					void ElectricPointBar(Image bar)
-					{
-						bar.type = Image.Type.Filled;
-						bar.fillMethod = Image.FillMethod.Horizontal;
-						bar.fillOrigin = 0;
-
-						repaintTarget_ControlBase += (cpData, buildingData) =>
-						{
-							float value = cpData.reservesElectric;
-							float maxValue = cpData.maxElectricPoint+ buildingData.maxElectricPoint;
-
-							float fillArmount = maxValue <=0 ? 0 : value / maxValue;
-							bar.fillAmount = fillArmount;
-						};
-					}
-				}
-			}
 		}
 	}
 }
 
 public partial class StrategyDetailsPanelUI : DetailsPanelUI // BattleUnit UI
 {
-	public void OnShow_BattleUnitUI()
+	public void OnShow_BattleUnitUI(StrategyDetailsPanelType openContent)
 	{
 
 	}
@@ -358,28 +277,12 @@ public partial class StrategyDetailsPanelUI : DetailsPanelUI // BattleUnit UI
 
 public partial class StrategyDetailsPanelUI : DetailsPanelUI // BattleSkill UI
 {
-	public void OnShow_BattleSkillUI()
+	public void OnShow_BattleSkillUI(StrategyDetailsPanelType openContent)
 	{
 
 	}
 	public void OnHide_BattleSkillUI()
 	{
 
-	}
-}
-
-
-
-public static class ExpandUIBuilder
-{
-	public static UILayoutBuilder HorizontalStatusBar(this UILayoutBuilder builder,
-		float fillArmount, bool leftToRight)
-	{
-		Image image = null;
-		image.type = Image.Type.Filled;
-		image.fillMethod = Image.FillMethod.Horizontal;
-		image.fillOrigin = leftToRight ? 0 : 1;
-		image.fillAmount = fillArmount;
-		return builder;
 	}
 }

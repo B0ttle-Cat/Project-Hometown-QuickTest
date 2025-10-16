@@ -6,7 +6,7 @@ public partial class ControlBase // ControlBaseData
 	{
 		maxManpower = data.maxManpower;
 
-		maxSuppliePoint = data.maxSuppliePoint;
+		maxSupplyPoint = data.maxSupplyPoint;
 		maxElectricPoint = data.maxElectricPoint;
 
 		defenseAddition = data.defenseAddition;
@@ -24,9 +24,9 @@ public partial class ControlBase // ControlBaseData
 		set => controlBaseName = value;
 	}
 	public int MaxManpower { get => maxManpower; set => maxManpower = value; }
-	public int MaxSuppliePoint { get => maxSuppliePoint; set => maxSuppliePoint = value; }
+	public int MaxSupplyPoint { get => maxSupplyPoint; set => maxSupplyPoint = value; }
 	public float MaxElectricPoint { get => maxElectricPoint; set => maxElectricPoint = value; }
-	public float OccupationTime { get => occupationSpeed; set => occupationSpeed = value; }
+	public float CaptureTime { get => captureSpeed; set => captureSpeed = value; }
 	public float DefenseAddition { get => defenseAddition; set => defenseAddition = value; }
 	public float DefenseMultiplication { get => defenseMultiplication; set => defenseMultiplication = value; }
 	public float AttackAddition { get => attackAddition; set => attackAddition = value; }
@@ -39,10 +39,10 @@ public partial class ControlBase // ControlBaseData
 	private string controlBaseName;
 
 	private int maxManpower;
-	private int maxSuppliePoint;
+	private int maxSupplyPoint;
 	private float maxElectricPoint;
 
-	private float occupationSpeed;
+	private float captureSpeed;
 
 	private float defenseAddition;
 	private float defenseMultiplication;
@@ -56,28 +56,33 @@ public partial class ControlBase // ControlBaseData
 	private float moraleRecoveryAddition;
 	private float moraleRecoveryMultiplication;
 }
-public partial class ControlBase // OccupationData
+public partial class ControlBase // CaptureData
 {
-	public void Init(StrategyStartSetterData.OccupationData data)
+	public void Init(StrategyStartSetterData.CaptureData data)
 	{
-		currentFactionID = StrategyGameManager.Collector.FactionNameToID(data.occupyingFaction);
-		occupationProgress = data.occupationProgress;
-		currentSuppliePoint = data.suppliesQuantity;
+		currentFactionID = StrategyManager.Collector.FactionNameToID(data.captureFaction);
+		captureProgress = data.captureProgress;
+		currentSupplyPoint = data.supplysQuantity;
 
-		if (controlBaseOccupation == null) controlBaseOccupation = GetComponent<ControlBaseOccupation>();
-		if (controlBaseOccupation != null) controlBaseOccupation.SetOccupation(currentFactionID);
+		if (controlBaseCapture == null) controlBaseCapture = GetComponent<ControlBaseCapture>();
+		if (controlBaseCapture != null) controlBaseCapture.SetCapture(currentFactionID);
 	}
-	public Faction OccupyingFaction
+	public Faction CaptureFaction
 	{
-		get => StrategyGameManager.Collector.FindFaction(currentFactionID);
+		get => StrategyManager.Collector.FindFaction(currentFactionID);
 		set => currentFactionID = value == null ? -1 : value.FactionID;
 	}
-	public float OccupationProgress { get => occupationProgress; set => occupationProgress = Mathf.Clamp01(value); }
-	public int CurrentSuppliePoint { get => currentSuppliePoint; set => currentSuppliePoint = value; }
+	public int CaptureFactionID
+	{
+		get => currentFactionID;
+		set => currentFactionID = value;
+	}
+	public float CaptureProgress { get => captureProgress; set => captureProgress = Mathf.Clamp01(value); }
+	public int CurrentSupplyPoint { get => currentSupplyPoint; set => currentSupplyPoint = value; }
 
 	private int currentFactionID = -1;
-	private float occupationProgress;
-	private int currentSuppliePoint;
+	private float captureProgress;
+	private int currentSupplyPoint;
 }
 public partial class ControlBase : MonoBehaviour
 {
@@ -85,10 +90,10 @@ public partial class ControlBase : MonoBehaviour
 	{
 		ControlBaseName = gameObject.name;
 		currentFactionID = -1;
-		OccupationProgress = 1;
+		CaptureProgress = 1;
 
 		maxManpower = 0;
-		maxSuppliePoint = 0;
+		maxSupplyPoint = 0;
 		maxElectricPoint = 0;
 		defenseAddition = 0;
 		defenseMultiplication = 1;
@@ -99,28 +104,28 @@ public partial class ControlBase : MonoBehaviour
 		moraleRecoveryAddition = 0;
 		moraleRecoveryMultiplication = 1;
 
-		controlBaseOccupation = GetComponentInChildren<ControlBaseOccupation>();
+		controlBaseCapture = GetComponentInChildren<ControlBaseCapture>();
 		controlBaseColor = GetComponentInChildren<ControlBaseColor>();
 	}
 
-	private ControlBaseOccupation controlBaseOccupation;
+	private ControlBaseCapture controlBaseCapture;
 	private ControlBaseColor controlBaseColor;
 
 	// Update is called once per frame
 	public void UpdateControlBase()
 	{
-		UpdateOccupation();
+		UpdateCapture();
 		UpdateColor();
 
-		void UpdateOccupation()
+		void UpdateCapture()
 		{
-			if (controlBaseOccupation == null) return;
-			controlBaseOccupation.UpdateOccupation(this);
+			if (controlBaseCapture == null) return;
+			controlBaseCapture.UpdateCapture(this);
 		}
 		void UpdateColor()
 		{
 			if (controlBaseColor == null) return;
-			controlBaseColor.UpdateColor(OccupyingFaction, OccupationProgress);
+			controlBaseColor.UpdateColor(CaptureFaction, CaptureProgress);
 		}
 	}
 }

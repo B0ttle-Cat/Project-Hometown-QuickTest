@@ -20,7 +20,7 @@
 
 //	public Data data;
 
-//	public override void SetData(Data data)
+//	public override void SetValue(Data data)
 //	{			
 //	}
 

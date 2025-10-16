@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-public class StrategyGamePlayData
+public partial class StrategyGamePlayData
 {
 	public abstract class GamePlayData<T>
 	{
@@ -14,19 +14,6 @@ public class StrategyGamePlayData
 		protected T _data;
 
 		private Action<T> onChangeValue;
-		public void AddListener(Action<T> onChangeValue)
-		{
-			this.onChangeValue -= onChangeValue;
-			this.onChangeValue += onChangeValue;
-		}
-		public void RemoveListener(Action<T> onChangeValue)
-		{
-			this.onChangeValue -= onChangeValue;
-		}
-		public void RemoveAllListener()
-		{
-			this.onChangeValue = null;
-		}
 		public T GetData() => _GetData();
 		public void SetData(T data, bool ignoreChangeEvent = false)
 		{
@@ -64,7 +51,7 @@ public class StrategyGamePlayData
 
 	public class KeyValueData : GamePlayData<KeyValueData.Data>
 	{
-		public KeyValueData(Data data) : base(data){}
+		public KeyValueData(Data data) : base(data) { }
 		public struct Data
 		{
 			public List<KeyValue> KeyValueList
@@ -104,12 +91,12 @@ public class StrategyGamePlayData
 					break;
 				}
 			}
-			if(isNew)
+			if (isNew)
 			{
 				list.Add(new KeyValue { Key = key, Value = value });
 			}
 
-			if(ignoreChangeEvent)
+			if (ignoreChangeEvent)
 			{
 				Invoke();
 			}
@@ -153,9 +140,108 @@ public class StrategyGamePlayData
 		}
 	}
 
-	public static KeyValueData TempData;
+	public static KeyValueData KeyValue;
+}
+public partial class StrategyGamePlayData // Prepared Data (준비된 데이터)
+{
+	public static int PlayerFactionID;
+	public static GameStartingData PreparedData;
+	[Serializable]
+	public class GameStartingData : GamePlayData<GameStartingData.Data>
+	{
+		public GameStartingData(Data data) : base(data) { }
 
+		[Serializable]
+		public struct Data
+		{
+			public Language.Type LanguageType;
+			public Overview overview;
+			public Mission mission;
+		}
+		[Serializable]
+		public struct Overview
+		{
+			public string title;
+			public string description;
+		}
+		[Serializable]
+		public struct Mission
+		{
+			public string id;
+			public string title;
+			public string description;
 
+			public string victoryScript;
+			public string defeatScript;
+
+			public SubMission[] enableSubMissions;
+		}
+		[Serializable]
+		public struct SubMission
+		{
+			public string id;
+			public string missionScript;
+		}
+	}
+}
+public partial class StrategyGamePlayData // Mission Data
+{
+	[Serializable]
+	public class MissionTreeData
+	{
+		[Serializable]
+		public struct ItemStruct :IDisposable
+		{
+			public string[] targets;
+			public MissionType missionType;
+
+			public ComparisonType comparisonType;
+			public int count;
+  
+            public void Dispose()
+            {
+				targets = null;
+			}
+        }
+		[Serializable]
+		public struct GroupStruct : IDisposable
+		{
+			public LogicType logicType;
+			public ComparisonType anyComparisonType;
+			public int anyCount;
+
+			public void Dispose()
+			{
+			}
+		}
+		
+		public enum MissionType
+		{
+			Kill,
+			Protect,
+			ControlBase_Count,
+			CaptureAndSecureBase,
+		}
+		public enum ResultTyoe
+		{
+			Wait = 0,
+			Succeed,
+			Failed,
+		}
+		public enum ComparisonType
+		{
+			동등, 이하, 이상,
+		}
+		public enum LogicType
+		{
+			All,
+			Any,
+		}
+	}
+}
+public partial class StrategyGamePlayData // Play Content Data
+{
+	[Serializable]
 	public class ControlBaseData : GamePlayData<ControlBaseData.Data>
 	{
 		public ControlBaseData(Data data) : base(data) { }
@@ -164,26 +250,27 @@ public class StrategyGamePlayData
 			public string controlBaseName;
 			public Sprite iconImage;
 
-			public string occupyingFaction;
+			public string captureFaction;
 
 			// 최대 보유량을 해당 수치만큼 늘린다.
 			public int maxManpower;
-			public int maxSuppliePoint;
+			public int maxSupplyPoint;
 			public int maxElectricPoint;
 
 			// 분당 충전량을 해당 수치만큼 늘린다.
 			public int manpowerPerMinute;
-			public int suppliePerMinute;
+			public int supplyPerMinute;
 			public int electricPerMinute;
 
 			// 현재 비축량
 			public int reservesManpower;
-			public int reservesSupplie;
+			public int reservesSupply;
 			public int reservesElectric;
 
-			public int currentSuppliePoint;
+			public int currentSupplyPoint;
 		}
 	}
+	[Serializable]
 	public class ControlBaseBattleVariable : GamePlayData<ControlBaseBattleVariable.Data>
 	{
 		public ControlBaseBattleVariable(Data data) : base(data) { }
@@ -202,6 +289,7 @@ public class StrategyGamePlayData
 			public float moraleRecoveryMultiplication;
 		}
 	}
+	[Serializable]
 	public class ControlBaseBuildingData : GamePlayData<ControlBaseBuildingData.Data>
 	{
 		public ControlBaseBuildingData(Data data) : base(data) { }
@@ -210,26 +298,28 @@ public class StrategyGamePlayData
 			public int buildingID;
 			public int buildingLevel;
 
-            internal Sprite buildingImage;
+			internal Sprite buildingImage;
 
 			// 최대 보유량을 해당 수치만큼 늘린다.
 			public int maxManpower;
-			public int maxSuppliePoint;
+			public int maxSupplyPoint;
 			public int maxElectricPoint;
 
 			// 분당 충전량을 해당 수치만큼 늘린다.
 			public int manpowerPerMinute;
-			public int suppliePerMinute;
+			public int supplyPerMinute;
 			public int electricPerMinute;
 		}
 		private Data data;
 	}
 
+	[Serializable]
 	public class UnitBaseData : GamePlayData<UnitBaseData.Data>
 	{
 		public UnitBaseData(Data data) : base(data) { }
 		public struct Data
 		{
+			public string unitKey;
 			public string unitName;
 			public int unitID;
 			public int factionID;
@@ -258,6 +348,7 @@ public class StrategyGamePlayData
 			건물,
 		}
 	}
+	[Serializable]
 	public class UnitProfileData : GamePlayData<UnitProfileData.Data>
 	{
 		public UnitProfileData(Data data) : base(data) { }
@@ -286,7 +377,7 @@ public class StrategyGamePlayData
 			public float firingDelay;       // 연속 공격 딜레이
 
 			public int electricPerAttack;   // 공격시 전력 소모량
-			public int suppliePerAttack;    // 공격시 물자 소모량
+			public int supplyPerAttack;    // 공격시 물자 소모량
 
 			public float attackange;        // 공격 범위
 			public float actionRange;       // 반응 범위
@@ -294,9 +385,10 @@ public class StrategyGamePlayData
 
 			public float moveSpeed;         // 이동 속도
 
-			public int occupationPoint;
+			public int capturePoint;
 		}
 	}
+	[Serializable]
 	public class UnitSkillData : GamePlayData<UnitSkillData.Data>
 	{
 		public UnitSkillData(Data data) : base(data) { }

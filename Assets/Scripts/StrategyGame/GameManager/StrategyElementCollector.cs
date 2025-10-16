@@ -24,7 +24,7 @@ public interface IStrategyElement
 	void OnStartGame() { }
 }
 
-public partial class StrategyElementCollector : MonoBehaviour
+public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 {
 	[SerializeField]
 	private List<ControlBase> controlBases;
@@ -33,17 +33,17 @@ public partial class StrategyElementCollector : MonoBehaviour
 	[SerializeField]
 	private List<UnitObject> units;
 	[SerializeField]
-	private List<SkillObject> skill;
+	private List<SkillObject> skills;
 	[SerializeField]
 	private List<IStrategyElement> others;
 
 	public List<ControlBase> ControlBaseList { get => controlBases; private set => controlBases = value; }
 	public List<Faction> FactionList { get => factions; private set => factions = value; }
 	public List<UnitObject> UnitList { get => units; private set => units = value; }
-	public List<SkillObject> SkillList { get => skill; private set => skill = value; }
+	public List<SkillObject> SkillList { get => skills; private set => skills = value; }
 	public List<IStrategyElement> OtherList { get => others; private set => others = value; }
 
-	public void InitList()
+	internal void Init()
 	{
 		InitControlBase();
 		InitFaction();
@@ -119,7 +119,6 @@ public partial class StrategyElementCollector : MonoBehaviour
 		}
 		SkillList.Clear();
 	}
-
 	public void InitOther()
 	{
 		if (OtherList == null)
@@ -137,6 +136,7 @@ public partial class StrategyElementCollector : MonoBehaviour
 		}
 		OtherList.Clear();
 	}
+
 	public void AddElement<T>(IEnumerable<T> elements) where T : class, IStrategyElement
 	{
 		foreach (var element in elements)
@@ -218,10 +218,20 @@ public partial class StrategyElementCollector : MonoBehaviour
 		}
 		element._OutStrategyCollector();
 	}
+
+    public void Dispose()
+    {
+		controlBases.Clear();
+		factions.Clear();
+		units.Clear();
+		skills.Clear();
+		others.Clear();
+	}
 }
 
-public partial class StrategyElementCollector // FInder
+public partial class StrategyElementCollector // Finder
 {
+	#region FindElement
 	public bool TryFindElement<T>(Func<T, bool> condition, out T find) where T : class, IStrategyElement
 	{
 		find = null;
@@ -262,6 +272,7 @@ public partial class StrategyElementCollector // FInder
 		}
 		return null;
 	}
+	#endregion
 
 	#region ControlBase
 	public bool TryFindControlBase(string factionName, out ControlBase find)
@@ -334,6 +345,7 @@ public partial class StrategyElementCollector // FInder
 
 public partial class StrategyElementCollector // Foreach
 {
+	#region Foreach
 	public void ForeachAll(Action<IStrategyElement> func)
 	{
 		ForControlBase(func);
@@ -688,6 +700,7 @@ public partial class StrategyElementCollector // Foreach
 			}
 		}
 	}
+	#endregion
 
 	#region ControlBase
 	public void ForControlBase(Func<ControlBase, bool> func) => Foreach(func);

@@ -28,7 +28,7 @@ public class UnitProfile : ScriptableObject
 	public float firingDelay;       // 연속 공격 딜레이
 
 	public int electricPerAttack;   // 공격시 전력 소모량
-	public int suppliePerAttack;    // 공격시 물자 소모량
+	public int supplyPerAttack;    // 공격시 물자 소모량
 
 	public float attackange;        // 공격 범위
 	public float actionRange;       // 반응 범위
@@ -37,7 +37,7 @@ public class UnitProfile : ScriptableObject
 	public float moveSpeed;         // 이동 속도
 
 	[Space]
-	public int occupationPoint;
+	public int capturePoint;
 
 	[Space]
 	public SkillProfile[] connectSkill;

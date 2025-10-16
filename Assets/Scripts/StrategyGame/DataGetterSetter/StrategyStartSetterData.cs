@@ -14,7 +14,7 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		public ControlBaseData[] controlBaseDatas;
 		public UnitData[] unitDatas;
 		[Space]
-		public OccupationData[] occupationDatas;
+		public CaptureData[] captureDatas;
 	}
 	[Serializable]
 	public struct FactionData
@@ -26,7 +26,7 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		public Sprite factionIcon;
 
 		public int maxManpower;
-		public int maxSuppliePoint;
+		public int maxSupplyPoint;
 		public int maxElectricPoint;
 
 		public GameObject defaultUnitPrefab;
@@ -37,7 +37,7 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		public string controlBaseName;
 		[Header("CB Status")]
 		public int maxManpower;
-		public int maxSuppliePoint;
+		public int maxSupplyPoint;
 		public int maxElectricPoint;
 		[Space]
 		public float defenseAddition;
@@ -67,13 +67,13 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		public Vector3 rotation;
 	}
 	[Serializable]
-	public struct OccupationData
+	public struct CaptureData
 	{
-		public string occupyingControlBase;
-		public string occupyingFaction;
-		public float occupationProgress;
+		public string captureControlBase;
+		public string captureFaction;
+		public float captureProgress;
 
-		public int suppliesQuantity;
+		public int supplysQuantity;
 	}
 
 	[SerializeField]

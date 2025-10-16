@@ -16,7 +16,7 @@ public partial class UnitObject : MonoBehaviour
 	public int FactionID => unitBaseData.GetData().factionID;
 	public Faction Faction
 	{
-		get => StrategyGameManager.Collector.FindFaction(FactionID);
+		get => StrategyManager.Collector.FindFaction(FactionID);
 	}
 
 	public void Init(string unitName = "", int unitID = -1)
@@ -32,14 +32,23 @@ public partial class UnitObject : MonoBehaviour
 	}
 	public void Init(UnitData data) // UnitData
 	{
-		UnitBaseData.SetData(new UnitBaseData.Data()
+		var initData = new UnitBaseData.Data()
 		{
 			unitName = data.unitName,
 			unitID = data.unitID,
-			factionID = StrategyGameManager.Collector.FactionNameToID(data.factionName),
+			factionID = StrategyManager.Collector.FactionNameToID(data.factionName),
 			weaponType = (UnitBaseData.WeaponType)data.weaponType,
 			protectType = (UnitBaseData.ProtectionType)data.protectType,
-		});
+		};
+
+		if (unitBaseData == null)
+		{
+			unitBaseData = new UnitBaseData(initData);
+		}
+		else
+		{
+			UnitBaseData.SetData(initData);
+		}
 
 		var profile = data.unitProfile;
 		UnitProfileData = new UnitProfileData(new UnitProfileData.Data()
@@ -67,7 +76,7 @@ public partial class UnitObject : MonoBehaviour
 			firingDelay = profile.firingDelay,
 
 			electricPerAttack = profile.electricPerAttack,
-			suppliePerAttack = profile.suppliePerAttack,
+			supplyPerAttack = profile.supplyPerAttack,
 
 			attackange = profile.attackange,
 			actionRange = profile.actionRange,
@@ -75,14 +84,14 @@ public partial class UnitObject : MonoBehaviour
 
 			moveSpeed = profile.moveSpeed,
 
-			occupationPoint = profile.occupationPoint,
+			capturePoint = profile.capturePoint,
 		});
 	}
 }
 public partial class UnitObject : MonoBehaviour // ProfileData
 {
 	private SkillProfile[] connectSkill;
-	private OccupationTag occupationTag;
+	private CaptureTag captureTag;
 
 	public int Manpower => UnitProfileData.GetData().manpower;
 	public int Durability => UnitProfileData.GetData().durability;
@@ -107,36 +116,36 @@ public partial class UnitObject : MonoBehaviour // ProfileData
 	public float FiringDelay => UnitProfileData.GetData().firingDelay;
 
 	public int ElectricPerAttack => UnitProfileData.GetData().electricPerAttack;
-	public int SuppliePerAttack => UnitProfileData.GetData().suppliePerAttack;
+	public int SupplyPerAttack => UnitProfileData.GetData().supplyPerAttack;
 
 	public float Attackange => UnitProfileData.GetData().attackange;
 	public float ActionRange => UnitProfileData.GetData().actionRange;
 	public float ViewRange => UnitProfileData.GetData().viewRange;
 
 	public float MoveSpeed => UnitProfileData.GetData().moveSpeed;
-	public int OccupationPoint => UnitProfileData.GetData().occupationPoint;
+	public int CapturePoint => UnitProfileData.GetData().capturePoint;
 
 	public SkillProfile[] ConnectSkill { get => connectSkill; set => connectSkill = value; }
-	public OccupationTag OccupationTag { get => occupationTag; set => occupationTag = value; }
+	public CaptureTag CaptureTag { get => captureTag; set => captureTag = value; }
 
 	public void Init(UnitProfile data)
 	{
 		ConnectSkill = data.connectSkill;
 
-		if (OccupationPoint > 0)
+		if (CapturePoint > 0)
 		{
-			if (OccupationTag == null) OccupationTag = GetComponentInChildren<OccupationTag>();
-			if (OccupationTag == null) OccupationTag = gameObject.AddComponent<OccupationTag>();
+			if (CaptureTag == null) CaptureTag = GetComponentInChildren<CaptureTag>();
+			if (CaptureTag == null) CaptureTag = gameObject.AddComponent<CaptureTag>();
 
-			OccupationTag.factionID = FactionID;
-			OccupationTag.pointValue = data.occupationPoint;
+			CaptureTag.factionID = FactionID;
+			CaptureTag.pointValue = data.capturePoint;
 		}
 		else
 		{
-			if (OccupationTag != null)
+			if (CaptureTag != null)
 			{
-				Destroy(OccupationTag);
-				OccupationTag = null;
+				Destroy(CaptureTag);
+				CaptureTag = null;
 			}
 		}
 	}

@@ -2,24 +2,10 @@
 
 public class StrategyStartSetter : MonoBehaviour
 {
-	private StrategyGameManager thisManager;
+	private StrategyManager thisManager;
 	private StrategyElementCollector collector;
 	[SerializeField]
 	private StrategyStartSetterData strategyStartSetterData;
-
-	// Init
-	public void InitFactionList(StrategyElementCollector collector)
-	{
-		var factions = strategyStartSetterData.GetData().factionDatas;
-		int length = factions.Length;
-		for (int i = 0 ; i < length ; i++)
-		{
-			var data = factions[i];
-			data.factionID = i;
-			Faction faction = new Faction(data);
-			collector.AddElement<Faction>(faction);
-		}
-	}
 
 	internal bool StartSetterIsValid()
 	{
@@ -28,14 +14,14 @@ public class StrategyStartSetter : MonoBehaviour
 			Debug.LogError("StrategyStartSetterData Is Null.");
 			return false;
 		}
-		thisManager = StrategyGameManager.Manager;
+		thisManager = StrategyManager.Manager;
 		if (thisManager == null)
 		{
 			Debug.LogError("ThisManager Is Null.");
 			return false;
 		}
-		collector = StrategyGameManager.Collector;
-		if(collector == null)
+		collector = StrategyManager.Collector;
+		if (collector == null)
 		{
 			Debug.LogError("No StrategyElementCollector component found in children of GameManager.");
 			return false;
@@ -52,6 +38,10 @@ public class StrategyStartSetter : MonoBehaviour
 		{
 			var factionData = factions[i];
 			factionData.factionID = i;
+			if(factionData.factionName == data.playerFactionName)
+			{
+				StrategyGamePlayData.PlayerFactionID = i;
+			}
 			Faction faction = new Faction(factionData);
 			collector.AddElement<Faction>(faction);
 		}
@@ -105,7 +95,7 @@ public class StrategyStartSetter : MonoBehaviour
 		for (int i = 0 ; i < includeLength ; i++)
 		{
 			var unit = includeSceneUnits[i];
-			if(collector.FindUnit(unit.UnitID) == null)
+			if (collector.FindUnit(unit.UnitID) == null)
 			{
 				string name = $"Unit_{dataLength + i:00}";
 				unit.gameObject.name = name;
@@ -114,21 +104,19 @@ public class StrategyStartSetter : MonoBehaviour
 			}
 		}
 	}
-
-
-	internal void OnStartSetter_Occupation()
+	internal void OnStartSetter_Capture()
 	{
 		var data = strategyStartSetterData.GetData();
-		var occData = data.occupationDatas;
+		var occData = data.captureDatas;
 		int length = occData.Length;
-		collector.ForControlBase(SetOccupation);
+		collector.ForControlBase(SetCapture);
 
-		void SetOccupation(ControlBase cb)
+		void SetCapture(ControlBase cb)
 		{
 			for (int i = 0 ; i < length ; i++)
 			{
 				var data = occData[i];
-				if(data.occupyingControlBase == cb.ControlBaseName)
+				if (data.captureControlBase == cb.ControlBaseName)
 				{
 					cb.Init(data);
 				}
