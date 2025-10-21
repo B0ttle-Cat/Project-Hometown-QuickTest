@@ -27,6 +27,8 @@ public class KeyPairDisplayName : KeyPairAssets<string>
 
 	public static KeyPairDisplayName Load(Language.Type type, string name)
 	{
-		return Resources.Load<KeyPairDisplayName>($"{nameof(KeyPairDisplayName)}/{type.ToString()}/{name}");
+		string path = $"{nameof(KeyPairDisplayName)}/{type.ToString()}/{name}";
+		Debug.Log(path);
+		return Resources.Load<KeyPairDisplayName>(path);
 	}
 }

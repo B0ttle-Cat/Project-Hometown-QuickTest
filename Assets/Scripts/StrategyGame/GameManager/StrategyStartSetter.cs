@@ -1,10 +1,15 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+
+using Sirenix.OdinInspector;
+
+using UnityEngine;
 
 public class StrategyStartSetter : MonoBehaviour
 {
 	private StrategyManager thisManager;
 	private StrategyElementCollector collector;
-	[SerializeField]
+
+	[SerializeField, InlineEditor, HideLabel, Title("Start Map Data")]
 	private StrategyStartSetterData strategyStartSetterData;
 
 	internal bool StartSetterIsValid()
@@ -29,6 +34,20 @@ public class StrategyStartSetter : MonoBehaviour
 		return true;
 	}
 
+	internal void OnSetPreparedData()
+	{
+		if (StrategyGamePlayData.PreparedData == null)
+		{
+			var data = strategyStartSetterData.GetData();
+			StrategyGamePlayData.PreparedData = new StrategyGamePlayData.GameStartingData(new()
+			{
+				LanguageType = Language.Type.Korean,
+				overview = data.overview,
+				mission = data.mission,
+			});
+		}
+	}
+
 	internal void OnStartSetter_Faction()
 	{
 		var data = strategyStartSetterData.GetData();
@@ -38,7 +57,7 @@ public class StrategyStartSetter : MonoBehaviour
 		{
 			var factionData = factions[i];
 			factionData.factionID = i;
-			if(factionData.factionName == data.playerFactionName)
+			if (factionData.factionName == data.playerFactionName)
 			{
 				StrategyGamePlayData.PlayerFactionID = i;
 			}
@@ -46,7 +65,6 @@ public class StrategyStartSetter : MonoBehaviour
 			collector.AddElement<Faction>(faction);
 		}
 	}
-
 	internal void OnStartSetter_ControlBase()
 	{
 		// 일단 씬에 있는 모든 ControlBaseData 컴퍼넌트를 수집
@@ -77,7 +95,8 @@ public class StrategyStartSetter : MonoBehaviour
 	}
 	internal void OnStartSetter_Unit()
 	{
-		var includeSceneUnits = GameObject.FindObjectsByType<UnitObject>(FindObjectsInactive.Include, FindObjectsSortMode.InstanceID);
+		List<UnitObject> includeSceneUnits = new ();
+		includeSceneUnits.AddRange(GameObject.FindObjectsByType<UnitObject>(FindObjectsInactive.Include, FindObjectsSortMode.InstanceID));
 
 		var data = strategyStartSetterData.GetData();
 		var unitDatas = data.unitDatas;
@@ -86,12 +105,36 @@ public class StrategyStartSetter : MonoBehaviour
 		for (int i = 0 ; i < dataLength ; i++)
 		{
 			var unitData = unitDatas[i];
-
-			UnitObject unitObject = UnitInstantiater.Instantiate(unitData);
+			unitData.unitID = i; ;
+			string unitName = unitData.unitName;
+			if (TryFindUnitAlready(unitName, out UnitObject unitObject))
+			{
+				UnitInstantiater.ResetWithData(unitObject, in unitData);
+			}
+			else
+			{
+				unitObject = UnitInstantiater.Instantiate(in unitData);
+			}
 			collector.AddElement(unitObject);
 		}
 
-		int includeLength = includeSceneUnits.Length;
+		bool TryFindUnitAlready(string unitName, out UnitObject unitObject)
+		{
+			unitObject = null;
+			int length = includeSceneUnits.Count;
+			for (int i = 0 ; i < length ; i++)
+			{
+				if (includeSceneUnits[i].ProfileData.unitName == unitName)
+				{
+					unitObject = includeSceneUnits[i];
+					includeSceneUnits.RemoveAt(i);
+					break;
+				}
+			}
+			return unitObject != null;
+		}
+
+		int includeLength = includeSceneUnits.Count;
 		for (int i = 0 ; i < includeLength ; i++)
 		{
 			var unit = includeSceneUnits[i];

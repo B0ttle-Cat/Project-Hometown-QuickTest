@@ -89,6 +89,7 @@ public class StrategyManager : MonoBehaviour
 			Debug.LogError("GameStart: StrategyStartSetter is not valid.");
 			return;
 		}
+		setter.OnSetPreparedData();
 		if(Collector == null)
 		{
 			Debug.LogError("GameStart: No StrategyElementCollector ThisComponent found in children of GameManager.");

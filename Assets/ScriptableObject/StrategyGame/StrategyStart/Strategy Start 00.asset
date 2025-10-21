@@ -14,106 +14,132 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StrategyStartSetterData
   data:
     playerFactionName: Faction_00
+    overview:
+      title: "Test \uC2DC\uC791 \uC124\uC815"
+      description: "\uD14C\uC2A4\uD2B8 \uC2DC\uC791 \uC635\uC158\uC744 \uC0AC\uC6A9"
+    mission:
+      id: 9999
+      title: Test Mission
+      description: "Test \uBBF8\uC158"
+      victoryScript: 
+      defeatScript: 
+      enableSubMissions: []
     factionDatas:
     - factionName: Faction_00
-      factionColor: {r: 1, g: 0, b: 0, a: 1}
-      factionIcon: {fileID: 0}
-      maxManpower: 50
-      maxSupplyPoint: 0
-      maxElectricPoint: 0
+      factionColor: {r: 0.19607843, g: 0.5882353, b: 0.19607843, a: 1}
+      factionIcon: {fileID: 21300000, guid: 685efeaf107f1514f9036b5688b3ddb3, type: 3}
+      maxPersonnel: 100
+      maxMaterialPoint: 100
+      maxElectricPoint: 100
       defaultUnitPrefab: {fileID: 2460545361625872358, guid: 47ee3d89ec6dbf842b177734ea94c8d2, type: 3}
     - factionName: Faction_01
-      factionColor: {r: 0, g: 0, b: 1, a: 1}
-      factionIcon: {fileID: 0}
-      maxManpower: 100
-      maxSupplyPoint: 0
-      maxElectricPoint: 0
+      factionColor: {r: 0.78431374, g: 0.19607843, b: 0.19607843, a: 1}
+      factionIcon: {fileID: 21300000, guid: 685efeaf107f1514f9036b5688b3ddb3, type: 3}
+      maxPersonnel: 100
+      maxMaterialPoint: 100
+      maxElectricPoint: 100
       defaultUnitPrefab: {fileID: 2460545361625872358, guid: 47ee3d89ec6dbf842b177734ea94c8d2, type: 3}
     controlBaseDatas:
     - profileData:
         controlBaseName: ControlBase_00
         environmentalKey: 
+        effect: 0
       mainStatsData:
-        currentManpower: 0
-        currentSupply: 0
-        currentElectric: 0
-        logisticsData:
-          maxManpower: 300
-          maxSupplyPoint: 300
-          maxElectricPoint: 300
-          manpowerPerMinute: 60
-          supplyPerMinute: 60
-          electricPerMinute: 60
-        unitSupportData:
-          defenseAddition: 0
-          defenseMultiplication: 0
-          attackAddition: 0
-          attackMultiplication: 0
-          hpRecoveryAddition: 0
-          hpRecoveryMultiplication: 0
-          moraleRecoveryAddition: 0
-          moraleRecoveryMultiplication: 0
-        currentEffect: 0
-      captureTime: 5
+        stats:
+          values: []
+        buff:
+          values: []
+      captureTime: 0
       facilitiesStatsData:
-        installedData: []
-        installingData: []
+        slotData: []
       supportStatsData:
         supportPoint: 0
         offensivePoint: 0
         defensivePoint: 0
-        logisticsPoint: 0
+        supplyPoint: 0
+        facilitiesPoint: 0
+    - profileData:
+        controlBaseName: ControlBase_01
+        environmentalKey: 
+        effect: 0
+      mainStatsData:
+        stats:
+          values: []
+        buff:
+          values: []
+      captureTime: 0
+      facilitiesStatsData:
+        slotData: []
+      supportStatsData:
+        supportPoint: 0
+        offensivePoint: 0
+        defensivePoint: 0
+        supplyPoint: 0
         facilitiesPoint: 0
     - profileData:
         controlBaseName: ControlBase_02
         environmentalKey: 
+        effect: 0
       mainStatsData:
-        currentManpower: 0
-        currentSupply: 0
-        currentElectric: 0
-        logisticsData:
-          maxManpower: 0
-          maxSupplyPoint: 0
-          maxElectricPoint: 0
-          manpowerPerMinute: 0
-          supplyPerMinute: 0
-          electricPerMinute: 0
-        unitSupportData:
-          defenseAddition: 0
-          defenseMultiplication: 0
-          attackAddition: 0
-          attackMultiplication: 0
-          hpRecoveryAddition: 0
-          hpRecoveryMultiplication: 0
-          moraleRecoveryAddition: 0
-          moraleRecoveryMultiplication: 0
-        currentEffect: 0
-      captureTime: 5
+        stats:
+          values: []
+        buff:
+          values: []
+      captureTime: 0
       facilitiesStatsData:
-        installedData: []
-        installingData: []
+        slotData: []
       supportStatsData:
         supportPoint: 0
         offensivePoint: 0
         defensivePoint: 0
-        logisticsPoint: 0
+        supplyPoint: 0
+        facilitiesPoint: 0
+    - profileData:
+        controlBaseName: ControlBase_03
+        environmentalKey: 
+        effect: 0
+      mainStatsData:
+        stats:
+          values: []
+        buff:
+          values: []
+      captureTime: 0
+      facilitiesStatsData:
+        slotData: []
+      supportStatsData:
+        supportPoint: 0
+        offensivePoint: 0
+        defensivePoint: 0
+        supplyPoint: 0
+        facilitiesPoint: 0
+    - profileData:
+        controlBaseName: ControlBase_04
+        environmentalKey: 
+        effect: 0
+      mainStatsData:
+        stats:
+          values: []
+        buff:
+          values: []
+      captureTime: 0
+      facilitiesStatsData:
+        slotData: []
+      supportStatsData:
+        supportPoint: 0
+        offensivePoint: 0
+        defensivePoint: 0
+        supplyPoint: 0
         facilitiesPoint: 0
     unitDatas:
-    - unitName: Unit
-      unitID: 0
+    - unitName: Unit A
       factionName: Faction_00
       unitProfile: {fileID: 11400000, guid: ef441d73e230ad44d8ad139f1663ba71, type: 2}
-      weaponType: 0
-      protectType: 0
-      position: {x: 0, y: 0, z: 0}
+      position: {x: 10, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0}
-    - unitName: Unit
-      unitID: 1
+    - unitName: Unit B
       factionName: Faction_01
       unitProfile: {fileID: 11400000, guid: ef441d73e230ad44d8ad139f1663ba71, type: 2}
-      weaponType: 0
-      protectType: 0
-      position: {x: 0, y: 0, z: 40}
+      position: {x: 0, y: 0, z: 10}
       rotation: {x: 0, y: 0, z: 0}
     captureDatas:
     - captureControlBase: ControlBase_00

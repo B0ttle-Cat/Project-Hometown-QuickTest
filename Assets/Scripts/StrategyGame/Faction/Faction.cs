@@ -1,5 +1,7 @@
 ﻿using System;
 
+using Sirenix.OdinInspector;
+
 using UnityEngine;
 
 [Serializable]
@@ -19,8 +21,10 @@ public partial class Faction
 		suppletionSpeed = 1f;
 	}
 
-	public int FactionID { get => factionID; }
+	[ShowInInspector]
 	public string FactionName { get => factionName; set => factionName = value; }
+	[ShowInInspector]
+	public int FactionID { get => factionID; }
 	public Color FactionColor { get => factionColor; set => factionColor = value; }
 	public Sprite FactionIcon { get => factionIcon; set => factionIcon = value; }
 	public GameObject DefaultUnitPrefab { get => defaultUnitPrefab; set => defaultUnitPrefab = value; }
@@ -29,8 +33,8 @@ public partial class Faction
 	public float SuppletionSpeed { get => suppletionSpeed; set => suppletionSpeed = value; }
 	public float CaptureSpeed { get => captureSpeed; set => captureSpeed = value; }
 
-	private readonly int factionID;
 	private string factionName;
+	private readonly int factionID;
 
 	private Color factionColor;
 	private Sprite factionIcon;

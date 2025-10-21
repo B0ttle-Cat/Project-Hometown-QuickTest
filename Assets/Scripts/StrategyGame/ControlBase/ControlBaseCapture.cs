@@ -2,8 +2,10 @@
 
 using UnityEngine;
 
-public class ControlBaseCapture : MonoBehaviour
+public class Update_ControlBaseCapture : StrategyUpdate.IUpdate
 {
+	private Dictionary<ControlBase, ControlBaseTrigger> trigger;
+	private Dictionary<ControlBase, bool> isKeep;
 	private ControlBase controlBase;
 	private ControlBaseTrigger controlBaseCollider;
 
@@ -21,7 +23,7 @@ public class ControlBaseCapture : MonoBehaviour
 		controlBase = _controlBase;
 
 		if (controlBaseCollider == null)
-			controlBaseCollider = GetComponentInChildren<ControlBaseTrigger>();
+			controlBaseCollider = _controlBase.GetComponentInChildren<ControlBaseTrigger>();
 		if (controlBaseCollider == null) return;
 
 		Dictionary<int,int> capturePoint = new Dictionary<int, int>();
@@ -130,8 +132,6 @@ public class ControlBaseCapture : MonoBehaviour
 			return;
 		}
 	}
-
-
 	public void KeepCapture(int factionID)
 	{
 		if (controlBase.CaptureProgress >= 1f)
@@ -157,7 +157,6 @@ public class ControlBaseCapture : MonoBehaviour
 			isKeepFaction = true;
 		}
 	}
-
 	public void Neutralization(int attackFactionID = -1)
 	{
 		var faction = StrategyManager.Collector.FindFaction(attackFactionID);
@@ -180,4 +179,9 @@ public class ControlBaseCapture : MonoBehaviour
 			isKeepFaction = false;
 		}
 	}
+
+    void StrategyUpdate.IUpdate.Update(in float deltaTime)
+    {
+        throw new System.NotImplementedException();
+    }
 }

@@ -12,10 +12,21 @@ public class FillRectUI : MonoBehaviour
 	[SerializeField]
 	private FillDiraction fillDiraction;
 
-	[SerializeField]
-	private RectMask2D fillRectMask2D;
+	[SerializeField, HorizontalGroup("Mask"), LabelText("BG Mask")]
+	private RectMask2D bgMask;
+	[SerializeField, HorizontalGroup("Mask"), LabelText("BG Mask")]
+	private RectMask2D fillMask;
+
+	[SerializeField, HorizontalGroup("Rect"), LabelText("BG Rect")]
+	private RectTransform bgRect;
+	[SerializeField, HorizontalGroup("Rect"), LabelText("Fill Rect")]
 	private RectTransform fillRect;
-	
+
+	[SerializeField, HorizontalGroup("Image"), LabelText("BG Image")]
+	private Image bgImage;
+	[SerializeField, HorizontalGroup("Image"), LabelText("Fill Image")]
+	private Image fillImage;
+
 	[FoldoutGroup("Color"), SerializeField]
 	private Color fillColor;
 	[FoldoutGroup("Color"), SerializeField, Range(0f,1f)]
@@ -26,6 +37,8 @@ public class FillRectUI : MonoBehaviour
 	private float bgBrightness;
 	[FoldoutGroup("Color"), SerializeField, Range(0f,1f)]
 	private float bgAlpha;
+	[FoldoutGroup("Color"), ShowInInspector, ReadOnly, EnableGUI]
+	private Color bgColor { get; set; }
 
 	private TMP_Text fillRectTextUI;
 	public enum FillDiraction
@@ -51,6 +64,7 @@ public class FillRectUI : MonoBehaviour
 	}
 	public void OnValidate()
 	{
+		Init();
 		FillUpdate();
 		ColorUpdate();
 	}
@@ -87,35 +101,71 @@ public class FillRectUI : MonoBehaviour
 		Text = text;
 	}
 
-    public void Awake()
-    {
+	public void Awake()
+	{
 		Init();
 		ColorUpdate();
-    }
+	}
 
-    private void Init()
+	private void Init()
 	{
-		if (fillRectMask2D == null)
+		var makss = GetComponentsInChildren<RectMask2D>();
+		if (makss.Length == 0)
 		{
-			fillRectMask2D = GetComponentInChildren<RectMask2D>();
+			return;
 		}
-		if (fillRectMask2D != null && fillRect == null)
+		if (bgMask == null)
 		{
-			fillRect = fillRectMask2D.GetComponent<RectTransform>();
-			fillRect.anchorMin = Vector2.zero;
-			fillRect.anchorMax = Vector2.one;
-			fillRect.anchoredPosition = Vector2.zero;
-			fillRect.sizeDelta = Vector2.zero;
-			fillRect.pivot = Vector2.one * 0.5f;
+			bgMask = makss[0];
+		}
+		if (bgMask != null)
+		{
+			if (bgRect == null)
+			{
+				bgRect = bgMask.GetComponent<RectTransform>();
+			}
+			if (bgImage == null)
+			{
+				bgImage = bgMask.GetComponentInChildren<Image>();
+			}
+			if (bgRect != null)
+			{
+				bgRect.anchorMin = Vector2.zero;
+				bgRect.anchorMax = Vector2.one;
+				bgRect.anchoredPosition = Vector2.zero;
+				bgRect.sizeDelta = Vector2.zero;
+				bgRect.pivot = Vector2.one * 0.5f;
+			}
+		}
+
+		if (fillMask == null)
+		{
+			fillMask = makss[1];
+		}
+		if (fillMask != null)
+		{
+			if (fillRect == null)
+			{
+				fillRect = fillMask.GetComponent<RectTransform>();
+			}
+			if (fillImage == null)
+			{
+				fillImage = fillMask.GetComponentInChildren<Image>();
+			}
+			if (fillRect != null)
+			{
+				fillRect.anchorMin = Vector2.zero;
+				fillRect.anchorMax = Vector2.one;
+				fillRect.anchoredPosition = Vector2.zero;
+				fillRect.sizeDelta = Vector2.zero;
+				fillRect.pivot = Vector2.one * 0.5f;
+			}
 		}
 	}
 	private void ColorUpdate()
 	{
-		if (fillRect == null) return;
+		if (fillImage == null) return;
 
-		// 각각의 이미지 가져오기
-		var bgImage = GetComponent<Image>();
-		var fillImage = fillRect.GetComponentInChildren<Image>();
 		if (bgImage == null || fillImage == null) return;
 
 		// 채워진 부분은 fillColor 그대로 적용
@@ -129,53 +179,84 @@ public class FillRectUI : MonoBehaviour
 		float bgS = s * bgSaturation;
 		float bgV = v * bgBrightness;
 
-		Color bgColor = Color.HSVToRGB(h, bgS, bgV);
-
-		bgColor.a = bgAlpha;
+		var color= Color.HSVToRGB(h, bgS, bgV);
+		color.a = bgAlpha;
+		bgColor = color;
 		bgImage.color = bgColor;
 	}
 	public void FillUpdate()
 	{
-		Init();
-		if (fillRectMask2D == null || fillRect == null) return;
-
-		/// <summary>
-		/// Padding to be applied to the masking
-		/// X = Left
-		/// Y = Bottom
-		/// Z = Right
-		/// W = Top
-		/// </summary>
-		switch (Diraction)
+		RenderBG();
+		RenderFill();
+		void RenderBG()
 		{
-			case FillDiraction.LeftToRight:
+			if (bgMask == null || bgRect == null || bgImage == null) return;
+			switch (Diraction)
 			{
-				float length = fillRect.rect.width;
-				float fill = length * (1f-Value);
-				fillRectMask2D.padding = new Vector4(0f, 0f, fill, 0f);
+				case FillDiraction.RightToLeft:
+				{
+					float length = bgRect.rect.width;
+					float fill = length * (Value);
+					bgMask.padding = new Vector4(0f, 0f, fill, 0f);
+				}
+				break;
+				case FillDiraction.LeftToRight:
+				{
+					float length = bgRect.rect.width;
+					float fill = length * (Value);
+					bgMask.padding = new Vector4(fill, 0f, 0f, 0f);
+				}
+				break;
+				case FillDiraction.BottomToTop:
+				{
+					float length = bgRect.rect.height;
+					float fill = length * (Value);
+					bgMask.padding = new Vector4(0f, fill, 0f, 0f);
+				}
+				break;
+				case FillDiraction.TopToBottom:
+				{
+					float length = bgRect.rect.height;
+					float fill = length * (Value);
+					bgMask.padding = new Vector4(0f, 0f, 0f, fill);
+				}
+				break;
 			}
-			break;
-			case FillDiraction.RightToLeft:
+		}
+		void RenderFill()
+		{
+			if (fillMask == null || fillRect == null || fillImage == null) return;
+			switch (Diraction)
 			{
-				float length = fillRect.rect.width;
-				float fill = length * (1f-Value);
-				fillRectMask2D.padding = new Vector4(fill, 0f, 0f, 0f);
+				case FillDiraction.LeftToRight:
+				{
+					float length = fillRect.rect.width;
+					float fill = length * (1f-Value);
+					fillMask.padding = new Vector4(0f, 0f, fill, 0f);
+				}
+				break;
+				case FillDiraction.RightToLeft:
+				{
+					float length = fillRect.rect.width;
+					float fill = length * (1f-Value);
+					fillMask.padding = new Vector4(fill, 0f, 0f, 0f);
+				}
+				break;
+				case FillDiraction.TopToBottom:
+				{
+					float length = fillRect.rect.height;
+					float fill = length * (1f-Value);
+					fillMask.padding = new Vector4(0f, fill, 0f, 0f);
+				}
+				break;
+				case FillDiraction.BottomToTop:
+				{
+					float length = fillRect.rect.height;
+					float fill = length * (1f-Value);
+					fillMask.padding = new Vector4(0f, 0f, 0f, fill);
+				}
+				break;
 			}
-			break;
-			case FillDiraction.TopToBottom:
-			{
-				float length = fillRect.rect.height;
-				float fill = length * (1f-Value);
-				fillRectMask2D.padding = new Vector4(0f, fill, 0f, 0f);
-			}
-			break;
-			case FillDiraction.BottomToTop:
-			{
-				float length = fillRect.rect.height;
-				float fill = length * (1f-Value);
-				fillRectMask2D.padding = new Vector4(0f, 0f, 0f, fill);
-			}
-			break;
 		}
 	}
 }

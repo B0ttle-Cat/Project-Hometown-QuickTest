@@ -6,6 +6,7 @@ using Sirenix.OdinInspector;
 
 using UnityEngine;
 
+using static StrategyStartSetterData;
 using static UnityEngine.Rendering.DebugUI;
 
 public partial class StrategyGamePlayData
@@ -17,6 +18,7 @@ public partial class StrategyGamePlayData
 		{
 			_data = data;
 		}
+		[SerializeField,InlineProperty,HideLabel]
 		protected T _data;
 		private Action<T> onChangeData;
 		private Action<T> onLateChangeData;
@@ -204,32 +206,9 @@ public partial class StrategyGamePlayData // Prepared Data (준비된 데이터)
 		public struct Data
 		{
 			public Language.Type LanguageType;
+
 			public Overview overview;
 			public Mission mission;
-		}
-		[Serializable]
-		public struct Overview
-		{
-			public string title;
-			public string description;
-		}
-		[Serializable]
-		public struct Mission
-		{
-			public string id;
-			public string title;
-			public string description;
-
-			public string victoryScript;
-			public string defeatScript;
-
-			public SubMission[] enableSubMissions;
-		}
-		[Serializable]
-		public struct SubMission
-		{
-			public string id;
-			public string missionScript;
 		}
 	}
 }
@@ -312,10 +291,8 @@ public partial class StrategyGamePlayData // Play Content Data
 			public struct Data
 			{
 				public string controlBaseName;
-
 				// 환경 요소
 				public string environmentalKey;
-
 				// 적용되어 있는 각종 효과
 				public Effect effect;
 
@@ -459,6 +436,11 @@ public partial class StrategyGamePlayData // Play Content Data
 					if (statsList == null) return 0;
 					return statsList.GetValue(statsType, symbol).Value;
 				}
+				public void SetValue(StatsType statsType, int value, SymbolType symbol)
+				{
+					if (statsList == null) return;
+					statsList.SetValue(statsType, value, symbol);
+				}
 			}
 		}
 		[Serializable]
@@ -546,7 +528,6 @@ public partial class StrategyGamePlayData // Play Content Data
 		유닛_회복력          = 1105, //
 		유닛_이동속도         = 1106, //이동 속도
 		유닛_점령점수         = 1107, //점령 점수
-
 		유닛_치명공격력        = 1108, // 치명 피해량 = (적용 피해량 + 유닛_치명공격력) *  유닛_치명공격배율 - 유닛_치명방어력 
 		유닛_치명공격배율       = 1108, // 최종 피해량 = 적용 피해량 + 치명 피해량
 		유닛_치명방어력        = 1109, //
@@ -554,17 +535,19 @@ public partial class StrategyGamePlayData // Play Content Data
 		유닛_관통레벨         = 1200, // 적용 피해량 = 기본 피해량 * ((유닛_관통레벨/유닛_장갑레벨)^2 : 0.1 ~ 1) * 상성 보정
 		유닛_장갑레벨         = 1201, //
 		유닛_EMP저항레벨      = 1202, //
+		유닛_상태이상적용레벨  = 1203, //
+		유닛_상태이상저항레벨  = 1204, //
 
 		유닛_공격명중기회       = 1300, //공격 기회 점수	// 명중 확률 = 기회/(기회+회피)
 		유닛_공격회피기회       = 1301, //공격 회피 점수
 		유닛_치명명중기회       = 1302, //치명타 기회 점수 // 치명 확률 = 기회/(기회+회피)
 		유닛_치명회피기회       = 1303, //치명타 회피 점수
 
-		유닛_명중피격수        = 1400, // 1회의 공격 명중시, 몇번의 피격을 발생시키는지 (0 이면 피해 계산 없음)
+		유닛_명중피격수         = 1400, // 1회의 공격 명중시, 몇번의 피격을 발생시키는지 (0 이면 피해 계산 없음)
 		유닛_연속공격횟수       = 1401, // 공격 시작시, 연속적으로 공격하는 횟수 (0 이면 공격안함)
 		유닛_조준지연시간       = 1402, //공격 대상 변경 후 // 유닛_조준지연시간 => 공격시작 => (유닛_연속공격횟수 * 유닛_연속공격지연시간) => 유닛_재공격지연시간 => 재공격
-		유닛_연속공격지연시간 = 1403, //연속 공격 딜레이
-		유닛_재공격지연시간  = 1404, //공격 후 딜레이
+		유닛_연속공격지연시간    = 1403, //연속 공격 딜레이
+		유닛_재공격지연시간     = 1404, //공격 후 딜레이
 
 		유닛_공격소모_물자      = 1500, //공격시 물자 소모량
 		유닛_공격소모_전력      = 1501, //공격시 전력 소모량

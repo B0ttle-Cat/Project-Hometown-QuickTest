@@ -5,6 +5,8 @@ public class KeyPairSprite : KeyPairAssets<Sprite>
 {
 	public static KeyPairSprite Load(Language.Type type, string name)
 	{
-		return Resources.Load<KeyPairSprite>($"{nameof(KeyPairSprite)}/{type.ToString()}/{name}");
+		string path = $"{nameof(KeyPairSprite)}/{type.ToString()}/{name}";
+		Debug.Log(path);
+		return Resources.Load<KeyPairSprite>(path);
 	}
 }

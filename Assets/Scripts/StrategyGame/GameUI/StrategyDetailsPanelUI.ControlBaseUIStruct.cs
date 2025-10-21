@@ -192,111 +192,30 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 				UpdateStatePanel("Stats KeyValue", "Support Stats", selectControlBase.supportStatsGroup?.MergedStatsValueList());
 			}
 
-			/*
-			void OnChangeDetailStats(StatsValue item)
-			{
-				StrategyGamePlayData.StatsType key = item.StatsType;
-				UpdateFillRectUI_Key(key);
-
-				pairChain.FindPairChain("Base Stats", out var baseStats);
-				if (baseStats == null) return;
-				int value = item.Value;
-				var symbol = item.Symbol;
-				UpdateStatsItem(key, value, symbol, detailStatsItemList, baseStats.transform);
-			}
-			void OnChangeFacilitiesStats(StatsValue item)
-			{
-				StrategyGamePlayData.StatsType key = item.StatsType;
-				UpdateFillRectUI_Key(key);
-
-				pairChain.FindPairChain("Facilities Stats", out var baseStats);
-				if (baseStats == null) return;
-				int value = item.Value;
-				var symbol = item.Symbol;
-				UpdateStatsItem(key, value, symbol, detailStatsItemList, baseStats.transform);
-			}
-			void OnChangeSupportStats(StatsValue item)
-			{
-				StrategyGamePlayData.StatsType key = item.StatsType;
-				UpdateFillRectUI_Key(key);
-
-				pairChain.FindPairChain("Support Stats", out var baseStats);
-				if (baseStats == null) return;
-				int value = item.Value;
-				var symbol = item.Symbol;
-				UpdateStatsItem(key, value, symbol, detailStatsItemList, baseStats.transform);
-			}
-
-			void OnChangeDetailBuff(StatsValue item)
-			{
-				StrategyGamePlayData.StatsType key = item.StatsType;
-				UpdateFillRectUI_Key(key);
-
-				pairChain.FindPairChain("Base Stats", out var baseStats);
-				if (baseStats == null) return;
-				var value = item.Value;
-				var symbol = item.Symbol;
-				UpdateStatsItem(key, value, symbol, detailStatsItemList, baseStats.transform);
-			}
-			void OnChangeFacilitiesBuff(StatsValue item)
-			{
-				StrategyGamePlayData.StatsType key = item.StatsType;
-				UpdateFillRectUI_Key(key);
-
-				pairChain.FindPairChain("Facilities Stats", out var baseStats);
-				if (baseStats == null) return;
-				var value = item.Value;
-				var symbol = item.Symbol;
-				UpdateStatsItem(key, value, symbol, detailStatsItemList, baseStats.transform);
-			}
-			void OnChangeSupportBuff(StatsValue item)
-			{
-				StrategyGamePlayData.StatsType key = item.StatsType;
-				UpdateFillRectUI_Key(key);
-
-				pairChain.FindPairChain("Support Stats", out var baseStats);
-				if (baseStats == null) return;
-				var value = item.Value;
-				var symbol = item.Symbol;
-				UpdateStatsItem(key, value, symbol, detailStatsItemList, baseStats.transform);
-			}
-			*/
 			void UpdateFillRectUI()
 			{
-				SetFillRectUI("Fill Durability", selectControlBase.GetDurability(), selectControlBase.GetMaxDurability(), "방어벽 없음");
-				SetFillRectUI("Fill Garrison", selectControlBase.GetGarrison(), selectControlBase.GetMaxGarrison(), "병력 보충 불가");
-				SetFillRectUI("Fill Material", selectControlBase.GetMaterial(), selectControlBase.GetMaxMaterial(), "물자 보충 불가");
-				SetFillRectUI("Fill Electric", selectControlBase.GetElectric(), selectControlBase.GetMaxElectric(), "전력 보충 불가");
+				SetFillRectUI("Fill Durability", selectControlBase.GetDurability(), "방어벽 없음");
+				SetFillRectUI("Fill Garrison", selectControlBase.GetGarrison(), "병력 보충 불가");
+				SetFillRectUI("Fill Material", selectControlBase.GetMaterial(), "물자 보충 불가");
+				SetFillRectUI("Fill Electric", selectControlBase.GetElectric(), "전력 보충 불가");
 			}
 			void UpdateFillRectUI_Key(StatsType key)
 			{
 				if (key == StrategyGamePlayData.StatsType.거점_최대내구도 || key == StrategyGamePlayData.StatsType.거점_현재내구도)
 				{
-					SetFillRectUI("Fill Durability",
-						selectControlBase.GetDurability(),
-						selectControlBase.GetMaxDurability(),
-						"방어벽 없음");
+					SetFillRectUI("Fill Durability",selectControlBase.GetDurability(),"방어벽 없음");
 				}
 				else if (key == StrategyGamePlayData.StatsType.거점_인력_최대보유량 || key == StrategyGamePlayData.StatsType.거점_인력_현재보유량)
 				{
-					SetFillRectUI("Fill Garrison",
-						selectControlBase.GetGarrison(),
-						selectControlBase.GetMaxGarrison(),
-						"병력 보충 불가");
+					SetFillRectUI("Fill Garrison",selectControlBase.GetGarrison(),"병력 보충 불가");
 				}
 				else if (key == StrategyGamePlayData.StatsType.거점_물자_최대보유량 || key == StrategyGamePlayData.StatsType.거점_물자_현재보유량)
 				{
-					SetFillRectUI("Fill Material",
-						selectControlBase.GetMaterial(),
-						selectControlBase.GetMaxMaterial(),
-						"물자 보충 불가");
+					SetFillRectUI("Fill Material",selectControlBase.GetMaterial(),"물자 보충 불가");
 				}
 				else if (key == StrategyGamePlayData.StatsType.거점_전력_최대보유량 || key == StrategyGamePlayData.StatsType.거점_전력_현재보유량)
 				{
-					SetFillRectUI("Fill Electric",
-						selectControlBase.GetElectric(),
-						selectControlBase.GetMaxElectric(),
-						"전력 보충 불가");
+					SetFillRectUI("Fill Electric",selectControlBase.GetElectric(),"전력 보충 불가");
 				}
 			}
 			void UpdateStatePanel(string stateItemName, string statePanelName, List<StatsValue> list)
@@ -369,15 +288,17 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 				statsItem.SetText(label, text);
 				return statsItem;
 			}
-			void SetFillRectUI(string fillRectName, int value, int maxValue, string noneText)
+			void SetFillRectUI(string fillRectName, (int value, int max) item, string noneText)
 			{
+				int value = item.value;
+				int max = item.max;
 				pairChain.FindPairChain<FillRectUI>(fillRectName, out var fillRect);
 				if (fillRect == null) return;
 
-				if (maxValue > 0)
+				if (max > 0)
 				{
-					float rate = (float)value / (float)maxValue;
-					fillRect.SetValueText(rate, $"{value,10} / {maxValue,-10}");
+					float rate = (float)value / (float)max;
+					fillRect.SetValueText(rate, $"{value,10} / {max,-10}");
 				}
 				else
 				{
@@ -995,12 +916,12 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 		}
 
 
-		public void OnStartFacilitiesInstall(int slotIndex, string facilitiesKey)
+		private void OnStartFacilitiesInstall(int slotIndex, string facilitiesKey)
 		{
-
+			selectControlBase.OnStartFacilitiesInstall(slotIndex, facilitiesKey);
 		}
 
-		public void OnShowInfoText(string text)
+		private void OnShowInfoText(string text)
 		{
 			if (facilitiesInfoText == null) return;
 			facilitiesInfoText.text = text;

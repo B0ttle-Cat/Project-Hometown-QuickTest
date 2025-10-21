@@ -3,7 +3,7 @@
 using static StrategyStartSetterData;
 public static class UnitInstantiater
 {
-	public static UnitObject Instantiate(UnitData unitData)
+	public static UnitObject Instantiate(in UnitData unitData)
 	{
 		var original = unitData.unitProfile.unitPrefab;
 		var position = unitData.position;
@@ -17,8 +17,22 @@ public static class UnitInstantiater
 		if (unit == null) unit = unitObject.AddComponent<UnitObject>();
 
 		unit.Init(unitData);
-		unit.Init(unitData.unitProfile);
 
 		return unit;
+	}
+	public static void ResetWithData(UnitObject unit, in UnitData unitData)
+	{
+		if(unit == null) return;
+
+		GameObject unitObject = unit.gameObject;
+
+		var position = unitData.position;
+		var rotation = Quaternion.Euler(unitData.rotation);
+		unitObject.transform.SetPositionAndRotation(position, rotation);
+
+		string name = $"{unitData.unitName}_{unitData.unitID:00}";
+		unitObject.gameObject.name = name;
+
+		unit.Init(unitData);
 	}
 }

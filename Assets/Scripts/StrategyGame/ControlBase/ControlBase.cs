@@ -4,34 +4,14 @@ using static StrategyGamePlayData;
 
 using ControlBaseData = StrategyGamePlayData.ControlBaseData;
 
-public partial class ControlBase : MonoBehaviour
+public partial class ControlBase : MonoBehaviour 
 {
 	public void Init()
 	{
-		controlBaseCapture = GetComponentInChildren<ControlBaseCapture>();
 		controlBaseColor = GetComponentInChildren<ControlBaseColor>();
 	}
 
-	private ControlBaseCapture controlBaseCapture;
 	private ControlBaseColor controlBaseColor;
-
-	// Update is called once per frame
-	public void UpdateControlBase()
-	{
-		UpdateCapture();
-		UpdateColor();
-
-		void UpdateCapture()
-		{
-			if (controlBaseCapture == null) return;
-			controlBaseCapture.UpdateCapture(this);
-		}
-		void UpdateColor()
-		{
-			if (controlBaseColor == null) return;
-			controlBaseColor.UpdateColor(CaptureFaction, CaptureProgress);
-		}
-	}
 }
 
 public partial class ControlBase // Profile
@@ -89,47 +69,31 @@ public partial class ControlBase // Profile
 		else supportData.SetData(data.supportStatsData);
 	}
 
-	public int GetMaxDurability()
+	public (int value, int max) GetDurability()
 	{
-		return 0;
+		return (0,0);
 	}
 
-	public int GetDurability()
+	public (int value, int max) GetGarrison()
 	{
-		return 0;
+		return (0, 0);
+	}
+	public (int value, int max) GetMaterial()
+	{
+		return (0, 0);
+	}
+	public (int value, int max) GetElectric()
+	{
+		return (0, 0);
 	}
 
-	public int GetMaxGarrison()
+	internal void OnStartFacilitiesInstall(int slotIndex, string facilitiesKey)
 	{
-		return 0;
-	}
-
-	public int GetGarrison()
-	{
-		return 0;
-	}
-	public int GetMaxMaterial()
-	{
-		return 0;
-	}
-
-	public int GetMaterial()
-	{
-		return 0;
-	}
-	public int GetMaxElectric()
-	{
-		return 0;
-	}
-
-	public int GetElectric()
-	{
-		return 0;
 	}
 }
 public partial class ControlBase // CaptureData
 {
-	public float CaptureTime => captureData.GetData().captureTime;
+	//public float CaptureTime => captureData.GetData().captureTime;
 
 	public void Init(StrategyStartSetterData.CaptureData data)
 	{
@@ -142,9 +106,6 @@ public partial class ControlBase // CaptureData
 
 		if (captureData == null) captureData = new ControlBaseData.Capture(initData);
 		else captureData.SetData(initData);
-
-		if (controlBaseCapture == null) controlBaseCapture = GetComponent<ControlBaseCapture>();
-		if (controlBaseCapture != null) controlBaseCapture.SetCapture(CaptureFactionID);
 	}
 
 	public Faction CaptureFaction => StrategyManager.Collector.FindFaction(CaptureFactionID);

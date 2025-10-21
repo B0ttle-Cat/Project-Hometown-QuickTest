@@ -498,7 +498,7 @@ public partial class StrategyMissionTree : MonoBehaviour, IDisposable
 			}
 		}
 
-		private const string testParserData = @"
+		public const string testParserData = @"
 All
 	Kill, 10 <=, ""UnitA"",""UnitB"",""UnitC"",""UnitD""
 	Any
