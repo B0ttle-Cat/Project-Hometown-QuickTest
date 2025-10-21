@@ -579,7 +579,7 @@ All
 		}
 	}
 }
-public partial class StrategyMissionTree // Init GamePlay
+public partial class StrategyMissionTree // _Init GamePlay
 {
 	public MissionTree VictoryMission => victoryMission;
 	public MissionTree DefeatMission => defeatMission;

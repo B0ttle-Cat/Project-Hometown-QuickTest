@@ -1,23 +1,32 @@
 ﻿using UnityEngine;
 
+using static StrategyGamePlayData;
+
 public class StrategyManager : MonoBehaviour
 {
 	public static StrategyManager Manager;
+
+	public static CommonGamePlayData GamePlayData => Manager == null ? null : Manager.gamePlayData;
 	public static StrategyElementCollector Collector => Manager == null ? null : Manager.collector;
 	public static StrategyMissionTree Mission => Manager == null ? null : Manager.mission;
 	public static StrategyStatistics Statistics => Manager == null ? null : Manager.statistics;
-	public static ItemIDToDisplayName ID2Name => Manager == null ? null : Manager.id2Name;
+
+	public static KeyPairDisplayName Key2Name => Manager == null ? null : Manager.key2Name;
+	public static KeyPairSprite Key2Sprite => Manager == null ? null : Manager.key2Sprite;
 	//public static 
 	public bool IsGameSceneReady { get; private set ; }
 
+	CommonGamePlayData gamePlayData;
 	private StrategyElementCollector collector;
 	private StrategyMissionTree mission;
 	private StrategyStatistics statistics;
-	private ItemIDToDisplayName id2Name;
+	private KeyPairDisplayName key2Name;
+	private KeyPairSprite key2Sprite;
 	private void Awake()
 	{
 		IsGameSceneReady = false;
 		Manager = this;
+		gamePlayData = new CommonGamePlayData();
 		collector = GetComponentInChildren<StrategyElementCollector>();
 		mission = GetComponentInChildren<StrategyMissionTree>();
 		statistics = GetComponentInChildren<StrategyStatistics>();
@@ -42,7 +51,8 @@ public class StrategyManager : MonoBehaviour
 			statistics = null;
 		}
 
-		id2Name = null;
+		key2Name = null;
+		key2Sprite = null;
 	}
 
 	void Start()
@@ -71,7 +81,7 @@ public class StrategyManager : MonoBehaviour
 
 		if (setter == null)
 		{
-			Debug.LogError("GameStart: No StrategyStartSetter component found on GameManager.");
+			Debug.LogError("GameStart: No StrategyStartSetter ThisComponent found on GameManager.");
 			return;
 		}
 		if (!setter.StartSetterIsValid())
@@ -81,24 +91,24 @@ public class StrategyManager : MonoBehaviour
 		}
 		if(Collector == null)
 		{
-			Debug.LogError("GameStart: No StrategyElementCollector component found in children of GameManager.");
+			Debug.LogError("GameStart: No StrategyElementCollector ThisComponent found in children of GameManager.");
 			return;
 		}
 		if(Mission == null)
 		{
-			Debug.LogError("GameStart: No StrategyMissionTree component found in children of GameManager.");
+			Debug.LogError("GameStart: No StrategyMissionTree ThisComponent found in children of GameManager.");
 			return;
 		}
 		if(Statistics == null)
 		{
-			Debug.LogError("GameStart: No StrategyStatistics component found in children of GameManager.");
+			Debug.LogError("GameStart: No StrategyStatistics ThisComponent found in children of GameManager.");
 			return;
 		}
 		Collector.Init();
 		Mission.Init();
 		Statistics.Init();
-		id2Name = ItemIDToDisplayName.Load(StrategyGamePlayData.PreparedData.GetData().LanguageType, "Strategy");
-
+		key2Name = KeyPairDisplayName.Load(StrategyGamePlayData.PreparedData.GetData().LanguageType, "Strategy");
+		key2Sprite = KeyPairSprite.Load(StrategyGamePlayData.PreparedData.GetData().LanguageType, "Strategy");
 		// 시작 세력 세팅
 		setter.OnStartSetter_Faction();
 

@@ -1,5 +1,7 @@
 ﻿using System;
 
+using Sirenix.OdinInspector;
+
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "StrategyStartSetterData", menuName = "Scriptable Objects/StrategyGame/StrategyStartSetterData")]
@@ -25,8 +27,8 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		public Color factionColor;
 		public Sprite factionIcon;
 
-		public int maxManpower;
-		public int maxSupplyPoint;
+		public int maxPersonnel;
+		public int maxMaterialPoint;
 		public int maxElectricPoint;
 
 		public GameObject defaultUnitPrefab;
@@ -34,23 +36,16 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 	[Serializable]
 	public struct ControlBaseData
 	{
-		public string controlBaseName;
-		[Header("CB Status")]
-		public int maxManpower;
-		public int maxSupplyPoint;
-		public int maxElectricPoint;
-		[Space]
-		public float defenseAddition;
-		public float defenseMultiplication;
-		[Space]
-		public float attackAddition;
-		public float attackMultiplication;
-		[Space]
-		public float hpRecoveryAddition;
-		public float hpRecoveryMultiplication;
-		[Space]
-		public float moraleRecoveryAddition;
-		public float moraleRecoveryMultiplication;
+		[InlineProperty, HideLabel, Title("Profile")]
+		public StrategyGamePlayData.ControlBaseData.Profile.Data profileData;
+		[InlineProperty, HideLabel, FoldoutGroup("MainStats")]
+		public StrategyGamePlayData.ControlBaseData.MainStats.Data mainStatsData;
+		[FoldoutGroup("MainStats")]
+		public float captureTime;
+		[InlineProperty, HideLabel, FoldoutGroup("Facilities")]
+		public StrategyGamePlayData.ControlBaseData.Facilities.Data facilitiesStatsData;
+		[InlineProperty, HideLabel, FoldoutGroup("Support")]
+		public StrategyGamePlayData.ControlBaseData.Support.Data supportStatsData;
 	}
 	[Serializable]
 	public struct UnitData
@@ -72,8 +67,6 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		public string captureControlBase;
 		public string captureFaction;
 		public float captureProgress;
-
-		public int supplysQuantity;
 	}
 
 	[SerializeField]

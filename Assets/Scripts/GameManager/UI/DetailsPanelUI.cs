@@ -24,21 +24,21 @@ public class DetailsPanelUI : MonoBehaviour
 		public string tabName;
 		private RectTransform tab;
 		private RectTransform content;
+		private ViewController contentView;
 
 		private RectTransform contentPrefab;
 		private RectTransform contentParent;
-		private Action<RectTransform> onStartShow;
 
 		public RectTransform Tab { get => tab; }
         public RectTransform Content { get => content; }
 
-        public TabSlot(string tabName, RectTransform tab, RectTransform contentPrefab, RectTransform contentParent, Action<RectTransform> onStartShow)
+        public TabSlot(string tabName, RectTransform tab, RectTransform contentPrefab, RectTransform contentParent, ViewController contentView )
 		{
 			this.tabName = tabName;
 			this.tab = tab;
 			this.contentPrefab = contentPrefab;
 			this.contentParent = contentParent;
-			this.onStartShow = onStartShow;
+			this.contentView = contentView;
 		}
 		void CreateContentUI()
 		{
@@ -69,6 +69,10 @@ public class DetailsPanelUI : MonoBehaviour
 			{
 				contentPrefab = null;
 			}
+			if (contentView != null)
+			{
+				contentView.Dispose();
+			}
 			if (content != null)
 			{
 				Destroy(content.gameObject);
@@ -84,16 +88,18 @@ public class DetailsPanelUI : MonoBehaviour
 			}
 
 			if (Content == null) return;
-
 			Content.gameObject.SetActive(true);
-			onStartShow?.Invoke(Content);
-
 			if (Content.TryGetComponent<CanvasGroupUI>(out var groupUI))
 			{
 				groupUI.OnShow();
 			}
+
+			if (contentView != null)
+			{
+				contentView.OnShow(Content);
+			}
 		}
-		public void OnHideContent(bool remove = true)
+		public void OnHideContent()
 		{
 			if (Content == null) return;
 			if (Content.TryGetComponent<CanvasGroupUI>(out var groupUI))
@@ -102,12 +108,54 @@ public class DetailsPanelUI : MonoBehaviour
 			}
 			else
 			{
-				groupUI.gameObject.SetActive(true);
+				Content.gameObject.SetActive(true);
+			}
+
+			if (contentView != null)
+			{
+				contentView.OnHide();
 			}
 		}
 	}
+
 	[SerializeField]
 	protected List<TabSlot> tabSlots;
+
+	[Serializable]
+	public abstract class ContentController
+	{
+		protected DetailsPanelUI component;
+
+		public ContentController(DetailsPanelUI component)
+		{
+			this.component = component;
+		}
+		public abstract void OnShow();
+		public abstract void OnHide();
+	}
+
+	[Serializable]
+	public abstract class ViewController : IDisposable
+	{
+		protected DetailsPanelUI component;
+		protected ContentController viewController;
+		public void Init(DetailsPanelUI component, ContentController viewModel) 
+		{
+			this.component = component;
+			this.viewController  = viewModel;
+		}
+		public void Dispose()
+		{
+			component = null;
+			viewController  = null;
+			OnDispose();
+		}
+		public virtual void OnInit() { }
+		public abstract void OnShow(RectTransform viewRect);
+		public abstract void OnHide();
+		public abstract void OnDispose();
+    }
+
 
 	protected void Init()
 	{
@@ -173,14 +221,10 @@ public class DetailsPanelUI : MonoBehaviour
 			}
 		}
 	}
-	public void AddContnet(string tabName, RectTransform prefab, Action<RectTransform> onStartShow)
-	{
-		AddContnet(tabName, prefab, onStartShow, tabSlots.Count == 0);
-	}
-	public void AddContnet(string tabName, RectTransform prefab, Action<RectTransform> onStartShow, bool isOn = false)
-	{
-		if (tabButtonSample == null) return;
 
+	public TView AddTabAndContnet<TView>(string tabName, RectTransform prefab, ContentController thisModel, bool isOn = false) where TView : ViewController, new()
+	{
+		if (tabButtonSample == null) return null;
 		Init();
 
 		RectTransform tabRect = GameObject.Instantiate(tabButtonSample, tabList);
@@ -196,12 +240,13 @@ public class DetailsPanelUI : MonoBehaviour
 		if (tabButton == null)
 		{
 			Destroy(tabRect.gameObject);
-			return;
+			return null;
 		}
-
-		var slot = new TabSlot(tabName, tabRect, prefab, contentParent, onStartShow);
+		ViewController tabContentView = new TView();
+		tabContentView.Init(this, thisModel);
+		var slot = new TabSlot(tabName, tabRect, prefab, contentParent , tabContentView);
 		tabSlots.Add(slot);
-
+			
 		// Tab Active
 		tabRect.gameObject.SetActive(true);
 		tabButton.onValueChanged.AddListener(TabValueChanged);
@@ -210,7 +255,6 @@ public class DetailsPanelUI : MonoBehaviour
 			if (_isOn) slot.OnShowContent();
 			else slot.OnHideContent();
 		}
-
 		if (tabButton.isOn == isOn)
 		{
 			TabValueChanged(isOn);
@@ -219,6 +263,7 @@ public class DetailsPanelUI : MonoBehaviour
 		{
 			tabButton.isOn = isOn;
 		}
+		return tabContentView as TView;
 	}
 
 	public void SelectContent(int index)

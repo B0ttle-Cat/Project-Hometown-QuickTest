@@ -44,7 +44,7 @@ namespace TMPro.Examples
 
             m_Transform = m_TextComponent.transform;
 
-            // Get a reference to the text object's textInfo
+            // Get a reference to the Text object's textInfo
             m_TextInfo = m_TextComponent.textInfo;
 
             // Update Text Statistics
@@ -79,13 +79,13 @@ namespace TMPro.Examples
                 DrawLinkBounds();
             #endregion
 
-            // Draw Quad around the bounds of the text
+            // Draw Quad around the bounds of the Text
             #region Draw Bounds
             if (ShowMeshBounds)
                 DrawBounds();
             #endregion
 
-            // Draw Quad around the rendered region of the text.
+            // Draw Quad around the rendered region of the Text.
             #region Draw Text Bounds
             if (ShowTextBounds)
                 DrawTextBounds();
@@ -96,7 +96,7 @@ namespace TMPro.Examples
         /// <summary>
         /// Method to draw a rectangle around each character.
         /// </summary>
-        /// <param Name="text"></param>
+        /// <param Name="Text"></param>
         void DrawCharactersBounds()
         {
             int characterCount = m_TextInfo.characterCount;
@@ -194,7 +194,7 @@ namespace TMPro.Examples
                 DrawSquare(advancePosition, 0.025f / m_ScaleMultiplier, Color.yellow);
                 DrawCrosshair(advancePosition, 0.0125f / m_ScaleMultiplier, Color.yellow);
 
-                // Draw text labels for metrics
+                // Draw Text labels for metrics
                if (m_HandleSize < 0.5f)
                {
                    GUIStyle style = new GUIStyle(GUI.skin.GetStyle("Label"));
@@ -258,9 +258,9 @@ namespace TMPro.Examples
 
 
         /// <summary>
-        /// Method to draw rectangles around each word of the text.
+        /// Method to draw rectangles around each word of the Text.
         /// </summary>
-        /// <param Name="text"></param>
+        /// <param Name="Text"></param>
         void DrawWordBounds()
         {
             for (int i = 0; i < m_TextInfo.wordCount; i++)
@@ -362,9 +362,9 @@ namespace TMPro.Examples
 
 
         /// <summary>
-        /// Draw rectangle around each of the links contained in the text.
+        /// Draw rectangle around each of the links contained in the Text.
         /// </summary>
-        /// <param Name="text"></param>
+        /// <param Name="Text"></param>
         void DrawLinkBounds()
         {
             TMP_TextInfo textInfo = m_TextComponent.textInfo;
@@ -385,7 +385,7 @@ namespace TMPro.Examples
 
                 Color32 linkColor = Color.cyan;
 
-                // Iterate through each character of the link text
+                // Iterate through each character of the link Text
                 for (int j = 0; j < linkInfo.linkTextLength; j++)
                 {
                     int characterIndex = linkInfo.linkTextfirstCharacterIndex + j;
@@ -466,9 +466,9 @@ namespace TMPro.Examples
 
 
         /// <summary>
-        /// Draw Rectangles around each lines of the text.
+        /// Draw Rectangles around each lines of the Text.
         /// </summary>
-        /// <param Name="text"></param>
+        /// <param Name="Text"></param>
         void DrawLineBounds()
         {
             int lineCount = m_TextInfo.lineCount;
@@ -518,7 +518,7 @@ namespace TMPro.Examples
                 Handles.color = Color.yellow;
                 Handles.DrawDottedLine(descentLineStart, descentLineEnd, dottedLineSize);
 
-                // Draw text labels for metrics
+                // Draw Text labels for metrics
                 if (m_HandleSize < 1.0f)
                 {
                     GUIStyle style = new GUIStyle();
@@ -547,7 +547,7 @@ namespace TMPro.Examples
 
 
         /// <summary>
-        /// Draw Rectangle around the bounds of the text object.
+        /// Draw Rectangle around the bounds of the Text object.
         /// </summary>
         void DrawBounds()
         {

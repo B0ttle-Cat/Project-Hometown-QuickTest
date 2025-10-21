@@ -5,18 +5,16 @@ using UnityEngine;
 
 public partial class StrategyStatistics : MonoBehaviour
 {
-  
-
     public class StatsItem : IDisposable
 	{
 		public string catagory;
-		public string itemID;
+		public string key;
 
-		private StatsData data;
+		private ObserverValue data;
 
 		public bool TryGetValue<T>(out T t) where T : unmanaged
 		{
-			if (data != null && data is StatsData<T> tData)
+			if (data != null && data is ObserverStruct<T> tData)
 			{
 				t = tData.Value;
 				return true;
@@ -26,7 +24,7 @@ public partial class StrategyStatistics : MonoBehaviour
 		}
 		public void SetValue<T>(T t) where T : unmanaged
 		{
-			if (data == null || data is not StatsData<T> tData)
+			if (data == null || data is not ObserverStruct<T> tData)
 			{
 				if (data != null) data.Dispose();
 
@@ -40,7 +38,7 @@ public partial class StrategyStatistics : MonoBehaviour
 				}
 				else
 				{
-					data = new StatsData<T>(t);
+					data = new ObserverStruct<T>(t);
 				}
 			}
 			else
@@ -51,7 +49,7 @@ public partial class StrategyStatistics : MonoBehaviour
 		public void Dispose()
 		{
 			catagory = default;
-			itemID = null;
+			key = null;
 			if (data != null) data.Dispose();
 			data = null;
 		}
@@ -64,13 +62,13 @@ public partial class StrategyStatistics : MonoBehaviour
 		public void AddListener<T>(Action<T> listener) where T : unmanaged
 		{
 			if (listener == null) return;
-			if (data == null || data is not StatsData<T> tData) return;
+			if (data == null || data is not ObserverStruct<T> tData) return;
 			tData.AddListener(listener);
 		}
 		public void RemoveListener<T>(Action<T> listener) where T : unmanaged
 		{
 			if (listener == null) return;
-			if (data == null || data is not StatsData<T> tData) return;
+			if (data == null || data is not ObserverStruct<T> tData) return;
 			tData.RemoveListener(listener);
 		}
 		public void RemoveAllListener()
@@ -97,90 +95,8 @@ public partial class StrategyStatistics : MonoBehaviour
 			return data.ToString();
 		}
 	}
-	private abstract class StatsData : IDisposable
-	{
-		public abstract void Invoke();
-		public abstract void AddListener_ToString(Action<string> listener);
-		public abstract void RemoveListener_ToString(Action<string> listener);
-		public abstract void RemoveAllListener();
-		public abstract void Dispose();
-	}
-	private class StatsData<T> : StatsData where T : unmanaged
-	{
-		protected T value;
 
-		public StatsData(T value)
-		{
-			this.value = value;
-		}
-
-		public virtual T Value
-		{
-			get => value; set
-			{
-				if (IsEquals(value)) return;
-				this.value = value;
-				Invoke();
-			}
-		}
-		private event Action<T> onValueChanged;
-		private event Action<string> toStringChanged;
-
-		public override void Invoke()
-		{
-			if (onValueChanged != null) onValueChanged.Invoke(value);
-			if (toStringChanged != null) toStringChanged.Invoke(ToString());
-		}
-		public virtual bool IsEquals(T value)
-		{
-			return this.value.Equals(value);
-		}
-
-		public void AddListener(Action<T> listener)
-		{
-			if (listener == null) return;
-			onValueChanged -= listener;
-			onValueChanged += listener;
-		}
-		public void RemoveListener(Action<T> listener)
-		{
-			if (listener == null) return;
-			onValueChanged -= listener;
-		}
-		public override void AddListener_ToString(Action<string> listener)
-		{
-			if (listener == null) return;
-			toStringChanged -= listener;
-			toStringChanged += listener;
-		}
-		public override void RemoveListener_ToString(Action<string> listener)
-		{
-			if (listener == null) return;
-			toStringChanged -= listener;
-		}
-		public override void RemoveAllListener()
-		{
-			onValueChanged = null;
-			toStringChanged = null;
-		}
-		public override void Dispose()
-		{
-			onValueChanged = null;
-			toStringChanged = null;
-			try
-			{
-				((IDisposable)value).Dispose();
-			}
-			catch { }
-		}
-
-		public override string ToString()
-		{
-			return value.ToString();
-		}
-	}
-
-	private class StatsData_Bool : StatsData<bool>
+	private class StatsData_Bool : ObserverStruct<bool>
 	{
 		public StatsData_Bool(bool value) : base(value)
 		{
@@ -190,7 +106,7 @@ public partial class StrategyStatistics : MonoBehaviour
 			return Value ? "Yes" : "No";
 		}
 	}
-	private class StatsData_Float : StatsData<float>
+	private class StatsData_Float : ObserverStruct<float>
 	{
 		public StatsData_Float(float value) : base(value)
 		{
@@ -231,17 +147,17 @@ public partial class StrategyStatistics: IDisposable
 			statsDatas = null;
 		}
 	}
-	public void AddItem<T>(string catagory, string itemID, T value) where T : unmanaged
+	public void AddItem<T>(string catagory, string key, T value) where T : unmanaged
 	{
 		List<StatsItem> list = statsDatas[catagory] ??= new List<StatsItem>();
 
-		int findIndex = list.FindIndex(i => i.itemID.Equals(itemID));
+		int findIndex = list.FindIndex(i => i.key.Equals(key));
 		if (findIndex < 0)
 		{
 			var newIteme = new StatsItem()
 			{
 				catagory = catagory,
-				itemID = itemID,
+				key = key,
 			};
 			newIteme.SetValue(value);
 
@@ -252,11 +168,11 @@ public partial class StrategyStatistics: IDisposable
 			list[findIndex].SetValue(value);
 		}
 	}
-	public void RemoveItem(string catagory, string itemID)
+	public void RemoveItem(string catagory, string key)
 	{
 		if (statsDatas.TryGetValue(catagory, out var list))
 		{
-			int findIndex = list.FindIndex(i => i.itemID.Equals(itemID));
+			int findIndex = list.FindIndex(i => i.key.Equals(key));
 			list.RemoveAt(findIndex);
 			if (list.Count == 0)
 			{
@@ -265,12 +181,12 @@ public partial class StrategyStatistics: IDisposable
 		}
 	}
 
-	private bool TryFindItem(string catagory, string itmeID, out StatsItem statsItem)
+	private bool TryFindItem(string catagory, string key, out StatsItem statsItem)
 	{
 		statsItem = null;
 		if (statsDatas.TryGetValue(catagory, out var list))
 		{
-			int findIndex = list.FindIndex(i => i.itemID.Equals(itmeID));
+			int findIndex = list.FindIndex(i => i.key.Equals(key));
 			if (findIndex > 0)
 			{
 				statsItem = list[findIndex];
@@ -278,14 +194,14 @@ public partial class StrategyStatistics: IDisposable
 		}
 		return statsItem != null;
 	}
-	public List<(string catagory, string itemID)> SelectKeyList(Func<(string catagory, string itemID), bool> condition = null)
+	public List<(string catagory, string key)> SelectKeyList(Func<(string catagory, string key), bool> condition = null)
 	{
-		List<(string catagory, string itemID)> list = new List<(string catagory, string itemID)>(statsDatas.Count);
+		List<(string catagory, string key)> list = new List<(string catagory, string key)>(statsDatas.Count);
 		foreach (var item in statsDatas)
 		{
 			foreach (var _item in item.Value)
 			{
-				(string catagory, string itemID) value = (_item.catagory, _item.itemID);
+				(string catagory, string key) value = (_item.catagory, _item.key);
 				if (condition == null || condition(value))
 				{
 					list.Add(value);
@@ -295,36 +211,36 @@ public partial class StrategyStatistics: IDisposable
 		return list;
 	}
 
-	public void AddListener_ToString(string catagory, string itmeID, Action<string> toString, bool callAfterAdd = false)
+	public void AddListener_ToString(string catagory, string key, Action<string> toString, bool callAfterAdd = false)
 	{
 		if (toString == null) return;
-		if (!TryFindItem(catagory, itmeID, out var item)) return;
+		if (!TryFindItem(catagory, key, out var item)) return;
 		item.AddListener_ToString(toString);
 		if (callAfterAdd) toString.Invoke(item.ToValueString());
 	}
-	public void RemoveListener_ToString(string catagory, string itmeID, Action<string> toString)
+	public void RemoveListener_ToString(string catagory, string key, Action<string> toString)
 	{
 		if (toString == null) return;
-		if (!TryFindItem(catagory, itmeID, out var item)) return;
+		if (!TryFindItem(catagory, key, out var item)) return;
 		item.RemoveListener_ToString(toString);
 	}
 
-	public void AddListener<T>(string catagory, string itmeID, Action<T> listener, bool callAfterAdd = false) where T : unmanaged
+	public void AddListener<T>(string catagory, string key, Action<T> listener, bool callAfterAdd = false) where T : unmanaged
 	{
 		if (listener == null) return;
-		if (!TryFindItem(catagory, itmeID, out var item)) return;
+		if (!TryFindItem(catagory, key, out var item)) return;
 		item.AddListener(listener);
 		if (callAfterAdd && item.TryGetValue<T>(out var value)) listener.Invoke(value);
 	}
-	public void RemoveListener<T>(string catagory, string itmeID, Action<T> listener) where T : unmanaged
+	public void RemoveListener<T>(string catagory, string key, Action<T> listener) where T : unmanaged
 	{
 		if (listener == null) return;
-		if (!TryFindItem(catagory, itmeID, out var item)) return;
+		if (!TryFindItem(catagory, key, out var item)) return;
 		item.RemoveListener(listener);
 	}
-	public void RemoveAllListener(string catagory, string itmeID)
+	public void RemoveAllListener(string catagory, string key)
 	{
-		if (!TryFindItem(catagory, itmeID, out var item)) return;
+		if (!TryFindItem(catagory, key, out var item)) return;
 		item.RemoveAllListener();
 	}
 }

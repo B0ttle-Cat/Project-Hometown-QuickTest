@@ -13,7 +13,7 @@
 //		public Color factionColor;
 //		public Sprite factionIcon;
 
-//		public int maxManpower;
+//		public int maxPersonnel;
 
 //		public GameObject defaultUnitPrefab;
 //	}

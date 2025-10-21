@@ -471,9 +471,9 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4977313606720876122}
   m_Enabled: 1
-  m_Alpha: 0
-  m_Interactable: 0
-  m_BlocksRaycasts: 0
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
 --- !u!114 &8993900907088698435
 MonoBehaviour:
@@ -487,7 +487,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69f83da43e56f034ba53e7751e0c3c7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CanvasGroupUI
-  isOn: 0
+  isOn: 1
   changeTime: 0
   scaledDeltaTime: 0
   on:
@@ -511,14 +511,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KeyPairTarget
   list:
-  - path: Scroll View/Viewport/Content
-    key: Content
-  - path: Scroll View/Viewport/Content/VictoryConditions
-    key: Victory
-  - path: Scroll View/Viewport/Content/DefeatConditions
-    key: Defeat
-  - path: Scroll View/Viewport/MissionItem
-    key: Item
+  - key: Content
+    target: {fileID: 7482784039369779210}
+  - key: Victory
+    target: {fileID: 4491885652743553468}
+  - key: Defeat
+    target: {fileID: 5963974293077322501}
+  - key: Item
+    target: {fileID: 1881540017277338301}
 --- !u!1 &5803261843379985855
 GameObject:
   m_ObjectHideFlags: 0
@@ -859,7 +859,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6628010889809472678}
   m_HandleRect: {fileID: 3711982547288082022}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:

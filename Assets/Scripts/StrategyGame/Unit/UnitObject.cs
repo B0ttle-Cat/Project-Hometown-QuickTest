@@ -1,19 +1,18 @@
 ﻿using UnityEngine;
 
 using static StrategyGamePlayData;
-using static StrategyStartSetterData;
 
 public partial class UnitObject : MonoBehaviour
 {
-	private UnitBaseData unitBaseData;
-	private UnitProfileData unitProfileData;
+	private UnitData.Profile profileData;
+	private UnitData.Stats statsData;
 
-	public UnitBaseData UnitBaseData { get => unitBaseData; set => unitBaseData = value; }
-	public UnitProfileData UnitProfileData { get => unitProfileData; set => unitProfileData = value; }
+	public UnitData.Profile ProfileData { get => profileData; set => profileData = value; }
+	public UnitData.Stats StatsData { get => statsData; set => statsData = value; }
 
-	public string UnitName => unitBaseData.GetData().unitName;
-	public int UnitID => unitBaseData.GetData().unitID;
-	public int FactionID => unitBaseData.GetData().factionID;
+	public string UnitName => profileData.GetData().unitName;
+	public int UnitID => profileData.GetData().unitID;
+	public int FactionID => profileData.GetData().factionID;
 	public Faction Faction
 	{
 		get => StrategyManager.Collector.FindFaction(FactionID);
@@ -21,70 +20,71 @@ public partial class UnitObject : MonoBehaviour
 
 	public void Init(string unitName = "", int unitID = -1)
 	{
-		unitBaseData = new UnitBaseData(new UnitBaseData.Data()
+		profileData = new UnitData.Profile(new UnitData.Profile.Data()
 		{
 			unitName = unitName,
 			unitID = unitID,
 			factionID = -1,
-			weaponType = UnitBaseData.WeaponType.None,
-			protectType = UnitBaseData.ProtectionType.None,
+			weaponType = WeaponType.None,
+			protectType = ProtectionType.None,
 		});
 	}
-	public void Init(UnitData data) // UnitData
+	public void Init(StrategyStartSetterData.UnitData data) // UnitData
 	{
-		var initData = new UnitBaseData.Data()
+		var initData = new UnitData.Profile.Data()
 		{
 			unitName = data.unitName,
 			unitID = data.unitID,
 			factionID = StrategyManager.Collector.FactionNameToID(data.factionName),
-			weaponType = (UnitBaseData.WeaponType)data.weaponType,
-			protectType = (UnitBaseData.ProtectionType)data.protectType,
+			weaponType = (WeaponType)data.weaponType,
+			protectType = (ProtectionType)data.protectType,
 		};
 
-		if (unitBaseData == null)
+		if (profileData == null)
 		{
-			unitBaseData = new UnitBaseData(initData);
+			profileData = new UnitData.Profile(initData);
 		}
 		else
 		{
-			UnitBaseData.SetData(initData);
+			ProfileData.SetData(initData);
 		}
 
 		var profile = data.unitProfile;
-		UnitProfileData = new UnitProfileData(new UnitProfileData.Data()
+		StatsData = new UnitData.Stats(new UnitData.Stats.Data()
 		{
-			manpower = profile.manpower,
-			durability = profile.durability,
+			statsList = new StatsList(
+				(StatsType.유닛_인력, profile.유닛_인력, SymbolType.Number),
+				(StatsType.유닛_물자, profile.유닛_물자, SymbolType.Number),
+				(StatsType.유닛_전력, profile.유닛_전력, SymbolType.Number),
 
-			attack = profile.attack,
-			defense = profile.defense,
-			heal = profile.heal,
+				(StatsType.유닛_최대내구도, profile.유닛_최대내구도, SymbolType.Number),
+				(StatsType.유닛_현재내구도, profile.유닛_현재내구도, SymbolType.Number),
+				(StatsType.유닛_공격력, profile.유닛_공격력, SymbolType.Number),
+				(StatsType.유닛_방어력, profile.유닛_방어력, SymbolType.Number),
+				(StatsType.유닛_치유력, profile.유닛_치유력, SymbolType.Number),
+				(StatsType.유닛_회복력, profile.유닛_회복력, SymbolType.Number),
+				(StatsType.유닛_이동속도, profile.유닛_이동속도, SymbolType.Number),
+				(StatsType.유닛_점령점수, profile.유닛_점령점수, SymbolType.Number),
 
-			piercingLevel = profile.piercingLevel,
-			protectingLevel = profile.protectingLevel,
+				(StatsType.유닛_관통레벨, profile.유닛_관통레벨, SymbolType.Number),
+				(StatsType.유닛_장갑레벨, profile.유닛_장갑레벨, SymbolType.Number),
+				(StatsType.유닛_EMP저항레벨, profile.유닛_EMP저항레벨, SymbolType.Number),
 
-			EMPProtectionLevel = profile.EMPProtectionLevel,
+				(StatsType.유닛_공격명중기회, profile.유닛_공격명중기회, SymbolType.Number),
+				(StatsType.유닛_공격회피기회, profile.유닛_공격회피기회, SymbolType.Number),
+				(StatsType.유닛_치명명중기회, profile.유닛_치명명중기회, SymbolType.Number),
+				(StatsType.유닛_치명회피기회, profile.유닛_치명회피기회, SymbolType.Number),
 
-			attackHitPoint = profile.attackHitPoint,
-			attackMissPoint = profile.attackMissPoint,
+				(StatsType.유닛_명중피격수, profile.유닛_명중피격수, SymbolType.Number),
+				(StatsType.유닛_연속공격횟수, profile.유닛_연속공격횟수, SymbolType.Number),
+				(StatsType.유닛_조준지연시간, profile.유닛_조준지연시간, SymbolType.Number),
+				(StatsType.유닛_연속공격지연시간, profile.유닛_연속공격지연시간, SymbolType.Number),
+				(StatsType.유닛_재공격지연시간, profile.유닛_재공격지연시간, SymbolType.Number),
 
-			criticalHitPoint = profile.criticalHitPoint,
-			criticalMissPoint = profile.criticalMissPoint,
-
-			attackDelay = profile.attackDelay,
-			firingCount = profile.firingCount,
-			firingDelay = profile.firingDelay,
-
-			electricPerAttack = profile.electricPerAttack,
-			supplyPerAttack = profile.supplyPerAttack,
-
-			attackange = profile.attackange,
-			actionRange = profile.actionRange,
-			viewRange = profile.viewRange,
-
-			moveSpeed = profile.moveSpeed,
-
-			capturePoint = profile.capturePoint,
+				(StatsType.유닛_공격범위, profile.유닛_공격범위, SymbolType.Number),
+				(StatsType.유닛_행동범위, profile.유닛_행동범위, SymbolType.Number),
+				(StatsType.유닛_시야범위, profile.유닛_시야범위, SymbolType.Number)
+				)
 		});
 	}
 }
@@ -93,37 +93,31 @@ public partial class UnitObject : MonoBehaviour // ProfileData
 	private SkillProfile[] connectSkill;
 	private CaptureTag captureTag;
 
-	public int Manpower => UnitProfileData.GetData().manpower;
-	public int Durability => UnitProfileData.GetData().durability;
+	public int 유닛_인력 => StatsData.GetData().GetValue(StatsType.유닛_인력, SymbolType.Number);
+	public int 유닛_최대내구도 => StatsData.GetData().GetValue(StatsType.유닛_최대내구도, SymbolType.Number);
+	public int 유닛_현재내구도 => StatsData.GetData().GetValue(StatsType.유닛_현재내구도, SymbolType.Number);
+	public int 유닛_공격력 => StatsData.GetData().GetValue(StatsType.유닛_공격력, SymbolType.Number);
+	public int 유닛_방어력 => StatsData.GetData().GetValue(StatsType.유닛_방어력, SymbolType.Number);
+	public int 유닛_치유력 => StatsData.GetData().GetValue(StatsType.유닛_치유력, SymbolType.Number);
+	public int 유닛_회복력 => StatsData.GetData().GetValue(StatsType.유닛_회복력, SymbolType.Number);
+	public int 유닛_관통레벨 => StatsData.GetData().GetValue(StatsType.유닛_관통레벨, SymbolType.Number);
+	public int 유닛_장갑레벨 => StatsData.GetData().GetValue(StatsType.유닛_장갑레벨, SymbolType.Number);
+	public int 유닛_EMP저항레벨 => StatsData.GetData().GetValue(StatsType.유닛_EMP저항레벨, SymbolType.Number);
+	public int 유닛_공격명중기회 => StatsData.GetData().GetValue(StatsType.유닛_공격명중기회, SymbolType.Number);
+	public int 유닛_공격회피기회 => StatsData.GetData().GetValue(StatsType.유닛_공격회피기회, SymbolType.Number);
+	public int 유닛_치명명중기회 => StatsData.GetData().GetValue(StatsType.유닛_치명명중기회, SymbolType.Number);
+	public int 유닛_치명회피기회 => StatsData.GetData().GetValue(StatsType.유닛_치명회피기회, SymbolType.Number);
+	public int 유닛_공격지연시간 => StatsData.GetData().GetValue(StatsType.유닛_재공격지연시간, SymbolType.Number);
+	public int 유닛_연속공격횟수 => StatsData.GetData().GetValue(StatsType.유닛_연속공격횟수, SymbolType.Number);
+	public int 유닛_연속공격지연시간 => StatsData.GetData().GetValue(StatsType.유닛_연속공격지연시간, SymbolType.Number);
+	public int 유닛_공격소모_전력 => StatsData.GetData().GetValue(StatsType.유닛_공격소모_전력, SymbolType.Number);
+	public int 유닛_공격소모_물자 => StatsData.GetData().GetValue(StatsType.유닛_공격소모_물자, SymbolType.Number);
+	public int 유닛_공격범위 => StatsData.GetData().GetValue(StatsType.유닛_공격범위, SymbolType.Number);
+	public int 유닛_행동범위 => StatsData.GetData().GetValue(StatsType.유닛_행동범위, SymbolType.Number);
+	public int 유닛_시야범위 => StatsData.GetData().GetValue(StatsType.유닛_시야범위, SymbolType.Number);
+	public int 유닛_이동속도 => StatsData.GetData().GetValue(StatsType.유닛_이동속도, SymbolType.Number);
+	public int 유닛_점령점수 => StatsData.GetData().GetValue(StatsType.유닛_점령점수, SymbolType.Number);
 
-	public int Attack => UnitProfileData.GetData().attack;
-	public int Defense => UnitProfileData.GetData().defense;
-	public int Heal => UnitProfileData.GetData().heal;
-
-	public int PiercingLevel => UnitProfileData.GetData().piercingLevel;
-	public int ProtectingLevel => UnitProfileData.GetData().protectingLevel;
-
-	public int EMPProtectionLevel => UnitProfileData.GetData().EMPProtectionLevel;
-
-	public int AttackHitPoint => UnitProfileData.GetData().attackHitPoint;
-	public int AttackMissPoint => UnitProfileData.GetData().attackMissPoint;
-
-	public int CriticalHitPoint => UnitProfileData.GetData().criticalHitPoint;
-	public int CriticalMissPoint => UnitProfileData.GetData().criticalMissPoint;
-
-	public float AttackDelay => UnitProfileData.GetData().attackDelay;
-	public int FiringCount => UnitProfileData.GetData().firingCount;
-	public float FiringDelay => UnitProfileData.GetData().firingDelay;
-
-	public int ElectricPerAttack => UnitProfileData.GetData().electricPerAttack;
-	public int SupplyPerAttack => UnitProfileData.GetData().supplyPerAttack;
-
-	public float Attackange => UnitProfileData.GetData().attackange;
-	public float ActionRange => UnitProfileData.GetData().actionRange;
-	public float ViewRange => UnitProfileData.GetData().viewRange;
-
-	public float MoveSpeed => UnitProfileData.GetData().moveSpeed;
-	public int CapturePoint => UnitProfileData.GetData().capturePoint;
 
 	public SkillProfile[] ConnectSkill { get => connectSkill; set => connectSkill = value; }
 	public CaptureTag CaptureTag { get => captureTag; set => captureTag = value; }
@@ -132,7 +126,7 @@ public partial class UnitObject : MonoBehaviour // ProfileData
 	{
 		ConnectSkill = data.connectSkill;
 
-		if (CapturePoint > 0)
+		if (유닛_점령점수 > 0)
 		{
 			if (CaptureTag == null) CaptureTag = GetComponentInChildren<CaptureTag>();
 			if (CaptureTag == null) CaptureTag = gameObject.AddComponent<CaptureTag>();

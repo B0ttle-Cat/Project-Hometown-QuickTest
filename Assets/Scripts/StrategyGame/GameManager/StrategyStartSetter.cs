@@ -23,7 +23,7 @@ public class StrategyStartSetter : MonoBehaviour
 		collector = StrategyManager.Collector;
 		if (collector == null)
 		{
-			Debug.LogError("No StrategyElementCollector component found in children of GameManager.");
+			Debug.LogError("No StrategyElementCollector ThisComponent found in children of GameManager.");
 			return false;
 		}
 		return true;
@@ -49,7 +49,7 @@ public class StrategyStartSetter : MonoBehaviour
 
 	internal void OnStartSetter_ControlBase()
 	{
-		// 일단 씬에 있는 모든 ControlBase 컴퍼넌트를 수집
+		// 일단 씬에 있는 모든 ControlBaseData 컴퍼넌트를 수집
 		var allBase = GameObject.FindObjectsByType<ControlBase>(FindObjectsInactive.Include, FindObjectsSortMode.InstanceID);
 
 		var data = strategyStartSetterData.GetData();
@@ -66,7 +66,7 @@ public class StrategyStartSetter : MonoBehaviour
 			for (int j = 0 ; j < dataLength ; j++)
 			{
 				var cbData = controlBases[j];
-				if (cbName == cbData.controlBaseName)
+				if (cbName == cbData.profileData.controlBaseName)
 				{
 					cb.Init(cbData);
 					break;

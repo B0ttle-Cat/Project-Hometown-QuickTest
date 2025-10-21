@@ -1,109 +1,13 @@
 ﻿using UnityEngine;
 
-public partial class ControlBase // ControlBaseData
-{
-	public void Init(StrategyStartSetterData.ControlBaseData data)
-	{
-		maxManpower = data.maxManpower;
+using static StrategyGamePlayData;
 
-		maxSupplyPoint = data.maxSupplyPoint;
-		maxElectricPoint = data.maxElectricPoint;
+using ControlBaseData = StrategyGamePlayData.ControlBaseData;
 
-		defenseAddition = data.defenseAddition;
-		defenseMultiplication = data.defenseMultiplication;
-		attackAddition = data.attackAddition;
-		attackMultiplication = data.attackMultiplication;
-		hpRecoveryAddition = data.hpRecoveryAddition;
-		hpRecoveryMultiplication = data.hpRecoveryMultiplication;
-		moraleRecoveryAddition = data.moraleRecoveryAddition;
-		moraleRecoveryMultiplication = data.moraleRecoveryMultiplication;
-	}
-	public string ControlBaseName
-	{
-		get => string.IsNullOrWhiteSpace(controlBaseName) ? gameObject.name : controlBaseName;
-		set => controlBaseName = value;
-	}
-	public int MaxManpower { get => maxManpower; set => maxManpower = value; }
-	public int MaxSupplyPoint { get => maxSupplyPoint; set => maxSupplyPoint = value; }
-	public float MaxElectricPoint { get => maxElectricPoint; set => maxElectricPoint = value; }
-	public float CaptureTime { get => captureSpeed; set => captureSpeed = value; }
-	public float DefenseAddition { get => defenseAddition; set => defenseAddition = value; }
-	public float DefenseMultiplication { get => defenseMultiplication; set => defenseMultiplication = value; }
-	public float AttackAddition { get => attackAddition; set => attackAddition = value; }
-	public float AttackMultiplication { get => attackMultiplication; set => attackMultiplication = value; }
-	public float HpRecoveryAddition { get => hpRecoveryAddition; set => hpRecoveryAddition = value; }
-	public float HpRecoveryMultiplication { get => hpRecoveryMultiplication; set => hpRecoveryMultiplication = value; }
-	public float MoraleRecoveryAddition { get => moraleRecoveryAddition; set => moraleRecoveryAddition = value; }
-	public float MoraleRecoveryMultiplication { get => moraleRecoveryMultiplication; set => moraleRecoveryMultiplication = value; }
-
-	private string controlBaseName;
-
-	private int maxManpower;
-	private int maxSupplyPoint;
-	private float maxElectricPoint;
-
-	private float captureSpeed;
-
-	private float defenseAddition;
-	private float defenseMultiplication;
-
-	private float attackAddition;
-	private float attackMultiplication;
-
-	private float hpRecoveryAddition;
-	private float hpRecoveryMultiplication;
-
-	private float moraleRecoveryAddition;
-	private float moraleRecoveryMultiplication;
-}
-public partial class ControlBase // CaptureData
-{
-	public void Init(StrategyStartSetterData.CaptureData data)
-	{
-		currentFactionID = StrategyManager.Collector.FactionNameToID(data.captureFaction);
-		captureProgress = data.captureProgress;
-		currentSupplyPoint = data.supplysQuantity;
-
-		if (controlBaseCapture == null) controlBaseCapture = GetComponent<ControlBaseCapture>();
-		if (controlBaseCapture != null) controlBaseCapture.SetCapture(currentFactionID);
-	}
-	public Faction CaptureFaction
-	{
-		get => StrategyManager.Collector.FindFaction(currentFactionID);
-		set => currentFactionID = value == null ? -1 : value.FactionID;
-	}
-	public int CaptureFactionID
-	{
-		get => currentFactionID;
-		set => currentFactionID = value;
-	}
-	public float CaptureProgress { get => captureProgress; set => captureProgress = Mathf.Clamp01(value); }
-	public int CurrentSupplyPoint { get => currentSupplyPoint; set => currentSupplyPoint = value; }
-
-	private int currentFactionID = -1;
-	private float captureProgress;
-	private int currentSupplyPoint;
-}
 public partial class ControlBase : MonoBehaviour
 {
 	public void Init()
 	{
-		ControlBaseName = gameObject.name;
-		currentFactionID = -1;
-		CaptureProgress = 1;
-
-		maxManpower = 0;
-		maxSupplyPoint = 0;
-		maxElectricPoint = 0;
-		defenseAddition = 0;
-		defenseMultiplication = 1;
-		attackAddition = 0;
-		attackMultiplication = 1;
-		hpRecoveryAddition = 0;
-		hpRecoveryMultiplication = 1;
-		moraleRecoveryAddition = 0;
-		moraleRecoveryMultiplication = 1;
-
 		controlBaseCapture = GetComponentInChildren<ControlBaseCapture>();
 		controlBaseColor = GetComponentInChildren<ControlBaseColor>();
 	}
@@ -130,6 +34,131 @@ public partial class ControlBase : MonoBehaviour
 	}
 }
 
+public partial class ControlBase // Profile
+{
+	private ControlBaseData.Profile profileData;
+	private ControlBaseData.Capture captureData;
+	private ControlBaseData.MainStats mainStatsData;
+	private ControlBaseData.Facilities facilitiesData;
+	private ControlBaseData.Support supportData;
+
+
+	public StatsGroup facilitiesStatsGroup;
+	public StatsGroup supportStatsGroup;
+
+	public string ControlBaseName => profileData.GetData().controlBaseName;
+
+
+	public ControlBaseData.Profile Profile => profileData;
+	public ControlBaseData.Capture Capture => captureData;
+	public ControlBaseData.MainStats Stats => mainStatsData;
+	public ControlBaseData.Facilities Facilities => facilitiesData;
+	public ControlBaseData.Support Support => supportData;
+
+	public ControlBaseData.Profile.Data ProfileData => profileData.GetData();
+	public ControlBaseData.Capture.Data CaptureData => captureData.GetData();
+	public ControlBaseData.MainStats.Data StatsData => mainStatsData.GetData();
+	public ControlBaseData.Facilities.Data FacilitiesData => facilitiesData.GetData();
+	public ControlBaseData.Support.Data SupportData => supportData.GetData();
+
+	public StatsList MainStatsList => StatsData.GetStatsList();
+	public StatsList MainBuffList => StatsData.GetBuffList();  
+	public StatsGroup FacilitiesBuffGroup => facilitiesStatsGroup;
+	public StatsGroup SupportBuffGroup => supportStatsGroup;
+
+
+	public void Init(StrategyStartSetterData.ControlBaseData data)
+	{
+		if (profileData == null) profileData = new ControlBaseData.Profile(data.profileData);
+		else profileData.SetData(data.profileData);
+
+		if (captureData == null) captureData = new ControlBaseData.Capture(new()
+		{
+			captureFactionID = -1,
+			captureProgress = 1,
+			captureTime = data.captureTime,
+		});
+
+		if (mainStatsData == null) mainStatsData = new ControlBaseData.MainStats(data.mainStatsData);
+		else mainStatsData.SetData(data.mainStatsData);
+
+		if (facilitiesData == null) facilitiesData = new ControlBaseData.Facilities(data.facilitiesStatsData);
+		else facilitiesData.SetData(data.facilitiesStatsData);
+
+		if (supportData == null) supportData = new ControlBaseData.Support(data.supportStatsData);
+		else supportData.SetData(data.supportStatsData);
+	}
+
+	public int GetMaxDurability()
+	{
+		return 0;
+	}
+
+	public int GetDurability()
+	{
+		return 0;
+	}
+
+	public int GetMaxGarrison()
+	{
+		return 0;
+	}
+
+	public int GetGarrison()
+	{
+		return 0;
+	}
+	public int GetMaxMaterial()
+	{
+		return 0;
+	}
+
+	public int GetMaterial()
+	{
+		return 0;
+	}
+	public int GetMaxElectric()
+	{
+		return 0;
+	}
+
+	public int GetElectric()
+	{
+		return 0;
+	}
+}
+public partial class ControlBase // CaptureData
+{
+	public float CaptureTime => captureData.GetData().captureTime;
+
+	public void Init(StrategyStartSetterData.CaptureData data)
+	{
+		ControlBaseData.Capture.Data initData = new ()
+		{
+			 captureFactionID = StrategyManager.Collector.TryFindFaction(data.captureFaction, out var find) ? find.FactionID : -1,
+			 captureProgress = data.captureProgress,
+			 captureTime = captureData == null ? 0 : captureData.GetData().captureTime,
+		};
+
+		if (captureData == null) captureData = new ControlBaseData.Capture(initData);
+		else captureData.SetData(initData);
+
+		if (controlBaseCapture == null) controlBaseCapture = GetComponent<ControlBaseCapture>();
+		if (controlBaseCapture != null) controlBaseCapture.SetCapture(CaptureFactionID);
+	}
+
+	public Faction CaptureFaction => StrategyManager.Collector.FindFaction(CaptureFactionID);
+	public int CaptureFactionID => captureData.GetData().captureFactionID;
+	public float CaptureProgress => captureData.GetData().captureProgress;
+
+	public void SetCaptureData(int factionID, float progress)
+	{
+		var data= captureData.GetData();
+		data.captureFactionID = factionID;
+		data.captureProgress = progress;
+		captureData.SetData(data);
+	}
+}
 
 public partial class ControlBase : IStrategyElement
 {

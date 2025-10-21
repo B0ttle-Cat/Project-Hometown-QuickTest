@@ -13,7 +13,7 @@ public partial class Faction
 		factionIcon = data.factionIcon;
 		defaultUnitPrefab = data.defaultUnitPrefab;
 
-		MaxManpower = data.maxManpower;
+		MaxPersonnel = data.maxPersonnel;
 
 		captureSpeed = 1f;
 		suppletionSpeed = 1f;
@@ -25,7 +25,7 @@ public partial class Faction
 	public Sprite FactionIcon { get => factionIcon; set => factionIcon = value; }
 	public GameObject DefaultUnitPrefab { get => defaultUnitPrefab; set => defaultUnitPrefab = value; }
 
-	public int MaxManpower { get => maxManpower; set => maxManpower = value; }
+	public int MaxPersonnel { get => maxPersonnel; set => maxPersonnel = value; }
 	public float SuppletionSpeed { get => suppletionSpeed; set => suppletionSpeed = value; }
 	public float CaptureSpeed { get => captureSpeed; set => captureSpeed = value; }
 
@@ -36,7 +36,7 @@ public partial class Faction
 	private Sprite factionIcon;
 	private GameObject defaultUnitPrefab;
 
-	private int maxManpower;
+	private int maxPersonnel;
 	private float captureSpeed;
 	private float suppletionSpeed;
 

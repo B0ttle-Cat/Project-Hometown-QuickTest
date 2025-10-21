@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 
@@ -73,7 +73,7 @@ namespace TMPro.Examples
                     textMesh.fontSize = i * 10;
 
                     textMesh.color = new Color32(255, 255, 255, 255);
-                    textMesh.text = i + " pts - Lorem ipsum dolor sit...";
+                    textMesh.Text = i + " pts - Lorem ipsum dolor sit...";
 
                     lineHeight += i;
                     */

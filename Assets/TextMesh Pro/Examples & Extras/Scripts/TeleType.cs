@@ -21,7 +21,7 @@ namespace TMPro.Examples
 
         void Awake()
         {
-            // Get Reference to TextMeshPro Component
+            // Get Reference to TextMeshPro ThisComponent
             m_textMeshPro = GetComponent<TMP_Text>();
             m_textMeshPro.text = label01;
             m_textMeshPro.textWrappingMode = TextWrappingModes.Normal;
@@ -51,7 +51,7 @@ namespace TMPro.Examples
             m_textMeshPro.ForceMeshUpdate();
 
 
-            int totalVisibleCharacters = m_textMeshPro.textInfo.characterCount; // Get # of Visible Character in text object
+            int totalVisibleCharacters = m_textMeshPro.textInfo.characterCount; // Get # of Visible Character in Text object
             int counter = 0;
             int visibleCount = 0;
 
@@ -76,7 +76,7 @@ namespace TMPro.Examples
                 yield return new WaitForSeconds(0.05f);
             }
 
-            //Debug.Log("Done revealing the text.");
+            //Debug.Log("Done revealing the Text.");
         }
 
     }

@@ -149,7 +149,9 @@ public class ControlBaseCapture : MonoBehaviour
 		float totalSpeed = captureSpeed / captureTime;
 		float delta = totalSpeed * Time.deltaTime;
 
-		controlBase.CaptureProgress += delta;
+		float captureProgress = controlBase.CaptureProgress + delta;
+		controlBase.SetCaptureData(faction.FactionID, captureProgress);
+
 		if (controlBase.CaptureFaction != null && controlBase.CaptureProgress >= 1f)
 		{
 			isKeepFaction = true;
@@ -169,11 +171,12 @@ public class ControlBaseCapture : MonoBehaviour
 		float totalSpeed = captureSpeed / captureTime;
 		float delta = totalSpeed * Time.deltaTime;
 
-		controlBase.CaptureProgress -= delta;
-		if (controlBase.CaptureProgress <= 0f)
+		float captureProgress = controlBase.CaptureProgress;
+		captureProgress -= delta;
+		if (captureProgress <= 0f)
 		{
-			controlBase.CaptureFaction = faction;
-			controlBase.CaptureProgress = 0f;
+
+			controlBase.SetCaptureData(faction.FactionID, 0f);
 			isKeepFaction = false;
 		}
 	}

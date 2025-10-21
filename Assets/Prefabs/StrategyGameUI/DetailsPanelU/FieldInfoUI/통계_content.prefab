@@ -336,9 +336,9 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3241074146613912678}
   m_Enabled: 1
-  m_Alpha: 0
-  m_Interactable: 0
-  m_BlocksRaycasts: 0
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
 --- !u!114 &1245524387011369187
 MonoBehaviour:
@@ -352,7 +352,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69f83da43e56f034ba53e7751e0c3c7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CanvasGroupUI
-  isOn: 0
+  isOn: 1
   changeTime: 0
   scaledDeltaTime: 0
   on:
@@ -376,12 +376,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KeyPairTarget
   list:
-  - path: Scroll View/Viewport/Content
-    key: Content
-  - path: Scroll View/Viewport/Group
-    key: Group
-  - path: Scroll View/Viewport/Item
-    key: Item
+  - key: Content
+    target: {fileID: 2882825542726231977}
+  - key: Group
+    target: {fileID: 942756055458721976}
+  - key: Item
+    target: {fileID: 2361544608951832729}
 --- !u!1 &4103600913711590220
 GameObject:
   m_ObjectHideFlags: 0

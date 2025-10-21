@@ -19,92 +19,106 @@ MonoBehaviour:
       factionColor: {r: 1, g: 0, b: 0, a: 1}
       factionIcon: {fileID: 0}
       maxManpower: 50
+      maxSupplyPoint: 0
+      maxElectricPoint: 0
       defaultUnitPrefab: {fileID: 2460545361625872358, guid: 47ee3d89ec6dbf842b177734ea94c8d2, type: 3}
     - factionName: Faction_01
       factionColor: {r: 0, g: 0, b: 1, a: 1}
       factionIcon: {fileID: 0}
       maxManpower: 100
+      maxSupplyPoint: 0
+      maxElectricPoint: 0
       defaultUnitPrefab: {fileID: 2460545361625872358, guid: 47ee3d89ec6dbf842b177734ea94c8d2, type: 3}
-    controlPointDatas:
-    - controlPointName: ControlPoint_00
-      maxManpower: 0
-      maxSupply: 1000
-      localRechargeSupplySpeed: 100
-      defenseAddition: 0
-      defenseMultiplication: 1
-      attackAddition: 0
-      attackMultiplication: 1
-      hpRecoveryAddition: 0
-      hpRecoveryMultiplication: 1
-      moraleRecoveryAddition: 0
-      moraleRecoveryMultiplication: 1
-    - controlPointName: ControlPoint_01
-      maxManpower: 0
-      maxSupply: 1000
-      localRechargeSupplySpeed: 100
-      defenseAddition: 0
-      defenseMultiplication: 1
-      attackAddition: 0
-      attackMultiplication: 1
-      hpRecoveryAddition: 0
-      hpRecoveryMultiplication: 1
-      moraleRecoveryAddition: 0
-      moraleRecoveryMultiplication: 1
-    - controlPointName: ControlPoint_02
-      maxManpower: 0
-      maxSupply: 1000
-      localRechargeSupplySpeed: 100
-      defenseAddition: 0
-      defenseMultiplication: 1
-      attackAddition: 0
-      attackMultiplication: 1
-      hpRecoveryAddition: 0
-      hpRecoveryMultiplication: 1
-      moraleRecoveryAddition: 0
-      moraleRecoveryMultiplication: 1
-    - controlPointName: ControlPoint_03
-      maxManpower: 0
-      maxSupply: 1000
-      localRechargeSupplySpeed: 100
-      defenseAddition: 0
-      defenseMultiplication: 1
-      attackAddition: 0
-      attackMultiplication: 1
-      hpRecoveryAddition: 0
-      hpRecoveryMultiplication: 1
-      moraleRecoveryAddition: 0
-      moraleRecoveryMultiplication: 1
-    - controlPointName: ControlPoint_04
-      maxManpower: 0
-      maxSupply: 1000
-      localRechargeSupplySpeed: 100
-      defenseAddition: 0
-      defenseMultiplication: 1
-      attackAddition: 0
-      attackMultiplication: 1
-      hpRecoveryAddition: 0
-      hpRecoveryMultiplication: 1
-      moraleRecoveryAddition: 0
-      moraleRecoveryMultiplication: 1
+    controlBaseDatas:
+    - profileData:
+        controlBaseName: ControlBase_00
+        environmentalKey: 
+      mainStatsData:
+        currentManpower: 0
+        currentSupply: 0
+        currentElectric: 0
+        logisticsData:
+          maxManpower: 300
+          maxSupplyPoint: 300
+          maxElectricPoint: 300
+          manpowerPerMinute: 60
+          supplyPerMinute: 60
+          electricPerMinute: 60
+        unitSupportData:
+          defenseAddition: 0
+          defenseMultiplication: 0
+          attackAddition: 0
+          attackMultiplication: 0
+          hpRecoveryAddition: 0
+          hpRecoveryMultiplication: 0
+          moraleRecoveryAddition: 0
+          moraleRecoveryMultiplication: 0
+        currentEffect: 0
+      captureTime: 5
+      facilitiesStatsData:
+        installedData: []
+        installingData: []
+      supportStatsData:
+        supportPoint: 0
+        offensivePoint: 0
+        defensivePoint: 0
+        logisticsPoint: 0
+        facilitiesPoint: 0
+    - profileData:
+        controlBaseName: ControlBase_02
+        environmentalKey: 
+      mainStatsData:
+        currentManpower: 0
+        currentSupply: 0
+        currentElectric: 0
+        logisticsData:
+          maxManpower: 0
+          maxSupplyPoint: 0
+          maxElectricPoint: 0
+          manpowerPerMinute: 0
+          supplyPerMinute: 0
+          electricPerMinute: 0
+        unitSupportData:
+          defenseAddition: 0
+          defenseMultiplication: 0
+          attackAddition: 0
+          attackMultiplication: 0
+          hpRecoveryAddition: 0
+          hpRecoveryMultiplication: 0
+          moraleRecoveryAddition: 0
+          moraleRecoveryMultiplication: 0
+        currentEffect: 0
+      captureTime: 5
+      facilitiesStatsData:
+        installedData: []
+        installingData: []
+      supportStatsData:
+        supportPoint: 0
+        offensivePoint: 0
+        defensivePoint: 0
+        logisticsPoint: 0
+        facilitiesPoint: 0
     unitDatas:
     - unitName: Unit
       unitID: 0
       factionName: Faction_00
       unitProfile: {fileID: 11400000, guid: ef441d73e230ad44d8ad139f1663ba71, type: 2}
+      weaponType: 0
+      protectType: 0
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0}
     - unitName: Unit
       unitID: 1
       factionName: Faction_01
       unitProfile: {fileID: 11400000, guid: ef441d73e230ad44d8ad139f1663ba71, type: 2}
+      weaponType: 0
+      protectType: 0
       position: {x: 0, y: 0, z: 40}
       rotation: {x: 0, y: 0, z: 0}
-    occupationDatas:
-    - occupyingControlPoint: ControlPoint_00
-      occupyingFaction: Faction_00
-      occupationProgress: 1
-      suppliesQuantity: 0
-    - occupyingControlPoint: ControlPoint_02
-      occupyingFaction: Faction_01
-      occupationProgress: 1
-      suppliesQuantity: 0
+    captureDatas:
+    - captureControlBase: ControlBase_00
+      captureFaction: Faction_00
+      captureProgress: 1
+    - captureControlBase: ControlBase_02
+      captureFaction: Faction_01
+      captureProgress: 1

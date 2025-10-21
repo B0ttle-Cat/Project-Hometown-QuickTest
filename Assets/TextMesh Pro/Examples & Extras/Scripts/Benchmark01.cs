@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 
@@ -33,7 +33,7 @@ namespace TMPro.Examples
 
 
 
-            if (BenchmarkType == 0) // TextMesh Pro Component
+            if (BenchmarkType == 0) // TextMesh Pro ThisComponent
             {
                 m_textMeshPro = gameObject.AddComponent<TextMeshPro>();
                 m_textMeshPro.autoSizeTextContainer = true;
@@ -114,11 +114,11 @@ namespace TMPro.Examples
         {
             if (BenchmarkType == 0)
             {
-                m_textMeshPro.text = (m_frame % 1000).ToString();
+                m_textMeshPro.Text = (m_frame % 1000).ToString();
             }
             else if (BenchmarkType == 1)
             {
-                m_textMesh.text = (m_frame % 1000).ToString();
+                m_textMesh.Text = (m_frame % 1000).ToString();
             }
 
             m_frame += 1;
