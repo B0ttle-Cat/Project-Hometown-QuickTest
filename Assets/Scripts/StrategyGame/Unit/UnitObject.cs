@@ -50,43 +50,43 @@ public partial class UnitObject : MonoBehaviour
 		Stats = new UnitData.Stats(new UnitData.Stats.Data()
 		{
 			statsList = new StatsList(
-				(StatsType.유닛_인력, profile.유닛_인력, SymbolType.Number),
-				(StatsType.유닛_물자, profile.유닛_물자, SymbolType.Number),
-				(StatsType.유닛_전력, profile.유닛_전력, SymbolType.Number),
+				(StatsType.유닛_인력, profile.유닛_인력),
+				(StatsType.유닛_물자, profile.유닛_물자),
+				(StatsType.유닛_전력, profile.유닛_전력),
 
-				(StatsType.유닛_최대내구도, profile.유닛_최대내구도, SymbolType.Number),
-				(StatsType.유닛_현재내구도, profile.유닛_현재내구도, SymbolType.Number),
-				(StatsType.유닛_공격력, profile.유닛_공격력, SymbolType.Number),
-				(StatsType.유닛_방어력, profile.유닛_방어력, SymbolType.Number),
-				(StatsType.유닛_치유력, profile.유닛_치유력, SymbolType.Number),
-				(StatsType.유닛_회복력, profile.유닛_회복력, SymbolType.Number),
-				(StatsType.유닛_이동속도, profile.유닛_이동속도, SymbolType.Number),
-				(StatsType.유닛_점령점수, profile.유닛_점령점수, SymbolType.Number),
-				(StatsType.유닛_치명공격력, profile.유닛_치명공격력, SymbolType.Number),
-				(StatsType.유닛_치명공격배율, profile.유닛_치명공격배율, SymbolType.Number),
-				(StatsType.유닛_치명방어력, profile.유닛_치명방어력, SymbolType.Number),
+				(StatsType.유닛_최대내구도, profile.유닛_최대내구도),
+				(StatsType.유닛_현재내구도, profile.유닛_현재내구도),
+				(StatsType.유닛_공격력, profile.유닛_공격력),
+				(StatsType.유닛_방어력, profile.유닛_방어력),
+				(StatsType.유닛_치유력, profile.유닛_치유력),
+				(StatsType.유닛_회복력, profile.유닛_회복력),
+				(StatsType.유닛_이동속도, profile.유닛_이동속도),
+				(StatsType.유닛_점령점수, profile.유닛_점령점수),
+				(StatsType.유닛_치명공격력, profile.유닛_치명공격력),
+				(StatsType.유닛_치명공격배율, profile.유닛_치명공격배율),
+				(StatsType.유닛_치명방어력, profile.유닛_치명방어력),
 
-				(StatsType.유닛_관통레벨, profile.유닛_관통레벨, SymbolType.Number),
-				(StatsType.유닛_장갑레벨, profile.유닛_장갑레벨, SymbolType.Number),
-				(StatsType.유닛_EMP저항레벨, profile.유닛_EMP저항레벨, SymbolType.Number),
+				(StatsType.유닛_관통레벨, profile.유닛_관통레벨),
+				(StatsType.유닛_장갑레벨, profile.유닛_장갑레벨),
+				(StatsType.유닛_EMP저항레벨, profile.유닛_EMP저항레벨),
 
-				(StatsType.유닛_공격명중기회, profile.유닛_공격명중기회, SymbolType.Number),
-				(StatsType.유닛_공격회피기회, profile.유닛_공격회피기회, SymbolType.Number),
-				(StatsType.유닛_치명명중기회, profile.유닛_치명명중기회, SymbolType.Number),
-				(StatsType.유닛_치명회피기회, profile.유닛_치명회피기회, SymbolType.Number),
+				(StatsType.유닛_공격명중기회, profile.유닛_공격명중기회),
+				(StatsType.유닛_공격회피기회, profile.유닛_공격회피기회),
+				(StatsType.유닛_치명명중기회, profile.유닛_치명명중기회),
+				(StatsType.유닛_치명회피기회, profile.유닛_치명회피기회),
 
-				(StatsType.유닛_명중피격수, profile.유닛_명중피격수, SymbolType.Number),
-				(StatsType.유닛_연속공격횟수, profile.유닛_연속공격횟수, SymbolType.Number),
-				(StatsType.유닛_조준지연시간, profile.유닛_조준지연시간, SymbolType.Number),
-				(StatsType.유닛_연속공격지연시간, profile.유닛_연속공격지연시간, SymbolType.Number),
-				(StatsType.유닛_재공격지연시간, profile.유닛_재공격지연시간, SymbolType.Number),
+				(StatsType.유닛_명중피격수, profile.유닛_명중피격수),
+				(StatsType.유닛_연속공격횟수, profile.유닛_연속공격횟수),
+				(StatsType.유닛_조준지연시간, profile.유닛_조준지연시간),
+				(StatsType.유닛_연속공격지연시간, profile.유닛_연속공격지연시간),
+				(StatsType.유닛_재공격지연시간, profile.유닛_재공격지연시간),
 
-				(StatsType.유닛_공격소모_물자, profile.유닛_공격소모_물자, SymbolType.Number),
-				(StatsType.유닛_공격소모_전력, profile.유닛_공격소모_전력, SymbolType.Number),
+				(StatsType.유닛_공격소모_물자, profile.유닛_공격소모_물자),
+				(StatsType.유닛_공격소모_전력, profile.유닛_공격소모_전력),
 
-				(StatsType.유닛_공격범위, profile.유닛_공격범위, SymbolType.Number),
-				(StatsType.유닛_행동범위, profile.유닛_행동범위, SymbolType.Number),
-				(StatsType.유닛_시야범위, profile.유닛_시야범위, SymbolType.Number)
+				(StatsType.유닛_공격범위, profile.유닛_공격범위),
+				(StatsType.유닛_행동범위, profile.유닛_행동범위),
+				(StatsType.유닛_시야범위, profile.유닛_시야범위)
 				)
 		});
 
@@ -98,7 +98,7 @@ public partial class UnitObject : MonoBehaviour // Other
 	private SkillProfile[] connectSkill;
 	private CaptureTag captureTag;
 
-	public int GetStateValue(StatsType type, SymbolType symbol) => Stats.GetData().GetValue(type, symbol);
+	public int GetStateValue(StatsType type) => Stats.GetData().GetValue(type);
 
 	public SkillProfile[] ConnectSkill { get => connectSkill; set => connectSkill = value; }
 	public CaptureTag CaptureTag { get => captureTag; set => captureTag = value; }
@@ -106,7 +106,7 @@ public partial class UnitObject : MonoBehaviour // Other
 	public void InitOther(UnitProfileObject data)
 	{
 		ConnectSkill = data.connectSkill;
-		var 유닛_점령점수 = Stats.GetData().GetValue(StatsType.유닛_점령점수, SymbolType.Number);
+		var 유닛_점령점수 = Stats.GetData().GetValue(StatsType.유닛_점령점수);
 		if (유닛_점령점수 > 0)
 		{
 			if (CaptureTag == null) CaptureTag = GetComponentInChildren<CaptureTag>();

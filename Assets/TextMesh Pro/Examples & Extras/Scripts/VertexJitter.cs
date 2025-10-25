@@ -16,7 +16,7 @@ namespace TMPro.Examples
         private bool hasTextChanged;
 
         /// <summary>
-        /// Structure to hold pre-computed animation data.
+        /// Structure to hold pre-computed animation capture.
         /// </summary>
         private struct VertexAnim
         {
@@ -80,15 +80,15 @@ namespace TMPro.Examples
                 vertexAnim[i].speed = Random.Range(1f, 3f);
             }
 
-            // Cache the vertex data of the Text object as the Jitter FX is applied to the original position of the characters.
+            // Cache the vertex capture of the Text object as the Jitter FX is applied to the original position of the characters.
             TMP_MeshInfo[] cachedMeshInfo = textInfo.CopyMeshInfoVertexData();
 
             while (true)
             {
-                // Get new copy of vertex data if the Text has changed.
+                // Get new copy of vertex capture if the Text has changed.
                 if (hasTextChanged)
                 {
-                    // Update the copy of the vertex data for the Text object.
+                    // OnUpdate the copy of the vertex capture for the Text object.
                     cachedMeshInfo = textInfo.CopyMeshInfoVertexData();
 
                     hasTextChanged = false;
@@ -112,7 +112,7 @@ namespace TMPro.Examples
                     if (!charInfo.isVisible)
                         continue;
 
-                    // Retrieve the pre-computed animation data for the given character.
+                    // Retrieve the pre-computed animation capture for the given character.
                     VertexAnim vertAnim = vertexAnim[i];
 
                     // Get the index of the material used by the current character.

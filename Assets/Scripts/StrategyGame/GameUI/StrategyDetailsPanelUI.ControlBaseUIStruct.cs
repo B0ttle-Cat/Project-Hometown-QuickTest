@@ -184,12 +184,12 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 			void OnChangeFacilitiesData(ControlBaseData.Facilities.Data data)
 			{
 				UpdateFillRectUI();
-				UpdateStatePanel("Stats KeyValue", "Facilities Stats", selectControlBase.FacilitiesBuffGroup?.MergedStatsValueList());
+				UpdateStatePanel("Stats KeyValue", "Facilities Stats", selectControlBase.FacilitiesBuffGroup?.GetValueList());
 			}
 			void OnChangeSupportData(ControlBaseData.Support.Data data)
 			{
 				UpdateFillRectUI();
-				UpdateStatePanel("Stats KeyValue", "Support Stats", selectControlBase.supportStatsGroup?.MergedStatsValueList());
+				UpdateStatePanel("Stats KeyValue", "Support Stats", selectControlBase.supportStatsGroup?.GetValueList());
 			}
 
 			void UpdateFillRectUI()
@@ -234,17 +234,16 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 					var item = list[i];
 					var key = item.StatsType;
 					var value = item.Value;
-					var symbol = item.Symbol;
-					UpdateStatsItem(key, value, symbol, detailStatsItemList, baseStats.transform);
+					UpdateStatsItem(key, value, detailStatsItemList, baseStats.transform);
 				}
 			}
 
-			void UpdateStatsItem(StatsType key, int value, SymbolType symbol, Dictionary<StatsType, LabelTextUI> list, Transform parent)
+			void UpdateStatsItem(StatsType key, int value, Dictionary<StatsType, LabelTextUI> list, Transform parent)
 			{
 				if (list.TryGetValue(key, out var uiObject))
 				{
-					//string label = StrategyManager.Key2Name.GetAsset(key.ToString());
-					string text =  $"{(value>=0?"+":"-")}{value.ToString()}{SymbolToString(symbol)}";
+					//string label = StrategyManager.Key2Name.GetAsset(type.ToString());
+					string text =  $"{(value>=0?"+":"-")}{value.ToString()}{SuffixStatsType(key)}";
 					list[key].SetText(text);
 
 					if (value == 0)
@@ -259,7 +258,7 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 				else
 				{
 					string label = StrategyManager.Key2Name.GetAsset(key.ToString());
-					string text =  $"{(value>=0?"+":"-")}{value.ToString()}{SymbolToString(symbol)}";
+					string text =  $"{(value>=0?"+":"-")}{value.ToString()}{SuffixStatsType(key)}";
 					var newItem = NewStatsItem(label, text, parent);
 					list.Add(key, newItem);
 
@@ -272,13 +271,6 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 						newItem.gameObject.SetActive(true);
 					}
 				}
-
-				string SymbolToString(SymbolType symbolType) => symbol switch
-				{
-					SymbolType.Number => "",
-					SymbolType.Percent => "%",
-					_ => ""
-				};
 			}
 			LabelTextUI NewStatsItem(string label, string text, Transform parent)
 			{
@@ -478,17 +470,16 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 					var item = list[i];
 					var type = item.StatsType;
 					var value = item.Value;
-					var symbol = item.Symbol;
-					UpdateStatsItem(type, value, symbol, itemList, supportPanel.transform);
+					UpdateStatsItem(type, value, itemList, supportPanel.transform);
 				}
 			}
-			void UpdateStatsItem(StatsType key, int value, SymbolType symbol, Dictionary<StatsType, LabelTextUI> list, Transform parent)
+			void UpdateStatsItem(StatsType key, int value, Dictionary<StatsType, LabelTextUI> list, Transform parent)
 			{
 				if (list.TryGetValue(key, out var uiObject))
 				{
-					//string label = StrategyManager.Key2Name.GetAsset(key.ToString());
-					string text =  $"{(value>=0?"+":"-")}{value.ToString()}{SymbolToString(symbol)}";
-					list[key].SetText(text);
+					//string label = StrategyManager.Key2Name.GetAsset(type.ToString());
+					string text =  $"{(value>=0?"+":"-")}{value.ToString()}{SuffixStatsType(key)}";
+					list[key].SetText(text); 
 
 					if (value == 0)
 					{
@@ -502,7 +493,7 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 				else
 				{
 					string label = StrategyManager.Key2Name.GetAsset(key.ToString());
-					string text =  $"{(value>=0?"+":"-")}{value.ToString()}{SymbolToString(symbol)}";
+					string text =  $"{(value>=0?"+":"-")}{value.ToString()}{SuffixStatsType(key)}";
 					var newItem = NewStatsItem(label, text, parent);
 					list.Add(key, newItem);
 
@@ -515,13 +506,6 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 						newItem.gameObject.SetActive(true);
 					}
 				}
-
-				string SymbolToString(SymbolType symbolType) => symbol switch
-				{
-					SymbolType.Number => "",
-					SymbolType.Percent => "%",
-					_ => ""
-				};
 			}
 			LabelTextUI NewStatsItem(string label, string text, Transform parent)
 			{
@@ -689,11 +673,11 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 			{
 				var slotChain = facilitiesSlots[index];
 				string key = data.facilitiesKey;
-				var installing = data.installing;
+				var constructing = data.constructing;
 			
 				slotChain.FindPairChain<Button>("Button", out var Button);
 				slotChain.FindPairChain<Image>("Image", out var Image);
-				slotChain.FindPairChain<Image>("Installing", out var InstallingImage);
+				slotChain.FindPairChain<Image>("Progress", out var ProgressImage);
 				slotChain.FindPairChain<TMP_Text>("Label", out var Label);
 
 				if (Button != null)
@@ -705,19 +689,19 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 				{
 					Image.sprite = StrategyManager.Key2Sprite.GetAsset(key);
 				}
-				if(InstallingImage != null)
+				if(ProgressImage != null)
 				{
-					if(string.IsNullOrWhiteSpace(installing.facilitiesKey) || installing.facilitiesKey == key)
+					if(string.IsNullOrWhiteSpace(constructing.facilitiesKey) || constructing.facilitiesKey == key)
 					{
-						InstallingImage.enabled = false;
+						ProgressImage.enabled = false;
 					}
 					else
 					{
-						InstallingImage.enabled = true;
-						float installingTime = installing.installingTime;
-						float timeRemaining = installing.timeRemaining;
+						ProgressImage.enabled = true;
+						float installingTime = constructing.constructTime;
+						float timeRemaining = constructing.timeRemaining;
 						if(installingTime < 1) installingTime = 1;
-						InstallingImage.fillAmount = 1f - (timeRemaining / installingTime);
+						ProgressImage.fillAmount = 1f - (timeRemaining / installingTime);
 					}
 				}
 				if (Label != null)
@@ -778,7 +762,7 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 			 
 			void UpdateFacilitiesState(GameObject FacilitiesPanel, Dictionary<StatsType, LabelTextUI> itemList)
 			{
-				var list = selectControlBase.FacilitiesBuffGroup.MergedStatsValueList();
+				var list = selectControlBase.FacilitiesBuffGroup.GetValueList();
 
 				int length = list == null ? 0 : list.Count;
 				for (int i = 0 ; i < length ; i++)
@@ -786,16 +770,15 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 					var item = list[i];
 					var type = item.StatsType;
 					var value = item.Value;
-					var symbol = item.Symbol;
-					UpdateStatsItem(type, value, symbol, itemList, FacilitiesPanel.transform);
+					UpdateStatsItem(type, value, itemList, FacilitiesPanel.transform);
 				}
 			}
-			void UpdateStatsItem(StatsType key, int value, SymbolType symbol, Dictionary<StatsType, LabelTextUI> list, Transform parent)
+			void UpdateStatsItem(StatsType key, int value, Dictionary<StatsType, LabelTextUI> list, Transform parent)
 			{
 				if (list.TryGetValue(key, out var uiObject))
 				{
-					//string label = StrategyManager.Key2Name.GetAsset(key.ToString());
-					string text =  $"{(value>=0?"+":"-")}{value.ToString()}{SymbolToString(symbol)}";
+					//string label = StrategyManager.Key2Name.GetAsset(type.ToString());
+					string text =  $"{(value>=0?"+":"-")}{value.ToString()}{SuffixStatsType(key)}";
 					list[key].SetText(text);
 
 					if (value == 0)
@@ -810,7 +793,7 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 				else
 				{
 					string label = StrategyManager.Key2Name.GetAsset(key.ToString());
-					string text =  $"{(value>=0?"+":"-")}{value.ToString()}{SymbolToString(symbol)}";
+					string text =  $"{(value>=0?"+":"-")}{value.ToString()}{SuffixStatsType(key)}";
 					var newItem = NewStatsItem(label, text, parent);
 					list.Add(key, newItem);
 
@@ -823,13 +806,6 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 						newItem.gameObject.SetActive(true);
 					}
 				}
-
-				string SymbolToString(SymbolType symbolType) => symbol switch
-				{
-					SymbolType.Number => "",
-					SymbolType.Percent => "%",
-					_ => ""
-				};
 			}
 			LabelTextUI NewStatsItem(string label, string text, Transform parent)
 			{
@@ -918,7 +894,7 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 
 		private void OnStartFacilitiesInstall(int slotIndex, string facilitiesKey)
 		{
-			selectControlBase.OnStartFacilitiesInstall(slotIndex, facilitiesKey);
+			selectControlBase.OnStartFacilitiesConstruct(slotIndex, facilitiesKey);
 		}
 
 		private void OnShowInfoText(string text)

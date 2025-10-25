@@ -72,7 +72,7 @@ namespace TMPro.Examples
         {
             if (obj == m_TextMeshPro)
             {
-                // Update cached vertex data.
+                // OnUpdate cached vertex capture.
                 m_cachedMeshInfoVertexData = m_TextMeshPro.textInfo.CopyMeshInfoVertexData();
             }
         }
@@ -195,7 +195,7 @@ namespace TMPro.Examples
                         vertexColors[vertexIndex + 3] = c;
                     }
 
-                    // Update Geometry
+                    // OnUpdate Geometry
                     m_TextMeshPro.UpdateVertexData(TMP_VertexDataUpdateFlags.All);
 
                     m_selectedWord = -1;
@@ -230,7 +230,7 @@ namespace TMPro.Examples
                         vertexColors[vertexIndex + 3] = c;
                     }
 
-                    // Update Geometry
+                    // OnUpdate Geometry
                     m_TextMeshPro.UpdateVertexData(TMP_VertexDataUpdateFlags.All);
 
                 }
@@ -470,7 +470,7 @@ namespace TMPro.Examples
             // Get a reference to the vertices that we need to replace.
             Vector3[] dst_vertices = m_TextMeshPro.textInfo.meshInfo[materialIndex].vertices;
 
-            // Restore / Copy vertices from source to destination
+            // Restore / Paste vertices from source to destination
             dst_vertices[vertexIndex + 0] = src_vertices[vertexIndex + 0];
             dst_vertices[vertexIndex + 1] = src_vertices[vertexIndex + 1];
             dst_vertices[vertexIndex + 2] = src_vertices[vertexIndex + 2];
@@ -483,7 +483,7 @@ namespace TMPro.Examples
             // Get a reference to the cached / original vertex colors.
             Color32[] src_colors = m_cachedMeshInfoVertexData[materialIndex].colors32;
 
-            // Copy the vertex colors from source to destination.
+            // Paste the vertex colors from source to destination.
             dst_colors[vertexIndex + 0] = src_colors[vertexIndex + 0];
             dst_colors[vertexIndex + 1] = src_colors[vertexIndex + 1];
             dst_colors[vertexIndex + 2] = src_colors[vertexIndex + 2];

@@ -46,7 +46,46 @@ MonoBehaviour:
         effect: 0
       mainStatsData:
         stats:
-          values: []
+          values:
+          - statsType: 2020
+            value: 50
+            symbol: 0
+          - statsType: 2021
+            value: 50
+            symbol: 0
+          - statsType: 2022
+            value: 50
+            symbol: 0
+          - statsType: 2000
+            value: 100
+            symbol: 0
+          - statsType: 2001
+            value: 1000
+            symbol: 0
+          - statsType: 2002
+            value: 1000
+            symbol: 0
+          - statsType: 2010
+            value: 5
+            symbol: 0
+          - statsType: 2011
+            value: 50
+            symbol: 0
+          - statsType: 2012
+            value: 50
+            symbol: 0
+          - statsType: 2100
+            value: 500
+            symbol: 0
+          - statsType: 2101
+            value: 500
+            symbol: 0
+          - statsType: 2102
+            value: 100
+            symbol: 0
+          - statsType: 2103
+            value: 10
+            symbol: 0
         buff:
           values: []
       captureTime: 0
@@ -64,7 +103,46 @@ MonoBehaviour:
         effect: 0
       mainStatsData:
         stats:
-          values: []
+          values:
+          - statsType: 2020
+            value: 50
+            symbol: 0
+          - statsType: 2021
+            value: 50
+            symbol: 0
+          - statsType: 2022
+            value: 50
+            symbol: 0
+          - statsType: 2000
+            value: 100
+            symbol: 0
+          - statsType: 2001
+            value: 1000
+            symbol: 0
+          - statsType: 2002
+            value: 1000
+            symbol: 0
+          - statsType: 2010
+            value: 5
+            symbol: 0
+          - statsType: 2011
+            value: 50
+            symbol: 0
+          - statsType: 2012
+            value: 50
+            symbol: 0
+          - statsType: 2100
+            value: 500
+            symbol: 0
+          - statsType: 2101
+            value: 500
+            symbol: 0
+          - statsType: 2102
+            value: 100
+            symbol: 0
+          - statsType: 2103
+            value: 10
+            symbol: 0
         buff:
           values: []
       captureTime: 0
@@ -82,7 +160,46 @@ MonoBehaviour:
         effect: 0
       mainStatsData:
         stats:
-          values: []
+          values:
+          - statsType: 2020
+            value: 50
+            symbol: 0
+          - statsType: 2021
+            value: 50
+            symbol: 0
+          - statsType: 2022
+            value: 50
+            symbol: 0
+          - statsType: 2000
+            value: 100
+            symbol: 0
+          - statsType: 2001
+            value: 1000
+            symbol: 0
+          - statsType: 2002
+            value: 1000
+            symbol: 0
+          - statsType: 2010
+            value: 5
+            symbol: 0
+          - statsType: 2011
+            value: 50
+            symbol: 0
+          - statsType: 2012
+            value: 50
+            symbol: 0
+          - statsType: 2100
+            value: 500
+            symbol: 0
+          - statsType: 2101
+            value: 500
+            symbol: 0
+          - statsType: 2102
+            value: 100
+            symbol: 0
+          - statsType: 2103
+            value: 10
+            symbol: 0
         buff:
           values: []
       captureTime: 0
@@ -100,7 +217,46 @@ MonoBehaviour:
         effect: 0
       mainStatsData:
         stats:
-          values: []
+          values:
+          - statsType: 2020
+            value: 50
+            symbol: 0
+          - statsType: 2021
+            value: 50
+            symbol: 0
+          - statsType: 2022
+            value: 50
+            symbol: 0
+          - statsType: 2000
+            value: 100
+            symbol: 0
+          - statsType: 2001
+            value: 1000
+            symbol: 0
+          - statsType: 2002
+            value: 1000
+            symbol: 0
+          - statsType: 2010
+            value: 5
+            symbol: 0
+          - statsType: 2011
+            value: 50
+            symbol: 0
+          - statsType: 2012
+            value: 50
+            symbol: 0
+          - statsType: 2100
+            value: 500
+            symbol: 0
+          - statsType: 2101
+            value: 500
+            symbol: 0
+          - statsType: 2102
+            value: 100
+            symbol: 0
+          - statsType: 2103
+            value: 10
+            symbol: 0
         buff:
           values: []
       captureTime: 0
@@ -118,7 +274,46 @@ MonoBehaviour:
         effect: 0
       mainStatsData:
         stats:
-          values: []
+          values:
+          - statsType: 2020
+            value: 50
+            symbol: 0
+          - statsType: 2021
+            value: 50
+            symbol: 0
+          - statsType: 2022
+            value: 50
+            symbol: 0
+          - statsType: 2000
+            value: 100
+            symbol: 0
+          - statsType: 2001
+            value: 1000
+            symbol: 0
+          - statsType: 2002
+            value: 1000
+            symbol: 0
+          - statsType: 2010
+            value: 5
+            symbol: 0
+          - statsType: 2011
+            value: 50
+            symbol: 0
+          - statsType: 2012
+            value: 50
+            symbol: 0
+          - statsType: 2100
+            value: 500
+            symbol: 0
+          - statsType: 2101
+            value: 500
+            symbol: 0
+          - statsType: 2102
+            value: 100
+            symbol: 0
+          - statsType: 2103
+            value: 10
+            symbol: 0
         buff:
           values: []
       captureTime: 0

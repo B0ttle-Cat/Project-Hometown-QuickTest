@@ -4,35 +4,45 @@ using UnityEngine;
 
 public class ControlBaseTrigger : MonoBehaviour
 {
-	private List<Collider> triggingList;
+	private HashSet<Collider> colliderList;
 	private List<CaptureTag> captureTagList;
 
-	public List<Collider> TriggingList => triggingList;
+	public HashSet<Collider> ColliderList => colliderList;
 	public List<CaptureTag> CaptureTagList => captureTagList;
 
 	private void Awake()
 	{
-		triggingList = new List<Collider>();
+		colliderList = new HashSet<Collider>();
 		captureTagList = new List<CaptureTag>();
 	}
-
-	void OnTriggerEnter(Collider other)
-	{
-		triggingList.Add(other);
-		var unit = other.GetComponentInParent<CaptureTag>();
-		if(unit != null)
+    private void OnDestroy()
+    {
+		ClearList(colliderList);
+		ClearList(captureTagList);
+		colliderList = null;
+		captureTagList = null;
+		void  ClearList<T>(ICollection<T> list)
 		{
+			if (list == null) return;
+			list.Clear();
+		}
+    }
+
+    void OnTriggerEnter(Collider other)
+	{
+		if (colliderList.Add(other))
+		{
+			var unit = other.GetComponentInParent<CaptureTag>();
 			captureTagList.Add(unit);
 		}
 	}
 
 	void OnTriggerExit(Collider other)
 	{
-		triggingList.Remove(other);
-		var unit = other.GetComponentInParent<CaptureTag>();
-		if (captureTagList.Remove(unit))
+		if (colliderList.Remove(other))
 		{
-
+			var unit = other.GetComponentInParent<CaptureTag>();
+			captureTagList.Remove(unit);
 		}
 	}
 }

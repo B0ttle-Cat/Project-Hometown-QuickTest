@@ -22,48 +22,48 @@ public class UnitProfileObject : ScriptableObject
 			protectType = profileData.protectType;
 
 			var statsData = unit.StatsData;
-			유닛_인력 = statsData.GetValue(StatsType.유닛_인력, SymbolType.Number);
-			유닛_물자 = statsData.GetValue(StatsType.유닛_물자, SymbolType.Number);
-			유닛_전력 = statsData.GetValue(StatsType.유닛_전력, SymbolType.Number);
+			유닛_인력 = statsData.GetValue(StatsType.유닛_인력);
+			유닛_물자 = statsData.GetValue(StatsType.유닛_물자);
+			유닛_전력 = statsData.GetValue(StatsType.유닛_전력);
 
-			유닛_최대내구도 = statsData.GetValue(StatsType.유닛_최대내구도, SymbolType.Number);
-			유닛_현재내구도 = statsData.GetValue(StatsType.유닛_현재내구도, SymbolType.Number);
+			유닛_최대내구도 = statsData.GetValue(StatsType.유닛_최대내구도);
+			유닛_현재내구도 = statsData.GetValue(StatsType.유닛_현재내구도);
 
-			유닛_공격력 = statsData.GetValue(StatsType.유닛_공격력, SymbolType.Number);
-			유닛_방어력 = statsData.GetValue(StatsType.유닛_방어력, SymbolType.Number);
-			유닛_치유력 = statsData.GetValue(StatsType.유닛_치유력, SymbolType.Number);
-			유닛_회복력 = statsData.GetValue(StatsType.유닛_회복력, SymbolType.Number);
-			유닛_이동속도 = statsData.GetValue(StatsType.유닛_이동속도, SymbolType.Number);
-			유닛_점령점수 = statsData.GetValue(StatsType.유닛_점령점수, SymbolType.Number);
+			유닛_공격력 = statsData.GetValue(StatsType.유닛_공격력);
+			유닛_방어력 = statsData.GetValue(StatsType.유닛_방어력);
+			유닛_치유력 = statsData.GetValue(StatsType.유닛_치유력);
+			유닛_회복력 = statsData.GetValue(StatsType.유닛_회복력);
+			유닛_이동속도 = statsData.GetValue(StatsType.유닛_이동속도);
+			유닛_점령점수 = statsData.GetValue(StatsType.유닛_점령점수);
 
-			유닛_치명공격력 = statsData.GetValue(StatsType.유닛_치명공격력, SymbolType.Number);
-			유닛_치명공격배율 = statsData.GetValue(StatsType.유닛_치명공격배율, SymbolType.Number);
-			유닛_치명방어력 = statsData.GetValue(StatsType.유닛_치명방어력, SymbolType.Number);
+			유닛_치명공격력 = statsData.GetValue(StatsType.유닛_치명공격력);
+			유닛_치명공격배율 = statsData.GetValue(StatsType.유닛_치명공격배율);
+			유닛_치명방어력 = statsData.GetValue(StatsType.유닛_치명방어력);
 
-			유닛_관통레벨 = statsData.GetValue(StatsType.유닛_관통레벨, SymbolType.Number);
-			유닛_장갑레벨 = statsData.GetValue(StatsType.유닛_장갑레벨, SymbolType.Number);
-			유닛_EMP저항레벨 = statsData.GetValue(StatsType.유닛_EMP저항레벨, SymbolType.Number);
+			유닛_관통레벨 = statsData.GetValue(StatsType.유닛_관통레벨);
+			유닛_장갑레벨 = statsData.GetValue(StatsType.유닛_장갑레벨);
+			유닛_EMP저항레벨 = statsData.GetValue(StatsType.유닛_EMP저항레벨);
 
-			유닛_상태이상적용레벨 = statsData.GetValue(StatsType.유닛_상태이상적용레벨, SymbolType.Number);
-			유닛_상태이상저항레벨 = statsData.GetValue(StatsType.유닛_상태이상저항레벨, SymbolType.Number);
+			유닛_상태이상적용레벨 = statsData.GetValue(StatsType.유닛_상태이상적용레벨);
+			유닛_상태이상저항레벨 = statsData.GetValue(StatsType.유닛_상태이상저항레벨);
 
-			유닛_공격명중기회 = statsData.GetValue(StatsType.유닛_공격명중기회, SymbolType.Number);
-			유닛_공격회피기회 = statsData.GetValue(StatsType.유닛_공격회피기회, SymbolType.Number);
-			유닛_치명명중기회 = statsData.GetValue(StatsType.유닛_치명명중기회, SymbolType.Number);
-			유닛_치명회피기회 = statsData.GetValue(StatsType.유닛_치명회피기회, SymbolType.Number);
+			유닛_공격명중기회 = statsData.GetValue(StatsType.유닛_공격명중기회);
+			유닛_공격회피기회 = statsData.GetValue(StatsType.유닛_공격회피기회);
+			유닛_치명명중기회 = statsData.GetValue(StatsType.유닛_치명명중기회);
+			유닛_치명회피기회 = statsData.GetValue(StatsType.유닛_치명회피기회);
 
-			유닛_명중피격수 = statsData.GetValue(StatsType.유닛_명중피격수, SymbolType.Number);
-			유닛_연속공격횟수 = statsData.GetValue(StatsType.유닛_연속공격횟수, SymbolType.Number);
-			유닛_조준지연시간 = statsData.GetValue(StatsType.유닛_조준지연시간, SymbolType.Number);
-			유닛_연속공격지연시간 = statsData.GetValue(StatsType.유닛_연속공격지연시간, SymbolType.Number);
-			유닛_재공격지연시간 = statsData.GetValue(StatsType.유닛_재공격지연시간, SymbolType.Number);
+			유닛_명중피격수 = statsData.GetValue(StatsType.유닛_명중피격수);
+			유닛_연속공격횟수 = statsData.GetValue(StatsType.유닛_연속공격횟수);
+			유닛_조준지연시간 = statsData.GetValue(StatsType.유닛_조준지연시간);
+			유닛_연속공격지연시간 = statsData.GetValue(StatsType.유닛_연속공격지연시간);
+			유닛_재공격지연시간 = statsData.GetValue(StatsType.유닛_재공격지연시간);
 
-			유닛_공격소모_물자 = statsData.GetValue(StatsType.유닛_공격소모_물자, SymbolType.Number);
-			유닛_공격소모_전력 = statsData.GetValue(StatsType.유닛_공격소모_전력, SymbolType.Number);
+			유닛_공격소모_물자 = statsData.GetValue(StatsType.유닛_공격소모_물자);
+			유닛_공격소모_전력 = statsData.GetValue(StatsType.유닛_공격소모_전력);
 
-			유닛_공격범위 = statsData.GetValue(StatsType.유닛_공격범위, SymbolType.Number);
-			유닛_행동범위 = statsData.GetValue(StatsType.유닛_행동범위, SymbolType.Number);
-			유닛_시야범위 = statsData.GetValue(StatsType.유닛_시야범위, SymbolType.Number);
+			유닛_공격범위 = statsData.GetValue(StatsType.유닛_공격범위);
+			유닛_행동범위 = statsData.GetValue(StatsType.유닛_행동범위);
+			유닛_시야범위 = statsData.GetValue(StatsType.유닛_시야범위);
 		}
 	}
 	private void PushData()
@@ -78,48 +78,48 @@ public class UnitProfileObject : ScriptableObject
 			unit.Profile.SetData(profileData);
 
 			var statsData = unit.StatsData;
-			statsData.SetValue(StatsType.유닛_인력, 유닛_인력, SymbolType.Number);
-			statsData.SetValue(StatsType.유닛_물자, 유닛_물자, SymbolType.Number);
-			statsData.SetValue(StatsType.유닛_전력, 유닛_전력, SymbolType.Number);
+			statsData.SetValue(StatsType.유닛_인력, 유닛_인력);
+			statsData.SetValue(StatsType.유닛_물자, 유닛_물자);
+			statsData.SetValue(StatsType.유닛_전력, 유닛_전력);
 
-			statsData.SetValue(StatsType.유닛_최대내구도, 유닛_최대내구도, SymbolType.Number);
-			statsData.SetValue(StatsType.유닛_현재내구도, 유닛_현재내구도, SymbolType.Number);
+			statsData.SetValue(StatsType.유닛_최대내구도, 유닛_최대내구도);
+			statsData.SetValue(StatsType.유닛_현재내구도, 유닛_현재내구도);
 
-			statsData.SetValue(StatsType.유닛_공격력, 유닛_공격력, SymbolType.Number);
-			statsData.SetValue(StatsType.유닛_방어력, 유닛_방어력, SymbolType.Number);
-			statsData.SetValue(StatsType.유닛_치유력, 유닛_치유력, SymbolType.Number);
-			statsData.SetValue(StatsType.유닛_회복력, 유닛_회복력, SymbolType.Number);
-			statsData.SetValue(StatsType.유닛_이동속도, 유닛_이동속도, SymbolType.Number);
-			statsData.SetValue(StatsType.유닛_점령점수, 유닛_점령점수, SymbolType.Number);
+			statsData.SetValue(StatsType.유닛_공격력, 유닛_공격력);
+			statsData.SetValue(StatsType.유닛_방어력, 유닛_방어력);
+			statsData.SetValue(StatsType.유닛_치유력, 유닛_치유력);
+			statsData.SetValue(StatsType.유닛_회복력, 유닛_회복력);
+			statsData.SetValue(StatsType.유닛_이동속도, 유닛_이동속도);
+			statsData.SetValue(StatsType.유닛_점령점수, 유닛_점령점수);
 
-			statsData.SetValue(StatsType.유닛_치명공격력, 유닛_치명공격력, SymbolType.Number);
-			statsData.SetValue(StatsType.유닛_치명공격배율, 유닛_치명공격배율, SymbolType.Number);
-			statsData.SetValue(StatsType.유닛_치명방어력, 유닛_치명방어력, SymbolType.Number);
+			statsData.SetValue(StatsType.유닛_치명공격력, 유닛_치명공격력);
+			statsData.SetValue(StatsType.유닛_치명공격배율, 유닛_치명공격배율);
+			statsData.SetValue(StatsType.유닛_치명방어력, 유닛_치명방어력);
 
-			statsData.SetValue(StatsType.유닛_관통레벨, 유닛_관통레벨, SymbolType.Number);
-			statsData.SetValue(StatsType.유닛_장갑레벨, 유닛_장갑레벨, SymbolType.Number);
-			statsData.SetValue(StatsType.유닛_EMP저항레벨, 유닛_EMP저항레벨, SymbolType.Number);
+			statsData.SetValue(StatsType.유닛_관통레벨, 유닛_관통레벨);
+			statsData.SetValue(StatsType.유닛_장갑레벨, 유닛_장갑레벨);
+			statsData.SetValue(StatsType.유닛_EMP저항레벨, 유닛_EMP저항레벨);
 
-			statsData.SetValue(StatsType.유닛_상태이상적용레벨, 유닛_상태이상적용레벨, SymbolType.Number);
-			statsData.SetValue(StatsType.유닛_상태이상저항레벨, 유닛_상태이상저항레벨, SymbolType.Number);
+			statsData.SetValue(StatsType.유닛_상태이상적용레벨, 유닛_상태이상적용레벨);
+			statsData.SetValue(StatsType.유닛_상태이상저항레벨, 유닛_상태이상저항레벨);
 
-			statsData.SetValue(StatsType.유닛_공격명중기회, 유닛_공격명중기회, SymbolType.Number);
-			statsData.SetValue(StatsType.유닛_공격회피기회, 유닛_공격회피기회, SymbolType.Number);
-			statsData.SetValue(StatsType.유닛_치명명중기회, 유닛_치명명중기회, SymbolType.Number);
-			statsData.SetValue(StatsType.유닛_치명회피기회, 유닛_치명회피기회, SymbolType.Number);
+			statsData.SetValue(StatsType.유닛_공격명중기회, 유닛_공격명중기회);
+			statsData.SetValue(StatsType.유닛_공격회피기회, 유닛_공격회피기회);
+			statsData.SetValue(StatsType.유닛_치명명중기회, 유닛_치명명중기회);
+			statsData.SetValue(StatsType.유닛_치명회피기회, 유닛_치명회피기회);
 
-			statsData.SetValue(StatsType.유닛_명중피격수, 유닛_명중피격수, SymbolType.Number);
-			statsData.SetValue(StatsType.유닛_연속공격횟수, 유닛_연속공격횟수, SymbolType.Number);
-			statsData.SetValue(StatsType.유닛_조준지연시간, 유닛_조준지연시간, SymbolType.Number);
-			statsData.SetValue(StatsType.유닛_연속공격지연시간, 유닛_연속공격지연시간, SymbolType.Number);
-			statsData.SetValue(StatsType.유닛_재공격지연시간, 유닛_재공격지연시간, SymbolType.Number);
+			statsData.SetValue(StatsType.유닛_명중피격수, 유닛_명중피격수);
+			statsData.SetValue(StatsType.유닛_연속공격횟수, 유닛_연속공격횟수);
+			statsData.SetValue(StatsType.유닛_조준지연시간, 유닛_조준지연시간);
+			statsData.SetValue(StatsType.유닛_연속공격지연시간, 유닛_연속공격지연시간);
+			statsData.SetValue(StatsType.유닛_재공격지연시간, 유닛_재공격지연시간);
 
-			statsData.SetValue(StatsType.유닛_공격소모_물자, 유닛_공격소모_물자, SymbolType.Number);
-			statsData.SetValue(StatsType.유닛_공격소모_전력, 유닛_공격소모_전력, SymbolType.Number);
+			statsData.SetValue(StatsType.유닛_공격소모_물자, 유닛_공격소모_물자);
+			statsData.SetValue(StatsType.유닛_공격소모_전력, 유닛_공격소모_전력);
 
-			statsData.SetValue(StatsType.유닛_공격범위, 유닛_공격범위, SymbolType.Number);
-			statsData.SetValue(StatsType.유닛_행동범위, 유닛_행동범위, SymbolType.Number);
-			statsData.SetValue(StatsType.유닛_시야범위, 유닛_시야범위, SymbolType.Number);
+			statsData.SetValue(StatsType.유닛_공격범위, 유닛_공격범위);
+			statsData.SetValue(StatsType.유닛_행동범위, 유닛_행동범위);
+			statsData.SetValue(StatsType.유닛_시야범위, 유닛_시야범위);
 			unit.Stats.SetData(statsData);
 			//UnityEditor.PrefabUtility.SavePrefabAsset(unitPrefab);
 		}

@@ -68,7 +68,7 @@ namespace TMPro.Examples
                 old_CurveScale = CurveScale;
                 old_curve = CopyAnimationCurve(VertexCurve);
 
-                m_TextComponent.ForceMeshUpdate(); // Generate the mesh and populate the textInfo with data we can use and manipulate.
+                m_TextComponent.ForceMeshUpdate(); // Generate the mesh and populate the textInfo with capture we can use and manipulate.
 
                 TMP_TextInfo textInfo = m_TextComponent.textInfo;
                 int characterCount = textInfo.characterCount;

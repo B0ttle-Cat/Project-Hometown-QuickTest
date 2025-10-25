@@ -7,6 +7,7 @@ using Sirenix.OdinInspector.Editor;
 
 using UnityEngine;
 
+using static StrategyGamePlayData;
 using static StrategyMissionTree;
 
 [CreateAssetMenu(fileName = "StrategyStartSetterData", menuName = "Scriptable Objects/StrategyGame/StrategyStartSetterData")]
@@ -63,16 +64,16 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 #if UNITY_EDITOR
 		private string GroupName => profileData.controlBaseName;
 		[FoldoutGroup("@GroupName")]
-		[ShowInInspector, InlineButton("PushData"), InlineButton("PullData"), PropertyOrder(-1)]
+		[ShowInInspector, InlineButton("PushData"), InlineButton("PullData"), PropertyOrder(-99)]
 		[LabelWidth(50)]
 		private ControlBase Target { get; set; }
 		private void PullData()
 		{
 			if (Target == null) return;
-			profileData = Target.ProfileData;
-			mainStatsData = Target.StatsData;
-			facilitiesStatsData = Target.FacilitiesData;
-			supportStatsData = Target.SupportData;
+			profileData = Target.ProfileData.Copy();
+			mainStatsData = Target.StatsData.Copy();
+			facilitiesStatsData = Target.FacilitiesData.Copy();
+			supportStatsData = Target.SupportData.Copy();
 			captureTime = Target.CaptureData.captureTime;
 
 			profileData.controlBaseName = Target.gameObject.name;
@@ -80,14 +81,20 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		private void PushData()
 		{
 			if (Target == null) return;
-			Target.Profile.SetData(profileData, true);
-			Target.Stats.SetData(mainStatsData, true);
-			Target.Facilities.SetData(facilitiesStatsData, true);
-			Target.Support.SetData(supportStatsData, true);
+			Target.Profile.SetData(profileData.Copy(), true);
+			Target.Stats.SetData(mainStatsData.Copy(), true);
+			Target.Facilities.SetData(facilitiesStatsData.Copy(), true);
+			Target.Support.SetData(supportStatsData.Copy(), true);
 
 			var captureData =  Target.CaptureData;
 			captureData.captureTime = captureTime;
 			Target.Capture.SetData(captureData, true);
+		}
+
+		[ButtonGroup("@GroupName/Button"), PropertyOrder(-98)]
+		private void ResetDetulsStats()
+		{
+			mainStatsData.stats = StatsList.ControlBaseStatsList;
 		}
 #endif
 		[FoldoutGroup("@GroupName")]
@@ -118,6 +125,9 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		public Vector3 position;
 		[FoldoutGroup("@unitName")]
 		public Vector3 rotation;
+
+		[FoldoutGroup("@unitName")]
+		public string connectedControlBaseName;
 
 #if UNITY_EDITOR
 		private static IEnumerable<string> GetFactionName(InspectorProperty property)
@@ -181,14 +191,23 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 
 	}
 	[Serializable]
-	public struct Overview
+	public struct Overview : IDataCopy<Overview>
 	{
 		public string title;
 		[TextArea(2,10)]
 		public string description;
-	}
+
+        public Overview Copy()
+        {
+			return new Overview()
+			{
+				title = title,
+				description = description
+			};
+        }
+    }
 	[Serializable]
-	public struct Mission
+	public struct Mission : IDataCopy<Mission>
 	{
 		public string id;
 		public string title;
@@ -202,16 +221,38 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		[Tooltip(MissionParser.testParserData)]
 		public string defeatScript;
 
-		public SubMission[] enableSubMissions;
-	}
+		public MissionBlock[] enableSubMissions;
+
+        public Mission Copy()
+        {
+			return new Mission()
+			{
+				id = id,
+				title = title,
+				description = description,
+				victoryScript = victoryScript,
+				defeatScript = defeatScript,
+				enableSubMissions = enableSubMissions?.Select(s=>s.Copy()).ToArray()
+			};
+        }
+    }
 	[Serializable]
-	public struct SubMission
+	public struct MissionBlock : IDataCopy<MissionBlock>
 	{
 		public string id;
 		[TextArea(2,10)]
 		[Tooltip(MissionParser.testParserData)]
 		public string missionScript;
-	}
+
+        public MissionBlock Copy()
+        {
+			return new MissionBlock()
+			{
+				id = id,
+				missionScript = missionScript
+			};
+        }
+    }
 	[SerializeField, InlineProperty, HideLabel]
 	private Data data;
 	protected override Data _data { get => data; set => data = value; }

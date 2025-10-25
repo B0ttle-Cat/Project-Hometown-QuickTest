@@ -348,7 +348,7 @@ public partial class StrategyMissionTree : MonoBehaviour, IDisposable
 		}
 
 		private static readonly Regex lineRegex = new Regex(
-				@"^(?<indent>\t*)(?<keyword>\w+)(?:,\s*(?:(?<data>\d+)\s*(?<compare><=|>=|==|!=|<|>)\s*,\s*)?(?<args>.*))?$",
+				@"^(?<indent>\t*)(?<keyword>\w+)(?:,\s*(?:(?<capture>\d+)\s*(?<compare><=|>=|==|!=|<|>)\s*,\s*)?(?<args>.*))?$",
 				RegexOptions.Compiled);
 
 		public static List<Command> ParseLines(string text)
@@ -368,7 +368,7 @@ public partial class StrategyMissionTree : MonoBehaviour, IDisposable
 
 				int indent = match.Groups["indent"].Value.Length;
 				string keyword = match.Groups["keyword"].Value.Trim();
-				string valueStr = match.Groups["data"].Value;
+				string valueStr = match.Groups["capture"].Value;
 				string compareStr = match.Groups["compare"].Value;
 				string argsRaw = match.Groups["args"].Value?.Trim() ?? "";
 				string[] args = SplitArgs(argsRaw);

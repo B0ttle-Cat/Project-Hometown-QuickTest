@@ -151,19 +151,27 @@ public class StrategyStartSetter : MonoBehaviour
 	{
 		var data = strategyStartSetterData.GetData();
 		var occData = data.captureDatas;
-		int length = occData.Length;
-		collector.ForControlBase(SetCapture);
+
+		collector.ForEachControlBase(SetCapture);
 
 		void SetCapture(ControlBase cb)
 		{
+			int length = occData.Length;
 			for (int i = 0 ; i < length ; i++)
 			{
-				var data = occData[i];
-				if (data.captureControlBase == cb.ControlBaseName)
+				var _data = occData[i];
+				if (_data.captureControlBase == cb.ControlBaseName)
 				{
-					cb.Init(data);
+					cb.Init(_data);
+					return;
 				}
 			}
+			cb.Init(new StrategyStartSetterData.CaptureData()
+			{
+				 captureControlBase = "",
+				 captureFaction = "",
+				 captureProgress = 0
+			});
 		}
 	}
 }

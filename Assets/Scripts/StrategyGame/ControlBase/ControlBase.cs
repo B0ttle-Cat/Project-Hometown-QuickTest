@@ -22,12 +22,10 @@ public partial class ControlBase // Profile
 	private ControlBaseData.Facilities facilitiesData;
 	private ControlBaseData.Support supportData;
 
-
 	public StatsGroup facilitiesStatsGroup;
 	public StatsGroup supportStatsGroup;
 
 	public string ControlBaseName => profileData.GetData().controlBaseName;
-
 
 	public ControlBaseData.Profile Profile => profileData;
 	public ControlBaseData.Capture Capture => captureData;
@@ -42,7 +40,6 @@ public partial class ControlBase // Profile
 	public ControlBaseData.Support.Data SupportData => supportData.GetData();
 
 	public StatsList MainStatsList => StatsData.GetStatsList();
-	public StatsList MainBuffList => StatsData.GetBuffList();  
 	public StatsGroup FacilitiesBuffGroup => facilitiesStatsGroup;
 	public StatsGroup SupportBuffGroup => supportStatsGroup;
 
@@ -87,7 +84,10 @@ public partial class ControlBase // Profile
 		return (0, 0);
 	}
 
-	internal void OnStartFacilitiesInstall(int slotIndex, string facilitiesKey)
+	internal void OnStartFacilitiesConstruct(int slotIndex, string facilitiesKey)
+	{
+	}
+	internal void OnFinishFacilitiesConstruct(int slotIndex, string facilitiesKey)
 	{
 	}
 }

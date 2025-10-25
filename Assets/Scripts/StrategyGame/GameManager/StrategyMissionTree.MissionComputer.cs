@@ -89,9 +89,9 @@ public partial class StrategyMissionTree // MissionCompute
 			for (int i = 0 ; i < length ; i++)
 			{
 				var statsKey = statsKeys[i];
-				//if (StrategyManager.Statistics.TryGetStatsValue(statsKey, out string Name,out int data))
+				//if (StrategyManager.Statistics.TryGetStatsValue(statsKey, out string Name,out int capture))
 				//{
-				//	computeCount += data;
+				//	computeCount += capture;
 				//}
 			}
 			return computeCount;
@@ -145,7 +145,7 @@ public partial class StrategyMissionTree // MissionCompute
 			int computeCount = 0;
 			if (targets == null || targets.Length == 0) return computeCount;
 
-			StrategyManager.Collector.ForUnit(unit =>
+			StrategyManager.Collector.ForEachUnit(unit =>
 			{
 				if (targets.Contains(unit.UnitName))
 				{
@@ -199,7 +199,7 @@ public partial class StrategyMissionTree // MissionCompute
 		private int ComputeCount(in ItemStruct itemStruct)
 		{
 			int computeCount = 0;
-			StrategyManager.Collector.ForControlBase(cb =>
+			StrategyManager.Collector.ForEachControlBase(cb =>
 			{
 				if(cb.CaptureFactionID == StrategyGamePlayData.PlayerFactionID)
 				{
@@ -256,7 +256,7 @@ public partial class StrategyMissionTree // MissionCompute
 		{
 			var targetList = itemStruct.targets.ToList();
 			int computeCount = 0;
-			StrategyManager.Collector.ForControlBase(cb =>
+			StrategyManager.Collector.ForEachControlBase(cb =>
 			{
 				if (cb.CaptureFactionID == StrategyGamePlayData.PlayerFactionID 
 					&& targetList.Remove(cb.ControlBaseName))

@@ -22,7 +22,7 @@ namespace TMPro.Examples
             m_TextMeshPro = gameObject.GetComponent<TextMeshPro>();
             m_Camera = Camera.main;
 
-            // Force generation of the Text object so we have valid data to work with. CurrentRect is needed since LateUpdate() will be called before the Text object has a chance to generated when entering play mode.
+            // Force generation of the Text object so we have valid capture to work with. CurrentRect is needed since LateUpdate() will be called before the Text object has a chance to generated when entering play mode.
             m_TextMeshPro.ForceMeshUpdate();
         }
 

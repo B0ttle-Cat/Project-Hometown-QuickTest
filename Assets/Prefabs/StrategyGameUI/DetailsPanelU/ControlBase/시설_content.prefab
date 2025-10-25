@@ -2352,7 +2352,7 @@ MonoBehaviour:
     target: {fileID: 7358247423719305224}
   - key: Facilities Control
     target: {fileID: 1147345977127950403}
-  - key: Facilities Installable
+  - key: Facilities Construct
     target: {fileID: 4526994052139464234}
   - key: Total Statistics
     target: {fileID: 7316209948945923234}
@@ -2495,7 +2495,7 @@ GameObject:
   - component: {fileID: 3655443045870854687}
   - component: {fileID: 8815259252479362655}
   m_Layer: 5
-  m_Name: Facilities Installable
+  m_Name: Facilities Construct
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2610,7 +2610,7 @@ GameObject:
   - component: {fileID: 504229538582437549}
   - component: {fileID: 78795661565971175}
   m_Layer: 5
-  m_Name: InstallingFill
+  m_Name: Progress
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3924,7 +3924,7 @@ MonoBehaviour:
     target: {fileID: 6179999467537150171}
   - key: Image
     target: {fileID: 6215366243942121442}
-  - key: Installing
+  - key: Progress
     target: {fileID: 4841143398802522051}
   - key: Label
     target: {fileID: 2933731628519083916}

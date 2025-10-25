@@ -18,14 +18,14 @@
 //		public GameObject defaultUnitPrefab;
 //	}
 
-//	public Data data;
+//	public Data capture;
 
-//	public override void SetValue(Data data)
+//	public override void SetValue(Data capture)
 //	{			
 //	}
 
 //	public override Data GetData()
 //	{
-//		return data;
+//		return capture;
 //	}
 //}

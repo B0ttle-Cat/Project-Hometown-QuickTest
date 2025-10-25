@@ -2,9 +2,9 @@
 
 //using UnityEngine;
 
-//public class Update_ControlBaseCapture : StrategyUpdate.IUpdate
+//public class StrategyUpdate_CaptureUpdate : StrategyUpdate.IStrategyUpdater
 //{
-//	private Dictionary<ControlBase, ControlBaseTrigger> trigger;
+//	private Dictionary<ControlBase, ControlBaseTrigger> colliderList;
 //	private Dictionary<ControlBase, bool> isKeep;
 //	private ControlBase controlBase;
 //	private ControlBaseTrigger controlBaseCollider;
@@ -33,16 +33,16 @@
 //		ComputeFactionPointList();
 //		void ComputeFactionPointList()
 //		{
-//			var colliders = controlBaseCollider.TriggingList;
-//			if (colliders == null || colliders.Count == 0)
+//			var colliderList = controlBaseCollider.ColliderList;
+//			if (colliderList == null || colliderList.Count == 0)
 //			{
 //				return;
 //			}
 
 //			HashSet<UnitObject> unitObject = new HashSet<UnitObject>();
-//			foreach (Collider collider in colliders)
+//			foreach (Collider colliderList in colliderList)
 //			{
-//				UnitObject unit = collider.GetComponentInParent<UnitObject>();
+//				UnitObject unit = colliderList.GetComponentInParent<UnitObject>();
 //				if (unit != null)
 //				{
 //					unitObject.Add(unit);
@@ -180,7 +180,7 @@
 //		}
 //	}
 
-//    void StrategyUpdate.IUpdate.Update(in float deltaTime)
+//    void StrategyUpdate.IStrategyUpdater.OnUpdate(in float deltaTime)
 //    {
 //        throw new System.NotImplementedException();
 //    }

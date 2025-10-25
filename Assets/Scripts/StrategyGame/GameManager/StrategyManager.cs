@@ -132,7 +132,7 @@ public class StrategyManager : MonoBehaviour
 		await Awaitable.NextFrameAsync();
 
 		Destroy(setter);
-		Collector.ForeachAll(element =>
+		Collector.ForEachAll(element =>
 		{
 			element.OnStartGame();
 		});
