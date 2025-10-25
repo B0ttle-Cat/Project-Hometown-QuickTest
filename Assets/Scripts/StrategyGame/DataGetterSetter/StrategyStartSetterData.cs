@@ -23,7 +23,7 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 
 		[Space]
 		public FactionData[] factionDatas;
-		public ControlBaseData[] controlBaseDatas;
+		public SectorData[] sectorDatas;
 		public UnitData[] unitDatas;
 		[Space]
 		[TableList]
@@ -33,7 +33,7 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		private IEnumerable<string> GetFactionName()
 		{
 			if (factionDatas == null || factionDatas.Length == 0)
-				return new[] { "(No ControlBaseData)" };
+				return new[] { "(No SectorData)" };
 
 			return factionDatas.Select(x => x.factionName);
 		}
@@ -59,14 +59,14 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		[FoldoutGroup("@factionName")] public GameObject defaultUnitPrefab;
 	}
 	[Serializable]
-	public struct ControlBaseData
+	public struct SectorData
 	{
 #if UNITY_EDITOR
-		private string GroupName => profileData.controlBaseName;
+		private string GroupName => profileData.sectorName;
 		[FoldoutGroup("@GroupName")]
 		[ShowInInspector, InlineButton("PushData"), InlineButton("PullData"), PropertyOrder(-99)]
 		[LabelWidth(50)]
-		private ControlBase Target { get; set; }
+		private SectorObject Target { get; set; }
 		private void PullData()
 		{
 			if (Target == null) return;
@@ -76,7 +76,7 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 			supportStatsData = Target.SupportData.Copy();
 			captureTime = Target.CaptureData.captureTime;
 
-			profileData.controlBaseName = Target.gameObject.name;
+			profileData.sectorName = Target.gameObject.name;
 		}
 		private void PushData()
 		{
@@ -94,20 +94,20 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		[ButtonGroup("@GroupName/Button"), PropertyOrder(-98)]
 		private void ResetDetulsStats()
 		{
-			mainStatsData.stats = StatsList.ControlBaseStatsList;
+			mainStatsData.stats = StatsList.SectorStatsList;
 		}
 #endif
 		[FoldoutGroup("@GroupName")]
 		[InlineProperty, HideLabel, TitleGroup("@GroupName/Profile")]
-		public StrategyGamePlayData.ControlBaseData.Profile.Data profileData;
+		public StrategyGamePlayData.SectorData.Profile.Data profileData;
 		[InlineProperty, HideLabel, FoldoutGroup("@GroupName/MainStats")]
-		public StrategyGamePlayData.ControlBaseData.MainStats.Data mainStatsData;
+		public StrategyGamePlayData.SectorData.MainStats.Data mainStatsData;
 		[FoldoutGroup("@GroupName/MainStats")]
 		public float captureTime;
 		[InlineProperty, HideLabel, FoldoutGroup("@GroupName/Facilities")]
-		public StrategyGamePlayData.ControlBaseData.Facilities.Data facilitiesStatsData;
+		public StrategyGamePlayData.SectorData.Facilities.Data facilitiesStatsData;
 		[InlineProperty, HideLabel, FoldoutGroup("@GroupName/Support")]
-		public StrategyGamePlayData.ControlBaseData.Support.Data supportStatsData;
+		public StrategyGamePlayData.SectorData.Support.Data supportStatsData;
 	}
 	[Serializable]
 	public struct UnitData
@@ -127,7 +127,7 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		public Vector3 rotation;
 
 		[FoldoutGroup("@unitName")]
-		public string connectedControlBaseName;
+		public string connectedSectorName;
 
 #if UNITY_EDITOR
 		private static IEnumerable<string> GetFactionName(InspectorProperty property)
@@ -139,7 +139,7 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 
 			var bases = root.data.factionDatas;
 			if (bases == null || bases.Length == 0)
-				return new[] { "(No ControlBaseData)" };
+				return new[] { "(No SectorData)" };
 
 			return bases.Select(x => x.factionName);
 		}
@@ -148,8 +148,8 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 	[Serializable]
 	public struct CaptureData
 	{
-		[ValueDropdown("@GetControlBaseNames($property)")]
-		public string captureControlBase;
+		[ValueDropdown("@GetSectorNames($property)")]
+		public string captureSector;
 		[ValueDropdown("@GetCaptureFactionName($property)")]
 		public string captureFaction;
 		[Range(0f,1f)]
@@ -160,18 +160,18 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 			public bool isFixed;
 		}
 #if UNITY_EDITOR
-		private static IEnumerable<string> GetControlBaseNames(InspectorProperty property)
+		private static IEnumerable<string> GetSectorNames(InspectorProperty property)
 		{
 			// 루트까지 올라감
 			var root = property.Tree.WeakTargets.FirstOrDefault() as StrategyStartSetterData;
 			if (root == null)
 				return new[] { "(No Root Data)" };
 
-			var bases = root.data.controlBaseDatas;
+			var bases = root.data.sectorDatas;
 			if (bases == null || bases.Length == 0)
-				return new[] { "(No ControlBaseData)" };
+				return new[] { "(No SectorData)" };
 
-			return bases.Select(x => x.profileData.controlBaseName);
+			return bases.Select(x => x.profileData.sectorName);
 		}
 		// Odin의 PropertyContext를 통해 상위 오브젝트 접근
 		private static IEnumerable<string> GetCaptureFactionName(InspectorProperty property)
@@ -183,7 +183,7 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 
 			var bases = root.data.factionDatas;
 			if (bases == null || bases.Length == 0)
-				return new[] { "(No ControlBaseData)" };
+				return new[] { "(No SectorData)" };
 
 			return bases.Select(x => x.factionName);
 		}

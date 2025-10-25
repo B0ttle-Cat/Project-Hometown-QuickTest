@@ -16,7 +16,7 @@ public partial class StrategyMissionTree // MissionCompute
 		{
 			MissionType.Kill => "정해진 대상을 처치 또는 파괴하세요.",
 			MissionType.Protect => "정해진 대상이 처치 또는 파괴되지 않도록 보호하세요.",
-			MissionType.ControlBase_Count => "아무 거점을 정해진 수 많큼 점령하세요.",
+			MissionType.Sector_Count => "아무 거점을 정해진 수 많큼 점령하세요.",
 			MissionType.CaptureAndSecureBase => "정해진 거점을 점령 또는 보호 하세요.",
 
 			_ => "",
@@ -158,8 +158,8 @@ public partial class StrategyMissionTree // MissionCompute
 	}
 	#endregion
 
-	#region ControlBase_Count_Mission
-	public class ControlBase_Count_Mission : MissionComputer
+	#region Sector_Count_Mission
+	public class Sector_Count_Mission : MissionComputer
 	{
 		public override ResultTyoe Compute(in ItemStruct itemStruct)
 		{
@@ -199,7 +199,7 @@ public partial class StrategyMissionTree // MissionCompute
 		private int ComputeCount(in ItemStruct itemStruct)
 		{
 			int computeCount = 0;
-			StrategyManager.Collector.ForEachControlBase(cb =>
+			StrategyManager.Collector.ForEachSector(cb =>
 			{
 				if(cb.CaptureFactionID == StrategyGamePlayData.PlayerFactionID)
 				{
@@ -256,10 +256,10 @@ public partial class StrategyMissionTree // MissionCompute
 		{
 			var targetList = itemStruct.targets.ToList();
 			int computeCount = 0;
-			StrategyManager.Collector.ForEachControlBase(cb =>
+			StrategyManager.Collector.ForEachSector(cb =>
 			{
 				if (cb.CaptureFactionID == StrategyGamePlayData.PlayerFactionID 
-					&& targetList.Remove(cb.ControlBaseName))
+					&& targetList.Remove(cb.SectorName))
 				{
 					computeCount++;
 				}

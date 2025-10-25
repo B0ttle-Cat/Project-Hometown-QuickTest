@@ -202,7 +202,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 	}
 
 	[SerializeField]
-	private ElementList<ControlBase> controlBases;
+	private ElementList<SectorObject> sectors;
 	[SerializeField]
 	private ElementList<Faction> factions;
 	[SerializeField]
@@ -212,7 +212,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 	[SerializeField]
 	private ElementList<IStrategyElement> others;
 	private Dictionary<Type, ElementList> _elementLists;
-	public List<ControlBase> ControlBaseList => controlBases?.List ?? new List<ControlBase>();
+	public List<SectorObject> SectorList => sectors?.List ?? new List<SectorObject>();
 	public List<Faction> FactionList => factions?.List ?? new List<Faction>();
 	public List<UnitObject> UnitList => units?.List ?? new List<UnitObject>();
 	public List<SkillObject> SkillList => skills?.List ?? new List<SkillObject>();
@@ -225,7 +225,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 
 	private IEnumerable<IList> GetAllLists()
 	{
-		yield return ControlBaseList;
+		yield return SectorList;
 		yield return FactionList;
 		yield return UnitList;
 		yield return SkillList;
@@ -234,7 +234,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 	internal void Init()
 	{
 	//	_listenerMap = new Dictionary<Delegate, Action<IList>>();
-		InitControlBase();
+		InitSector();
 		InitFaction();
 		InitUnit();
 		InitSkill();
@@ -244,7 +244,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 	{
 		_listCache ??= new Dictionary<Type, IList>
 		{
-			[typeof(ControlBase)] = ControlBaseList,
+			[typeof(SectorObject)] = SectorList,
 			[typeof(Faction)] = FactionList,
 			[typeof(UnitObject)] = UnitList,
 			[typeof(SkillObject)] = SkillList,
@@ -255,7 +255,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 	{
 		_elementLists = new Dictionary<Type, ElementList>
 		{
-			[typeof(ControlBase)] = controlBases,
+			[typeof(SectorObject)] = sectors,
 			[typeof(Faction)] = factions,
 			[typeof(UnitObject)] = units,
 			[typeof(SkillObject)] = skills,
@@ -263,14 +263,14 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 		};
 	}
 
-	public void InitControlBase() => (controlBases ??= new ElementList<ControlBase>()).Init(32);
+	public void InitSector() => (sectors ??= new ElementList<SectorObject>()).Init(32);
 	public void InitFaction() => (factions ??= new ElementList<Faction>()).Init(8);
 	public void InitUnit() => (units ??= new ElementList<UnitObject>()).Init(512);
 	public void InitSkill() => (skills ??= new ElementList<SkillObject>()).Init(512);
 	public void InitOther() => (others ??= new ElementList<IStrategyElement>()).Init(64);
 	public void Dispose()
 	{
-		controlBases?.Dispose();
+		sectors?.Dispose();
 		factions?.Dispose();
 		units?.Dispose();
 		skills?.Dispose();
@@ -286,7 +286,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 	{
 		_ = elements switch
 		{
-			IEnumerable<ControlBase> item => controlBases.AddElement(item),
+			IEnumerable<SectorObject> item => sectors.AddElement(item),
 			IEnumerable<Faction> item => factions.AddElement(item),
 			IEnumerable<UnitObject> item => units.AddElement(item),
 			IEnumerable<SkillObject> item => skills.AddElement(item),
@@ -304,7 +304,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 	{
 		_ = element switch
 		{
-			ControlBase item => controlBases.AddElement(item),
+			SectorObject item => sectors.AddElement(item),
 			Faction item => factions.AddElement(item),
 			UnitObject item => units.AddElement(item),
 			SkillObject item => skills.AddElement(item),
@@ -315,7 +315,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 	{
 		_ = element switch
 		{
-			ControlBase item => controlBases.RemoveElement(item),
+			SectorObject item => sectors.RemoveElement(item),
 			Faction item => factions.RemoveElement(item),
 			UnitObject item => units.RemoveElement(item),
 			SkillObject item => skills.RemoveElement(item),
@@ -373,19 +373,19 @@ public partial class StrategyElementCollector // Finder
 	}
 	#endregion
 
-	#region ControlBase
-	public bool TryFindControlBase(string factionName, out ControlBase find)
+	#region Sector
+	public bool TryFindSector(string factionName, out SectorObject find)
 	{
 		if (string.IsNullOrWhiteSpace(factionName))
 		{
 			find = null;
 			return false;
 		}
-		return TryFindElement<ControlBase>(f => f.ControlBaseName == factionName, out find);
+		return TryFindElement<SectorObject>(f => f.SectorName == factionName, out find);
 	}
-	public ControlBase FindControlBase(string factionName)
+	public SectorObject FindSector(string factionName)
 	{
-		return FindElement<ControlBase>(f => f.ControlBaseName == factionName);
+		return FindElement<SectorObject>(f => f.SectorName == factionName);
 	}
 	#endregion
 
@@ -509,11 +509,11 @@ public partial class StrategyElementCollector // ForEach
 		=> ForEachInternal<T>(GetListByType(typeof(T)), funcWithIndex: func);
 	#endregion
 
-	#region ControlBase
-	public void ForEachControlBase(Action<ControlBase> func) => ForEach(func);
-	public void ForEachControlBase(Func<ControlBase, bool> func) => ForEach(func);
-	public void ForEachControlBase(Action<ControlBase, ForeachIndex> func) => ForEach(func);
-	public void ForEachControlBase(Func<ControlBase, ForeachIndex, bool> func) => ForEach(func);
+	#region Sector
+	public void ForEachSector(Action<SectorObject> func) => ForEach(func);
+	public void ForEachSector(Func<SectorObject, bool> func) => ForEach(func);
+	public void ForEachSector(Action<SectorObject, ForeachIndex> func) => ForEach(func);
+	public void ForEachSector(Func<SectorObject, ForeachIndex, bool> func) => ForEach(func);
 	#endregion
 
 	#region Faction

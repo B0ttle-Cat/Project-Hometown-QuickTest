@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4751203609396836704}
   - component: {fileID: 6182438146015752348}
   m_Layer: 0
-  m_Name: ControlBase
+  m_Name: SectorObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

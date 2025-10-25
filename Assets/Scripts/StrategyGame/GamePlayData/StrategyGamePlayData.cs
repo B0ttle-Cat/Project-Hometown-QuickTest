@@ -247,7 +247,7 @@ public partial class StrategyGamePlayData // Common Game Play Data
 	{
 		public StrategyDetailsPanelUI.StrategyDetailsPanelType openStartType;
 
-		public ObserverString selectControlBase;
+		public ObserverString selectSector;
 		public ObserverInt selectUnitID;
 	}
 }
@@ -286,7 +286,7 @@ public partial class StrategyGamePlayData // Mission Data
 		{
 			Kill,
 			Protect,
-			ControlBase_Count,
+			Sector_Count,
 			CaptureAndSecureBase,
 		}
 		public enum ResultTyoe
@@ -309,7 +309,7 @@ public partial class StrategyGamePlayData // Mission Data
 public partial class StrategyGamePlayData // Play Content Data
 {
 	[Serializable]
-	public class ControlBaseData
+	public class SectorData
 	{
 		[Serializable]
 		public class Profile : GamePlayData<Profile.Data>
@@ -318,7 +318,7 @@ public partial class StrategyGamePlayData // Play Content Data
 			[Serializable]
 			public struct Data : IDataCopy<Data>
 			{
-				public string controlBaseName;
+				public string sectorName;
 				// 환경 요소
 				public string environmentalKey;
 				// 적용되어 있는 각종 효과
@@ -333,7 +333,7 @@ public partial class StrategyGamePlayData // Play Content Data
 				{
 					return new Data()
 					{
-						controlBaseName = controlBaseName,
+						sectorName = sectorName,
 						environmentalKey = environmentalKey,
 						effect = effect
 					};
@@ -374,7 +374,7 @@ public partial class StrategyGamePlayData // Play Content Data
 				public StatsList stats;
 				public Data(StatsList stats = null) : this()
 				{
-					this.stats = stats ?? StatsList.ControlBaseStatsList;
+					this.stats = stats ?? StatsList.SectorStatsList;
 				}
 				public int GetValue(StatsType statsType)
 				{
@@ -549,45 +549,45 @@ public partial class StrategyGamePlayData // Play Content Data
 				public int skillLevel;
 			}
 		}
-		public class ConnectedControlBase
+		public class ConnectedSector
 		{
 			[Header("State")]
 			[SerializeField]
-			private string lastEnterControlBaseName;
+			private string lastEnterSectorName;
 			[SerializeField]
-			private string currEnterControlBaseName;
-			public string ConnectControlBaseName
+			private string currEnterSectorName;
+			public string ConnectSectorName
 			{
 				get
 				{
-					if (string.IsNullOrWhiteSpace(currEnterControlBaseName))
+					if (string.IsNullOrWhiteSpace(currEnterSectorName))
 					{
-						if (string.IsNullOrWhiteSpace(lastEnterControlBaseName))
+						if (string.IsNullOrWhiteSpace(lastEnterSectorName))
 						{
 							return null;
 						}
-						return lastEnterControlBaseName;
+						return lastEnterSectorName;
 					}
-					return currEnterControlBaseName;
+					return currEnterSectorName;
 				}
 				set
 				{
-					if (string.IsNullOrWhiteSpace(currEnterControlBaseName))
+					if (string.IsNullOrWhiteSpace(currEnterSectorName))
 					{
-						lastEnterControlBaseName = currEnterControlBaseName = value;
+						lastEnterSectorName = currEnterSectorName = value;
 					}
 					else
 					{
-						lastEnterControlBaseName = currEnterControlBaseName;
-						currEnterControlBaseName = value;
+						lastEnterSectorName = currEnterSectorName;
+						currEnterSectorName = value;
 					}
 				}
 			}
-			public ControlBase ConnectControlBase
+			public SectorObject ConnectSector
 			{
 				get
 				{
-					if (StrategyManager.Collector.TryFindControlBase(ConnectControlBaseName, out var cb))
+					if (StrategyManager.Collector.TryFindSector(ConnectSectorName, out var cb))
 					{
 						return cb;
 					}
@@ -852,7 +852,7 @@ public partial class StrategyGamePlayData // Play Content Data
 			new StatsValue(StatsType.유닛_점령점수),
 			new StatsValue(StatsType.None)
 			);
-		public static StatsList ControlBaseStatsList => new StatsList(
+		public static StatsList SectorStatsList => new StatsList(
 				new StatsValue(StatsType.거점_인력_현재보유량, 50),
 				new StatsValue(StatsType.거점_물자_현재보유량, 50),
 				new StatsValue(StatsType.거점_전력_현재보유량, 50),

@@ -23,7 +23,7 @@ public partial class StrategyMissionTree : MonoBehaviour, IDisposable
 			{
 				MissionType.Kill => new Kill_Mission(),
 				MissionType.Protect => new Protect_Mission(),
-				MissionType.ControlBase_Count => new ControlBase_Count_Mission(),
+				MissionType.Sector_Count => new Sector_Count_Mission(),
 				MissionType.CaptureAndSecureBase  => new CaptureAndSecureBase_Mission(),
 				_ => null,
 			};
@@ -481,9 +481,9 @@ public partial class StrategyMissionTree : MonoBehaviour, IDisposable
 				missionType = MissionTreeData.MissionType.Protect;
 				return true;
 			}
-			else if (keyword.Equals(nameof(MissionTreeData.MissionType.ControlBase_Count), StringComparison.OrdinalIgnoreCase))
+			else if (keyword.Equals(nameof(MissionTreeData.MissionType.Sector_Count), StringComparison.OrdinalIgnoreCase))
 			{
-				missionType = MissionTreeData.MissionType.ControlBase_Count;
+				missionType = MissionTreeData.MissionType.Sector_Count;
 				return true;
 			}
 			else if (keyword.Equals(nameof(MissionTreeData.MissionType.CaptureAndSecureBase), StringComparison.OrdinalIgnoreCase))

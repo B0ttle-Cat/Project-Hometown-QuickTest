@@ -8,12 +8,12 @@ public class UnitObjectTrigger : MonoBehaviour
 	private UnitObject thisUnit;
 	private HashSet<Collider> colliderList;
 
-	private List<ControlBase> enterControlBaseList;
+	private List<SectorObject> enterSectorList;
 	private List<UnitObject> closedUnitList;
 	private List<SkillObject> enterSkillList;
 
 	public HashSet<Collider> ColliderList => colliderList;
-	public List<ControlBase> EnterControlBaseList => enterControlBaseList;
+	public List<SectorObject> EnterSectorList => enterSectorList;
 	public List<UnitObject> ClosedUnitList => closedUnitList;
 	public List<SkillObject> EnterSkillList => enterSkillList;
 
@@ -23,7 +23,7 @@ public class UnitObjectTrigger : MonoBehaviour
 		thisUnit = GetComponentInParent<UnitObject>();
         
 		colliderList = new HashSet<Collider>();
-		enterControlBaseList = new List<ControlBase>();
+		enterSectorList = new List<SectorObject>();
 		closedUnitList = new List<UnitObject>();
 		enterSkillList = new List<SkillObject>();
 	}
@@ -32,12 +32,12 @@ public class UnitObjectTrigger : MonoBehaviour
 		thisUnit = null;
 		
 		ClearList(colliderList);
-		ClearList(enterControlBaseList);
+		ClearList(enterSectorList);
 		ClearList(closedUnitList);
 		ClearList(enterSkillList);
 
 		colliderList = null;
-		enterControlBaseList = null;
+		enterSectorList = null;
 		closedUnitList = null;
 		enterSkillList = null;
 
@@ -55,7 +55,7 @@ public class UnitObjectTrigger : MonoBehaviour
 			IStrategyElement element = other.gameObject.GetComponentInParent<IStrategyElement>();
 			_ = element switch
 			{
-				ControlBase item => OnEnter(item),
+				SectorObject item => OnEnter(item),
 				UnitObject item => OnEnter(item),
 				SkillObject item => OnEnter(item),
 				_ => OnEnter(element)
@@ -69,7 +69,7 @@ public class UnitObjectTrigger : MonoBehaviour
 			IStrategyElement element = other.gameObject.GetComponentInParent<IStrategyElement>();
 			_ = element switch
 			{
-				ControlBase item => OnExit(item),
+				SectorObject item => OnExit(item),
 				UnitObject item => OnExit(item),
 				SkillObject item => OnExit(item),
 				_ => OnExit(element)
@@ -77,38 +77,38 @@ public class UnitObjectTrigger : MonoBehaviour
 		}
     }
 
-    public bool OnEnter(ControlBase cb)
+    public bool OnEnter(SectorObject sector)
 	{
-		enterControlBaseList.Add(cb);
+		enterSectorList.Add(sector);
 		return true;
 	}
-	public bool OnEnter(UnitObject cb)
+	public bool OnEnter(UnitObject unit)
 	{
 
 		return true;
 	}
-	public bool OnEnter(SkillObject cb)
+	public bool OnEnter(SkillObject skill)
 	{
 		return true;
 	}
-	public bool OnEnter(IStrategyElement cb)
+	public bool OnEnter(IStrategyElement other)
 	{
 		return true;
 	}
 
-	public bool OnExit(ControlBase cb)
+	public bool OnExit(SectorObject sector)
 	{
-		return enterControlBaseList.Remove(cb);
+		return enterSectorList.Remove(sector);
 	}
-	public bool OnExit(UnitObject cb)
-	{
-		return true;
-	}
-	public bool OnExit(SkillObject cb)
+	public bool OnExit(UnitObject unit)
 	{
 		return true;
 	}
-	public bool OnExit(IStrategyElement cb)
+	public bool OnExit(SkillObject skill)
+	{
+		return true;
+	}
+	public bool OnExit(IStrategyElement other)
 	{
 		return true;
 	}

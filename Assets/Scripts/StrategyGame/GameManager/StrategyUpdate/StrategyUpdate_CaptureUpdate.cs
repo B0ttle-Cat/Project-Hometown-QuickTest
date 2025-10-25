@@ -17,7 +17,7 @@ public partial class StrategyUpdate
         protected override void Start()
 		{
 			UpdateList = new List<CaptureUpdate>();
-			var list = StrategyManager.Collector.ControlBaseList;
+			var list = StrategyManager.Collector.SectorList;
 			int length = list.Count;
 			for (int i = 0 ; i < length ; i++)
 			{
@@ -34,10 +34,10 @@ public partial class StrategyUpdate
 			for (int i = 0 ; i < length ; i++)
 			{
                 CaptureUpdate update = UpdateList[i];
-				ControlBase controlBase = update.controlBase;
-				if (controlBase == null || !controlBase.isActiveAndEnabled) continue;
+				SectorObject sector = update.sector;
+				if (sector == null || !sector.isActiveAndEnabled) continue;
 
-				var captureData = controlBase.CaptureData;
+				var captureData = sector.CaptureData;
 
 				int oldFaction = update.ownerFactionID;
                 float oldProgress = update.captureProgress;
@@ -56,7 +56,7 @@ public partial class StrategyUpdate
 					var data = captureData;
                 	data.captureFactionID = nextFaction;
                 	data.captureProgress = nextProgress;
-					controlBase.Capture.SetData(data);
+					sector.Capture.SetData(data);
                 }
 				if(changeProgress)
 				{
@@ -67,9 +67,9 @@ public partial class StrategyUpdate
 
 		public class CaptureUpdate : UpdateLogic
 		{
-			public ControlBase controlBase;
-			public ControlBaseTrigger controlBaseTrigger;
-			public ControlBaseColor controlBaseColor;
+			public SectorObject sector;
+			public SectorTrigger sectorTrigger;
+			public SectorColor sectorColor;
 			public float captureTime;
 
 			public int ownerFactionID;		// 점령 세력
@@ -143,13 +143,13 @@ public partial class StrategyUpdate
 				public int faactionID;
 				public float progress;
 			}
-			public CaptureUpdate(StrategyUpdateSubClass<CaptureUpdate> thisSubClass, ControlBase cb) : base(thisSubClass)
+			public CaptureUpdate(StrategyUpdateSubClass<CaptureUpdate> thisSubClass, SectorObject sector) : base(thisSubClass)
 			{
-				this.controlBase = cb;
-				this.controlBaseTrigger = cb.GetComponentInChildren<ControlBaseTrigger>();
-				this.controlBaseColor = cb.GetComponentInChildren<ControlBaseColor>();
+				this.sector = sector;
+				this.sectorTrigger = sector.GetComponentInChildren<SectorTrigger>();
+				this.sectorColor = sector.GetComponentInChildren<SectorColor>();
 
-				var data = cb.CaptureData;
+				var data = sector.CaptureData;
 
 				this.captureTime = Mathf.Max(data.captureTime, 1f);
 
@@ -165,8 +165,8 @@ public partial class StrategyUpdate
 
 			protected override void OnDispose()
 			{
-				controlBase = null;
-				controlBaseTrigger = null;
+				sector = null;
+				sectorTrigger = null;
 				if (factionProgress != null)
 				{
 					factionProgress.Dispose();
@@ -303,7 +303,7 @@ public partial class StrategyUpdate
 			{
 				var dict = new Dictionary<int,int>();
 				int total = 0;
-				foreach (var tag in controlBaseTrigger.CaptureTagList)
+				foreach (var tag in sectorTrigger.CaptureTagList)
 				{
 					if (!dict.ContainsKey(tag.factionID)) dict[tag.factionID] = 0;
 					dict[tag.factionID] += Mathf.Max(0, tag.pointValue);
@@ -316,11 +316,11 @@ public partial class StrategyUpdate
 			{
 				if(StrategyManager.Collector.TryFindFaction(colorFaction, out var faction))
 				{
-					controlBaseColor.UpdateColor(faction, colorProgress);
+					sectorColor.UpdateColor(faction, colorProgress);
 				}
 				else
 				{
-					controlBaseColor.UpdateColor(null, 0);
+					sectorColor.UpdateColor(null, 0);
 				}
 			}
 		}

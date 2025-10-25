@@ -10,7 +10,7 @@ public partial class StrategyUpdate
         protected override void Start()
         {
 			updateList = new List<EndedResourcesSupply>();
-			var list = StrategyManager.Collector.ControlBaseList;
+			var list = StrategyManager.Collector.SectorList;
 			int length = list.Count;
 			for (int i = 0 ; i < length ; i++)
 			{
@@ -34,10 +34,10 @@ public partial class StrategyUpdate
 
         public class EndedResourcesSupply : UpdateLogic
         {
-			private ControlBase cb;
-			public EndedResourcesSupply(StrategyUpdateSubClass<EndedResourcesSupply> thisSubClass, ControlBase cb) :base(thisSubClass)
+			private SectorObject sector;
+			public EndedResourcesSupply(StrategyUpdateSubClass<EndedResourcesSupply> thisSubClass, SectorObject sector) :base(thisSubClass)
 			{
-				this.cb = cb;
+				this.sector = sector;
 			}
 
 			protected override void OnDispose()
@@ -46,12 +46,12 @@ public partial class StrategyUpdate
 
 			protected override void OnUpdate(in float deltaTime)
             {
-				if (cb == null || !cb.isActiveAndEnabled) return;
+				if (sector == null || !sector.isActiveAndEnabled) return;
 
-				string key = $"{cb.ControlBaseName}_{UpdateLogicSort.거점_자원갱신이벤트}";
+				string key = $"{sector.SectorName}_{UpdateLogicSort.거점_자원갱신이벤트}";
 				if (!TempData.TryGetValue<bool>(key, out var isUpdate) || !isUpdate) return;
 
-				cb.Stats.Invoke();
+				sector.Stats.Invoke();
 			}
         }
     }

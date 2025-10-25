@@ -1,4 +1,4 @@
-%YAML 1.1
+﻿%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &11400000
 MonoBehaviour:
@@ -39,9 +39,9 @@ MonoBehaviour:
       maxMaterialPoint: 100
       maxElectricPoint: 100
       defaultUnitPrefab: {fileID: 2460545361625872358, guid: 47ee3d89ec6dbf842b177734ea94c8d2, type: 3}
-    controlBaseDatas:
+    sectorDatas:
     - profileData:
-        controlBaseName: ControlBase_00
+        sectorName: Sector_00
         environmentalKey: 
         effect: 0
       mainStatsData:
@@ -98,7 +98,7 @@ MonoBehaviour:
         supplyPoint: 0
         facilitiesPoint: 0
     - profileData:
-        controlBaseName: ControlBase_01
+        sectorName: Sector_01
         environmentalKey: 
         effect: 0
       mainStatsData:
@@ -155,7 +155,7 @@ MonoBehaviour:
         supplyPoint: 0
         facilitiesPoint: 0
     - profileData:
-        controlBaseName: ControlBase_02
+        sectorName: Sector_02
         environmentalKey: 
         effect: 0
       mainStatsData:
@@ -212,7 +212,7 @@ MonoBehaviour:
         supplyPoint: 0
         facilitiesPoint: 0
     - profileData:
-        controlBaseName: ControlBase_03
+        sectorName: Sector_03
         environmentalKey: 
         effect: 0
       mainStatsData:
@@ -269,7 +269,7 @@ MonoBehaviour:
         supplyPoint: 0
         facilitiesPoint: 0
     - profileData:
-        controlBaseName: ControlBase_04
+        sectorName: Sector_04
         environmentalKey: 
         effect: 0
       mainStatsData:
@@ -337,9 +337,9 @@ MonoBehaviour:
       position: {x: 0, y: 0, z: 10}
       rotation: {x: 0, y: 0, z: 0}
     captureDatas:
-    - captureControlBase: ControlBase_00
+    - captureSector: Sector_00
       captureFaction: Faction_00
       captureProgress: 1
-    - captureControlBase: ControlBase_02
+    - captureSector: Sector_02
       captureFaction: Faction_01
       captureProgress: 1

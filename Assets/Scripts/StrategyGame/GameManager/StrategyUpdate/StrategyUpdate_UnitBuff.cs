@@ -65,7 +65,7 @@ public partial class StrategyUpdate
 		{
 			private UnitObject unit;
 
-			private readonly StatsType[] ControlBaseBuffType = new StatsType[]
+			private readonly StatsType[] SectorBuffType = new StatsType[]
 			{
 
 			};
@@ -85,26 +85,26 @@ public partial class StrategyUpdate
 			{
 				if (unit == null || !unit.isActiveAndEnabled) return;
 
-				//string cbBugffKey = $"ControlBaseUnitBuff_{captureTag.ConnectControlBaseName}";
+				//string cbBugffKey = $"SectorUnitBuff_{captureTag.ConnectSectorName}";
 				//if(!TempData.TryGetValue(cbBugffKey, out List<StatsValue> cbBuffList))
 				//{
-				//	cbBuffList = GetControlBaseBuffState(captureTag.ConnectControlBase);
+				//	cbBuffList = GetSectorBuffState(captureTag.ConnectSector);
 				//}
 			}
 
-			private List<StatsValue> GetControlBaseBuffState(ControlBase cb)
+			private List<StatsValue> GetSectorBuffState(SectorObject sector)
 			{
-				if (cb == null) return new List<StatsValue>();
+				if (sector == null) return new List<StatsValue>();
 
-				StatsList MainStatsList = cb.MainStatsList;
-				StatsGroup FacilitiesBuffGroup = cb.FacilitiesBuffGroup;
-				StatsGroup supportBuffGroup = cb.SupportBuffGroup;
+				StatsList MainStatsList = sector.MainStatsList;
+				StatsGroup FacilitiesBuffGroup = sector.FacilitiesBuffGroup;
+				StatsGroup supportBuffGroup = sector.SupportBuffGroup;
 
-				var mainList = MainStatsList.GetValueList(ControlBaseBuffType);
-				var facilitiesList = FacilitiesBuffGroup.GetValueList(ControlBaseBuffType);
-				var supportList = supportBuffGroup.GetValueList(ControlBaseBuffType);
+				var mainList = MainStatsList.GetValueList(SectorBuffType);
+				var facilitiesList = FacilitiesBuffGroup.GetValueList(SectorBuffType);
+				var supportList = supportBuffGroup.GetValueList(SectorBuffType);
 
-				int length = ControlBaseBuffType.Length;
+				int length = SectorBuffType.Length;
 				var totalList = new List<StatsValue>(length);
 				for (int i = 0 ; i < length ; i++)
 				{

@@ -11,10 +11,10 @@ using UnityEngine.UI;
 
 using static StrategyGamePlayData;
 
-public partial class StrategyDetailsPanelUI // ControlBaseData UI
+public partial class StrategyDetailsPanelUI // SectorData UI
 {
 	[Serializable]
-	public struct ControlBaseUIPrefab
+	public struct SectorUIPrefab
 	{
 		public RectTransform info;
 		public RectTransform support;
@@ -22,20 +22,20 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 		public RectTransform garrison;
 	}
 	[FoldoutGroup("거점 정보 UI"), InlineProperty, HideLabel]
-	public ControlBaseUIPrefab controlBaseUIPrefab;
+	public SectorUIPrefab sectorUIPrefab;
 
-	public class ControlBaseUIStruct : StrategyContentController
+	public class SectorUIStruct : StrategyContentController
 	{
-		public ControlBaseUIStruct(StrategyDetailsPanelUI component) : base(component) { }
-		ControlBaseUIPrefab UIPrefab => ThisComponent.controlBaseUIPrefab;
+		public SectorUIStruct(StrategyDetailsPanelUI component) : base(component) { }
+		SectorUIPrefab UIPrefab => ThisComponent.sectorUIPrefab;
 
 		public override void OnShow()
 		{
 			ThisComponent.ContentTitleText("거점");
-			AddTabAndContnet_Info(initContent == StrategyDetailsPanelType.ControlBase_Info);
-			AddTabAndContnet_Support(initContent == StrategyDetailsPanelType.ControlBase_Support);
-			AddTabAndContnet_Facilities(initContent == StrategyDetailsPanelType.ControlBase_Facilities);
-			AddTabAndContnet_Garrison(initContent == StrategyDetailsPanelType.ControlBase_Garrison);
+			AddTabAndContnet_Info(initContent == StrategyDetailsPanelType.Sector_Info);
+			AddTabAndContnet_Support(initContent == StrategyDetailsPanelType.Sector_Support);
+			AddTabAndContnet_Facilities(initContent == StrategyDetailsPanelType.Sector_Facilities);
+			AddTabAndContnet_Garrison(initContent == StrategyDetailsPanelType.Sector_Garrison);
 		}
 		public override void OnHide()
 		{
@@ -45,34 +45,34 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 		// 선택한 거점의 기본 정보 보기
 		private void AddTabAndContnet_Info(bool isOn = false)
 		{
-			ThisComponent.AddTabAndContnet<ControlBase_Info>("거점 정보", UIPrefab.info, this, isOn);
+			ThisComponent.AddTabAndContnet<Sector_Info>("거점 정보", UIPrefab.info, this, isOn);
 		}
 		private void AddTabAndContnet_Support(bool isOn = false)
 		{
-			ThisComponent.AddTabAndContnet<ControlBase_Support>("지원 정책", UIPrefab.support, this, isOn);
+			ThisComponent.AddTabAndContnet<Sector_Support>("지원 정책", UIPrefab.support, this, isOn);
 		}
 		private void AddTabAndContnet_Facilities(bool isOn = false)
 		{
-			ThisComponent.AddTabAndContnet<ControlBase_Facilities>("설치 시설", UIPrefab.facilities, this, isOn);
+			ThisComponent.AddTabAndContnet<Sector_Facilities>("설치 시설", UIPrefab.facilities, this, isOn);
 		}
 		private void AddTabAndContnet_Garrison(bool isOn = false)
 		{
-			ThisComponent.AddTabAndContnet<ControlBase_Garrison>("방어 병력", UIPrefab.garrison, this, isOn);
+			ThisComponent.AddTabAndContnet<Sector_Garrison>("방어 병력", UIPrefab.garrison, this, isOn);
 		}
 	}
 
-	public class ControlBase_Info : StrategyViewController
+	public class Sector_Info : StrategyViewController
 	{
 		private IKeyPairChain pairChain;
-		private ControlBase selectControlBase;
+		private SectorObject selectSector;
 
-		private Action<string> onSelectControlBase;
+		private Action<string> onSelectSector;
 
-		private Action<ControlBaseData.Profile.Data>       onChangeProfileData;
-		private Action<ControlBaseData.Capture.Data>       onChangeCaptureData;
-		private Action<ControlBaseData.MainStats.Data>     onChangeStatsData;
-		private Action<ControlBaseData.Facilities.Data>    onChangeFacilitiesData;
-		private Action<ControlBaseData.Support.Data>       onChangeSupportData;
+		private Action<SectorData.Profile.Data>       onChangeProfileData;
+		private Action<SectorData.Capture.Data>       onChangeCaptureData;
+		private Action<SectorData.MainStats.Data>     onChangeStatsData;
+		private Action<SectorData.Facilities.Data>    onChangeFacilitiesData;
+		private Action<SectorData.Support.Data>       onChangeSupportData;
 
 		private Dictionary<StatsType, LabelTextUI> detailStatsItemList;
 		private Dictionary<StatsType, LabelTextUI> facilitiesStateItemList;
@@ -86,8 +86,8 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 			}
 
 			// 거점 변경 변경
-			onSelectControlBase = SelectControlBase;
-			StrategyManager.GamePlayData.selectControlBase.AddLateListener(onSelectControlBase);
+			onSelectSector = SelectSector;
+			StrategyManager.GamePlayData.selectSector.AddLateListener(onSelectSector);
 
 			// 항목 변경 이벤트
 			onChangeProfileData = OnChangeProfileData;
@@ -102,42 +102,42 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 			supportStatsItemList ??= new();
 
 			// 실행
-			SelectControlBase(StrategyManager.GamePlayData.selectControlBase.Value);
-			void SelectControlBase(string controlBase)
+			SelectSector(StrategyManager.GamePlayData.selectSector.Value);
+			void SelectSector(string sector)
 			{
-				if (selectControlBase != null)
+				if (selectSector != null)
 				{
-					selectControlBase.Profile.RemoveListener(onChangeProfileData);
-					selectControlBase.Capture.RemoveListener(onChangeCaptureData);
-					selectControlBase.Stats.RemoveListener(onChangeStatsData);
-					selectControlBase.Facilities.RemoveListener(onChangeFacilitiesData);
-					selectControlBase.Support.RemoveListener(onChangeSupportData);
-					selectControlBase = null;
+					selectSector.Profile.RemoveListener(onChangeProfileData);
+					selectSector.Capture.RemoveListener(onChangeCaptureData);
+					selectSector.Stats.RemoveListener(onChangeStatsData);
+					selectSector.Facilities.RemoveListener(onChangeFacilitiesData);
+					selectSector.Support.RemoveListener(onChangeSupportData);
+					selectSector = null;
 				}
 				DeleteStatsItemList(detailStatsItemList);
 				DeleteStatsItemList(facilitiesStateItemList);
 				DeleteStatsItemList(supportStatsItemList);
 
-				if (!StrategyManager.Collector.TryFindControlBase(controlBase, out selectControlBase))
+				if (!StrategyManager.Collector.TryFindSector(sector, out selectSector))
 				{
 					DeInitEvent();
 					return;
 				}
 
-				selectControlBase.Profile.AddLateListener(onChangeProfileData);
-				selectControlBase.Capture.AddLateListener(onChangeCaptureData);
-				selectControlBase.Stats.AddLateListener(onChangeStatsData);
-				selectControlBase.Facilities.AddLateListener(onChangeFacilitiesData);
-				selectControlBase.Support.AddLateListener(onChangeSupportData);
+				selectSector.Profile.AddLateListener(onChangeProfileData);
+				selectSector.Capture.AddLateListener(onChangeCaptureData);
+				selectSector.Stats.AddLateListener(onChangeStatsData);
+				selectSector.Facilities.AddLateListener(onChangeFacilitiesData);
+				selectSector.Support.AddLateListener(onChangeSupportData);
 
-				onChangeProfileData.Invoke(selectControlBase.ProfileData);
-				onChangeCaptureData.Invoke(selectControlBase.CaptureData);
-				onChangeStatsData.Invoke(selectControlBase.StatsData);
-				onChangeFacilitiesData.Invoke(selectControlBase.FacilitiesData);
-				onChangeSupportData.Invoke(selectControlBase.SupportData);
+				onChangeProfileData.Invoke(selectSector.ProfileData);
+				onChangeCaptureData.Invoke(selectSector.CaptureData);
+				onChangeStatsData.Invoke(selectSector.StatsData);
+				onChangeFacilitiesData.Invoke(selectSector.FacilitiesData);
+				onChangeSupportData.Invoke(selectSector.SupportData);
 			}
 
-			void OnChangeProfileData(ControlBaseData.Profile.Data data)
+			void OnChangeProfileData(SectorData.Profile.Data data)
 			{
 				pairChain
 					.FindPairChain<Image>("MainImage", out var mainImage)
@@ -151,14 +151,14 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 				}
 				if (nameText != null)
 				{
-					nameText.text = data.controlBaseName;
+					nameText.text = data.sectorName;
 				}
 				if (effectText != null)
 				{
 					effectText.text = data.EffectString();
 				}
 			}
-			void OnChangeCaptureData(ControlBaseData.Capture.Data data)
+			void OnChangeCaptureData(SectorData.Capture.Data data)
 			{
 				pairChain
 				  .FindPairChain<Text>("CaptureText", out var captureText)
@@ -176,46 +176,46 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 					}
 				}
 			}
-			void OnChangeStatsData(ControlBaseData.MainStats.Data data)
+			void OnChangeStatsData(SectorData.MainStats.Data data)
 			{
 				UpdateFillRectUI();
-				UpdateStatePanel("Stats KeyValue", "Base Stats", selectControlBase.MainStatsList?.GetValueList());
+				UpdateStatePanel("Stats KeyValue", "Base Stats", selectSector.MainStatsList?.GetValueList());
 			}
-			void OnChangeFacilitiesData(ControlBaseData.Facilities.Data data)
+			void OnChangeFacilitiesData(SectorData.Facilities.Data data)
 			{
 				UpdateFillRectUI();
-				UpdateStatePanel("Stats KeyValue", "Facilities Stats", selectControlBase.FacilitiesBuffGroup?.GetValueList());
+				UpdateStatePanel("Stats KeyValue", "Facilities Stats", selectSector.FacilitiesBuffGroup?.GetValueList());
 			}
-			void OnChangeSupportData(ControlBaseData.Support.Data data)
+			void OnChangeSupportData(SectorData.Support.Data data)
 			{
 				UpdateFillRectUI();
-				UpdateStatePanel("Stats KeyValue", "Support Stats", selectControlBase.supportStatsGroup?.GetValueList());
+				UpdateStatePanel("Stats KeyValue", "Support Stats", selectSector.supportStatsGroup?.GetValueList());
 			}
 
 			void UpdateFillRectUI()
 			{
-				SetFillRectUI("Fill Durability", selectControlBase.GetDurability(), "방어벽 없음");
-				SetFillRectUI("Fill Garrison", selectControlBase.GetGarrison(), "병력 보충 불가");
-				SetFillRectUI("Fill Material", selectControlBase.GetMaterial(), "물자 보충 불가");
-				SetFillRectUI("Fill Electric", selectControlBase.GetElectric(), "전력 보충 불가");
+				SetFillRectUI("Fill Durability", selectSector.GetDurability(), "방어벽 없음");
+				SetFillRectUI("Fill Garrison", selectSector.GetGarrison(), "병력 보충 불가");
+				SetFillRectUI("Fill Material", selectSector.GetMaterial(), "물자 보충 불가");
+				SetFillRectUI("Fill Electric", selectSector.GetElectric(), "전력 보충 불가");
 			}
 			void UpdateFillRectUI_Key(StatsType key)
 			{
 				if (key == StrategyGamePlayData.StatsType.거점_최대내구도 || key == StrategyGamePlayData.StatsType.거점_현재내구도)
 				{
-					SetFillRectUI("Fill Durability",selectControlBase.GetDurability(),"방어벽 없음");
+					SetFillRectUI("Fill Durability",selectSector.GetDurability(),"방어벽 없음");
 				}
 				else if (key == StrategyGamePlayData.StatsType.거점_인력_최대보유량 || key == StrategyGamePlayData.StatsType.거점_인력_현재보유량)
 				{
-					SetFillRectUI("Fill Garrison",selectControlBase.GetGarrison(),"병력 보충 불가");
+					SetFillRectUI("Fill Garrison",selectSector.GetGarrison(),"병력 보충 불가");
 				}
 				else if (key == StrategyGamePlayData.StatsType.거점_물자_최대보유량 || key == StrategyGamePlayData.StatsType.거점_물자_현재보유량)
 				{
-					SetFillRectUI("Fill Material",selectControlBase.GetMaterial(),"물자 보충 불가");
+					SetFillRectUI("Fill Material",selectSector.GetMaterial(),"물자 보충 불가");
 				}
 				else if (key == StrategyGamePlayData.StatsType.거점_전력_최대보유량 || key == StrategyGamePlayData.StatsType.거점_전력_현재보유량)
 				{
-					SetFillRectUI("Fill Electric",selectControlBase.GetElectric(),"전력 보충 불가");
+					SetFillRectUI("Fill Electric",selectSector.GetElectric(),"전력 보충 불가");
 				}
 			}
 			void UpdateStatePanel(string stateItemName, string statePanelName, List<StatsValue> list)
@@ -302,44 +302,44 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 		{
 			DeInitEvent();
 			pairChain = null;
-			selectControlBase = null;
+			selectSector = null;
 		}
 		public override void OnDispose()
 		{
 			DeInitEvent();
 			pairChain = null;
-			selectControlBase = null;
+			selectSector = null;
 		}
 
 		private void DeInitEvent()
 		{
-			if (onSelectControlBase != null)
+			if (onSelectSector != null)
 			{
-				StrategyManager.GamePlayData.selectControlBase.RemoveListener(onSelectControlBase);
+				StrategyManager.GamePlayData.selectSector.RemoveListener(onSelectSector);
 			}
 
-			if (selectControlBase != null)
+			if (selectSector != null)
 			{
-				selectControlBase.Profile.RemoveListener(onChangeProfileData);
-				selectControlBase.Capture.RemoveListener(onChangeCaptureData);
-				selectControlBase.Stats.RemoveListener(onChangeStatsData);
-				selectControlBase.Facilities.RemoveListener(onChangeFacilitiesData);
-				selectControlBase.Support.RemoveListener(onChangeSupportData);
+				selectSector.Profile.RemoveListener(onChangeProfileData);
+				selectSector.Capture.RemoveListener(onChangeCaptureData);
+				selectSector.Stats.RemoveListener(onChangeStatsData);
+				selectSector.Facilities.RemoveListener(onChangeFacilitiesData);
+				selectSector.Support.RemoveListener(onChangeSupportData);
 
-				//selectControlBase.MainStatsList.RemoveListener(onChangeDetailStats);
-				//selectControlBase.FacilitiesStatsList.RemoveListener(onChangeFacilitiesStats);
-				//selectControlBase.SupportStatsList.RemoveListener(onChangeSupportStats);
+				//selectSector.MainStatsList.RemoveListener(onChangeDetailStats);
+				//selectSector.FacilitiesStatsList.RemoveListener(onChangeFacilitiesStats);
+				//selectSector.SupportStatsList.RemoveListener(onChangeSupportStats);
 				//
-				//selectControlBase.MainBuffList.RemoveListener(onChangeDetailBuff);
-				//selectControlBase.FacilitiesBuffGroup.RemoveListener(onChangeFacilitiesBuff);
-				//selectControlBase.SupportBuffGroup.RemoveListener(onChangeSupportBuff);
+				//selectSector.MainBuffList.RemoveListener(onChangeDetailBuff);
+				//selectSector.FacilitiesBuffGroup.RemoveListener(onChangeFacilitiesBuff);
+				//selectSector.SupportBuffGroup.RemoveListener(onChangeSupportBuff);
 
 			}
 			DeleteStatsItemList(detailStatsItemList);
 			DeleteStatsItemList(facilitiesStateItemList);
 			DeleteStatsItemList(supportStatsItemList);
 
-			onSelectControlBase = null;
+			onSelectSector = null;
 
 			onChangeProfileData = null;
 			onChangeCaptureData = null;
@@ -376,14 +376,14 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 			}
 		}
 	}
-	public class ControlBase_Support : StrategyViewController
+	public class Sector_Support : StrategyViewController
 	{
 		private IKeyPairChain pairChain;
-		private ControlBase selectControlBase;
+		private SectorObject selectSector;
 
-		private Action<string> onSelectControlBase;
+		private Action<string> onSelectSector;
 
-		private Action<ControlBaseData.Support.Data>       onChangeSupportData;
+		private Action<SectorData.Support.Data>       onChangeSupportData;
 
 		private Dictionary<StatsType, LabelTextUI> offensiveItemList;
 		private Dictionary<StatsType, LabelTextUI> defensiveItemList;
@@ -399,8 +399,8 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 			}
 
 			// 거점 변경 변경
-			onSelectControlBase = SelectControlBase;
-			StrategyManager.GamePlayData.selectControlBase.AddLateListener(onSelectControlBase);
+			onSelectSector = SelectSector;
+			StrategyManager.GamePlayData.selectSector.AddLateListener(onSelectSector);
 
 			// 항목 변경 이벤트
 			onChangeSupportData = OnChangeSupportData;
@@ -412,13 +412,13 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 			facilitiesItemList ??= new();
 
 			// 실행
-			SelectControlBase(StrategyManager.GamePlayData.selectControlBase.Value);
-			void SelectControlBase(string controlBase)
+			SelectSector(StrategyManager.GamePlayData.selectSector.Value);
+			void SelectSector(string sector)
 			{
-				if (selectControlBase != null)
+				if (selectSector != null)
 				{
-					selectControlBase.Support.RemoveListener(onChangeSupportData);
-					selectControlBase = null;
+					selectSector.Support.RemoveListener(onChangeSupportData);
+					selectSector = null;
 				}
 
 				DeleteStatsItemList(offensiveItemList);
@@ -426,17 +426,17 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 				DeleteStatsItemList(supplyItemList);
 				DeleteStatsItemList(facilitiesItemList);
 
-				if (!StrategyManager.Collector.TryFindControlBase(controlBase, out selectControlBase))
+				if (!StrategyManager.Collector.TryFindSector(sector, out selectSector))
 				{
 					DeInitEvent();
 					return;
 				}
-				selectControlBase.Support.AddLateListener(onChangeSupportData);
+				selectSector.Support.AddLateListener(onChangeSupportData);
 
-				onChangeSupportData.Invoke(selectControlBase.SupportData);
+				onChangeSupportData.Invoke(selectSector.SupportData);
 			}
 
-			void OnChangeSupportData(ControlBaseData.Support.Data data)
+			void OnChangeSupportData(SectorData.Support.Data data)
 			{
 				pairChain.FindPairChain<TMP_Text>("PointText", out var PointText);
 				if (PointText != null)
@@ -461,7 +461,7 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 			}
 			void UpdateSupportState(string key, GameObject supportPanel, Dictionary<StatsType, LabelTextUI> itemList)
 			{
-				selectControlBase.SupportBuffGroup.TryGetList(key, out var statsList);
+				selectSector.SupportBuffGroup.TryGetList(key, out var statsList);
 
 				var list = statsList.GetValueList();
 				int length = list == null ? 0 : list.Count;
@@ -534,20 +534,20 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 		{
 			DeInitEvent();
 			pairChain = null;
-			selectControlBase = null;
+			selectSector = null;
 		}
 		private void DeInitEvent()
 		{
-			if (onSelectControlBase != null)
+			if (onSelectSector != null)
 			{
-				StrategyManager.GamePlayData.selectControlBase.RemoveListener(onSelectControlBase);
-				onSelectControlBase = null;
+				StrategyManager.GamePlayData.selectSector.RemoveListener(onSelectSector);
+				onSelectSector = null;
 			}
 
-			if (selectControlBase != null)
+			if (selectSector != null)
 			{
-				selectControlBase.Support.RemoveListener(onChangeSupportData);
-				selectControlBase = null;
+				selectSector.Support.RemoveListener(onChangeSupportData);
+				selectSector = null;
 			}
 
 			DeleteStatsItemList(offensiveItemList);
@@ -576,18 +576,18 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 			}
 		}
 	}
-	public class ControlBase_Facilities : StrategyViewController
+	public class Sector_Facilities : StrategyViewController
 	{
 		private IKeyPairChain pairChain;
-		private ControlBase selectControlBase;
+		private SectorObject selectSector;
 		private IKeyPairChain facilitiesControlUI;
 		private IKeyPairChain facilitiesInstallableUI;
 
 		private TMP_Text facilitiesInfoText;
 
-		private Action<string> onSelectControlBase;
+		private Action<string> onSelectSector;
 
-		private Action<ControlBaseData.Facilities.Data>       onChangeFacilitiesData;
+		private Action<SectorData.Facilities.Data>       onChangeFacilitiesData;
 
 		private List<IKeyPairChain> facilitiesSlots;
 		private Dictionary<StatsType, LabelTextUI> facilitiesItemList;
@@ -604,8 +604,8 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 			pairChain.FindPairChain<TMP_Text>("InfoText", out facilitiesInfoText);
 
 			// 거점 변경 변경
-			onSelectControlBase = SelectControlBase;
-			StrategyManager.GamePlayData.selectControlBase.AddLateListener(onSelectControlBase);
+			onSelectSector = SelectSector;
+			StrategyManager.GamePlayData.selectSector.AddLateListener(onSelectSector);
 
 			// 항목 변경 이벤트
 			onChangeFacilitiesData = OnChangeFacilitiesData;
@@ -615,31 +615,31 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 			facilitiesItemList ??= new();
 
 			// 실행
-			SelectControlBase(StrategyManager.GamePlayData.selectControlBase.Value);
-			void SelectControlBase(string controlBase)
+			SelectSector(StrategyManager.GamePlayData.selectSector.Value);
+			void SelectSector(string sector)
 			{
-				if (selectControlBase != null)
+				if (selectSector != null)
 				{
-					selectControlBase.Facilities.RemoveListener(onChangeFacilitiesData);
-					selectControlBase = null;
+					selectSector.Facilities.RemoveListener(onChangeFacilitiesData);
+					selectSector = null;
 				}
 
 				DeleteFacilitiesSlots(facilitiesSlots);
 				DeleteStatsItemList(facilitiesItemList);
 
-				if (!StrategyManager.Collector.TryFindControlBase(controlBase, out selectControlBase))
+				if (!StrategyManager.Collector.TryFindSector(sector, out selectSector))
 				{
 					DeInitEvent();
 					return;
 				}
-				selectControlBase.Facilities.AddLateListener(onChangeFacilitiesData);
+				selectSector.Facilities.AddLateListener(onChangeFacilitiesData);
 
-				onChangeFacilitiesData.Invoke(selectControlBase.FacilitiesData);
+				onChangeFacilitiesData.Invoke(selectSector.FacilitiesData);
 			}
 
-			void OnChangeFacilitiesData(ControlBaseData.Facilities.Data data)
+			void OnChangeFacilitiesData(SectorData.Facilities.Data data)
 			{
-				ControlBaseData.Facilities.Slot[] slotData = data.slotData;
+				SectorData.Facilities.Slot[] slotData = data.slotData;
 				CreateSlot(slotData == null ? 0 : slotData.Length);
 
 				int slotLength = slotData.Length;
@@ -669,7 +669,7 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 					}
 				}
 			}
-			void UpdateSlotInfo(int index, ControlBaseData.Facilities.Slot data)
+			void UpdateSlotInfo(int index, SectorData.Facilities.Slot data)
 			{
 				var slotChain = facilitiesSlots[index];
 				string key = data.facilitiesKey;
@@ -762,7 +762,7 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 			 
 			void UpdateFacilitiesState(GameObject FacilitiesPanel, Dictionary<StatsType, LabelTextUI> itemList)
 			{
-				var list = selectControlBase.FacilitiesBuffGroup.GetValueList();
+				var list = selectSector.FacilitiesBuffGroup.GetValueList();
 
 				int length = list == null ? 0 : list.Count;
 				for (int i = 0 ; i < length ; i++)
@@ -828,7 +828,7 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 			HideSlotInstallableUI();
 			DeInitEvent();
 			pairChain = null;
-			selectControlBase = null;
+			selectSector = null;
 			facilitiesControlUI = null;
 			facilitiesInstallableUI = null;
 		}
@@ -844,16 +844,16 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 		}
 		private void DeInitEvent()
 		{
-			if (onSelectControlBase != null)
+			if (onSelectSector != null)
 			{
-				StrategyManager.GamePlayData.selectControlBase.RemoveListener(onSelectControlBase);
-				onSelectControlBase = null;
+				StrategyManager.GamePlayData.selectSector.RemoveListener(onSelectSector);
+				onSelectSector = null;
 			}
 
-			if (selectControlBase != null)
+			if (selectSector != null)
 			{
-				selectControlBase.Facilities.RemoveListener(onChangeFacilitiesData);
-				selectControlBase = null;
+				selectSector.Facilities.RemoveListener(onChangeFacilitiesData);
+				selectSector = null;
 			}
 
 			DeleteStatsItemList(facilitiesItemList);
@@ -894,7 +894,7 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 
 		private void OnStartFacilitiesInstall(int slotIndex, string facilitiesKey)
 		{
-			selectControlBase.OnStartFacilitiesConstruct(slotIndex, facilitiesKey);
+			selectSector.OnStartFacilitiesConstruct(slotIndex, facilitiesKey);
 		}
 
 		private void OnShowInfoText(string text)
@@ -903,7 +903,7 @@ public partial class StrategyDetailsPanelUI // ControlBaseData UI
 			facilitiesInfoText.text = text;
 		}
 	}
-	public class ControlBase_Garrison : StrategyViewController
+	public class Sector_Garrison : StrategyViewController
 	{
 		public override void OnShow(RectTransform viewRect)
 		{

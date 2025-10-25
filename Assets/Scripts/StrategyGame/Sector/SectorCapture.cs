@@ -4,10 +4,10 @@
 
 //public class StrategyUpdate_CaptureUpdate : StrategyUpdate.IStrategyUpdater
 //{
-//	private Dictionary<ControlBase, ControlBaseTrigger> colliderList;
-//	private Dictionary<ControlBase, bool> isKeep;
-//	private ControlBase controlBase;
-//	private ControlBaseTrigger controlBaseCollider;
+//	private Dictionary<SectorObject, SectorTrigger> colliderList;
+//	private Dictionary<SectorObject, bool> isKeep;
+//	private SectorObject sector;
+//	private SectorTrigger sectorCollider;
 
 //	private bool isKeepFaction;
 
@@ -18,13 +18,13 @@
 //	{
 //		isKeepFaction = factionID >= 0;
 //	}
-//	internal void UpdateCapture(ControlBase _controlBase)
+//	internal void UpdateCapture(SectorObject _sector)
 //	{
-//		controlBase = _controlBase;
+//		sector = _sector;
 
-//		if (controlBaseCollider == null)
-//			controlBaseCollider = _controlBase.GetComponentInChildren<ControlBaseTrigger>();
-//		if (controlBaseCollider == null) return;
+//		if (sectorCollider == null)
+//			sectorCollider = _sector.GetComponentInChildren<SectorTrigger>();
+//		if (sectorCollider == null) return;
 
 //		Dictionary<int,int> capturePoint = new Dictionary<int, int>();
 
@@ -33,7 +33,7 @@
 //		ComputeFactionPointList();
 //		void ComputeFactionPointList()
 //		{
-//			var colliderList = controlBaseCollider.ColliderList;
+//			var colliderList = sectorCollider.ColliderList;
 //			if (colliderList == null || colliderList.Count == 0)
 //			{
 //				return;
@@ -73,7 +73,7 @@
 //			}
 //		}
 
-//		Faction currentFaction = controlBase.CaptureFaction;
+//		Faction currentFaction = sector.CaptureFaction;
 //		int currentFactionID = currentFaction == null ? -1 : currentFaction.FactionID;
 
 //		if (totalPoint == 0)
@@ -134,13 +134,13 @@
 //	}
 //	public void KeepCapture(int factionID)
 //	{
-//		if (controlBase.CaptureProgress >= 1f)
+//		if (sector.CaptureProgress >= 1f)
 //		{
 //			return;
 //		}
 //		var faction = StrategyManager.Collector.FindFaction(factionID);
 
-//		float captureTime = controlBase.CaptureTime;
+//		float captureTime = sector.CaptureTime;
 //		float captureSpeed =  faction == null ? 1 : faction.CaptureSpeed;
 
 //		captureTime = Mathf.Max(captureTime, 1f);
@@ -149,10 +149,10 @@
 //		float totalSpeed = captureSpeed / captureTime;
 //		float delta = totalSpeed * Time.deltaTime;
 
-//		float captureProgress = controlBase.CaptureProgress + delta;
-//		controlBase.SetCaptureData(faction.FactionID, captureProgress);
+//		float captureProgress = sector.CaptureProgress + delta;
+//		sector.SetCaptureData(faction.FactionID, captureProgress);
 
-//		if (controlBase.CaptureFaction != null && controlBase.CaptureProgress >= 1f)
+//		if (sector.CaptureFaction != null && sector.CaptureProgress >= 1f)
 //		{
 //			isKeepFaction = true;
 //		}
@@ -161,7 +161,7 @@
 //	{
 //		var faction = StrategyManager.Collector.FindFaction(attackFactionID);
 
-//		float captureTime = controlBase.CaptureTime;
+//		float captureTime = sector.CaptureTime;
 //		float captureSpeed =  faction == null ? 1 : faction.CaptureSpeed;
 
 //		captureTime = Mathf.Max(captureTime, 1f);
@@ -170,12 +170,12 @@
 //		float totalSpeed = captureSpeed / captureTime;
 //		float delta = totalSpeed * Time.deltaTime;
 
-//		float captureProgress = controlBase.CaptureProgress;
+//		float captureProgress = sector.CaptureProgress;
 //		captureProgress -= delta;
 //		if (captureProgress <= 0f)
 //		{
 
-//			controlBase.SetCaptureData(faction.FactionID, 0f);
+//			sector.SetCaptureData(faction.FactionID, 0f);
 //			isKeepFaction = false;
 //		}
 //	}

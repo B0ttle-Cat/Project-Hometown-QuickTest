@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class ControlBaseColor : MonoBehaviour
+public class SectorColor : MonoBehaviour
 {
 	private Color targetColor;
 	private Gradient targetGradient;

@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-public class ControlBaseTrigger : MonoBehaviour
+public class SectorTrigger : MonoBehaviour
 {
 	private HashSet<Collider> colliderList;
 	private List<CaptureTag> captureTagList;

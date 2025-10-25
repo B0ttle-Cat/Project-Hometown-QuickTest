@@ -1,4 +1,4 @@
-%YAML 1.1
+﻿%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!29 &1
 OcclusionCullingSettings:
@@ -467,7 +467,7 @@ GameObject:
   - component: {fileID: 58857481}
   - component: {fileID: 58857480}
   m_Layer: 5
-  m_Name: Panel_ControlBase
+  m_Name: Panel_Sector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1887,7 +1887,7 @@ GameObject:
   m_Component:
   - component: {fileID: 128646698}
   m_Layer: 5
-  m_Name: Info_ControlBase
+  m_Name: Info_Sector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2152,7 +2152,7 @@ MonoBehaviour:
     overview: {fileID: 0}
   battleUnitUIPrefab:
     overview: {fileID: 0}
-  controlBaseUIPrefab:
+  sectorUIPrefab:
     info: {fileID: 638748987557167112, guid: fee8ccb1d840c8d47a53695f3f01c015, type: 3}
     support: {fileID: 6440992554431209310, guid: d9aa4dfba9e54a742b4868b952e0a019, type: 3}
     facilities: {fileID: 4447532916768258166, guid: 3d31b2933d4aeac4b83fcaa683f7afb1, type: 3}
@@ -3097,7 +3097,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4300306911235521037, guid: 65b2fe5c02731a74dae76d0e92cc7e7c, type: 3}
       propertyPath: m_Name
-      value: ControlBase_01
+      value: Sector_01
       objectReference: {fileID: 0}
     - target: {fileID: 7324596390385222986, guid: 65b2fe5c02731a74dae76d0e92cc7e7c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -7493,7 +7493,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4300306911235521037, guid: 65b2fe5c02731a74dae76d0e92cc7e7c, type: 3}
       propertyPath: m_Name
-      value: ControlBase_02
+      value: Sector_02
       objectReference: {fileID: 0}
     - target: {fileID: 4300306911235521037, guid: 65b2fe5c02731a74dae76d0e92cc7e7c, type: 3}
       propertyPath: m_IsActive
@@ -8328,7 +8328,7 @@ GameObject:
   - component: {fileID: 958603562}
   - component: {fileID: 958603561}
   m_Layer: 5
-  m_Name: ControlBase_00
+  m_Name: Sector_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8570,7 +8570,7 @@ GameObject:
   - component: {fileID: 1007553023}
   - component: {fileID: 1007553024}
   m_Layer: 5
-  m_Name: Button_ControlBase
+  m_Name: Button_Sector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10549,7 +10549,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4300306911235521037, guid: 65b2fe5c02731a74dae76d0e92cc7e7c, type: 3}
       propertyPath: m_Name
-      value: ControlBase_04
+      value: Sector_04
       objectReference: {fileID: 0}
     - target: {fileID: 4300306911235521037, guid: 65b2fe5c02731a74dae76d0e92cc7e7c, type: 3}
       propertyPath: m_IsActive
@@ -12281,7 +12281,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c43786e0ac819c4b9c26b0675f5e22f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StrategyGameObjectCollector
-  controlBases: []
+  sectors: []
   factions: []
   units: []
   skills: []
@@ -14698,7 +14698,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4300306911235521037, guid: 65b2fe5c02731a74dae76d0e92cc7e7c, type: 3}
       propertyPath: m_Name
-      value: ControlBase_03
+      value: Sector_03
       objectReference: {fileID: 0}
     - target: {fileID: 4300306911235521037, guid: 65b2fe5c02731a74dae76d0e92cc7e7c, type: 3}
       propertyPath: m_IsActive
@@ -15216,7 +15216,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4300306911235521037, guid: 65b2fe5c02731a74dae76d0e92cc7e7c, type: 3}
       propertyPath: m_Name
-      value: ControlBase_00
+      value: Sector_00
       objectReference: {fileID: 0}
     - target: {fileID: 4300306911235521037, guid: 65b2fe5c02731a74dae76d0e92cc7e7c, type: 3}
       propertyPath: m_IsActive

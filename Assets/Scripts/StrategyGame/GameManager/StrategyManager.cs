@@ -114,7 +114,7 @@ public class StrategyManager : MonoBehaviour
 		setter.OnStartSetter_Faction();
 
 		// CB 세팅
-		setter.OnStartSetter_ControlBase();
+		setter.OnStartSetter_Sector();
 
 		// Unit 세팅
 		setter.OnStartSetter_Unit();

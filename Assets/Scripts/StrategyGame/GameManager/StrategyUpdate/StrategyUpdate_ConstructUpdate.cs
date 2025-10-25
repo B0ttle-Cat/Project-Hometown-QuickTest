@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-using static StrategyGamePlayData.ControlBaseData;
+using static StrategyGamePlayData.SectorData;
 using static StrategyUpdate.StrategyUpdate_ConstructUpdate;
 public partial class StrategyUpdate
 {
@@ -13,7 +13,7 @@ public partial class StrategyUpdate
         protected override void Start()
 		{
 			updateList = new List<ConstructUpdate>();
-			var list = StrategyManager.Collector.ControlBaseList;
+			var list = StrategyManager.Collector.SectorList;
 			int length = list.Count;
 			for (int i = 0 ; i < length ; i++)
 			{
@@ -35,25 +35,25 @@ public partial class StrategyUpdate
 
 		public class ConstructUpdate : UpdateLogic
 		{
-			public ControlBase cb;
+			public SectorObject sector;
 			public Facilities data;
 
-			public ConstructUpdate(StrategyUpdateSubClass<ConstructUpdate> thisSubClass, ControlBase cb):base(thisSubClass)
+			public ConstructUpdate(StrategyUpdateSubClass<ConstructUpdate> thisSubClass, SectorObject sector):base(thisSubClass)
 			{
-				this.cb = cb;
-				this.data = cb.Facilities;
+				this.sector = sector;
+				this.data = sector.Facilities;
 			}
 
 			protected override void OnDispose()
 			{
-				cb = null;
+				sector = null;
 				data = null;
 			}
 
 			protected override void OnUpdate(in float deltaTime)
 			{
-				if (cb == null || !cb.isActiveAndEnabled) return;
-				if((data ??= cb.Facilities) == null) return;
+				if (sector == null || !sector.isActiveAndEnabled) return;
+				if((data ??= sector.Facilities) == null) return;
 
 				var _data = data.GetData();
 				int slotLength = _data.slotData.Length;
@@ -75,7 +75,7 @@ public partial class StrategyUpdate
 					if(timeRemaining <= 0)
 					{
 						// 시설 공사 완료
-						cb.OnFinishFacilitiesConstruct(i, constructing.facilitiesKey);
+						sector.OnFinishFacilitiesConstruct(i, constructing.facilitiesKey);
 					}
 
 					slot.constructing = constructing;

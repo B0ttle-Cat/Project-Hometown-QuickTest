@@ -2,67 +2,67 @@
 
 using static StrategyGamePlayData;
 
-using ControlBaseData = StrategyGamePlayData.ControlBaseData;
+using SectorData = StrategyGamePlayData.SectorData;
 
-public partial class ControlBase : MonoBehaviour 
+public partial class SectorObject : MonoBehaviour 
 {
 	public void Init()
 	{
-		controlBaseColor = GetComponentInChildren<ControlBaseColor>();
+		sectorColor = GetComponentInChildren<SectorColor>();
 	}
 
-	private ControlBaseColor controlBaseColor;
+	private SectorColor sectorColor;
 }
 
-public partial class ControlBase // Profile
+public partial class SectorObject // Profile
 {
-	private ControlBaseData.Profile profileData;
-	private ControlBaseData.Capture captureData;
-	private ControlBaseData.MainStats mainStatsData;
-	private ControlBaseData.Facilities facilitiesData;
-	private ControlBaseData.Support supportData;
+	private SectorData.Profile profileData;
+	private SectorData.Capture captureData;
+	private SectorData.MainStats mainStatsData;
+	private SectorData.Facilities facilitiesData;
+	private SectorData.Support supportData;
 
 	public StatsGroup facilitiesStatsGroup;
 	public StatsGroup supportStatsGroup;
 
-	public string ControlBaseName => profileData.GetData().controlBaseName;
+	public string SectorName => profileData.GetData().sectorName;
 
-	public ControlBaseData.Profile Profile => profileData;
-	public ControlBaseData.Capture Capture => captureData;
-	public ControlBaseData.MainStats Stats => mainStatsData;
-	public ControlBaseData.Facilities Facilities => facilitiesData;
-	public ControlBaseData.Support Support => supportData;
+	public SectorData.Profile Profile => profileData;
+	public SectorData.Capture Capture => captureData;
+	public SectorData.MainStats Stats => mainStatsData;
+	public SectorData.Facilities Facilities => facilitiesData;
+	public SectorData.Support Support => supportData;
 
-	public ControlBaseData.Profile.Data ProfileData => profileData.GetData();
-	public ControlBaseData.Capture.Data CaptureData => captureData.GetData();
-	public ControlBaseData.MainStats.Data StatsData => mainStatsData.GetData();
-	public ControlBaseData.Facilities.Data FacilitiesData => facilitiesData.GetData();
-	public ControlBaseData.Support.Data SupportData => supportData.GetData();
+	public SectorData.Profile.Data ProfileData => profileData.GetData();
+	public SectorData.Capture.Data CaptureData => captureData.GetData();
+	public SectorData.MainStats.Data StatsData => mainStatsData.GetData();
+	public SectorData.Facilities.Data FacilitiesData => facilitiesData.GetData();
+	public SectorData.Support.Data SupportData => supportData.GetData();
 
 	public StatsList MainStatsList => StatsData.GetStatsList();
 	public StatsGroup FacilitiesBuffGroup => facilitiesStatsGroup;
 	public StatsGroup SupportBuffGroup => supportStatsGroup;
 
 
-	public void Init(StrategyStartSetterData.ControlBaseData data)
+	public void Init(StrategyStartSetterData.SectorData data)
 	{
-		if (profileData == null) profileData = new ControlBaseData.Profile(data.profileData);
+		if (profileData == null) profileData = new SectorData.Profile(data.profileData);
 		else profileData.SetData(data.profileData);
 
-		if (captureData == null) captureData = new ControlBaseData.Capture(new()
+		if (captureData == null) captureData = new SectorData.Capture(new()
 		{
 			captureFactionID = -1,
 			captureProgress = 1,
 			captureTime = data.captureTime,
 		});
 
-		if (mainStatsData == null) mainStatsData = new ControlBaseData.MainStats(data.mainStatsData);
+		if (mainStatsData == null) mainStatsData = new SectorData.MainStats(data.mainStatsData);
 		else mainStatsData.SetData(data.mainStatsData);
 
-		if (facilitiesData == null) facilitiesData = new ControlBaseData.Facilities(data.facilitiesStatsData);
+		if (facilitiesData == null) facilitiesData = new SectorData.Facilities(data.facilitiesStatsData);
 		else facilitiesData.SetData(data.facilitiesStatsData);
 
-		if (supportData == null) supportData = new ControlBaseData.Support(data.supportStatsData);
+		if (supportData == null) supportData = new SectorData.Support(data.supportStatsData);
 		else supportData.SetData(data.supportStatsData);
 	}
 
@@ -91,20 +91,20 @@ public partial class ControlBase // Profile
 	{
 	}
 }
-public partial class ControlBase // CaptureData
+public partial class SectorObject // CaptureData
 {
 	//public float CaptureTime => captureData.GetData().captureTime;
 
 	public void Init(StrategyStartSetterData.CaptureData data)
 	{
-		ControlBaseData.Capture.Data initData = new ()
+		SectorData.Capture.Data initData = new ()
 		{
 			 captureFactionID = StrategyManager.Collector.TryFindFaction(data.captureFaction, out var find) ? find.FactionID : -1,
 			 captureProgress = data.captureProgress,
 			 captureTime = captureData == null ? 0 : captureData.GetData().captureTime,
 		};
 
-		if (captureData == null) captureData = new ControlBaseData.Capture(initData);
+		if (captureData == null) captureData = new SectorData.Capture(initData);
 		else captureData.SetData(initData);
 	}
 
@@ -121,7 +121,7 @@ public partial class ControlBase // CaptureData
 	}
 }
 
-public partial class ControlBase : IStrategyElement
+public partial class SectorObject : IStrategyElement
 {
 	public bool IsInCollector { get; set; }
 

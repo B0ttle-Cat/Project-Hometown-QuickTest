@@ -14,7 +14,7 @@ public partial class StrategyUpdate
 		protected override void Start()
 		{
 			updateList = new List<ResourcesSupply>();
-			var list = StrategyManager.Collector.ControlBaseList;
+			var list = StrategyManager.Collector.SectorList;
 			int length = list.Count;
 			for (int i = 0 ; i < length ; i++)
 			{
@@ -35,7 +35,7 @@ public partial class StrategyUpdate
 		}
 		public class ResourcesSupply : UpdateLogic
 		{
-			private ControlBase cb;
+			private SectorObject sector;
 
 			private const StatsType MaxType = StatsType.거점_전력_최대보유량;
 			private const StatsType SupplyType = StatsType.거점_전력_분당회복량;
@@ -45,23 +45,23 @@ public partial class StrategyUpdate
 			float replenish; // 다음 보충까지 남은 시간.
 			float surplus; // 여분의 보충량
 
-			public ResourcesSupply(StrategyUpdateSubClass<ResourcesSupply> thisSubClass, ControlBase cb) : base(thisSubClass)
+			public ResourcesSupply(StrategyUpdateSubClass<ResourcesSupply> thisSubClass, SectorObject sector) : base(thisSubClass)
 			{
-				this.cb = cb;
+				this.sector = sector;
 				replenish = resupplyTime;
 				surplus = 0f;
 			}
 			protected override void OnDispose()
 			{
-				cb = null;
+				sector = null;
 			}
 			protected override void OnUpdate(in float deltaTime)
 			{
-				if (cb == null || !cb.isActiveAndEnabled) return;
+				if (sector == null || !sector.isActiveAndEnabled) return;
 
-				StatsList MainStatsList = cb.MainStatsList;
-				StatsGroup FacilitiesBuffGroup = cb.FacilitiesBuffGroup;
-				StatsGroup supportBuffGroup = cb.SupportBuffGroup;
+				StatsList MainStatsList = sector.MainStatsList;
+				StatsGroup FacilitiesBuffGroup = sector.FacilitiesBuffGroup;
+				StatsGroup supportBuffGroup = sector.SupportBuffGroup;
 
 				var maxMain = MainStatsList.GetValue(MaxType);
 				var maxFacilities = FacilitiesBuffGroup.GetValue(MaxType);
@@ -124,7 +124,7 @@ public partial class StrategyUpdate
 				{
 					MainStatsList.SetValue(CurrType, 현재보유량);
 
-					string key = $"{cb.ControlBaseName}_{UpdateLogicSort.거점_자원갱신이벤트}";
+					string key = $"{sector.SectorName}_{UpdateLogicSort.거점_자원갱신이벤트}";
 					TempData.SetValue(key, true, UpdateLogicSort.거점_자원갱신이벤트);
 				}
 			}

@@ -65,32 +65,32 @@ public class StrategyStartSetter : MonoBehaviour
 			collector.AddElement<Faction>(faction);
 		}
 	}
-	internal void OnStartSetter_ControlBase()
+	internal void OnStartSetter_Sector()
 	{
-		// 일단 씬에 있는 모든 ControlBaseData 컴퍼넌트를 수집
-		var allBase = GameObject.FindObjectsByType<ControlBase>(FindObjectsInactive.Include, FindObjectsSortMode.InstanceID);
+		// 일단 씬에 있는 모든 SectorData 컴퍼넌트를 수집
+		var allSector = GameObject.FindObjectsByType<SectorObject>(FindObjectsInactive.Include, FindObjectsSortMode.InstanceID);
 
 		var data = strategyStartSetterData.GetData();
-		var controlBases = data.controlBaseDatas;
+		var sectors = data.sectorDatas;
 
-		int cbLength = allBase.Length;
-		int dataLength = controlBases.Length;
+		int cbLength = allSector.Length;
+		int dataLength = sectors.Length;
 		for (int i = 0 ; i < cbLength ; i++)
 		{
-			ControlBase cb = allBase[i];
-			cb.Init();
+			SectorObject sector = allSector[i];
+			sector.Init();
 
-			string cbName =  cb.gameObject.name;
+			string cbName =  sector.gameObject.name;
 			for (int j = 0 ; j < dataLength ; j++)
 			{
-				var cbData = controlBases[j];
-				if (cbName == cbData.profileData.controlBaseName)
+				var cbData = sectors[j];
+				if (cbName == cbData.profileData.sectorName)
 				{
-					cb.Init(cbData);
+					sector.Init(cbData);
 					break;
 				}
 			}
-			collector.AddElement(cb);
+			collector.AddElement(sector);
 		}
 	}
 	internal void OnStartSetter_Unit()
@@ -152,23 +152,23 @@ public class StrategyStartSetter : MonoBehaviour
 		var data = strategyStartSetterData.GetData();
 		var occData = data.captureDatas;
 
-		collector.ForEachControlBase(SetCapture);
+		collector.ForEachSector(SetCapture);
 
-		void SetCapture(ControlBase cb)
+		void SetCapture(SectorObject sector)
 		{
 			int length = occData.Length;
 			for (int i = 0 ; i < length ; i++)
 			{
 				var _data = occData[i];
-				if (_data.captureControlBase == cb.ControlBaseName)
+				if (_data.captureSector == sector.SectorName)
 				{
-					cb.Init(_data);
+					sector.Init(_data);
 					return;
 				}
 			}
-			cb.Init(new StrategyStartSetterData.CaptureData()
+			sector.Init(new StrategyStartSetterData.CaptureData()
 			{
-				 captureControlBase = "",
+				 captureSector = "",
 				 captureFaction = "",
 				 captureProgress = 0
 			});

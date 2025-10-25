@@ -25,11 +25,11 @@ public partial class StrategyDetailsPanelUI : DetailsPanelUI
 		FieldInfo_Storyboard,
 
 		[HideInInspector]
-		ControlBase = 200,
-		ControlBase_Info,
-		ControlBase_Support,
-		ControlBase_Facilities,
-		ControlBase_Garrison,
+		Sector = 200,
+		Sector_Info,
+		Sector_Support,
+		Sector_Facilities,
+		Sector_Garrison,
 
 		[HideInInspector]
 		BattleUnit = 300,
@@ -49,11 +49,11 @@ public partial class StrategyDetailsPanelUI : DetailsPanelUI
 		currentDetailsPanelItem = openContent switch
 		{
 			StrategyDetailsPanelType.Menu => new MainGameMenuUI(this),
-			>= StrategyDetailsPanelType.FieldInfo and < StrategyDetailsPanelType.ControlBase
+			>= StrategyDetailsPanelType.FieldInfo and < StrategyDetailsPanelType.Sector
 				=> new FieldInfoViewController(this),
-			>= StrategyDetailsPanelType.ControlBase and < StrategyDetailsPanelType.BattleUnit
-				=> new ControlBaseUIStruct(this),
-			>= StrategyDetailsPanelType.ControlBase and < StrategyDetailsPanelType.BattleSkill
+			>= StrategyDetailsPanelType.Sector and < StrategyDetailsPanelType.BattleUnit
+				=> new SectorUIStruct(this),
+			>= StrategyDetailsPanelType.Sector and < StrategyDetailsPanelType.BattleSkill
 				=> new BattleUnitUIStruct(this),
 			>= StrategyDetailsPanelType.BattleSkill
 				=> new BattleSkillUIStruct(this),
