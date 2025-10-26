@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-public interface IStrategyElement
+public interface IStrategyElement : IStartGame
 {
 	public bool IsInCollector { get; set; }
 	void _InStrategyCollector()
@@ -21,8 +21,22 @@ public interface IStrategyElement
 	}
 	void InStrategyCollector();
 	void OutStrategyCollector();
-
+}
+public interface IStartGame
+{
 	void OnStartGame() { }
+}
+public interface ISelectMouse
+{
+	Vector3 ClickCenter { get; }
+	bool IsPointEnter { get; set; }
+	bool IsSelectMouse { get; set; }
+	void OnPointEnter() { }
+	void OnPointExit() { }
+	void OnSelect();
+	void OnDeselect();
+	void OnSingleSelect();
+	void OnSingleDeselect();
 }
 public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 {
@@ -223,7 +237,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 
 
 
-	private IEnumerable<IList> GetAllLists()
+	public IEnumerable<IList> GetAllLists()
 	{
 		yield return SectorList;
 		yield return FactionList;
@@ -277,10 +291,15 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 		others?.Dispose();
 	}
 
-	private IList GetListByType(Type type)
+	private IList GetListByType<T>()
 	{
 		InitListTypeCache();
-		return _listCache.TryGetValue(type, out var list) ? list : OtherList;
+		return _listCache.TryGetValue(typeof(T), out var list) ? list : OtherList;
+	}
+	private ElementList GetElementByType<T>()
+	{
+		InitElementListCache();
+		return _elementLists.TryGetValue(typeof(T), out var element) ? element : others;
 	}
 	public void AddElement<TList, TItem>(TList elements) where TList : IEnumerable<TItem> where TItem : class, IStrategyElement
 	{
@@ -327,9 +346,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 	{
 		if (action == null) return;
 
-		if (!_elementLists.TryGetValue(typeof(T), out var element))
-			element = others;
-
+		var	element = GetElementByType<T>();
 		element.OnAddListener(action);
 	}
 
@@ -337,9 +354,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 	{
 		if (action == null) return;
 
-		if (!_elementLists.TryGetValue(typeof(T), out var element))
-			element = others;
-
+		var element = GetElementByType<T>();
 		element.OnRemoveListener(action);
 	}
 }
@@ -351,7 +366,7 @@ public partial class StrategyElementCollector // Finder
 		find = null;
 		if (condition == null) return false;
 
-		var list = GetListByType(typeof(T));
+		var list = GetListByType<T>();
 		for (int i = 0 ; i < list.Count ; i++)
 		{
 			if (list[i] is T t && condition(t))
@@ -497,16 +512,16 @@ public partial class StrategyElementCollector // ForEach
 	}
 
 	public void ForEach<T>(Action<T> func) where T : class, IStrategyElement
-		=> ForEachInternal<T>(GetListByType(typeof(T)), action: func);
+		=> ForEachInternal<T>(GetListByType<T>(), action: func);
 
 	public void ForEach<T>(Func<T, bool> func) where T : class, IStrategyElement
-		=> ForEachInternal<T>(GetListByType(typeof(T)), func: func);
+		=> ForEachInternal<T>(GetListByType<T>(), func: func);
 
 	public void ForEach<T>(Action<T, ForeachIndex> func) where T : class, IStrategyElement
-		=> ForEachInternal<T>(GetListByType(typeof(T)), actionWithIndex: func);
+		=> ForEachInternal<T>(GetListByType<T>(), actionWithIndex: func);
 
 	public void ForEach<T>(Func<T, ForeachIndex, bool> func) where T : class, IStrategyElement
-		=> ForEachInternal<T>(GetListByType(typeof(T)), funcWithIndex: func);
+		=> ForEachInternal<T>(GetListByType<T>(), funcWithIndex: func);
 	#endregion
 
 	#region Sector

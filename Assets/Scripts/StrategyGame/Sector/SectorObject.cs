@@ -4,17 +4,7 @@ using static StrategyGamePlayData;
 
 using SectorData = StrategyGamePlayData.SectorData;
 
-public partial class SectorObject : MonoBehaviour 
-{
-	public void Init()
-	{
-		sectorColor = GetComponentInChildren<SectorColor>();
-	}
-
-	private SectorColor sectorColor;
-}
-
-public partial class SectorObject // Profile
+public partial class SectorObject : MonoBehaviour
 {
 	private SectorData.Profile profileData;
 	private SectorData.Capture captureData;
@@ -40,14 +30,14 @@ public partial class SectorObject // Profile
 	public SectorData.Support.Data SupportData => supportData.GetData();
 
 	public StatsList MainStatsList => StatsData.GetStatsList();
-	public StatsGroup FacilitiesBuffGroup => facilitiesStatsGroup;
-	public StatsGroup SupportBuffGroup => supportStatsGroup;
+	public StatsGroup FacilitiesBuffGroup => facilitiesStatsGroup ??= new StatsGroup();
+	public StatsGroup SupportBuffGroup => supportStatsGroup ??= new StatsGroup();
 
 
 	public void Init(StrategyStartSetterData.SectorData data)
 	{
-		if (profileData == null) profileData = new SectorData.Profile(data.profileData);
-		else profileData.SetData(data.profileData);
+		if (profileData == null) profileData = new SectorData.Profile(data.profileData.Copy());
+		else profileData.SetData(data.profileData.Copy());
 
 		if (captureData == null) captureData = new SectorData.Capture(new()
 		{
@@ -56,14 +46,14 @@ public partial class SectorObject // Profile
 			captureTime = data.captureTime,
 		});
 
-		if (mainStatsData == null) mainStatsData = new SectorData.MainStats(data.mainStatsData);
-		else mainStatsData.SetData(data.mainStatsData);
+		if (mainStatsData == null) mainStatsData = new SectorData.MainStats(data.mainStatsData.Copy());
+		else mainStatsData.SetData(data.mainStatsData.Copy());
 
-		if (facilitiesData == null) facilitiesData = new SectorData.Facilities(data.facilitiesStatsData);
-		else facilitiesData.SetData(data.facilitiesStatsData);
+		if (facilitiesData == null) facilitiesData = new SectorData.Facilities(data.facilitiesStatsData.Copy());
+		else facilitiesData.SetData(data.facilitiesStatsData.Copy());
 
-		if (supportData == null) supportData = new SectorData.Support(data.supportStatsData);
-		else supportData.SetData(data.supportStatsData);
+		if (supportData == null) supportData = new SectorData.Support(data.supportStatsData.Copy());
+		else supportData.SetData(data.supportStatsData.Copy());
 	}
 
 	public (int value, int max) GetDurability()
@@ -94,7 +84,6 @@ public partial class SectorObject // Profile
 public partial class SectorObject // CaptureData
 {
 	//public float CaptureTime => captureData.GetData().captureTime;
-
 	public void Init(StrategyStartSetterData.CaptureData data)
 	{
 		SectorData.Capture.Data initData = new ()
@@ -107,11 +96,9 @@ public partial class SectorObject // CaptureData
 		if (captureData == null) captureData = new SectorData.Capture(initData);
 		else captureData.SetData(initData);
 	}
-
 	public Faction CaptureFaction => StrategyManager.Collector.FindFaction(CaptureFactionID);
 	public int CaptureFactionID => captureData.GetData().captureFactionID;
 	public float CaptureProgress => captureData.GetData().captureProgress;
-
 	public void SetCaptureData(int factionID, float progress)
 	{
 		var data= captureData.GetData();
@@ -120,7 +107,6 @@ public partial class SectorObject // CaptureData
 		captureData.SetData(data);
 	}
 }
-
 public partial class SectorObject : IStrategyElement
 {
 	public bool IsInCollector { get; set; }
@@ -130,6 +116,33 @@ public partial class SectorObject : IStrategyElement
 	}
 
 	public void OutStrategyCollector()
+	{
+	}
+}
+
+public partial class SectorObject : ISelectMouse
+{
+	public Vector3 ClickCenter => transform.position;
+	bool ISelectMouse.IsSelectMouse { get; set; }
+    bool ISelectMouse.IsPointEnter { get; set; }
+	void ISelectMouse.OnPointEnter()
+	{
+	}
+	void ISelectMouse.OnPointExit()
+	{
+		
+	}
+	void ISelectMouse.OnSelect()
+	{
+	}
+	void ISelectMouse.OnDeselect()
+    {
+    }
+	void ISelectMouse.OnSingleSelect()
+	{
+	}
+
+	void ISelectMouse.OnSingleDeselect()
 	{
 	}
 }

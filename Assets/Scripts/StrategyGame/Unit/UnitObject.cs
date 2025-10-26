@@ -1,17 +1,28 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+
+using UnityEngine;
 
 using static StrategyGamePlayData;
+using static StrategyGamePlayData.UnitData.Skill;
 
 public partial class UnitObject : MonoBehaviour
 {
 	private UnitData.Profile profile;
 	private UnitData.Stats stats;
+	private UnitData.Skill skill;
+	private UnitData.ConnectSector sector;
+
+	private StatsGroup skillBuffGroup;
 
 	public UnitData.Profile Profile { get => profile; set => profile = value; }
 	public UnitData.Stats Stats { get => stats; set => stats = value; }
+	public UnitData.Skill Skill { get => skill; set => skill = value; }
+	public UnitData.ConnectSector Sector { get => sector; set => sector = value; }
 
 	public UnitData.Profile.Data ProfileData => Profile.GetData();
 	public UnitData.Stats.Data StatsData => Stats.GetData();
+	public UnitData.Skill.Data SkillData => Skill.GetData();
+	public UnitData.ConnectSector.Data SectorData => Sector.GetData();
 
 	public string UnitName => profile.GetData().unitName;
 	public int UnitID => profile.GetData().unitID;
@@ -20,6 +31,9 @@ public partial class UnitObject : MonoBehaviour
 	{
 		get => StrategyManager.Collector.FindFaction(FactionID);
 	}
+
+	public StatsList MainStatsList => StatsData.GetStatsList();
+	public StatsGroup SkillBuffGroup => skillBuffGroup ??= new StatsGroup();
 
 	public void Init(string unitName = "", int unitID = -1)
 	{
@@ -39,7 +53,7 @@ public partial class UnitObject : MonoBehaviour
 		int factionID = StrategyManager.Collector.FactionNameToID(data.factionName);
 		UnitProfileObject profile = data.unitProfile;
 
-		Profile = new UnitData.Profile(new UnitData.Profile.Data()
+		Profile = new UnitData.Profile(new()
 		{
 			unitName = unitName,
 			unitID = unitID,
@@ -47,51 +61,17 @@ public partial class UnitObject : MonoBehaviour
 			weaponType = profile.weaponType,
 			protectType = profile.protectType,
 		});
-		Stats = new UnitData.Stats(new UnitData.Stats.Data()
+		Stats = new UnitData.Stats(new()
 		{
-			statsList = new StatsList(
-				(StatsType.유닛_인력, profile.유닛_인력),
-				(StatsType.유닛_물자, profile.유닛_물자),
-				(StatsType.유닛_전력, profile.유닛_전력),
-
-				(StatsType.유닛_최대내구도, profile.유닛_최대내구도),
-				(StatsType.유닛_현재내구도, profile.유닛_현재내구도),
-				(StatsType.유닛_공격력, profile.유닛_공격력),
-				(StatsType.유닛_방어력, profile.유닛_방어력),
-				(StatsType.유닛_치유력, profile.유닛_치유력),
-				(StatsType.유닛_회복력, profile.유닛_회복력),
-				(StatsType.유닛_이동속도, profile.유닛_이동속도),
-				(StatsType.유닛_점령점수, profile.유닛_점령점수),
-				(StatsType.유닛_치명공격력, profile.유닛_치명공격력),
-				(StatsType.유닛_치명공격배율, profile.유닛_치명공격배율),
-				(StatsType.유닛_치명방어력, profile.유닛_치명방어력),
-
-				(StatsType.유닛_관통레벨, profile.유닛_관통레벨),
-				(StatsType.유닛_장갑레벨, profile.유닛_장갑레벨),
-				(StatsType.유닛_EMP저항레벨, profile.유닛_EMP저항레벨),
-
-				(StatsType.유닛_공격명중기회, profile.유닛_공격명중기회),
-				(StatsType.유닛_공격회피기회, profile.유닛_공격회피기회),
-				(StatsType.유닛_치명명중기회, profile.유닛_치명명중기회),
-				(StatsType.유닛_치명회피기회, profile.유닛_치명회피기회),
-
-				(StatsType.유닛_명중피격수, profile.유닛_명중피격수),
-				(StatsType.유닛_연속공격횟수, profile.유닛_연속공격횟수),
-				(StatsType.유닛_조준지연시간, profile.유닛_조준지연시간),
-				(StatsType.유닛_연속공격지연시간, profile.유닛_연속공격지연시간),
-				(StatsType.유닛_재공격지연시간, profile.유닛_재공격지연시간),
-
-				(StatsType.유닛_공격소모_물자, profile.유닛_공격소모_물자),
-				(StatsType.유닛_공격소모_전력, profile.유닛_공격소모_전력),
-
-				(StatsType.유닛_공격범위, profile.유닛_공격범위),
-				(StatsType.유닛_행동범위, profile.유닛_행동범위),
-				(StatsType.유닛_시야범위, profile.유닛_시야범위)
-				)
+			stats = new StatsList(profile.ConvertStatsValues())
 		});
-
+		Skill = new UnitData.Skill(new()
+		{
+			skillDatas = data.skillData.Select(i=>new SkillData(i.x, i.y)).ToArray()
+		});
+		Sector = new UnitData.ConnectSector(new(data.connectSectorName));
 		InitOther(profile);
-	}		  
+	}
 }
 public partial class UnitObject : MonoBehaviour // Other
 {
@@ -136,4 +116,32 @@ public partial class UnitObject : IStrategyElement
 	public void OutStrategyCollector()
 	{
 	}
+}
+public partial class UnitObject : ISelectMouse
+{
+	public Vector3 ClickCenter => transform.position;
+	bool ISelectMouse.IsSelectMouse { get; set; }
+    bool ISelectMouse.IsPointEnter { get; set; }
+    Vector3 ISelectMouse.ClickCenter { get; }
+
+    void ISelectMouse.OnPointEnter()
+	{
+	}
+	void ISelectMouse.OnPointExit()
+	{
+	}
+	void ISelectMouse.OnSelect()
+	{
+	}
+	void ISelectMouse.OnDeselect()
+	{
+	}
+
+    void ISelectMouse.OnSingleSelect()
+    {
+    }
+
+    void ISelectMouse.OnSingleDeselect()
+    {
+    }
 }

@@ -14,7 +14,7 @@ public class StrategyManager : MonoBehaviour
 	public static KeyPairDisplayName Key2Name => Manager == null ? null : Manager.key2Name;
 	public static KeyPairSprite Key2Sprite => Manager == null ? null : Manager.key2Sprite;
 	//public static 
-	public bool IsGameSceneReady { get; private set ; }
+	public bool IsGameSceneReady { get; private set; }
 
 	CommonGamePlayData gamePlayData;
 	private StrategyElementCollector collector;
@@ -35,17 +35,17 @@ public class StrategyManager : MonoBehaviour
 	{
 		Manager = null;
 
-		if(collector != null)
+		if (collector != null)
 		{
 			collector.Dispose();
 			collector = null;
 		}
-		if(mission != null)
+		if (mission != null)
 		{
 			mission.Dispose();
 			mission = null;
 		}
-		if(statistics != null)
+		if (statistics != null)
 		{
 			statistics.Dispose();
 			statistics = null;
@@ -61,7 +61,7 @@ public class StrategyManager : MonoBehaviour
 	}
 	public async void GameStart()
 	{
-		if(IsGameSceneReady)
+		if (IsGameSceneReady)
 		{
 			Debug.LogWarning("GameStart: Game Scene is already ready.");
 			return;
@@ -70,11 +70,15 @@ public class StrategyManager : MonoBehaviour
 		Debug.Log("GameStart: Start");
 		IsGameSceneReady = true;
 
-		if(TryGetComponent<StrategyUpdate>(out var _update))
+		if (TryGetComponent<StrategyUpdate>(out var _update))
 		{
 			_update.enabled = false;
-			await Awaitable.NextFrameAsync();
 		}
+		if (TryGetComponent<StrategyMouseSelecter>(out var _clicker))
+		{
+			_clicker.enabled = false;
+		}
+		await Awaitable.NextFrameAsync();
 
 		// 초기화 전용 컴퍼넌트 확보
 		StrategyStartSetter setter = GetComponent<StrategyStartSetter>();
@@ -90,17 +94,17 @@ public class StrategyManager : MonoBehaviour
 			return;
 		}
 		setter.OnSetPreparedData();
-		if(Collector == null)
+		if (Collector == null)
 		{
 			Debug.LogError("GameStart: No StrategyElementCollector ThisComponent found in children of GameManager.");
 			return;
 		}
-		if(Mission == null)
+		if (Mission == null)
 		{
 			Debug.LogError("GameStart: No StrategyMissionTree ThisComponent found in children of GameManager.");
 			return;
 		}
-		if(Statistics == null)
+		if (Statistics == null)
 		{
 			Debug.LogError("GameStart: No StrategyStatistics ThisComponent found in children of GameManager.");
 			return;
@@ -139,5 +143,8 @@ public class StrategyManager : MonoBehaviour
 
 		if (_update == null) gameObject.AddComponent<StrategyUpdate>();
 		else _update.enabled = true;
+
+		if (_clicker == null) gameObject.AddComponent<StrategyMouseSelecter>();
+		else _clicker.enabled = true;
 	}
 }

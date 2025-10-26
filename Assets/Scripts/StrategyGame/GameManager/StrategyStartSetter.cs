@@ -78,8 +78,7 @@ public class StrategyStartSetter : MonoBehaviour
 		for (int i = 0 ; i < cbLength ; i++)
 		{
 			SectorObject sector = allSector[i];
-			sector.Init();
-
+			
 			string cbName =  sector.gameObject.name;
 			for (int j = 0 ; j < dataLength ; j++)
 			{

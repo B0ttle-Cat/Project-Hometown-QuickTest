@@ -49,7 +49,7 @@ public partial class StrategyUpdate
 				if (sector == null || !sector.isActiveAndEnabled) return;
 
 				string key = $"{sector.SectorName}_{UpdateLogicSort.거점_자원갱신이벤트}";
-				if (!TempData.TryGetValue<bool>(key, out var isUpdate) || !isUpdate) return;
+				if (!TempData.GetTrigger(key)) return;
 
 				sector.Stats.Invoke();
 			}

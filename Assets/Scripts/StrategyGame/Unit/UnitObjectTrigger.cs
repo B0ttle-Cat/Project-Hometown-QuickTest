@@ -6,18 +6,18 @@ using UnityEngine;
 public class UnitObjectTrigger : MonoBehaviour
 {
 	private UnitObject thisUnit;
-	private HashSet<Collider> colliderList;
 
+	private HashSet<Collider> colliderList;
 	private List<SectorObject> enterSectorList;
 	private List<UnitObject> closedUnitList;
 	private List<SkillObject> enterSkillList;
+	private List<IStrategyElement> enterOtherList;
 
 	public HashSet<Collider> ColliderList => colliderList;
 	public List<SectorObject> EnterSectorList => enterSectorList;
 	public List<UnitObject> ClosedUnitList => closedUnitList;
 	public List<SkillObject> EnterSkillList => enterSkillList;
-
-
+	public  List<IStrategyElement> EnterOtherList => enterOtherList;
 	private void Awake()
     {
 		thisUnit = GetComponentInParent<UnitObject>();
@@ -26,6 +26,7 @@ public class UnitObjectTrigger : MonoBehaviour
 		enterSectorList = new List<SectorObject>();
 		closedUnitList = new List<UnitObject>();
 		enterSkillList = new List<SkillObject>();
+		enterOtherList = new List<IStrategyElement>();
 	}
     private void OnDestroy()
     {
@@ -35,11 +36,13 @@ public class UnitObjectTrigger : MonoBehaviour
 		ClearList(enterSectorList);
 		ClearList(closedUnitList);
 		ClearList(enterSkillList);
+		ClearList(enterOtherList);
 
 		colliderList = null;
 		enterSectorList = null;
 		closedUnitList = null;
 		enterSkillList = null;
+		enterOtherList = null;
 
 		void ClearList<T>(ICollection<T> list)
 		{
@@ -77,39 +80,41 @@ public class UnitObjectTrigger : MonoBehaviour
 		}
     }
 
-    public bool OnEnter(SectorObject sector)
+    public bool OnEnter(SectorObject item)
 	{
-		enterSectorList.Add(sector);
+		enterSectorList.Add(item);
 		return true;
 	}
-	public bool OnEnter(UnitObject unit)
+	public bool OnEnter(UnitObject item)
 	{
+		closedUnitList.Add(item);
+		return true;
+	}
+	public bool OnEnter(SkillObject item)
+	{
+		enterSkillList.Add(item);
+		return true;
+	}
+	public bool OnEnter(IStrategyElement item)
+	{
+		enterOtherList.Add(item);
+		return true;
+	}
 
-		return true;
-	}
-	public bool OnEnter(SkillObject skill)
+	public bool OnExit(SectorObject item)
 	{
-		return true;
+		return enterSectorList.Remove(item);
 	}
-	public bool OnEnter(IStrategyElement other)
+	public bool OnExit(UnitObject item)
 	{
-		return true;
+		return closedUnitList.Remove(item);
 	}
-
-	public bool OnExit(SectorObject sector)
+	public bool OnExit(SkillObject item)
 	{
-		return enterSectorList.Remove(sector);
+		return enterSkillList.Remove(item);
 	}
-	public bool OnExit(UnitObject unit)
+	public bool OnExit(IStrategyElement item)
 	{
-		return true;
-	}
-	public bool OnExit(SkillObject skill)
-	{
-		return true;
-	}
-	public bool OnExit(IStrategyElement other)
-	{
-		return true;
+		return enterOtherList.Remove(item);
 	}
 }

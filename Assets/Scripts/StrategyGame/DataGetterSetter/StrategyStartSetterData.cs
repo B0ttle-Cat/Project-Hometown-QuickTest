@@ -116,7 +116,8 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		public string unitName;
 		public int unitID { get; set; }
 		[FoldoutGroup("@unitName")]
-		[ValueDropdown("@GetFactionName($property)")]
+		[ValueDropdown("@GetFactionNames($property)")]
+		[InlineButton("Clear_factionName","Clear")]
 		public string factionName;
 		[FoldoutGroup("@unitName")]
 		public UnitProfileObject unitProfile;
@@ -127,10 +128,23 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		public Vector3 rotation;
 
 		[FoldoutGroup("@unitName")]
-		public string connectedSectorName;
+		[ValueDropdown("@GetSectorNames($property)")]
+		[LabelText("SectorName")]
+		[InlineButton("Clear_connectSectorName","Clear")]
+		public string connectSectorName;
 
+		[FoldoutGroup("@unitName")]
+		public Vector2Int[] skillData;
 #if UNITY_EDITOR
-		private static IEnumerable<string> GetFactionName(InspectorProperty property)
+		private void Clear_factionName()
+		{
+			factionName = "";
+		}
+		private void Clear_connectSectorName()
+		{
+			connectSectorName = "";
+		}
+		private static IEnumerable<string> GetFactionNames(InspectorProperty property)
 		{
 			// 루트까지 올라감
 			var root = property.Tree.WeakTargets.FirstOrDefault() as StrategyStartSetterData;
@@ -139,9 +153,22 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 
 			var bases = root.data.factionDatas;
 			if (bases == null || bases.Length == 0)
-				return new[] { "(No SectorData)" };
+				return new[] { "(No Data)" };
 
 			return bases.Select(x => x.factionName);
+		}
+		private static IEnumerable<string> GetSectorNames(InspectorProperty property)
+		{
+			// 루트까지 올라감
+			var root = property.Tree.WeakTargets.FirstOrDefault() as StrategyStartSetterData;
+			if (root == null)
+				return new[] { "(No Root Data)" };
+
+			var bases = root.data.sectorDatas;
+			if (bases == null || bases.Length == 0)
+				return new[] { "(No Data)" };
+
+			return bases.Select(x => x.profileData.sectorName);
 		}
 #endif
 	}
@@ -150,7 +177,7 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 	{
 		[ValueDropdown("@GetSectorNames($property)")]
 		public string captureSector;
-		[ValueDropdown("@GetCaptureFactionName($property)")]
+		[ValueDropdown("@GetCaptureFactionNames($property)")]
 		public string captureFaction;
 		[Range(0f,1f)]
 		public float captureProgress;
@@ -169,12 +196,12 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 
 			var bases = root.data.sectorDatas;
 			if (bases == null || bases.Length == 0)
-				return new[] { "(No SectorData)" };
+				return new[] { "(No Data)" };
 
 			return bases.Select(x => x.profileData.sectorName);
 		}
 		// Odin의 PropertyContext를 통해 상위 오브젝트 접근
-		private static IEnumerable<string> GetCaptureFactionName(InspectorProperty property)
+		private static IEnumerable<string> GetCaptureFactionNames(InspectorProperty property)
 		{
 			// 루트까지 올라감
 			var root = property.Tree.WeakTargets.FirstOrDefault() as StrategyStartSetterData;
@@ -183,7 +210,7 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 
 			var bases = root.data.factionDatas;
 			if (bases == null || bases.Length == 0)
-				return new[] { "(No SectorData)" };
+				return new[] { "(No Data)" };
 
 			return bases.Select(x => x.factionName);
 		}

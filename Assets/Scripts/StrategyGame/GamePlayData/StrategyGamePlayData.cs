@@ -370,20 +370,10 @@ public partial class StrategyGamePlayData // Play Content Data
 			[Serializable]
 			public struct Data : IDataCopy<Data>
 			{
-				// 현재 비축량
 				public StatsList stats;
 				public Data(StatsList stats = null) : this()
 				{
 					this.stats = stats ?? StatsList.SectorStatsList;
-				}
-				public int GetValue(StatsType statsType)
-				{
-					if (stats == null) return 0;
-					return stats.GetValue(statsType).Value;
-				}
-				internal StatsList GetStatsList()
-				{
-					return stats;
 				}
 				public Data Copy()
 				{
@@ -391,6 +381,20 @@ public partial class StrategyGamePlayData // Play Content Data
 					{
 						stats = stats.Copy(),
 					};
+				}
+				public int GetValue(StatsType statsType)
+				{
+					if (stats == null) return 0;
+					return stats.GetValue(statsType).Value;
+				}
+				public void SetValue(StatsType statsType, int value)
+				{
+					if (stats == null) return;
+					stats.SetValue(statsType, value);
+				}
+				public StatsList GetStatsList()
+				{
+					return stats;
 				}
 			}
 		}
@@ -486,10 +490,9 @@ public partial class StrategyGamePlayData // Play Content Data
 				public WeaponType weaponType;
 				public ProtectionType protectType;
 
-
 				public Data Copy()
 				{
-					return default;
+					return this;
 				}
 			}
 		}
@@ -500,27 +503,28 @@ public partial class StrategyGamePlayData // Play Content Data
 			[Serializable]
 			public struct Data : IDataCopy<Data>
 			{
-				public StatsList statsList;
-
+				public StatsList stats;
 				public Data(StatsList statsList = null)
 				{
-					this.statsList = statsList ?? StatsList.UnitStatsList;
+					this.stats = statsList ?? StatsList.UnitStatsList;
 				}
-
 				public Data Copy()
 				{
-					return default;
+					return this;
 				}
-
 				public int GetValue(StatsType statsType)
 				{
-					if (statsList == null) return 0;
-					return statsList.GetValue(statsType).Value;
+					if (stats == null) return 0;
+					return stats.GetValue(statsType).Value;
 				}
 				public void SetValue(StatsType statsType, int value)
 				{
-					if (statsList == null) return;
-					statsList.SetValue(statsType, value);
+					if (stats == null) return;
+					stats.SetValue(statsType, value);
+				}
+				public StatsList GetStatsList()
+				{
+					return stats;
 				}
 			}
 		}
@@ -532,8 +536,6 @@ public partial class StrategyGamePlayData // Play Content Data
 			public struct Data : IDataCopy<Data>
 			{
 				public SkillData[] skillDatas;
-
-
 				public Data Copy()
 				{
 					return new Data()
@@ -545,69 +547,87 @@ public partial class StrategyGamePlayData // Play Content Data
 			[Serializable]
 			public struct SkillData
 			{
-				public int skillID;
+				public int skillKey;
 				public int skillLevel;
-			}
+
+                public SkillData(int skillKey, int skillLevel)
+                {
+                    this.skillKey = skillKey;
+                    this.skillLevel = skillLevel;
+                }
+            }
 		}
-		public class ConnectedSector
+		[Serializable]
+		public class StatsBuff
 		{
-			[Header("State")]
-			[SerializeField]
-			private string lastEnterSectorName;
-			[SerializeField]
-			private string currEnterSectorName;
-			public string ConnectSectorName
+
+		}
+
+		[Serializable]
+		public class ConnectSector : GamePlayData<ConnectSector.Data>
+		{
+			public ConnectSector(Data data) : base(data) { }
+			[Serializable]
+			public struct Data : IDataCopy<Data>
 			{
-				get
+				[SerializeField]
+				private string lastEnterSectorName;
+				[SerializeField]
+				private string currEnterSectorName;
+
+                public Data(string connectSectorName = "") : this()
+                {
+					lastEnterSectorName = currEnterSectorName = connectSectorName;
+                }
+
+                public string ConnectSectorName
 				{
-					if (string.IsNullOrWhiteSpace(currEnterSectorName))
+					get
 					{
-						if (string.IsNullOrWhiteSpace(lastEnterSectorName))
+						if (string.IsNullOrWhiteSpace(currEnterSectorName))
 						{
-							return null;
+							if (string.IsNullOrWhiteSpace(lastEnterSectorName))
+							{
+								return null;
+							}
+							return lastEnterSectorName;
 						}
-						return lastEnterSectorName;
+						return currEnterSectorName;
 					}
-					return currEnterSectorName;
+					set
+					{
+						if (string.IsNullOrWhiteSpace(currEnterSectorName))
+						{
+							lastEnterSectorName = currEnterSectorName = value;
+						}
+						else
+						{
+							lastEnterSectorName = currEnterSectorName;
+							currEnterSectorName = value;
+						}
+					}
 				}
-				set
+
+				public Data Copy()
 				{
-					if (string.IsNullOrWhiteSpace(currEnterSectorName))
-					{
-						lastEnterSectorName = currEnterSectorName = value;
-					}
-					else
-					{
-						lastEnterSectorName = currEnterSectorName;
-						currEnterSectorName = value;
-					}
+					return this;
 				}
 			}
-			public SectorObject ConnectSector
-			{
-				get
-				{
-					if (StrategyManager.Collector.TryFindSector(ConnectSectorName, out var cb))
-					{
-						return cb;
-					}
-					return null;
-				}
-			}
+
 		}
 	}
 
 	public enum WeaponType
 	{
-		None = 0, //	상성표: 무효 |<< (--) (- ) (  ) (+ ) (++) >>|유효
-				  //	대미지%	  |<< (20) (50) (100) (200) (300) >>|
-		관통, //			경장갑(  ) | 중장갑(+ ) | 역장(- ) | 건물(  )
-		폭발, //			경장갑(+ ) | 중장갑(  ) | 역장(- ) | 건물(  )
+		None = 0,     // 상성표: 무효 |<< (--) (- ) (  ) (+ ) (++) >>|유효
+					  // 대미지%	  |<< (20) (50) (100) (200) (300) >>|
+		관통,         // 경장갑(  ) | 중장갑(+ ) | 역장(- ) | 건물(  )
+		폭발,         // 경장갑(+ ) | 중장갑(  ) | 역장(- ) | 건물(  )
 
-		관통특화, //		경장갑(- ) | 중장갑(++) | 역장(- ) | 건물(+ )
-		폭발특화, //		경장갑(++) | 중장갑(--) | 역장(  ) | 건물(+ )
+		관통특화,     // 경장갑(- ) | 중장갑(++) | 역장(- ) | 건물(+ )
+		폭발특화,     // 경장갑(++) | 중장갑(--) | 역장(  ) | 건물(+ )
 
-		에너지, //		경장갑(- ) | 중장갑(--) | 역장(++) | 건물(--)
+		에너지,       // 경장갑(- ) | 중장갑(--) | 역장(++) | 건물(--)
 	}
 	public enum ProtectionType
 	{
@@ -628,7 +648,7 @@ public partial class StrategyGamePlayData // Play Content Data
 	// 유닛 피해량 (치명)
 	// 기본 피해량 = (유닛_공격력 - 유닛_방어력)
 	// 치명 피해량 = ((기본 피해량 + 유닛_치명공격력) * 적용 피해량 - 유닛_치명방어력)
-	// 상성 보정량 = ((유닛_관통레벨 / 유닛_장갑레벨)^2 : > 0.3 and < 1) * 상성 보정; 
+	// 상성 보정량 = ((유닛_관통레벨 / 유닛_장갑레벨)^2 : > 0.3 and < 1) * 상성 보정(WeaponType 참고); 
 	// 최종 피해량 = (기본 피해량 + 치명 피해량) * 상성 보정량 * 난수(0.8~1.2)
 	// 피해 계산 반복 => 유닛_공격당피격수 만큼
 	//
@@ -656,14 +676,14 @@ public partial class StrategyGamePlayData // Play Content Data
 		유닛_물자               = 1001, // 사용하기 위해 필요한 물자
 		유닛_전력               = 1002, // 사용하기 위해 필요한 전력
 
-		유닛_최대내구도        = 1100, //보유한 최대 채력량
-		유닛_현재내구도        = 1101, //보유한 현재 채력량
+		유닛_최대내구도        = 1100, // 보유한 최대 채력량
+		유닛_현재내구도        = 1101, // 보유한 현재 채력량
 		유닛_공격력            = 1102, // 기본 피해량 = 공격력 - 방어력
 		유닛_방어력            = 1103, //
 		유닛_치유력            = 1104, // 기본 회복량 = 치유력 + 회복력
 		유닛_회복력            = 1105, //
-		유닛_이동속도          = 1106, //이동 속도
-		유닛_점령점수          = 1107, //점령 점수
+		유닛_이동속도          = 1106, // 이동 속도
+		유닛_점령점수          = 1107, // 점령 점수
 		유닛_치명공격력        = 1108, // 치명 피해량 = (적용 피해량 + 유닛_치명공격력) *  유닛_치명공격배율 - 유닛_치명방어력 
 		유닛_치명공격배율      = 1108, // 최종 피해량 = 적용 피해량 + 치명 피해량
 		유닛_치명방어력        = 1109, //
@@ -704,14 +724,36 @@ public partial class StrategyGamePlayData // Play Content Data
 
 		거점_최대내구도        = 2100,
 		거점_현재내구도        = 2101,
-		거점_적정병력수용량    = 2102,
-		거점_현재병력수용량    = 2103,
 	}
+
+
+	public static StatsType[] SectorDurabilityStats =new StatsType[]
+	{
+		StatsType.거점_최대내구도,
+		StatsType.거점_현재내구도,
+	};
+
+	public static StatsType[] SectorSupplyStats =new StatsType[]
+	{
+		StatsType.거점_인력_현재보유량,
+		StatsType.거점_물자_현재보유량,
+		StatsType.거점_전력_현재보유량,
+	};
+
+	public static StatsType[] SectorSupplyStats_Max =new StatsType[]
+	{
+		StatsType.거점_인력_최대보유량,
+		StatsType.거점_물자_최대보유량,
+		StatsType.거점_전력_최대보유량,
+		StatsType.거점_인력_분당회복량,
+		StatsType.거점_물자_분당회복량,
+		StatsType.거점_전력_분당회복량,
+	};
+
 	public static string SuffixStatsType(StatsType type) => type switch
 	{
 		_ => ""
 	};
-
 	[Serializable]
 	public struct StatsValue
 	{
@@ -799,7 +841,6 @@ public partial class StrategyGamePlayData // Play Content Data
 		}
 		public static StatsValue None => new StatsValue(StatsType.None);
 	}
-
 	[Serializable]
 	public class StatsList : IDisposable, IDataCopy<StatsList>
 	{
@@ -810,6 +851,13 @@ public partial class StrategyGamePlayData // Play Content Data
 		private Action<StatsValue> onLateChangeValue;
 		private bool sleepOnChange;
 
+		public StatsList()
+		{
+			values = new List<StatsValue>();
+			onChangeValue = null;
+			onLateChangeValue = null;
+			sleepOnChange = false;
+		}
 		public StatsList(params (StatsType type, int value)[] values)
 		{
 			var list = values == null  ? new StatsValue[0] :  values.Select(i => new StatsValue(i.type, i.value));
@@ -853,19 +901,20 @@ public partial class StrategyGamePlayData // Play Content Data
 			new StatsValue(StatsType.None)
 			);
 		public static StatsList SectorStatsList => new StatsList(
-				new StatsValue(StatsType.거점_인력_현재보유량, 50),
-				new StatsValue(StatsType.거점_물자_현재보유량, 50),
-				new StatsValue(StatsType.거점_전력_현재보유량, 50),
+				new StatsValue(StatsType.거점_최대내구도, 500),
+				new StatsValue(StatsType.거점_현재내구도, 500),   
+
 				new StatsValue(StatsType.거점_인력_최대보유량, 100),
 				new StatsValue(StatsType.거점_물자_최대보유량, 1000),
 				new StatsValue(StatsType.거점_전력_최대보유량, 1000),
+
+				new StatsValue(StatsType.거점_인력_현재보유량, 50),
+				new StatsValue(StatsType.거점_물자_현재보유량, 50),
+				new StatsValue(StatsType.거점_전력_현재보유량, 50),
+
 				new StatsValue(StatsType.거점_인력_분당회복량, 5),
 				new StatsValue(StatsType.거점_물자_분당회복량, 50),
-				new StatsValue(StatsType.거점_전력_분당회복량, 50),
-				new StatsValue(StatsType.거점_최대내구도, 500),
-				new StatsValue(StatsType.거점_현재내구도, 500),
-				new StatsValue(StatsType.거점_적정병력수용량, 100),
-				new StatsValue(StatsType.거점_현재병력수용량, 10)
+				new StatsValue(StatsType.거점_전력_분당회복량, 50)
 		);
 		public void Invoke(in StatsValue statsValue)
 		{
@@ -1010,9 +1059,9 @@ public partial class StrategyGamePlayData // Play Content Data
 			values[findindex] = value;
 			Invoke(find);
 		}
-		public List<StatsValue> GetValueList()
+		public List<StatsValue> GetValueList(bool newCopy = false)
 		{
-			return values;
+			return newCopy ? new List<StatsValue>(values) : values;
 		}
 		public List<StatsValue> GetValueList(params StatsType[] types)
 		{
@@ -1067,14 +1116,11 @@ public partial class StrategyGamePlayData // Play Content Data
 			onLateChangeValue = null;
 			sleepOnChange = false;
 		}
-
 		public StatsList Copy()
 		{
 			return new StatsList(values.ToArray());
 		}
 	}
-
-
 	[Serializable]
 	public class StatsGroup : IDisposable, IDataCopy<StatsGroup>
 	{
@@ -1158,7 +1204,7 @@ public partial class StrategyGamePlayData // Play Content Data
 		{
 			StatsValue statsValue = new StatsValue(statsType,0);
 			int length = values.Count;
-			
+
 			for (int i = 0 ; i < length ; i++)
 			{
 				if (values[i].List == null) continue;

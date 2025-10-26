@@ -82,7 +82,7 @@ public partial class StrategyUpdate : MonoBehaviour
 		None = 0,
 
 		거점_점령상태,
-		거점_버프_계산,
+		거점_시설버프계산,
 
 		거점_시설_건설,
 
@@ -91,7 +91,9 @@ public partial class StrategyUpdate : MonoBehaviour
 		거점_물류_네트워크_업데이트,
 		거점_인력_보충,
 		거점_자원갱신이벤트,
+		거점_유닛버프계산,
 
+		유닛_인스턴스생성,
 		유닛_버프_계산,
 		유닛_이동,
 		유닛_상태_업데이트,     // 유닛의 위치와 스텟을 토대로 어떤 행동을 할지 결정한다.
@@ -99,7 +101,10 @@ public partial class StrategyUpdate : MonoBehaviour
 		유닛_데미지_계산,          // 충돌된 데이미 계산을 진행
 		유닛_사망_처리,           // HP 없는 유닛을 삭제.
 
-		UI
+		UI,
+
+
+		End = int.MaxValue,
 	}
 	public class StrategyUpdateTempData : IDisposable
 	{
@@ -126,6 +131,12 @@ public partial class StrategyUpdate : MonoBehaviour
 		{
 			dataList = new List<DataValue>();
 		}
+		public bool HasKey(string key)
+		{
+			int findIndex = dataList.FindIndex(d=>d.key == key);
+			return findIndex >= 0;
+		}
+
 		public bool TryGetValue<T>(string key, out T value)
 		{
 			value = default;
@@ -147,6 +158,22 @@ public partial class StrategyUpdate : MonoBehaviour
 			if (findIndex < 0) dataList.Add(new DataValue(key, value, alive));
 			else dataList[findIndex] = new DataValue(key, value, alive);
 		}
+
+		public bool GetTrigger(string key)
+		{
+			return HasKey(key);
+		}
+		public void SetTrigger(string key)
+		{
+			int findIndex = dataList.FindIndex(d=>d.key == key);
+			if (findIndex < 0) dataList.Add(new DataValue(key, true));
+		}
+		public void SetTrigger(string key, UpdateLogicSort alive)
+		{
+			int findIndex = dataList.FindIndex(d=>d.key == key);
+			if (findIndex < 0) dataList.Add(new DataValue(key, true, alive));
+		}
+
 		public bool RemoveValue(string key)
 		{
 			int findIndex = dataList.FindIndex(d=>d.key == key);
@@ -169,9 +196,11 @@ public partial class StrategyUpdate : MonoBehaviour
 
 		public void Dispose()
 		{
-			if (dataList == null) return;
-			dataList = null;
-			dataList.Clear();
+			if (dataList != null)
+			{
+				dataList.Clear();
+				dataList = null;
+			}
 		}
 	}
 
@@ -181,16 +210,19 @@ public partial class StrategyUpdate : MonoBehaviour
 		updateList = new List<(UpdateLogicSort type, IStrategyUpdater updater)>()
 		{
 			(UpdateLogicSort.거점_점령상태,  new StrategyUpdate_CaptureUpdate(this)),
-			(UpdateLogicSort.거점_버프_계산,  null),
 			(UpdateLogicSort.거점_시설_건설,  new StrategyUpdate_ConstructUpdate(this)),
+			(UpdateLogicSort.거점_시설버프계산,  null),
 
 			(UpdateLogicSort.거점_전력_보충,  new StrategyUpdate_ElectricSupply(this)),
 			(UpdateLogicSort.거점_물자_보충,  new StrategyUpdate_MaterialSupply(this)),
 			(UpdateLogicSort.거점_인력_보충,  new StrategyUpdate_PersonnelSupply(this)),
 
 			(UpdateLogicSort.거점_물류_네트워크_업데이트,  null),
-			(UpdateLogicSort.거점_자원갱신이벤트,  new StrategyUpdate_EndedResourcesSupply(this)),
 
+			(UpdateLogicSort.거점_자원갱신이벤트,  new StrategyUpdate_EndedResourcesSupply(this)),
+			(UpdateLogicSort.거점_유닛버프계산, null),
+
+			(UpdateLogicSort.유닛_인스턴스생성, null),
 			(UpdateLogicSort.유닛_버프_계산,  new StrategyUpdate_UnitBuff(this)),
 
 			(UpdateLogicSort.유닛_이동,  null),
@@ -198,20 +230,22 @@ public partial class StrategyUpdate : MonoBehaviour
 			(UpdateLogicSort.유닛_공격_업데이트,  null),
 			(UpdateLogicSort.유닛_데미지_계산,  null),
 			(UpdateLogicSort.유닛_사망_처리,  null),
+
+			(UpdateLogicSort.End, null)
 		};
 
 		foreach ((UpdateLogicSort type, IStrategyUpdater updater) in updateList)
 		{
-			updater.Start();
+			updater?.Start();
 		}
 	}
 	public void OnDisable()
 	{
 		if (updateList != null)
 		{
-			foreach ((UpdateLogicSort type, IStrategyUpdater updater) in updateList)
+			foreach ((_, IStrategyUpdater updater) in updateList)
 			{
-				updater.Dispose();
+				updater?.Dispose();
 			}
 			updateList.Clear();
 			updateList = null;
@@ -228,8 +262,26 @@ public partial class StrategyUpdate : MonoBehaviour
 		float deltaTime = Time.deltaTime;
 		foreach ((UpdateLogicSort type, IStrategyUpdater updater) in updateList)
 		{
-			updater.Update(in deltaTime);
-			tempData.AfterRemove(type);
+			try
+			{
+				updater?.Update(in deltaTime);
+			}
+			catch (Exception ex)
+			{
+				Debug.LogException(ex);
+			}
+			finally
+			{
+				try
+				{
+					tempData.AfterRemove(type);
+				}
+				catch (Exception ex)
+				{
+					Debug.LogException(ex);
+					tempData = new StrategyUpdateTempData();
+				}
+			}
 		}
 	}
 }

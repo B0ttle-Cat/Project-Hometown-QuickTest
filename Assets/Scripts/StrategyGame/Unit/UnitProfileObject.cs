@@ -176,4 +176,48 @@ public class UnitProfileObject : ScriptableObject
 
 	[Space]
 	public SkillProfile[] connectSkill;
+
+	public StatsValue[] ConvertStatsValues()
+	{
+		return new StatsValue[]
+		{
+			new (StatsType.유닛_인력, 유닛_인력),
+			new (StatsType.유닛_물자, 유닛_물자),
+			new (StatsType.유닛_전력, 유닛_전력),
+
+			new (StatsType.유닛_최대내구도, 유닛_최대내구도),
+			new (StatsType.유닛_현재내구도, 유닛_현재내구도),
+			new (StatsType.유닛_공격력, 유닛_공격력),
+			new (StatsType.유닛_방어력, 유닛_방어력),
+			new (StatsType.유닛_치유력, 유닛_치유력),
+			new (StatsType.유닛_회복력, 유닛_회복력),
+			new (StatsType.유닛_이동속도, 유닛_이동속도),
+			new (StatsType.유닛_점령점수, 유닛_점령점수),
+			new (StatsType.유닛_치명공격력, 유닛_치명공격력),
+			new (StatsType.유닛_치명공격배율, 유닛_치명공격배율),
+			new (StatsType.유닛_치명방어력, 유닛_치명방어력),
+
+			new (StatsType.유닛_관통레벨, 유닛_관통레벨),
+			new (StatsType.유닛_장갑레벨, 유닛_장갑레벨),
+			new (StatsType.유닛_EMP저항레벨, 유닛_EMP저항레벨),
+
+			new (StatsType.유닛_공격명중기회, 유닛_공격명중기회),
+			new (StatsType.유닛_공격회피기회, 유닛_공격회피기회),
+			new (StatsType.유닛_치명명중기회, 유닛_치명명중기회),
+			new (StatsType.유닛_치명회피기회, 유닛_치명회피기회),
+
+			new (StatsType.유닛_명중피격수, 유닛_명중피격수),
+			new (StatsType.유닛_연속공격횟수, 유닛_연속공격횟수),
+			new (StatsType.유닛_조준지연시간, 유닛_조준지연시간),
+			new (StatsType.유닛_연속공격지연시간, 유닛_연속공격지연시간),
+			new (StatsType.유닛_재공격지연시간, 유닛_재공격지연시간),
+
+			new (StatsType.유닛_공격소모_물자, 유닛_공격소모_물자),
+			new (StatsType.유닛_공격소모_전력, 유닛_공격소모_전력),
+
+			new (StatsType.유닛_공격범위, 유닛_공격범위),
+			new (StatsType.유닛_행동범위, 유닛_행동범위),
+			new (StatsType.유닛_시야범위, 유닛_시야범위)
+		};
+	}
 }

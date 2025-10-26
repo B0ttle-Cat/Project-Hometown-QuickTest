@@ -1,4 +1,4 @@
-﻿%YAML 1.1
+%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &11400000
 MonoBehaviour:
@@ -47,47 +47,28 @@ MonoBehaviour:
       mainStatsData:
         stats:
           values:
-          - statsType: 2020
-            value: 50
-            symbol: 0
-          - statsType: 2021
-            value: 50
-            symbol: 0
-          - statsType: 2022
-            value: 50
-            symbol: 0
-          - statsType: 2000
-            value: 100
-            symbol: 0
-          - statsType: 2001
-            value: 1000
-            symbol: 0
-          - statsType: 2002
-            value: 1000
-            symbol: 0
-          - statsType: 2010
-            value: 5
-            symbol: 0
-          - statsType: 2011
-            value: 50
-            symbol: 0
-          - statsType: 2012
-            value: 50
-            symbol: 0
           - statsType: 2100
             value: 500
-            symbol: 0
           - statsType: 2101
             value: 500
-            symbol: 0
-          - statsType: 2102
+          - statsType: 2000
             value: 100
-            symbol: 0
-          - statsType: 2103
-            value: 10
-            symbol: 0
-        buff:
-          values: []
+          - statsType: 2001
+            value: 1000
+          - statsType: 2002
+            value: 1000
+          - statsType: 2020
+            value: 50
+          - statsType: 2021
+            value: 50
+          - statsType: 2022
+            value: 50
+          - statsType: 2010
+            value: 5
+          - statsType: 2011
+            value: 50
+          - statsType: 2012
+            value: 50
       captureTime: 0
       facilitiesStatsData:
         slotData: []
@@ -104,47 +85,28 @@ MonoBehaviour:
       mainStatsData:
         stats:
           values:
-          - statsType: 2020
-            value: 50
-            symbol: 0
-          - statsType: 2021
-            value: 50
-            symbol: 0
-          - statsType: 2022
-            value: 50
-            symbol: 0
-          - statsType: 2000
-            value: 100
-            symbol: 0
-          - statsType: 2001
-            value: 1000
-            symbol: 0
-          - statsType: 2002
-            value: 1000
-            symbol: 0
-          - statsType: 2010
-            value: 5
-            symbol: 0
-          - statsType: 2011
-            value: 50
-            symbol: 0
-          - statsType: 2012
-            value: 50
-            symbol: 0
           - statsType: 2100
             value: 500
-            symbol: 0
           - statsType: 2101
             value: 500
-            symbol: 0
-          - statsType: 2102
+          - statsType: 2000
             value: 100
-            symbol: 0
-          - statsType: 2103
-            value: 10
-            symbol: 0
-        buff:
-          values: []
+          - statsType: 2001
+            value: 1000
+          - statsType: 2002
+            value: 1000
+          - statsType: 2020
+            value: 50
+          - statsType: 2021
+            value: 50
+          - statsType: 2022
+            value: 50
+          - statsType: 2010
+            value: 5
+          - statsType: 2011
+            value: 50
+          - statsType: 2012
+            value: 50
       captureTime: 0
       facilitiesStatsData:
         slotData: []
@@ -161,47 +123,28 @@ MonoBehaviour:
       mainStatsData:
         stats:
           values:
-          - statsType: 2020
-            value: 50
-            symbol: 0
-          - statsType: 2021
-            value: 50
-            symbol: 0
-          - statsType: 2022
-            value: 50
-            symbol: 0
-          - statsType: 2000
-            value: 100
-            symbol: 0
-          - statsType: 2001
-            value: 1000
-            symbol: 0
-          - statsType: 2002
-            value: 1000
-            symbol: 0
-          - statsType: 2010
-            value: 5
-            symbol: 0
-          - statsType: 2011
-            value: 50
-            symbol: 0
-          - statsType: 2012
-            value: 50
-            symbol: 0
           - statsType: 2100
             value: 500
-            symbol: 0
           - statsType: 2101
             value: 500
-            symbol: 0
-          - statsType: 2102
+          - statsType: 2000
             value: 100
-            symbol: 0
-          - statsType: 2103
-            value: 10
-            symbol: 0
-        buff:
-          values: []
+          - statsType: 2001
+            value: 1000
+          - statsType: 2002
+            value: 1000
+          - statsType: 2020
+            value: 50
+          - statsType: 2021
+            value: 50
+          - statsType: 2022
+            value: 50
+          - statsType: 2010
+            value: 5
+          - statsType: 2011
+            value: 50
+          - statsType: 2012
+            value: 50
       captureTime: 0
       facilitiesStatsData:
         slotData: []
@@ -218,47 +161,28 @@ MonoBehaviour:
       mainStatsData:
         stats:
           values:
-          - statsType: 2020
-            value: 50
-            symbol: 0
-          - statsType: 2021
-            value: 50
-            symbol: 0
-          - statsType: 2022
-            value: 50
-            symbol: 0
-          - statsType: 2000
-            value: 100
-            symbol: 0
-          - statsType: 2001
-            value: 1000
-            symbol: 0
-          - statsType: 2002
-            value: 1000
-            symbol: 0
-          - statsType: 2010
-            value: 5
-            symbol: 0
-          - statsType: 2011
-            value: 50
-            symbol: 0
-          - statsType: 2012
-            value: 50
-            symbol: 0
           - statsType: 2100
             value: 500
-            symbol: 0
           - statsType: 2101
             value: 500
-            symbol: 0
-          - statsType: 2102
+          - statsType: 2000
             value: 100
-            symbol: 0
-          - statsType: 2103
-            value: 10
-            symbol: 0
-        buff:
-          values: []
+          - statsType: 2001
+            value: 1000
+          - statsType: 2002
+            value: 1000
+          - statsType: 2020
+            value: 50
+          - statsType: 2021
+            value: 50
+          - statsType: 2022
+            value: 50
+          - statsType: 2010
+            value: 5
+          - statsType: 2011
+            value: 50
+          - statsType: 2012
+            value: 50
       captureTime: 0
       facilitiesStatsData:
         slotData: []
@@ -275,47 +199,28 @@ MonoBehaviour:
       mainStatsData:
         stats:
           values:
-          - statsType: 2020
-            value: 50
-            symbol: 0
-          - statsType: 2021
-            value: 50
-            symbol: 0
-          - statsType: 2022
-            value: 50
-            symbol: 0
-          - statsType: 2000
-            value: 100
-            symbol: 0
-          - statsType: 2001
-            value: 1000
-            symbol: 0
-          - statsType: 2002
-            value: 1000
-            symbol: 0
-          - statsType: 2010
-            value: 5
-            symbol: 0
-          - statsType: 2011
-            value: 50
-            symbol: 0
-          - statsType: 2012
-            value: 50
-            symbol: 0
           - statsType: 2100
             value: 500
-            symbol: 0
           - statsType: 2101
             value: 500
-            symbol: 0
-          - statsType: 2102
+          - statsType: 2000
             value: 100
-            symbol: 0
-          - statsType: 2103
-            value: 10
-            symbol: 0
-        buff:
-          values: []
+          - statsType: 2001
+            value: 1000
+          - statsType: 2002
+            value: 1000
+          - statsType: 2020
+            value: 50
+          - statsType: 2021
+            value: 50
+          - statsType: 2022
+            value: 50
+          - statsType: 2010
+            value: 5
+          - statsType: 2011
+            value: 50
+          - statsType: 2012
+            value: 50
       captureTime: 0
       facilitiesStatsData:
         slotData: []
@@ -331,11 +236,15 @@ MonoBehaviour:
       unitProfile: {fileID: 11400000, guid: ef441d73e230ad44d8ad139f1663ba71, type: 2}
       position: {x: 10, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0}
+      connectSectorName: 
+      skillData: []
     - unitName: Unit B
       factionName: Faction_01
       unitProfile: {fileID: 11400000, guid: ef441d73e230ad44d8ad139f1663ba71, type: 2}
       position: {x: 0, y: 0, z: 10}
       rotation: {x: 0, y: 0, z: 0}
+      connectSectorName: 
+      skillData: []
     captureDatas:
     - captureSector: Sector_00
       captureFaction: Faction_00

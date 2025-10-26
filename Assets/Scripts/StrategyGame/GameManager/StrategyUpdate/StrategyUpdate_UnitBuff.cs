@@ -64,16 +64,19 @@ public partial class StrategyUpdate
 		public class UnitSpawner : UpdateLogic
 		{
 			private UnitObject unit;
+			private UnitObjectTrigger unitTrigger;
 
 			private readonly StatsType[] SectorBuffType = new StatsType[]
 			{
-
+				 StatsType.유닛_최대내구도,
+				 StatsType.유닛_회복력,
 			};
 
 
 			public UnitSpawner(StrategyUpdateSubClass<UnitSpawner> thisSubClass, UnitObject unit) : base(thisSubClass)
 			{
 				this.unit = unit;
+				unitTrigger = unit.GetComponentInChildren<UnitObjectTrigger>();
 			}
 
 			protected override void OnDispose()
@@ -85,16 +88,37 @@ public partial class StrategyUpdate
 			{
 				if (unit == null || !unit.isActiveAndEnabled) return;
 
-				//string cbBugffKey = $"SectorUnitBuff_{captureTag.ConnectSectorName}";
-				//if(!TempData.TryGetValue(cbBugffKey, out List<StatsValue> cbBuffList))
-				//{
-				//	cbBuffList = GetSectorBuffState(captureTag.ConnectSector);
-				//}
+				StatsList tempStatsList = new StatsList();
+
+				tempStatsList.SumStats(unit.MainStatsList.GetValueList());
+				tempStatsList.SumStats(unit.SkillBuffGroup.GetValueList());
+				tempStatsList.SumStats(GetSectorBuffState());
+
+				string unitKey = $"Unit{unit.UnitID}_Stats";
+				TempData.SetValue(unitKey, tempStatsList.GetValueList(true), UpdateLogicSort.End);
+				tempStatsList.Dispose();
 			}
 
-			private List<StatsValue> GetSectorBuffState(SectorObject sector)
+			private SectorObject GetEnterSector()
 			{
+				string connectSectorName = unit.SectorData.ConnectSectorName;
+				if (!StrategyManager.Collector.TryFindSector(connectSectorName, out var sector)) return null;
+				if (sector.CaptureData.captureFactionID != unit.FactionID) return null;
+				return sector;
+			}
+
+			private List<StatsValue> GetSectorBuffState()
+			{
+				var sector = GetEnterSector();
 				if (sector == null) return new List<StatsValue>();
+
+				var enterSector = GetEnterSector();
+
+				string cbBugffKey = $"SectorUnitBuff_{enterSector.SectorName}";
+				if (TempData.TryGetValue(cbBugffKey, out List<StatsValue> cbBuffList))
+				{
+					return cbBuffList;
+				}
 
 				StatsList MainStatsList = sector.MainStatsList;
 				StatsGroup FacilitiesBuffGroup = sector.FacilitiesBuffGroup;
@@ -105,13 +129,13 @@ public partial class StrategyUpdate
 				var supportList = supportBuffGroup.GetValueList(SectorBuffType);
 
 				int length = SectorBuffType.Length;
-				var totalList = new List<StatsValue>(length);
+				cbBuffList = new List<StatsValue>(length);
 				for (int i = 0 ; i < length ; i++)
 				{
-					totalList.Add(mainList[i] + facilitiesList[i] + supportList[i]);
+					cbBuffList.Add(mainList[i] + facilitiesList[i] + supportList[i]);
 				}
 
-				return totalList;
+				return cbBuffList;
 			}
 		}
 	}

@@ -58,6 +58,7 @@ public partial class StrategyUpdate
 			protected override void OnUpdate(in float deltaTime)
 			{
 				if (sector == null || !sector.isActiveAndEnabled) return;
+				if(sector.CaptureData.captureFactionID < 0 ) return;
 
 				StatsList MainStatsList = sector.MainStatsList;
 				StatsGroup FacilitiesBuffGroup = sector.FacilitiesBuffGroup;
@@ -125,7 +126,8 @@ public partial class StrategyUpdate
 					MainStatsList.SetValue(CurrType, 현재보유량);
 
 					string key = $"{sector.SectorName}_{UpdateLogicSort.거점_자원갱신이벤트}";
-					TempData.SetValue(key, true, UpdateLogicSort.거점_자원갱신이벤트);
+					TempData.SetTrigger(key, UpdateLogicSort.거점_자원갱신이벤트);
+					Debug.Log($"Pressed ElectricSupply| Sector:{sector.SectorName,-10} | Faction:{sector.CaptureData.captureFactionID,-10} | Point:{현재보유량,4}/{최대보유량-4}");
 				}
 			}
 		}
