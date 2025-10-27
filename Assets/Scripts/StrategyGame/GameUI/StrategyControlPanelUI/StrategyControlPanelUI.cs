@@ -1,14 +1,38 @@
-﻿using UnityEngine;
-
-public class StrategyControlPanelUI : MonoBehaviour, IGamePanelUI
+﻿public partial class StrategyControlPanelUI : FloatingPanelUI, IGamePanelUI, IStartGame
 {
-	public void OpenUI()
+	public bool IsOpen { get; set; }
+    private void Awake()
+    {
+		CloseUI();
+	}
+    public void OpenUI()
 	{
-		throw new System.NotImplementedException();
+		
 	}
 	public void CloseUI()
 	{
-		throw new System.NotImplementedException();
+	
 	}
+    void IStartGame.OnStartGame()
+    {
+		StrategyManager.Selecter.AddListener_OnFirstAndLast(OpenUI, CloseUI);
+		if(StrategyManager.Selecter.GetCurrentSelectList.Count > 0)
+		{
+			OpenUI();
+		}
+    }
+    void IStartGame.OnStopGame()
+	{
+		CloseUI();
+		StrategyManager.Selecter.RemoveListener_OnFirsAndLast(OpenUI, CloseUI);
+	}
+	public void AddFloatingUI()
+	{
+
+	}
+}
+
+public partial class StrategyControlPanelUI
+{
 
 }

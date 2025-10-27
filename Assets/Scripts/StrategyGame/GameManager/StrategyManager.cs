@@ -10,7 +10,8 @@ public class StrategyManager : MonoBehaviour
 	public static StrategyElementCollector Collector => Manager == null ? null : Manager.collector;
 	public static StrategyMissionTree Mission => Manager == null ? null : Manager.mission;
 	public static StrategyStatistics Statistics => Manager == null ? null : Manager.statistics;
-
+	public static StrategyUpdate Updater => Manager == null ? null : Manager.updater;
+	public static StrategyMouseSelecter Selecter => Manager == null ? null : Manager.selecter;
 	public static KeyPairDisplayName Key2Name => Manager == null ? null : Manager.key2Name;
 	public static KeyPairSprite Key2Sprite => Manager == null ? null : Manager.key2Sprite;
 	//public static 
@@ -20,6 +21,8 @@ public class StrategyManager : MonoBehaviour
 	private StrategyElementCollector collector;
 	private StrategyMissionTree mission;
 	private StrategyStatistics statistics;
+	private StrategyUpdate updater;
+	private StrategyMouseSelecter selecter;
 	private KeyPairDisplayName key2Name;
 	private KeyPairSprite key2Sprite;
 	private void Awake()
@@ -30,6 +33,8 @@ public class StrategyManager : MonoBehaviour
 		collector = GetComponentInChildren<StrategyElementCollector>();
 		mission = GetComponentInChildren<StrategyMissionTree>();
 		statistics = GetComponentInChildren<StrategyStatistics>();
+		updater = GetComponentInChildren<StrategyUpdate>();
+		selecter = GetComponentInChildren<StrategyMouseSelecter>();
 	}
 	private void OnDestroy()
 	{
@@ -70,13 +75,15 @@ public class StrategyManager : MonoBehaviour
 		Debug.Log("GameStart: Start");
 		IsGameSceneReady = true;
 
-		if (TryGetComponent<StrategyUpdate>(out var _update))
+		OnStopGame();
+
+		if ((updater = updater != null ? updater : GetComponentInChildren<StrategyUpdate>()) != null)
 		{
-			_update.enabled = false;
+			updater.enabled = false;
 		}
-		if (TryGetComponent<StrategyMouseSelecter>(out var _clicker))
+		if ((selecter = selecter != null ? selecter : GetComponentInChildren<StrategyMouseSelecter>()) != null)
 		{
-			_clicker.enabled = false;
+			selecter.enabled = false;
 		}
 		await Awaitable.NextFrameAsync();
 
@@ -114,6 +121,7 @@ public class StrategyManager : MonoBehaviour
 		Statistics.Init();
 		key2Name = KeyPairDisplayName.Load(StrategyGamePlayData.PreparedData.GetData().LanguageType, "Strategy");
 		key2Sprite = KeyPairSprite.Load(StrategyGamePlayData.PreparedData.GetData().LanguageType, "Strategy");
+		
 		// 시작 세력 세팅
 		setter.OnStartSetter_Faction();
 
@@ -136,15 +144,38 @@ public class StrategyManager : MonoBehaviour
 		await Awaitable.NextFrameAsync();
 
 		Destroy(setter);
-		Collector.ForEachAll(element =>
+		setter = null;
+
+		if (updater == null) gameObject.AddComponent<StrategyUpdate>();
+		else updater.enabled = true;
+
+		if (selecter == null) gameObject.AddComponent<StrategyMouseSelecter>();
+		else selecter.enabled = true;
+
+		OnStartGame();
+	}
+	private void OnStopGame()
+	{
+		var allComponent = GameObject.FindObjectsByType<Component>(FindObjectsInactive.Include, FindObjectsSortMode.InstanceID);
+		int length = allComponent.Length;
+		for (int i = 0 ; i < allComponent.Length ; i++)
 		{
-			element.OnStartGame();
-		});
-
-		if (_update == null) gameObject.AddComponent<StrategyUpdate>();
-		else _update.enabled = true;
-
-		if (_clicker == null) gameObject.AddComponent<StrategyMouseSelecter>();
-		else _clicker.enabled = true;
+			if (allComponent[i] is IStartGame startGame)
+			{
+				startGame.OnStopGame();
+			}
+		}
+	}
+	private void OnStartGame()
+	{
+		var allComponent = GameObject.FindObjectsByType<Component>(FindObjectsInactive.Include, FindObjectsSortMode.InstanceID);
+		int length = allComponent.Length;
+		for (int i = 0 ; i < allComponent.Length ; i++)
+		{
+			if (allComponent[i] is IStartGame startGame)
+			{
+				startGame.OnStartGame();
+			}
+		}
 	}
 }

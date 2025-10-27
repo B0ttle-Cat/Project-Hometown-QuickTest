@@ -6,7 +6,6 @@ using UnityEngine;
 
 public partial class StrategyDetailsPanelUI : TabPanelUI, IGamePanelUI
 {
-
 	public enum StrategyDetailsPanelType
 	{
 		None,
@@ -37,9 +36,9 @@ public partial class StrategyDetailsPanelUI : TabPanelUI, IGamePanelUI
 	[InlineButton("CloseUI")]
 	[InlineButton("OpenUI")]
 	public StrategyDetailsPanelType selectContent;
-
 	public StrategyContentController currentDetailsPanelItem;
-	public void OpenUI()
+	public bool IsOpen { get; set; }
+    public void OpenUI()
 	{
 		ClearAllContent();
 		Init();

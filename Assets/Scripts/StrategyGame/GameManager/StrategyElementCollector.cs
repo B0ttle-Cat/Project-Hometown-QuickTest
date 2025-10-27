@@ -25,6 +25,7 @@ public interface IStrategyElement : IStartGame
 public interface IStartGame
 {
 	void OnStartGame() { }
+	void OnStopGame() { }
 }
 public interface ISelectMouse
 {
