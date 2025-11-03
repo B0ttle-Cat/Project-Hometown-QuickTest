@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd6aaf8ac52203b468f530cf6bb58be6, type: 3}
+  m_Name: Icon_shield
+  m_EditorClassIdentifier: Assembly-CSharp::KeyPairSprite
+  chains: []
+  prefix: Icon_shield
+  suffix: 
+  KeyPairTargetList:
+  - key: 0
+    asset: {fileID: -385118030, guid: cf2dbd1513f642e469ac15c6c143d457, type: 3}
+  - key: 1
+    asset: {fileID: -441239362, guid: cf2dbd1513f642e469ac15c6c143d457, type: 3}
+  - key: 2
+    asset: {fileID: -2118891018, guid: cf2dbd1513f642e469ac15c6c143d457, type: 3}
+  - key: 3
+    asset: {fileID: -1870610559, guid: cf2dbd1513f642e469ac15c6c143d457, type: 3}

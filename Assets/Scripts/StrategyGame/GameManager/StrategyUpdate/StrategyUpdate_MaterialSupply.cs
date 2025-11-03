@@ -128,7 +128,7 @@ public partial class StrategyUpdate
 
 					string key = $"{sector.SectorName}_{UpdateLogicSort.거점_자원갱신이벤트}";
 					TempData.SetTrigger(key, UpdateLogicSort.거점_자원갱신이벤트);
-					Debug.Log($"Pressed MaterialSupply| Sector:{sector.SectorName,-10} | Faction:{sector.CaptureData.captureFactionID,-10} | Point:{현재보유량,4}/{최대보유량 - 4}");
+					//Debug.Log($"Pressed MaterialSupply| Sector:{sector.SectorName,-10} | Faction:{sector.CaptureData.captureFactionID,-10} | Point:{현재보유량,4}/{최대보유량 - 4}");
 				}
 			}
 		}

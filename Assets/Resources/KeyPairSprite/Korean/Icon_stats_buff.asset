@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd6aaf8ac52203b468f530cf6bb58be6, type: 3}
+  m_Name: Icon_stats_buff
+  m_EditorClassIdentifier: Assembly-CSharp::KeyPairSprite
+  chains: []
+  prefix: Icon_stats_buff
+  suffix: 
+  KeyPairTargetList:
+  - key: AccuracyMinus
+    asset: {fileID: -772996458, guid: f8c111d1c0a0e124e8aec7c033642452, type: 3}
+  - key: AccuracyPlus
+    asset: {fileID: 278608265, guid: f8c111d1c0a0e124e8aec7c033642452, type: 3}
+  - key: AttackSpeedMinus
+    asset: {fileID: 1560491634, guid: f8c111d1c0a0e124e8aec7c033642452, type: 3}
+  - key: AttackSpeedPlus
+    asset: {fileID: 758555007, guid: f8c111d1c0a0e124e8aec7c033642452, type: 3}
+  - key: DefenseMinus
+    asset: {fileID: -1894915998, guid: f8c111d1c0a0e124e8aec7c033642452, type: 3}
+  - key: DefensePlus
+    asset: {fileID: 1063912087, guid: f8c111d1c0a0e124e8aec7c033642452, type: 3}
+  - key: EvasionMinus
+    asset: {fileID: 190217527, guid: f8c111d1c0a0e124e8aec7c033642452, type: 3}
+  - key: EvasionPlus
+    asset: {fileID: 2036227455, guid: f8c111d1c0a0e124e8aec7c033642452, type: 3}
+  - key: OffenseMinus
+    asset: {fileID: 1158620588, guid: f8c111d1c0a0e124e8aec7c033642452, type: 3}
+  - key: OffensePlus
+    asset: {fileID: 1587176571, guid: f8c111d1c0a0e124e8aec7c033642452, type: 3}
+  - key: RangeMinus
+    asset: {fileID: -1638474732, guid: f8c111d1c0a0e124e8aec7c033642452, type: 3}
+  - key: RangePlus
+    asset: {fileID: -1567291558, guid: f8c111d1c0a0e124e8aec7c033642452, type: 3}

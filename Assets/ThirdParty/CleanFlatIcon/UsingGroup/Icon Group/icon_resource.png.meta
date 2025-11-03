@@ -97,7 +97,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: supply
+      name: material
       rect:
         serializedVersion: 2
         x: 0
@@ -141,7 +141,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: manpower
+      name: personnel
       rect:
         serializedVersion: 2
         x: 0
@@ -202,8 +202,8 @@ TextureImporter:
     nameFileIdTable:
       base: 1218001533
       electric: -1710544365
-      manpower: -1346640611
-      supply: 1328324774
+      material: 1328324774
+      personnel: -1346640611
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

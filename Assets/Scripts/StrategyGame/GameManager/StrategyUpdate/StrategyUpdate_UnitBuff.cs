@@ -23,7 +23,7 @@ public partial class StrategyUpdate
 				if (unit == null) continue;
 				updateList.Add(new UnitSpawner(this, unit));
 			}
-			StrategyManager.Collector.OnAddChangeListListener<UnitObject>(OnChangeList);
+			StrategyManager.Collector.AddChangeListListener<UnitObject>(OnChangeList);
 		}
 
 		protected override void Update(in float deltaTime)
@@ -38,7 +38,7 @@ public partial class StrategyUpdate
 		}
 		protected override void Dispose()
 		{
-			StrategyManager.Collector.OnRemoveChangeListListener<UnitObject>(OnChangeList);
+			StrategyManager.Collector.RemoveChangeListListener<UnitObject>(OnChangeList);
 		}
 		private void OnChangeList(IList changeList)
 		{

@@ -27,17 +27,19 @@ public class FillRectUI : MonoBehaviour
 	[SerializeField, HorizontalGroup("Image"), LabelText("Fill Image")]
 	private Image fillImage;
 
-	[FoldoutGroup("Color"), SerializeField]
+	[FoldoutGroup("ImageConfig"), SerializeField]
+	private float pixelsPerUnit;
+	[FoldoutGroup("ImageConfig"), SerializeField]
 	private Color fillColor;
-	[FoldoutGroup("Color"), SerializeField, Range(0f,1f)]
+	[FoldoutGroup("ImageConfig"), SerializeField, Range(0f,1f)]
 	private float fillAlpha;
-	[FoldoutGroup("Color"), SerializeField, Range(0f,1f)]
+	[FoldoutGroup("ImageConfig"), SerializeField, Range(0f,1f)]
 	private float bgSaturation;
-	[FoldoutGroup("Color"), SerializeField, Range(0f,1f)]
+	[FoldoutGroup("ImageConfig"), SerializeField, Range(0f,1f)]
 	private float bgBrightness;
-	[FoldoutGroup("Color"), SerializeField, Range(0f,1f)]
+	[FoldoutGroup("ImageConfig"), SerializeField, Range(0f,1f)]
 	private float bgAlpha;
-	[FoldoutGroup("Color"), ShowInInspector, ReadOnly, EnableGUI]
+	[FoldoutGroup("ImageConfig"), ShowInInspector, ReadOnly, EnableGUI]
 	private Color bgColor { get; set; }
 
 	private TMP_Text fillRectTextUI;
@@ -60,6 +62,7 @@ public class FillRectUI : MonoBehaviour
 		bgBrightness = 1f;
 		fillAlpha = 1f;
 		bgAlpha = 1f;
+		pixelsPerUnit = image.pixelsPerUnitMultiplier;
 		FillUpdate();
 	}
 	public void OnValidate()
@@ -100,13 +103,11 @@ public class FillRectUI : MonoBehaviour
 		Value = Mathf.Clamp01(value);
 		Text = text;
 	}
-
-	public void Awake()
+	 public void Awake()
 	{
 		Init();
 		ColorUpdate();
 	}
-
 	private void Init()
 	{
 		var makss = GetComponentsInChildren<RectMask2D>();
@@ -135,6 +136,7 @@ public class FillRectUI : MonoBehaviour
 				bgRect.anchoredPosition = Vector2.zero;
 				bgRect.sizeDelta = Vector2.zero;
 				bgRect.pivot = Vector2.one * 0.5f;
+
 			}
 		}
 
@@ -183,6 +185,20 @@ public class FillRectUI : MonoBehaviour
 		color.a = bgAlpha;
 		bgColor = color;
 		bgImage.color = bgColor;
+
+		if (pixelsPerUnit >= 0.01f)
+		{
+			fillImage.pixelsPerUnitMultiplier = pixelsPerUnit;
+			bgImage.pixelsPerUnitMultiplier = pixelsPerUnit;
+		}
+		else
+		{
+			pixelsPerUnit = fillImage.pixelsPerUnitMultiplier;
+			if (pixelsPerUnit < 0.01f)
+			{
+				pixelsPerUnit = 0.01f;
+			}
+		}
 	}
 	public void FillUpdate()
 	{

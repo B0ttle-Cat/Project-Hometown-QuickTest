@@ -13,4 +13,8 @@ MonoBehaviour:
   m_Name: Strategy
   m_EditorClassIdentifier: Assembly-CSharp::ItemIDToDisplayName
   chains: []
-  KeyPairTargetList: []
+  prefix: 
+  suffix: 
+  KeyPairTargetList:
+  - key: 
+    asset: 

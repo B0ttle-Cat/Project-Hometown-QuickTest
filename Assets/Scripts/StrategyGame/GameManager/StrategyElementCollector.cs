@@ -24,8 +24,11 @@ public interface IStrategyElement : IStartGame
 }
 public interface IStartGame
 {
-	void OnStartGame() { }
-	void OnStopGame() { }
+	public static int Default = 0;
+	int StartEventOrder() => Default;
+	int StopEventOrder() => Default;
+	void OnStartGame();
+	void OnStopGame();
 }
 public interface ISelectMouse
 {
@@ -34,16 +37,23 @@ public interface ISelectMouse
 	bool IsSelectMouse { get; set; }
 	void OnPointEnter() { }
 	void OnPointExit() { }
-	void OnSelect();
-	void OnDeselect();
+	bool OnSelect();
+	bool OnDeselect();
 	void OnSingleSelect();
 	void OnSingleDeselect();
+	void OnFirstSelect();
+	void OnLastDeselect();
 }
 public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 {
-	public abstract class ElementList {
+	public abstract class ElementList
+	{
+		public abstract IList IList { get; }
+
 		public abstract void OnAddListener(Action<IList> action);
 		public abstract void OnRemoveListener(Action<IList> action);
+		public abstract void OnAddListener(Action<IStrategyElement, bool> action);
+		public abstract void OnRemoveListener(Action<IStrategyElement, bool> action);
 	}
 
 	[Serializable]
@@ -52,8 +62,10 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 		[SerializeField]
 		private List<T> list;
 		public List<T> List => list ??= new List<T>();
+		public override IList IList => List;
 
 		private Action<List<T>> onChangeList;
+		private Action<T, bool> onChange;
 		private bool sleepCallback;
 		public IEnumerator<T> GetEnumerator()
 		{
@@ -67,6 +79,8 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 		public void Init(int capacity = 32)
 		{
 			onChangeList = null;
+			onChange = null;
+
 			sleepCallback = false;
 
 			if (list == null)
@@ -92,36 +106,59 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 				list = null;
 			}
 			onChangeList = null;
+			onChange = null;
 			sleepCallback = false;
 		}
 		public bool AddElement(IEnumerable<T> elements)
 		{
-			bool isChange = false;
+			Queue<T> changeList = new Queue<T>();
 			sleepCallback = true;
 			foreach (var element in elements)
 			{
 				if (AddElement(element))
 				{
-					isChange = true;
+					changeList.Enqueue(element);
 				}
 			}
 			sleepCallback = false;
-			if (isChange) Invoke();
+
+			int changeListCount = changeList.Count;
+			bool isChange = changeListCount > 0;
+			if (isChange)
+			{
+				while (changeList.TryDequeue(out var dequeue))
+				{
+					Invoke(dequeue, true);
+				}
+				changeList = null;
+				Invoke();
+			}
 			return isChange;
 		}
 		public bool RemoveElement(IEnumerable<T> elements)
 		{
-			bool isChange = false;
+			Queue<T> changeList = new Queue<T>();
 			sleepCallback = true;
 			foreach (var element in elements)
 			{
 				if (RemoveElement(element))
 				{
-					isChange = true;
+					changeList.Enqueue(element);
 				}
 			}
 			sleepCallback = false;
-			if (isChange) Invoke();
+
+			int changeListCount = changeList.Count;
+			bool isChange = changeListCount > 0;
+			if (isChange)
+			{
+				while (changeList.TryDequeue(out var dequeue))
+				{
+					Invoke(dequeue, false);
+				}
+				changeList = null;
+				Invoke();
+			}
 			return isChange;
 		}
 		public bool AddElement(T element)
@@ -133,6 +170,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 				list.Add(element);
 				element._InStrategyCollector();
 				Invoke();
+				Invoke(element, true);
 				return true;
 			}
 			return false;
@@ -144,6 +182,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 			{
 				element._OutStrategyCollector();
 				Invoke();
+				Invoke(element, false);
 				return true;
 			}
 			return false;
@@ -152,7 +191,20 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 		public void Invoke()
 		{
 			if (sleepCallback || onChangeList == null) return;
-			onChangeList.Invoke(list);
+			try
+			{
+				onChangeList.Invoke(List);
+			}
+			catch (Exception ex) { Debug.LogException(ex); }
+		}
+		public void Invoke(T element, bool isAdded)
+		{
+			if (sleepCallback || onChange == null) return;
+			try
+			{
+				onChange.Invoke(element, isAdded);
+			}
+			catch (Exception ex) { Debug.LogException(ex); }
 		}
 		public override void OnAddListener(Action<IList> action)
 		{
@@ -164,6 +216,17 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 		{
 			if (action == null) return;
 			onChangeList -= action;
+		}
+		public override void OnAddListener(Action<IStrategyElement, bool> action)
+		{
+			if (action == null) return;
+			onChange -= action;
+			onChange += action;
+		}
+		public override void OnRemoveListener(Action<IStrategyElement, bool> action)
+		{
+			if (action == null) return;
+			onChange -= action;
 		}
 
 		public T Find(Func<T, bool> condition)
@@ -248,7 +311,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 	}
 	internal void Init()
 	{
-	//	_listenerMap = new Dictionary<Delegate, Action<IList>>();
+		//	_listenerMap = new Dictionary<Delegate, Action<IList>>();
 		InitSector();
 		InitFaction();
 		InitUnit();
@@ -343,19 +406,37 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 		};
 	}
 
-	public void OnAddChangeListListener<T>(Action<IList> action) where T : class, IStrategyElement
-	{
-		if (action == null) return;
-
-		var	element = GetElementByType<T>();
-		element.OnAddListener(action);
-	}
-
-	public void OnRemoveChangeListListener<T>(Action<IList> action) where T : class, IStrategyElement
+	public void AddChangeListListener<T>(Action<IList> action, bool callAtAfter = false) where T : class, IStrategyElement
 	{
 		if (action == null) return;
 
 		var element = GetElementByType<T>();
+		element.OnAddListener(action);
+		if (callAtAfter)
+		{
+			action.Invoke(element.IList);
+		}
+	}
+	public void RemoveChangeListListener<T>(Action<IList> action) where T : class, IStrategyElement
+	{
+		if (action == null) return;
+
+		var element = GetElementByType<T>();
+		element.OnRemoveListener(action);
+	}
+	public void AddChangeListener<T>(Action<IStrategyElement, bool> action, out IList getCurrentList) where T : class, IStrategyElement
+	{
+		var element = GetElementByType<T>();
+
+		element.OnAddListener(action);
+
+		getCurrentList = element.IList is List<T> ? element.IList : null;
+	}
+	public void RemoveChangeListener<T>(Action<IStrategyElement, bool> action) where T : class, IStrategyElement
+	{
+		if (action == null) return;
+
+		ElementList element = GetElementByType<T>();
 		element.OnRemoveListener(action);
 	}
 }
@@ -480,23 +561,23 @@ public partial class StrategyElementCollector // ForEach
 		Action<T, ForeachIndex> actionWithIndex = null,
 		Func<T, bool> func = null,
 		Action<T> action = null) where T : class, IStrategyElement
-			{
-				if (list == null) return false;
+	{
+		if (list == null) return false;
 
-				int count = list.Count;
-				var index = new ForeachIndex(0, count);
+		int count = list.Count;
+		var index = new ForeachIndex(0, count);
 
-				for (int i = 0 ; i < count ; i++)
-				{
-					index.Index = i;
-					if (list[i] is not T t) continue;
+		for (int i = 0 ; i < count ; i++)
+		{
+			index.Index = i;
+			if (list[i] is not T t) continue;
 
-					if (funcWithIndex != null && !funcWithIndex(t, index)) return false;
-					else if (actionWithIndex != null) actionWithIndex(t, index);
-					else if (func != null && !func(t)) return false;
-					else if (action != null) action(t);
-				}
-				return true;
+			if (funcWithIndex != null && !funcWithIndex(t, index)) return false;
+			else if (actionWithIndex != null) actionWithIndex(t, index);
+			else if (func != null && !func(t)) return false;
+			else if (action != null) action(t);
+		}
+		return true;
 	}
 
 	#region Foreach

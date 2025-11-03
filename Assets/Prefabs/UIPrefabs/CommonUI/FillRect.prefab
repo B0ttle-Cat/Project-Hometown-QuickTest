@@ -185,12 +185,12 @@ MonoBehaviour:
   fillRect: {fileID: 6189374999121712806}
   bgImage: {fileID: 7031273550108875670}
   fillImage: {fileID: 6799196330362347954}
+  pixelsPerUnit: 2
   fillColor: {r: 0, g: 0, b: 0, a: 0}
   fillAlpha: 0
   bgSaturation: 0
   bgBrightness: 0
   bgAlpha: 0
-  bgColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &5713316749639528765
 GameObject:
   m_ObjectHideFlags: 0
@@ -352,7 +352,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: -10, y: -10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5511505859215045757
 CanvasRenderer:
@@ -409,7 +409,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30
+  m_fontSize: 17.4
   m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 1

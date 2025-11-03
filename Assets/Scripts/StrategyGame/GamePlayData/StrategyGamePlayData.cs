@@ -322,11 +322,11 @@ public partial class StrategyGamePlayData // Play Content Data
 				// 환경 요소
 				public string environmentalKey;
 				// 적용되어 있는 각종 효과
-				public Effect effect;
+				public EffectsFlag effects;
 
 				public string EffectString()
 				{
-					return effect.ToString();
+					return effects.ToString();
 				}
 
 				public Data Copy()
@@ -335,7 +335,7 @@ public partial class StrategyGamePlayData // Play Content Data
 					{
 						sectorName = sectorName,
 						environmentalKey = environmentalKey,
-						effect = effect
+						effects = effects
 					};
 				}
 			}
@@ -458,20 +458,6 @@ public partial class StrategyGamePlayData // Play Content Data
 				}
 			}
 		}
-		[Flags]
-		public enum Effect
-		{
-			None = 0,
-
-			정전 = 1 << 0,
-			재밍 = 1 << 1,
-			화재 = 1 << 2,
-
-			포위 = 1 << 10,
-
-			반파 = 1 << 30,
-			완파 = 1 << 31,
-		}
 	}
 	public class UnitData
 	{
@@ -487,9 +473,11 @@ public partial class StrategyGamePlayData // Play Content Data
 				public int unitID;          // 씬에 배치된 유닛 고유번호
 				public int factionID;       // 유닛이 속한 세력 번호
 
+				// 무기 타입과 방어구 타입
 				public WeaponType weaponType;
 				public ProtectionType protectType;
-
+				// 적용되어 있는 각종 효과
+				public EffectsFlag effects;
 				public Data Copy()
 				{
 					return this;
@@ -550,12 +538,12 @@ public partial class StrategyGamePlayData // Play Content Data
 				public int skillKey;
 				public int skillLevel;
 
-                public SkillData(int skillKey, int skillLevel)
-                {
-                    this.skillKey = skillKey;
-                    this.skillLevel = skillLevel;
-                }
-            }
+				public SkillData(int skillKey, int skillLevel)
+				{
+					this.skillKey = skillKey;
+					this.skillLevel = skillLevel;
+				}
+			}
 		}
 		[Serializable]
 		public class StatsBuff
@@ -575,12 +563,12 @@ public partial class StrategyGamePlayData // Play Content Data
 				[SerializeField]
 				private string currEnterSectorName;
 
-                public Data(string connectSectorName = "") : this()
-                {
+				public Data(string connectSectorName = "") : this()
+				{
 					lastEnterSectorName = currEnterSectorName = connectSectorName;
-                }
+				}
 
-                public string ConnectSectorName
+				public string ConnectSectorName
 				{
 					get
 					{
@@ -616,7 +604,43 @@ public partial class StrategyGamePlayData // Play Content Data
 
 		}
 	}
-
+	
+	[Flags]
+	public enum EffectsFlag
+	{
+		None = 0,
+		감전 = 1 << 1,
+		공포 = 1 << 2,
+		방전 = 1 << 3,
+		빙결 = 1 << 4,
+		수면 = 1 << 5,
+		실명 = 1 << 6,
+		침수 = 1 << 7,
+		혼란 = 1 << 8,
+		화재 = 1 << 9,
+		FX_10 = 1 << 10,
+		FX_11 = 1 << 11,
+		FX_12 = 1 << 12,
+		FX_13 = 1 << 13,
+		FX_14 = 1 << 14,
+		FX_15 = 1 << 15,
+		FX_16 = 1 << 16,
+		FX_17 = 1 << 17,
+		FX_18 = 1 << 18,
+		FX_19 = 1 << 19,
+		FX_20 = 1 << 20,
+		FX_21 = 1 << 21,
+		FX_22 = 1 << 22,
+		FX_23 = 1 << 23,
+		FX_24 = 1 << 24,
+		FX_25 = 1 << 25,
+		FX_26 = 1 << 26,
+		FX_27 = 1 << 27,
+		FX_28 = 1 << 28,
+		FX_29 = 1 << 29,
+		FX_30 = 1 << 30,
+		FX_31 = 1 << 31,
+	}
 	public enum WeaponType
 	{
 		None = 0,     // 상성표: 무효 |<< (--) (- ) (  ) (+ ) (++) >>|유효
@@ -902,7 +926,7 @@ public partial class StrategyGamePlayData // Play Content Data
 			);
 		public static StatsList SectorStatsList => new StatsList(
 				new StatsValue(StatsType.거점_최대내구도, 500),
-				new StatsValue(StatsType.거점_현재내구도, 500),   
+				new StatsValue(StatsType.거점_현재내구도, 500),
 
 				new StatsValue(StatsType.거점_인력_최대보유량, 100),
 				new StatsValue(StatsType.거점_물자_최대보유량, 1000),
@@ -1138,6 +1162,8 @@ public partial class StrategyGamePlayData // Play Content Data
 		[SerializeField]
 		private List<KeyValue> values;
 
+		private Action<string> onChangeGroupKey;
+		private Action<string> onRemoveGroupKey;
 		public StatsGroup(params (string key, StatsList list)[] values)
 		{
 			var list = values == null  ? new KeyValue[0] :  values.Select(i => new KeyValue(i.key, i.list));
@@ -1162,26 +1188,17 @@ public partial class StrategyGamePlayData // Play Content Data
 				values = null;
 			}
 		}
-
-		public void AddList(string key, StatsList list)
-		{
-			int findindex = values.FindIndex(b=>b.Key == key);
-			if (findindex < 0)
-			{
-				values.Add(new KeyValue(key, list));
-				return;
-			}
-			values[findindex].List.MergeList(list);
-		}
 		public void SetList(string key, StatsList list)
 		{
 			int findindex = values.FindIndex(b=>b.Key == key);
 			if (findindex < 0)
 			{
 				values.Add(new KeyValue(key, list));
+				onChangeGroupKey?.Invoke(key);
 				return;
 			}
 			values[findindex] = new KeyValue(key, list);
+			onChangeGroupKey?.Invoke(key);
 		}
 		public void RemoveList(string key)
 		{
@@ -1191,6 +1208,7 @@ public partial class StrategyGamePlayData // Play Content Data
 				return;
 			}
 			values.RemoveAt(findindex);
+			onRemoveGroupKey?.Invoke(key);
 		}
 		public bool TryGetList(string key, out StatsList list)
 		{
@@ -1199,6 +1217,19 @@ public partial class StrategyGamePlayData // Play Content Data
 			return list != null;
 		}
 		internal static StatsGroup Empty => new StatsGroup();
+		public bool HasKey(string key)
+		{
+			int length = values.Count;
+			for (int i = 0 ; i < length ; i++)
+			{
+				if (values[i].Key == key) return true;
+			}
+			return false;
+		}
+		public List<string> GetkeyList()
+		{
+			return values.Select(i => i.Key).ToList();
+		}
 
 		public StatsValue GetValue(StatsType statsType)
 		{
@@ -1250,11 +1281,35 @@ public partial class StrategyGamePlayData // Play Content Data
 
 			return newList;
 		}
-
 		public StatsGroup Copy()
 		{
 			return new StatsGroup(values.ToArray());
 		}
 
+
+		public void AddListener(Action<string> onChangeGroupKey, Action<string> onRemoveGroupKey)
+		{
+			if (onChangeGroupKey != null)
+			{
+				this.onChangeGroupKey -= onChangeGroupKey;
+				this.onChangeGroupKey += onChangeGroupKey;
+			}
+			if (onRemoveGroupKey != null)
+			{
+				this.onRemoveGroupKey -= onRemoveGroupKey;
+				this.onRemoveGroupKey += onRemoveGroupKey;
+			}
+		}
+		public void RemoveListener(Action<string> onChangeGroupKey, Action<string> onRemoveGroupKey)
+		{
+			if (onChangeGroupKey != null)
+			{
+				this.onChangeGroupKey -= onChangeGroupKey;
+			}
+			if (onRemoveGroupKey != null)
+			{
+				this.onRemoveGroupKey -= onRemoveGroupKey;
+			}
+		}
 	}
 }

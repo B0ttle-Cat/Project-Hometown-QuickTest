@@ -169,7 +169,7 @@ public partial class StrategyDetailsPanelUI // FieldInfoViewController UI
 	{
 		public override void OnShow(RectTransform viewRect)
 		{
-			var findPairChain = viewRect.gameObject.FindPairChain();
+			var findPairChain = viewRect.gameObject.GetPairChain();
 			if (findPairChain == null) return;
 
 			findPairChain.FindPairChain<TMP_Text>("KeyValue", out var itemPrefab);

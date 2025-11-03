@@ -9,67 +9,6 @@ public interface IStrategyUpdater : IDisposable
 	void Update(in float deltaTime);
 }
 
-public abstract class StrategyUpdateSubClass<T> : IStrategyUpdater where T : StrategyUpdateSubClass<T>.UpdateLogic
-{
-	protected StrategyUpdate thisUpdater;
-	protected StrategyUpdate.StrategyUpdateTempData TempData => thisUpdater == null ? null : thisUpdater.TempData;
-	public StrategyUpdateSubClass(StrategyUpdate updater)
-	{
-		thisUpdater = updater;
-	}
-	protected List<T> updateList;
-	public virtual List<T> UpdateList { get => updateList; protected set => updateList = value; }
-
-	void IStrategyUpdater.Start() => Start();
-	void IStrategyUpdater.Update(in float deltaTime) => Update(in deltaTime);
-	void IDisposable.Dispose()
-	{
-		thisUpdater = null;
-
-		if (UpdateList != null)
-		{
-			int length = UpdateList.Count;
-			for (int i = 0 ; i < length ; i++)
-			{
-				UpdateList[i].Dispose();
-			}
-			UpdateList.Clear();
-		}
-		UpdateList = null;
-
-		Dispose();
-	}
-	protected abstract void Start();
-	protected abstract void Update(in float deltaTime);
-	protected virtual void Dispose()
-	{
-
-	}
-	public abstract class UpdateLogic : IDisposable
-	{
-		protected StrategyUpdateSubClass<T> thisSubClass;
-		protected StrategyUpdate Updater => thisSubClass == null ? null : thisSubClass.thisUpdater;
-		protected StrategyUpdate.StrategyUpdateTempData TempData => thisSubClass == null ? null : thisSubClass.TempData;
-		protected UpdateLogic(StrategyUpdateSubClass<T> thisSubClass)
-		{
-			this.thisSubClass = thisSubClass;
-		}
-
-		public void Update(in float deltaTime)
-		{
-			if (thisSubClass == null || Updater == null || TempData == null) return;
-			OnUpdate(deltaTime);
-		}
-		public void Dispose()
-		{
-			OnDispose();
-			thisSubClass = null;
-		}
-
-		protected abstract void OnUpdate(in float deltaTime);
-		protected abstract void OnDispose();
-	}
-}
 public partial class StrategyUpdate : MonoBehaviour
 {
 	private StrategyUpdateTempData tempData;
@@ -283,6 +222,67 @@ public partial class StrategyUpdate : MonoBehaviour
 				}
 			}
 		}
+	}
+}
+public abstract class StrategyUpdateSubClass<T> : IStrategyUpdater where T : StrategyUpdateSubClass<T>.UpdateLogic
+{
+	protected StrategyUpdate thisUpdater;
+	protected StrategyUpdate.StrategyUpdateTempData TempData => thisUpdater == null ? null : thisUpdater.TempData;
+	public StrategyUpdateSubClass(StrategyUpdate updater)
+	{
+		thisUpdater = updater;
+	}
+	protected List<T> updateList;
+	public virtual List<T> UpdateList { get => updateList; protected set => updateList = value; }
+
+	void IStrategyUpdater.Start() => Start();
+	void IStrategyUpdater.Update(in float deltaTime) => Update(in deltaTime);
+	void IDisposable.Dispose()
+	{
+		thisUpdater = null;
+
+		if (UpdateList != null)
+		{
+			int length = UpdateList.Count;
+			for (int i = 0 ; i < length ; i++)
+			{
+				UpdateList[i].Dispose();
+			}
+			UpdateList.Clear();
+		}
+		UpdateList = null;
+
+		Dispose();
+	}
+	protected abstract void Start();
+	protected abstract void Update(in float deltaTime);
+	protected virtual void Dispose()
+	{
+
+	}
+	public abstract class UpdateLogic : IDisposable
+	{
+		protected StrategyUpdateSubClass<T> thisSubClass;
+		protected StrategyUpdate Updater => thisSubClass == null ? null : thisSubClass.thisUpdater;
+		protected StrategyUpdate.StrategyUpdateTempData TempData => thisSubClass == null ? null : thisSubClass.TempData;
+		protected UpdateLogic(StrategyUpdateSubClass<T> thisSubClass)
+		{
+			this.thisSubClass = thisSubClass;
+		}
+
+		public void Update(in float deltaTime)
+		{
+			if (thisSubClass == null || Updater == null || TempData == null) return;
+			OnUpdate(deltaTime);
+		}
+		public void Dispose()
+		{
+			OnDispose();
+			thisSubClass = null;
+		}
+
+		protected abstract void OnUpdate(in float deltaTime);
+		protected abstract void OnDispose();
 	}
 }
 

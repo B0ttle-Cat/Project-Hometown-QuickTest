@@ -1,25 +1,42 @@
-﻿using UnityEngine;
+﻿using Sirenix.OdinInspector;
+
+using UnityEngine;
 
 public class StrategyGameUI : MonoBehaviour
 {
-	private StrategyControlPanelUI controlPanelUI;
-	private StrategyMainPanelUI mainPanelUI;
-	private StrategyDetailsPanelUI detailsPanelUI;
+	[SerializeField, ReadOnly] private StrategyMapPanelUI mapPanelUI;
+	[SerializeField, ReadOnly] private StrategyControlPanelUI controlPanelUI;
+	[SerializeField, ReadOnly] private StrategyMainPanelUI mainPanelUI;
+	[SerializeField, ReadOnly] private StrategyDetailsPanelUI detailsPanelUI;
 
-    private void Awake()
-    {
-		controlPanelUI = GetComponentInChildren<StrategyControlPanelUI>();
-		mainPanelUI = GetComponentInChildren<StrategyMainPanelUI>();
-		detailsPanelUI = GetComponentInChildren<StrategyDetailsPanelUI>();
+	public StrategyMapPanelUI MapPanelUI { get => mapPanelUI; private set => mapPanelUI = value; }
+	public StrategyControlPanelUI ControlPanelUI { get => controlPanelUI; private set => controlPanelUI = value; }
+	public StrategyMainPanelUI MainPanelUI { get => mainPanelUI; private set => mainPanelUI = value; }
+	public StrategyDetailsPanelUI DetailsPanelUI { get => detailsPanelUI; private set => detailsPanelUI = value; }
+	public void Reset()
+	{
+		mapPanelUI = GetComponentInChildren<StrategyMapPanelUI>(true);
+		ControlPanelUI = GetComponentInChildren<StrategyControlPanelUI>(true);
+		MainPanelUI = GetComponentInChildren<StrategyMainPanelUI>(true);
+		DetailsPanelUI = GetComponentInChildren<StrategyDetailsPanelUI>(true);
+	}
+	public void OnEnable()
+	{
+		mapPanelUI = GetComponentInChildren<StrategyMapPanelUI>(true);
+		ControlPanelUI = GetComponentInChildren<StrategyControlPanelUI>(true);
+		MainPanelUI = GetComponentInChildren<StrategyMainPanelUI>(true);
+		DetailsPanelUI = GetComponentInChildren<StrategyDetailsPanelUI>(true);
+	}
+	public void OnDisable()
+	{
+		mapPanelUI = null;
+		ControlPanelUI = null;
+		MainPanelUI = null;
+		DetailsPanelUI = null;
 	}
 
-    public void OpenDetailsPanel_FieldInfo_Overview()
-	{
-		if (detailsPanelUI == null) return;
-		detailsPanelUI.selectContent = StrategyDetailsPanelUI.StrategyDetailsPanelType.FieldInfo_Overview;
-		detailsPanelUI.OpenUI();
-	}
-	public void CloseDetailsPanel() 
+	public void CloseDetailsPanel()
 	{
 	}
+
 }

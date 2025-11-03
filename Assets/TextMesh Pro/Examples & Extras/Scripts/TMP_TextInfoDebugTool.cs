@@ -96,7 +96,7 @@ namespace TMPro.Examples
         /// <summary>
         /// Method to draw a rectangle around each character.
         /// </summary>
-        /// <param Name="Text"></param>
+        /// <param Label="Text"></param>
         void DrawCharactersBounds()
         {
             int characterCount = m_TextInfo.characterCount;
@@ -197,7 +197,7 @@ namespace TMPro.Examples
                 // Draw Text labels for metrics
                if (m_HandleSize < 0.5f)
                {
-                   GUIStyle style = new GUIStyle(GUI.skin.GetStyle("Label"));
+                   GUIStyle style = new GUIStyle(GUI.skin.GetStyle("_label"));
                    style.normal.textColor = new Color(0.6f, 0.6f, 0.6f, 1.0f);
                    style.fontSize = 12;
                    style.fixedWidth = 200;
@@ -216,17 +216,17 @@ namespace TMPro.Examples
                    labelPosition = m_Transform.TransformPoint(new Vector3(center, ascentline, 0));
                    style.alignment = TextAnchor.UpperCenter;
                    Handles.Label(labelPosition, "Ascent Line", style);
-                   //Handles.Label(labelPosition, "Ascent Line (" + ascentlineMetrics.ToString("f3") + ")" , style);
+                   //Handles._label(labelPosition, "Ascent Line (" + ascentlineMetrics.ToString("f3") + ")" , style);
 
                    // Base Line
                    labelPosition = m_Transform.TransformPoint(new Vector3(center, baseline, 0));
                    Handles.Label(labelPosition, "Base Line", style);
-                   //Handles.Label(labelPosition, "Base Line (" + baselineMetrics.ToString("f3") + ")" , style);
+                   //Handles._label(labelPosition, "Base Line (" + baselineMetrics.ToString("f3") + ")" , style);
 
                    // Descent line
                    labelPosition = m_Transform.TransformPoint(new Vector3(center, descentline, 0));
                    Handles.Label(labelPosition, "Descent Line", style);
-                   //Handles.Label(labelPosition, "Descent Line (" + descentlineMetrics.ToString("f3") + ")" , style);
+                   //Handles._label(labelPosition, "Descent Line (" + descentlineMetrics.ToString("f3") + ")" , style);
 
                    if (characterInfo.isVisible)
                    {
@@ -234,13 +234,13 @@ namespace TMPro.Examples
                        labelPosition = m_Transform.TransformPoint(new Vector3(center, capline, 0));
                        style.alignment = TextAnchor.UpperCenter;
                        Handles.Label(labelPosition, "Cap Line", style);
-                       //Handles.Label(labelPosition, "Cap Line (" + caplineMetrics.ToString("f3") + ")" , style);
+                       //Handles._label(labelPosition, "Cap Line (" + caplineMetrics.ToString("f3") + ")" , style);
 
                        // Mean Line
                        labelPosition = m_Transform.TransformPoint(new Vector3(center, meanline, 0));
                        style.alignment = TextAnchor.UpperCenter;
                        Handles.Label(labelPosition, "Mean Line", style);
-                       //Handles.Label(labelPosition, "Mean Line (" + ascentlineMetrics.ToString("f3") + ")" , style);
+                       //Handles._label(labelPosition, "Mean Line (" + ascentlineMetrics.ToString("f3") + ")" , style);
 
                        // Origin
                        labelPosition = m_Transform.TransformPoint(new Vector3(origin, baseline, 0));
@@ -260,7 +260,7 @@ namespace TMPro.Examples
         /// <summary>
         /// Method to draw rectangles around each word of the Text.
         /// </summary>
-        /// <param Name="Text"></param>
+        /// <param Label="Text"></param>
         void DrawWordBounds()
         {
             for (int i = 0; i < m_TextInfo.wordCount; i++)
@@ -364,7 +364,7 @@ namespace TMPro.Examples
         /// <summary>
         /// Draw rectangle around each of the links contained in the Text.
         /// </summary>
-        /// <param Name="Text"></param>
+        /// <param Label="Text"></param>
         void DrawLinkBounds()
         {
             TMP_TextInfo textInfo = m_TextComponent.textInfo;
@@ -468,7 +468,7 @@ namespace TMPro.Examples
         /// <summary>
         /// Draw Rectangles around each lines of the Text.
         /// </summary>
-        /// <param Name="Text"></param>
+        /// <param Label="Text"></param>
         void DrawLineBounds()
         {
             int lineCount = m_TextInfo.lineCount;

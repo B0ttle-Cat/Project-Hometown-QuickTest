@@ -121,18 +121,6 @@ public interface IKeyPairChain
 {
 	public KeyPairTarget This { get; }
 	public IKeyPairChain FindPairChain(string key, out GameObject find);
-	public IKeyPairChain FindPairChainAndCopy(string key, Transform parent, out GameObject find)
-	{
-		find = null;
-		FindPairChain(key, out var obj);
-		if(obj == null)
-		{
-			return this;
-		}
-
-		find = GameObject.Instantiate(obj, parent);
-		return this;
-	}
 	public IKeyPairChain FindPairChain<T>(string key, out T find) where T : Component
 	{
 		find = null;
@@ -145,6 +133,18 @@ public interface IKeyPairChain
 		{
 			find = component;
 		}
+		return this;
+	}
+	public IKeyPairChain FindPairChainAndCopy(string key, Transform parent, out GameObject find)
+	{
+		find = null;
+		FindPairChain(key, out var obj);
+		if(obj == null)
+		{
+			return this;
+		}
+
+		find = GameObject.Instantiate(obj, parent);
 		return this;
 	}
 	public IKeyPairChain FindPairChainAndCopy<T>(string key, Transform parent, out T find) where T : Component
@@ -161,6 +161,26 @@ public interface IKeyPairChain
 		}
 		return this;
 	}
+	public bool TryFindPair(string key, out GameObject find)
+	{
+		FindPairChain(key, out find);
+		return find != null;
+	}
+	public bool TryFindPair<T>(string key, out T find) where T : Component
+	{
+		FindPairChain<T>(key, out find);
+		return find != null;
+	}
+	public bool TryFindPairAndCopy(string key, Transform parent, out GameObject find)
+	{
+		FindPairChainAndCopy(key, parent, out find);
+		return find != null;
+	}
+	public bool TryFindPairAndCopy<T>(string key, Transform parent, out T find) where T : Component
+	{
+		FindPairChainAndCopy<T>(key, parent, out find);
+		return find != null;
+	}
 
 	public IKeyPairChain FindSubPairChain(string key)
 	{
@@ -171,25 +191,26 @@ public interface IKeyPairChain
 	{
 		return This.Parent;
 	}
+
 }
 
 public static class KeyPairTargetEx
 {
-	public static IKeyPairChain FindPairChain(this GameObject gameObject)
+	public static IKeyPairChain GetPairChain(this GameObject gameObject)
 	{
 		if (gameObject == null) return null;
-		KeyPairTarget keyPairTarget = gameObject.GetComponentInParent<KeyPairTarget>();
+		KeyPairTarget keyPairTarget = gameObject.GetComponentInParent<KeyPairTarget>(true);
 		return keyPairTarget;
 	}
 	public static bool TryFindPairChain(this GameObject gameObject, out IKeyPairChain pairChain)
 	{
-		return (pairChain = gameObject.FindPairChain()) != null;
+		return (pairChain = gameObject.GetPairChain()) != null;
 	}
 
 	public static GameObject FindPair(this GameObject gameObject, string key)
 	{
 		if (gameObject == null) return null;
-		KeyPairTarget keyPairTarget = gameObject.GetComponentInParent<KeyPairTarget>();
+		KeyPairTarget keyPairTarget = gameObject.GetComponentInParent<KeyPairTarget>(true);
 		if (keyPairTarget == null) return null;
 
 		return keyPairTarget.FindPair(key);

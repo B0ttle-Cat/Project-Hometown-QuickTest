@@ -10,7 +10,9 @@ using UnityEngine;
 public class CanvasGroupUI : MonoBehaviour
 {
 	private CanvasGroup canvasGroup;
-    public bool isOn;
+	[SerializeField]
+    private bool isOn;
+	private bool isAwaitOn;
 	public float changeTime = 0;
 	public bool scaledDeltaTime = false;
 	[FoldoutGroup("Setting")]
@@ -19,10 +21,11 @@ public class CanvasGroupUI : MonoBehaviour
 	[FoldoutGroup("Setting")]
 	[SerializeField, InlineProperty, HideLabel,Header("Off Setting")]
 	private Setting off = Setting.Off;
+	public bool IsOn => isOn;
+	public bool IsAwaitOn => isAwaitOn;
+	public bool IsSyncOn => IsOn == IsAwaitOn;
 
-	private bool? targetOnValue;
-
-    [Serializable]
+	[Serializable]
 	public struct Setting
 	{
 		[Range(0f,1f)]
@@ -95,16 +98,37 @@ public class CanvasGroupUI : MonoBehaviour
 		Init();
 		Value(false, true);
 	}
-	public void OnShow()
+	public void OnShow(Action awaitCallback = null)
 	{
 		Init();
 		Value(true);
+		
+		if (awaitCallback == null) return;
+		Await();
+		async void Await()
+		{
+			while (!IsSyncOn)
+			{
+				await Awaitable.NextFrameAsync();
+			}
+			awaitCallback?.Invoke();
+		}
 	}
 
-	public void OnHide()
+	public void OnHide(Action awaitCallback = null)
 	{
 		Init();
 		Value(false);
+
+		Await();
+		async void Await()
+		{
+			while (!IsSyncOn)
+			{
+				await Awaitable.NextFrameAsync();
+			}
+			awaitCallback?.Invoke();
+		}
 	}
 	public void OnToggle(bool isOn)
 	{
@@ -121,12 +145,14 @@ public class CanvasGroupUI : MonoBehaviour
 		{
 			if (_isOn) on.Set(canvasGroup);
 			else off.Set(canvasGroup);
-			targetOnValue = null;
+			isOn = _isOn;
+			isAwaitOn = _isOn;
 			return;
 		}
 
-		targetOnValue = _isOn;
-		while (targetOnValue.HasValue && canvasGroup != null)
+		isOn = _isOn;
+		isAwaitOn = !_isOn;
+		while (!IsSyncOn && canvasGroup != null)
 		{
 			if (_isOn) on.SetWithoutAlpha(canvasGroup);
 			else off.SetWithoutAlpha(canvasGroup);
@@ -143,6 +169,6 @@ public class CanvasGroupUI : MonoBehaviour
 			}
 			await Awaitable.NextFrameAsync();
 		}
-		targetOnValue = null;
+		isAwaitOn = isOn;
 	}
 }

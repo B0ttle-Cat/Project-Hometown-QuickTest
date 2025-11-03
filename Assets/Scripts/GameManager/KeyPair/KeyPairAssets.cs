@@ -6,17 +6,26 @@ using UnityEngine;
 
 public abstract class KeyPairAssets<T> : ScriptableObject
 {
+	[PropertyOrder(-10)]
 	public KeyPairAssets<T>[] chains;
 
 	[Serializable]
-	private struct KeyPairAssetsStruct
+	protected struct KeyPairAssetsStruct
 	{
 		[HorizontalGroup, HideLabel, SuffixLabel("Key", overlay: true)]
 		public string key;
-		[HorizontalGroup, HideLabel, SuffixLabel("KeyValue Target", overlay: true)]
+		//[HorizontalGroup, HideLabel, SuffixLabel("KeyValue Target", overlay: true)]
+		[HideIf("@true")]
 		public T asset;
 
-        public KeyPairAssetsStruct(string key, T asset)
+#if UNITY_EDITOR
+		private bool IsString() => asset is string;
+		[ShowIf("IsString"), ShowInInspector, HorizontalGroup, HideLabel, SuffixLabel("KeyValue Target", overlay: true)]
+		public T asset_string { get => asset; set => asset =value; }
+		[HideIf("IsString"), ShowInInspector, HorizontalGroup, HideLabel, PreviewField]
+		public T asset_preview { get => asset; set => asset = value; }
+#endif
+		public KeyPairAssetsStruct(string key, T asset)
         {
             this.key = key;
             this.asset = asset;
@@ -25,20 +34,24 @@ public abstract class KeyPairAssets<T> : ScriptableObject
 
 	[TitleGroup("Key KeyValue")]
 	[HorizontalGroup("Key KeyValue/H")]
-	public string prefix;
+	[SerializeField]
+	protected string prefix;
 	[TitleGroup("Key KeyValue")]
 	[HorizontalGroup("Key KeyValue/H")]
-	public string suffix;
+	[SerializeField]
+	protected string suffix;
 
 	[SerializeField]
-	[ListDrawerSettings(ShowPaging = false, ShowFoldout = false)]
-	private KeyPairAssetsStruct[] KeyPairTargetList;
+	[ListDrawerSettings(ShowFoldout = false)]
+	protected KeyPairAssetsStruct[] KeyPairTargetList;
 
 
 #if UNITY_EDITOR
 	private bool autoUpdateAsset = false;
 
 #endif
+	public T this[string key] => GetAsset(key);
+
 	public virtual bool TryGetAsset(string key, out T result)
 	{
 		result = default;
@@ -93,5 +106,12 @@ public abstract class KeyPairAssets<T> : ScriptableObject
 		}
 		value = default;
 		return false;
+	}
+
+	protected void AddAsset(string key, T value)
+	{
+		int newSize = KeyPairTargetList.Length + 1;
+		Array.Resize(ref KeyPairTargetList, newSize);
+		KeyPairTargetList[^1] = new KeyPairAssetsStruct(key,value);
 	}
 }

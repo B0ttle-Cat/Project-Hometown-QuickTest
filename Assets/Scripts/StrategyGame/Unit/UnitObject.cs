@@ -116,32 +116,50 @@ public partial class UnitObject : IStrategyElement
 	public void OutStrategyCollector()
 	{
 	}
+
+    void IStartGame.OnStartGame()
+    {
+    }
+
+    void IStartGame.OnStopGame()
+    {
+    }
 }
 public partial class UnitObject : ISelectMouse
 {
-	public Vector3 ClickCenter => transform.position;
+	public Vector3 clickCenter => transform.position;
 	bool ISelectMouse.IsSelectMouse { get; set; }
     bool ISelectMouse.IsPointEnter { get; set; }
-    Vector3 ISelectMouse.ClickCenter { get; }
+	Vector3 ISelectMouse.ClickCenter => clickCenter;
 
-    void ISelectMouse.OnPointEnter()
+
+	void ISelectMouse.OnPointEnter()
 	{
 	}
 	void ISelectMouse.OnPointExit()
 	{
 	}
-	void ISelectMouse.OnSelect()
+	bool ISelectMouse.OnSelect()
 	{
+		return true;
 	}
-	void ISelectMouse.OnDeselect()
+	bool ISelectMouse.OnDeselect()
+	{
+		return true;
+	}
+	void ISelectMouse.OnSingleSelect()
 	{
 	}
 
-    void ISelectMouse.OnSingleSelect()
-    {
-    }
+	void ISelectMouse.OnSingleDeselect()
+	{
+	}
 
-    void ISelectMouse.OnSingleDeselect()
-    {
-    }
+	void ISelectMouse.OnFirstSelect()
+	{
+	}
+
+	void ISelectMouse.OnLastDeselect()
+	{
+	}
 }

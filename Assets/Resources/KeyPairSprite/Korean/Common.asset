@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Common
   m_EditorClassIdentifier: Assembly-CSharp::KeyPairSprite
   chains:
-  - {fileID: 11400000, guid: 22bab8feaf6b8604682ca3c6141a9018, type: 2}
+  - {fileID: 11400000, guid: 100233aba0cc14949a40f77956287571, type: 2}
   prefix: 
   suffix: 
   KeyPairTargetList:

@@ -32,4 +32,12 @@ public partial class SkillObject : IStrategyElement
 	public void OutStrategyCollector()
 	{
 	}
+
+    void IStartGame.OnStartGame()
+    {
+    }
+
+    void IStartGame.OnStopGame()
+    {
+    }
 }

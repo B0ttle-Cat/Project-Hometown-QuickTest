@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd6aaf8ac52203b468f530cf6bb58be6, type: 3}
+  m_Name: Icon_status_effect
+  m_EditorClassIdentifier: Assembly-CSharp::KeyPairSprite
+  chains: []
+  prefix: Icon_status_effect
+  suffix: 
+  KeyPairTargetList:
+  - key: "\uAC10\uC804"
+    asset: {fileID: 1290352504, guid: 9fd6d8d6c84f4c4459b8383830a0f0b8, type: 3}
+  - key: "\uACF5\uD3EC"
+    asset: {fileID: 1933088888, guid: 9fd6d8d6c84f4c4459b8383830a0f0b8, type: 3}
+  - key: "\uBC29\uC804"
+    asset: {fileID: 1945692886, guid: 9fd6d8d6c84f4c4459b8383830a0f0b8, type: 3}
+  - key: "\uBE59\uACB0"
+    asset: {fileID: -1335710141, guid: 9fd6d8d6c84f4c4459b8383830a0f0b8, type: 3}
+  - key: "\uC218\uBA74"
+    asset: {fileID: 1824221095, guid: 9fd6d8d6c84f4c4459b8383830a0f0b8, type: 3}
+  - key: "\uC2E4\uBA85"
+    asset: {fileID: 647133215, guid: 9fd6d8d6c84f4c4459b8383830a0f0b8, type: 3}
+  - key: "\uCE68\uC218"
+    asset: {fileID: 1737886963, guid: 9fd6d8d6c84f4c4459b8383830a0f0b8, type: 3}
+  - key: "\uD63C\uB780"
+    asset: {fileID: -1010885574, guid: 9fd6d8d6c84f4c4459b8383830a0f0b8, type: 3}
+  - key: "\uD654\uC7AC"
+    asset: {fileID: 833887950, guid: 9fd6d8d6c84f4c4459b8383830a0f0b8, type: 3}

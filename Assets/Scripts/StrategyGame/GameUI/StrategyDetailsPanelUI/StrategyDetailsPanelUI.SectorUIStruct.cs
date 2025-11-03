@@ -284,17 +284,20 @@ public partial class StrategyDetailsPanelUI // SectorData UI
 			{
 				int value = item.value;
 				int max = item.max;
-				pairChain.FindPairChain<FillRectUI>(fillRectName, out var fillRect);
-				if (fillRect == null) return;
+				pairChain.FindPairChain<FillRectUIAndLabel>(fillRectName, out var fillRectAndLabel);
+				if (fillRectAndLabel == null) return;
 
 				if (max > 0)
 				{
 					float rate = (float)value / (float)max;
-					fillRect.SetValueText(rate, $"{value,10} / {max,-10}");
+					if(!fillRectAndLabel.gameObject.activeSelf)
+						fillRectAndLabel.gameObject.SetActive(true);
+					fillRectAndLabel.SetValueText(rate, $"{value,10} / {max,-10}");
 				}
 				else
 				{
-					fillRect.SetValueText(0, noneText);
+					if (fillRectAndLabel.gameObject.activeSelf)
+						fillRectAndLabel.gameObject.SetActive(false);
 				}
 			}
 		}
@@ -326,13 +329,13 @@ public partial class StrategyDetailsPanelUI // SectorData UI
 				selectSector.Facilities.RemoveListener(onChangeFacilitiesData);
 				selectSector.Support.RemoveListener(onChangeSupportData);
 
-				//selectSector.MainStatsList.RemoveListener(onChangeDetailStats);
-				//selectSector.FacilitiesStatsList.RemoveListener(onChangeFacilitiesStats);
-				//selectSector.SupportStatsList.RemoveListener(onChangeSupportStats);
+				//sector.MainStatsList.RemoveListener(onChangeDetailStats);
+				//sector.FacilitiesStatsList.RemoveListener(onChangeFacilitiesStats);
+				//sector.SupportStatsList.RemoveListener(onChangeSupportStats);
 				//
-				//selectSector.MainBuffList.RemoveListener(onChangeDetailBuff);
-				//selectSector.FacilitiesBuffGroup.RemoveListener(onChangeFacilitiesBuff);
-				//selectSector.SupportBuffGroup.RemoveListener(onChangeSupportBuff);
+				//sector.MainBuffList.RemoveListener(onChangeDetailBuff);
+				//sector.FacilitiesBuffGroup.RemoveListener(onChangeFacilitiesBuff);
+				//sector.SupportBuffGroup.RemoveListener(onChangeSupportBuff);
 
 			}
 			DeleteStatsItemList(detailStatsItemList);
@@ -678,7 +681,7 @@ public partial class StrategyDetailsPanelUI // SectorData UI
 				slotChain.FindPairChain<Button>("Button", out var Button);
 				slotChain.FindPairChain<Image>("Image", out var Image);
 				slotChain.FindPairChain<Image>("Progress", out var ProgressImage);
-				slotChain.FindPairChain<TMP_Text>("Label", out var Label);
+				slotChain.FindPairChain<TMP_Text>("_label", out var Label);
 
 				if (Button != null)
 				{

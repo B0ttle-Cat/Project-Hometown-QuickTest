@@ -1,11 +1,14 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+
+using UnityEngine;
 
 using static StrategyGamePlayData;
 
 public class StrategyManager : MonoBehaviour
 {
 	public static StrategyManager Manager;
-
+	public static Camera MainCamera => Manager == null ? null : Manager.mainCamera;
+	public static StrategyGameUI GameUI => Manager == null ? null : Manager.gameUI;
 	public static CommonGamePlayData GamePlayData => Manager == null ? null : Manager.gamePlayData;
 	public static StrategyElementCollector Collector => Manager == null ? null : Manager.collector;
 	public static StrategyMissionTree Mission => Manager == null ? null : Manager.mission;
@@ -18,6 +21,9 @@ public class StrategyManager : MonoBehaviour
 	public bool IsGameSceneReady { get; private set; }
 
 	CommonGamePlayData gamePlayData;
+	[SerializeField]
+	private Camera mainCamera;
+	private StrategyGameUI gameUI;
 	private StrategyElementCollector collector;
 	private StrategyMissionTree mission;
 	private StrategyStatistics statistics;
@@ -29,6 +35,8 @@ public class StrategyManager : MonoBehaviour
 	{
 		IsGameSceneReady = false;
 		Manager = this;
+		mainCamera = mainCamera == null ? Camera.main : mainCamera;
+		gameUI = FindAnyObjectByType<StrategyGameUI>();
 		gamePlayData = new CommonGamePlayData();
 		collector = GetComponentInChildren<StrategyElementCollector>();
 		mission = GetComponentInChildren<StrategyMissionTree>();
@@ -40,6 +48,11 @@ public class StrategyManager : MonoBehaviour
 	{
 		Manager = null;
 
+		if(gameUI != null)
+		{
+			gameUI.enabled = false;
+			gameUI = null;
+		}
 		if (collector != null)
 		{
 			collector.Dispose();
@@ -54,6 +67,16 @@ public class StrategyManager : MonoBehaviour
 		{
 			statistics.Dispose();
 			statistics = null;
+		}
+		if(updater != null)
+		{
+			updater.enabled = false;
+			updater = null;
+		}
+		if(selecter != null)
+		{
+			selecter.enabled = false;
+			selecter = null;
 		}
 
 		key2Name = null;
@@ -77,6 +100,10 @@ public class StrategyManager : MonoBehaviour
 
 		OnStopGame();
 
+		if ((gameUI = gameUI != null ? gameUI : FindAnyObjectByType<StrategyGameUI>()) != null)
+		{
+			gameUI.enabled = false;
+		}
 		if ((updater = updater != null ? updater : GetComponentInChildren<StrategyUpdate>()) != null)
 		{
 			updater.enabled = false;
@@ -84,6 +111,11 @@ public class StrategyManager : MonoBehaviour
 		if ((selecter = selecter != null ? selecter : GetComponentInChildren<StrategyMouseSelecter>()) != null)
 		{
 			selecter.enabled = false;
+		}
+		if (gameUI == null)
+		{
+			Debug.LogError("GameStart: No StrategyGameUI found in any GameObject.");
+			return;
 		}
 		await Awaitable.NextFrameAsync();
 
@@ -116,6 +148,7 @@ public class StrategyManager : MonoBehaviour
 			Debug.LogError("GameStart: No StrategyStatistics ThisComponent found in children of GameManager.");
 			return;
 		}
+
 		Collector.Init();
 		Mission.Init();
 		Statistics.Init();
@@ -146,6 +179,8 @@ public class StrategyManager : MonoBehaviour
 		Destroy(setter);
 		setter = null;
 
+		if (gameUI != null) gameUI.enabled = true;
+
 		if (updater == null) gameObject.AddComponent<StrategyUpdate>();
 		else updater.enabled = true;
 
@@ -157,25 +192,19 @@ public class StrategyManager : MonoBehaviour
 	private void OnStopGame()
 	{
 		var allComponent = GameObject.FindObjectsByType<Component>(FindObjectsInactive.Include, FindObjectsSortMode.InstanceID);
-		int length = allComponent.Length;
-		for (int i = 0 ; i < allComponent.Length ; i++)
+		var allList = allComponent.Where(c => c is IStartGame).Select(c => c as IStartGame).OrderBy(i => i.StopEventOrder());
+		foreach (var item in allList)
 		{
-			if (allComponent[i] is IStartGame startGame)
-			{
-				startGame.OnStopGame();
-			}
+			item.OnStopGame();
 		}
 	}
 	private void OnStartGame()
 	{
 		var allComponent = GameObject.FindObjectsByType<Component>(FindObjectsInactive.Include, FindObjectsSortMode.InstanceID);
-		int length = allComponent.Length;
-		for (int i = 0 ; i < allComponent.Length ; i++)
+		var allList = allComponent.Where(c => c is IStartGame).Select(c => c as IStartGame).OrderBy(i => i.StartEventOrder());
+		foreach (var item in allList)
 		{
-			if (allComponent[i] is IStartGame startGame)
-			{
-				startGame.OnStartGame();
-			}
+			item.OnStartGame();
 		}
 	}
 }

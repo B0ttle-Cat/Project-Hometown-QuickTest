@@ -89,7 +89,7 @@ public partial class StrategyMissionTree // MissionCompute
 			for (int i = 0 ; i < length ; i++)
 			{
 				var statsKey = statsKeys[i];
-				//if (StrategyManager.Statistics.TryGetStatsValue(statsKey, out string Name,out int capture))
+				//if (StrategyManager.Statistics.TryGetStatsValue(statsKey, out string Label,out int capture))
 				//{
 				//	computeCount += capture;
 				//}
