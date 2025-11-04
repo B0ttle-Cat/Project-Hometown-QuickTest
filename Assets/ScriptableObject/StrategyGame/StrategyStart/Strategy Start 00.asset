@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StrategyStartSetterData
   data:
     playerFactionName: Faction_00
+    unscaleGamePlayTime: 0
+    gamePlayTime: 0
     overview:
       title: "Test \uC2DC\uC791 \uC124\uC815"
       description: "\uD14C\uC2A4\uD2B8 \uC2DC\uC791 \uC635\uC158\uC744 \uC0AC\uC6A9"
@@ -43,7 +45,7 @@ MonoBehaviour:
     - profileData:
         sectorName: Sector_00
         environmentalKey: 
-        effect: 0
+        effects: 0
       mainStatsData:
         stats:
           values:
@@ -81,7 +83,7 @@ MonoBehaviour:
     - profileData:
         sectorName: Sector_01
         environmentalKey: 
-        effect: 0
+        effects: 0
       mainStatsData:
         stats:
           values:
@@ -119,7 +121,7 @@ MonoBehaviour:
     - profileData:
         sectorName: Sector_02
         environmentalKey: 
-        effect: 0
+        effects: 0
       mainStatsData:
         stats:
           values:
@@ -157,7 +159,7 @@ MonoBehaviour:
     - profileData:
         sectorName: Sector_03
         environmentalKey: 
-        effect: 0
+        effects: 0
       mainStatsData:
         stats:
           values:
@@ -195,7 +197,7 @@ MonoBehaviour:
     - profileData:
         sectorName: Sector_04
         environmentalKey: 
-        effect: 0
+        effects: 0
       mainStatsData:
         stats:
           values:
@@ -252,3 +254,40 @@ MonoBehaviour:
     - captureSector: Sector_02
       captureFaction: Faction_01
       captureProgress: 1
+    networkData:
+    - sectorA: Sector_00
+      connectType: 0
+      sectorB: Sector_01
+      waypoint:
+      - point: {x: -5, y: 0, z: -25}
+        width: 1
+      - point: {x: 5, y: 0, z: -15}
+        width: 1
+    - sectorA: Sector_02
+      connectType: 0
+      sectorB: Sector_01
+      waypoint: []
+    - sectorA: Sector_03
+      connectType: 0
+      sectorB: Sector_01
+      waypoint: []
+    - sectorA: Sector_04
+      connectType: 0
+      sectorB: Sector_01
+      waypoint: []
+    - sectorA: Sector_00
+      connectType: 1
+      sectorB: Sector_03
+      waypoint: []
+    - sectorA: Sector_03
+      connectType: 1
+      sectorB: Sector_02
+      waypoint: []
+    - sectorA: Sector_02
+      connectType: 1
+      sectorB: Sector_04
+      waypoint: []
+    - sectorA: Sector_04
+      connectType: 1
+      sectorB: Sector_00
+      waypoint: []

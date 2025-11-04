@@ -481,10 +481,10 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 				PairChain.FindPairChain("Supply", out var Supply);
 				PairChain.FindPairChain("Facilities", out var Facilities);
 
-				SetupSlider(Offensive, data.offensivePoint, null);
-				SetupSlider(Defensive, data.defensivePoint, null);
-				SetupSlider(Supply, data.supplyPoint, null);
-				SetupSlider(Facilities, data.facilitiesPoint, null);
+				SetupSlider(Offensive, data.offensivePoint, selectSector.OnChangeSupport_Offensive);
+				SetupSlider(Defensive, data.defensivePoint, selectSector.OnChangeSupport_Defensive);
+				SetupSlider(Supply, data.supplyPoint, selectSector.OnChangeSupport_Supply);
+				SetupSlider(Facilities, data.facilitiesPoint, selectSector.OnChangeSupport_Facilities);
 
 				UpdateSupportState("Offensive", Offensive, offensiveItemList);
 				UpdateSupportState("Defensive", Defensive, defensiveItemList);

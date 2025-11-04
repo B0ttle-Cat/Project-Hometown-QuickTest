@@ -67,7 +67,7 @@ public class StrategyStartSetter : MonoBehaviour
 			collector.AddElement<Faction>(faction);
 		}
 	}
-	internal void OnStartSetter_Sector()
+	internal async Awaitable OnStartSetter_Sector()
 	{
 		// 일단 씬에 있는 모든 SectorData 컴퍼넌트를 수집
 		var allSector = GameObject.FindObjectsByType<SectorObject>(FindObjectsInactive.Include, FindObjectsSortMode.InstanceID);
@@ -94,7 +94,7 @@ public class StrategyStartSetter : MonoBehaviour
 			collector.AddElement(sector);
 		}
 	}
-	internal void OnStartSetter_Unit()
+	internal async Awaitable OnStartSetter_Unit()
 	{
 		List<UnitObject> includeSceneUnits = new ();
 		includeSceneUnits.AddRange(GameObject.FindObjectsByType<UnitObject>(FindObjectsInactive.Include, FindObjectsSortMode.InstanceID));
@@ -106,7 +106,7 @@ public class StrategyStartSetter : MonoBehaviour
 		for (int i = 0 ; i < dataLength ; i++)
 		{
 			var unitData = unitDatas[i];
-			unitData.unitID = i; ;
+			unitData.unitID = i;
 			string unitName = unitData.unitName;
 			if (TryFindUnitAlready(unitName, out UnitObject unitObject))
 			{
@@ -174,5 +174,22 @@ public class StrategyStartSetter : MonoBehaviour
 				 captureProgress = 0
 			});
 		}
+	}
+
+    internal async Awaitable OnStartSetter_Network(StrategySectorNetwork network)
+    {
+		var data = strategyStartSetterData.GetData();
+		var networkDatas = data.networkData;
+
+		await network.Init(StrategyManager.Collector.SectorList, networkDatas);
+	}
+
+    internal void OnStartSetter_Mission(StrategyMissionTree mission)
+    {
+		// 메인 미션 세팅
+		mission.InitMainMission();
+
+		// 서브 미션 세팅
+		mission.InitSubMission();
 	}
 }

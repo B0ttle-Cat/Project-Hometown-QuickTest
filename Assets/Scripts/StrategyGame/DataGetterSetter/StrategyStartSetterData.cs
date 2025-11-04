@@ -21,8 +21,11 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 
 		public double unscaleGamePlayTime;
 		public double gamePlayTime;
-
+		
+		[Space]
+		[FoldoutGroup("Overview")]
 		public Overview overview;
+		[FoldoutGroup("Mission")]
 		public Mission mission;
 
 		[Space]
@@ -32,6 +35,8 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		[Space]
 		[TableList]
 		public CaptureData[] captureDatas;
+		[Space]
+		public NetworkData[] networkData;
 
 #if UNITY_EDITOR
 		private IEnumerable<string> GetFactionName()
@@ -159,7 +164,7 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 			if (bases == null || bases.Length == 0)
 				return new[] { "(No Data)" };
 
-			return bases.Select(x => x.factionName);
+			return bases.Select(x => x.factionName).Prepend("");
 		}
 		private static IEnumerable<string> GetSectorNames(InspectorProperty property)
 		{
@@ -172,7 +177,7 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 			if (bases == null || bases.Length == 0)
 				return new[] { "(No Data)" };
 
-			return bases.Select(x => x.profileData.sectorName);
+			return bases.Select(x => x.profileData.sectorName).Prepend("");
 		}
 #endif
 	}
@@ -202,7 +207,7 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 			if (bases == null || bases.Length == 0)
 				return new[] { "(No Data)" };
 
-			return bases.Select(x => x.profileData.sectorName);
+			return bases.Select(x => x.profileData.sectorName).Prepend("");
 		}
 		// Odin의 PropertyContext를 통해 상위 오브젝트 접근
 		private static IEnumerable<string> GetCaptureFactionNames(InspectorProperty property)
@@ -216,11 +221,55 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 			if (bases == null || bases.Length == 0)
 				return new[] { "(No Data)" };
 
-			return bases.Select(x => x.factionName);
+			return bases.Select(x => x.factionName).Prepend("");
 		}
 #endif
-
 	}
+	[Serializable]
+	public struct NetworkData
+	{
+		[HorizontalGroup, ValueDropdown("@GetSectorNames($property)"), HideLabel, SuffixLabel("Sector A  ",overlay: true)]
+		public string sectorA;
+		[HorizontalGroup(width:80), HideLabel]
+		public ConnectDir connectDir;
+		[HorizontalGroup, ValueDropdown("@GetSectorNames($property)"), HideLabel, SuffixLabel("Sector B  ",overlay: true)]
+		public string sectorB;
+#if UNITY_EDITOR
+		[ShowInInspector]
+		public bool onShowEditPoint { get; set;}
+#endif
+		[TableList]
+		public WaypointUtility.Waypoint[] waypoint;		
+		public enum ConnectDir
+		{
+			[InspectorName("A ↔ B")]
+			Both,
+			[InspectorName("A → B")]
+			AtoB,
+			[InspectorName("A ← B")]
+			BtoA,
+			[InspectorName("A | B")]
+			None
+		}
+#if UNITY_EDITOR
+
+		private static IEnumerable<string> GetSectorNames(InspectorProperty property)
+		{
+			// 루트까지 올라감
+			var root = property.Tree.WeakTargets.FirstOrDefault() as StrategyStartSetterData;
+			if (root == null)
+				return new[] { "(No Root Data)" };
+
+			var bases = root.data.sectorDatas;
+			if (bases == null || bases.Length == 0)
+				return new[] { "(No Data)" };
+			var test = new string[1] { ""};
+
+			return bases.Select(x => x.profileData.sectorName).Prepend("");
+		}
+#endif
+	}
+
 	[Serializable]
 	public struct Overview : IDataCopy<Overview>
 	{
@@ -228,15 +277,15 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		[TextArea(2,10)]
 		public string description;
 
-        public Overview Copy()
-        {
+		public Overview Copy()
+		{
 			return new Overview()
 			{
 				title = title,
 				description = description
 			};
-        }
-    }
+		}
+	}
 	[Serializable]
 	public struct Mission : IDataCopy<Mission>
 	{
@@ -254,8 +303,8 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 
 		public MissionBlock[] enableSubMissions;
 
-        public Mission Copy()
-        {
+		public Mission Copy()
+		{
 			return new Mission()
 			{
 				id = id,
@@ -263,10 +312,10 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 				description = description,
 				victoryScript = victoryScript,
 				defeatScript = defeatScript,
-				enableSubMissions = enableSubMissions?.Select(s=>s.Copy()).ToArray()
+				enableSubMissions = enableSubMissions?.Select(s => s.Copy()).ToArray()
 			};
-        }
-    }
+		}
+	}
 	[Serializable]
 	public struct MissionBlock : IDataCopy<MissionBlock>
 	{
@@ -275,16 +324,23 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		[Tooltip(MissionParser.testParserData)]
 		public string missionScript;
 
-        public MissionBlock Copy()
-        {
+		public MissionBlock Copy()
+		{
 			return new MissionBlock()
 			{
 				id = id,
 				missionScript = missionScript
 			};
-        }
-    }
-	[SerializeField, InlineProperty, HideLabel]
+		}
+	}
+
+#if UNITY_EDITOR
+	[ShowInInspector, FoldoutGroup("GizmoOption", order: -99)]
+	public bool onShowGizmo { get; set; } = false;
+	[ShowInInspector, FoldoutGroup("GizmoOption")]
+	public bool onShowWayPointsGizmo { get; set; } = false;
+#endif
+	[Space, SerializeField, InlineProperty, HideLabel]
 	private Data data;
 	protected override Data _data { get => data; set => data = value; }
 }

@@ -52,6 +52,9 @@ MonoBehaviour:
     values: []
   supportStatsGroup:
     values: []
+  effectStatsGroup:
+    values: []
+  visibilityGroup: {fileID: 0}
 --- !u!114 &6182438146015752348
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -78,6 +81,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraVisibilityGroupInStrategy
   targetCamera: {fileID: 0}
+  isVisible: 0
+  renderers: []
+  visibleScreenRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  visibleWorldBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
 --- !u!1 &7918457449481402264
 GameObject:
   m_ObjectHideFlags: 0

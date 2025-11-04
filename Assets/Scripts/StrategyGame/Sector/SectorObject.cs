@@ -81,6 +81,7 @@ public partial class SectorObject : MonoBehaviour
 		return (0, 0);
 	}
 
+ 
 }
 public partial class SectorObject // SectorControl
 {
@@ -94,6 +95,18 @@ public partial class SectorObject // SectorControl
 	{
 	}
 	internal void OnFinishFacilitiesConstruct(int slotIndex, string facilitiesKey)
+	{
+	}
+	internal void OnChangeSupport_Offensive(float changeLevel)
+	{
+	}
+	internal void OnChangeSupport_Defensive(float changeLevel)
+	{
+	}
+	internal void OnChangeSupport_Supply(float changeLevel)
+	{
+	}
+	internal void OnChangeSupport_Facilities(float changeLevel)
 	{
 	}
 

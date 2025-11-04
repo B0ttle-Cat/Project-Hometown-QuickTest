@@ -16,6 +16,7 @@ public class StrategyManager : MonoBehaviour
 	public static StrategyTime Time => Manager == null ? null : Manager.time;
 	public static StrategyUpdate Updater => Manager == null ? null : Manager.updater;
 	public static StrategyMouseSelecter Selecter => Manager == null ? null : Manager.selecter;
+	public static StrategySectorNetwork SectorNetwork => Manager == null ? null : Manager.network;
 	public static KeyPairDisplayName Key2Name => Manager == null ? null : Manager.key2Name;
 	public static KeyPairSprite Key2Sprite => Manager == null ? null : Manager.key2Sprite;
 
@@ -34,6 +35,7 @@ public class StrategyManager : MonoBehaviour
 	private StrategyTime time;
 	private StrategyUpdate updater;
 	private StrategyMouseSelecter selecter;
+	private StrategySectorNetwork network;
 	private KeyPairDisplayName key2Name;
 	private KeyPairSprite key2Sprite;
 	private void Awake()
@@ -48,6 +50,7 @@ public class StrategyManager : MonoBehaviour
 		statistics = GetComponentInChildren<StrategyStatistics>();
 		updater = GetComponentInChildren<StrategyUpdate>();
 		selecter = GetComponentInChildren<StrategyMouseSelecter>();
+		network = FindAnyObjectByType<StrategySectorNetwork>();
 	}
 	private void OnDestroy()
 	{
@@ -166,24 +169,22 @@ public class StrategyManager : MonoBehaviour
 		key2Name = KeyPairDisplayName.Load(StrategyManager.PreparedData.GetData().LanguageType, "_KeyPair");
 		key2Sprite = KeyPairSprite.Load(StrategyManager.PreparedData.GetData().LanguageType, "_KeyPair");
 		
-		
 		// 시작 세력 세팅
 		setter.OnStartSetter_Faction();
 
-		// CB 세팅
-		setter.OnStartSetter_Sector();
+		// Sector 세팅
+		await setter.OnStartSetter_Sector();
+
+		// Map Network 초기화
+		await setter.OnStartSetter_Network(network);
 
 		// Unit 세팅
-		setter.OnStartSetter_Unit();
+		await setter.OnStartSetter_Unit();
 
 		// 점령 지역 세팅
 		setter.OnStartSetter_Capture();
 
-		// 메인 미션 세팅
-		Mission.InitMainMission();
-
-		// 서브 미션 세팅
-		Mission.InitSubMission();
+		setter.OnStartSetter_Mission(mission);
 
 		// 시작 전 대기 프레임
 		await Awaitable.NextFrameAsync();
@@ -197,13 +198,13 @@ public class StrategyManager : MonoBehaviour
 			gameUI.Init();
 		}
 
-		if (updater == null) gameObject.AddComponent<StrategyUpdate>();
+		if (updater == null) updater = gameObject.AddComponent<StrategyUpdate>();
 		else updater.enabled = true;
-		updater.SetTime(time);
 
-		if (selecter == null) gameObject.AddComponent<StrategyMouseSelecter>();
+		if (selecter == null) selecter = gameObject.AddComponent<StrategyMouseSelecter>();
 		else selecter.enabled = true;
 
+		updater.SetTime(time);
 		OnStartGame();
 	}
 	private void OnStopGame()
