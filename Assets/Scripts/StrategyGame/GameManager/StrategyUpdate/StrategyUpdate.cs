@@ -143,6 +143,13 @@ public partial class StrategyUpdate : MonoBehaviour
 		}
 	}
 
+	private StrategyTime ThisTime { get; set; }
+
+	internal void SetTime(StrategyTime time)
+	{
+		ThisTime = time;
+	}
+
 	public void OnEnable()
 	{
 		tempData = new StrategyUpdateTempData();
@@ -198,6 +205,7 @@ public partial class StrategyUpdate : MonoBehaviour
 	}
 	private void Update()
 	{
+		if(ThisTime != null) ThisTime.TimeUpdate();
 		float deltaTime = Time.deltaTime;
 		foreach ((UpdateLogicSort type, IStrategyUpdater updater) in updateList)
 		{

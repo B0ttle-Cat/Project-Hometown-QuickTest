@@ -6,11 +6,11 @@ public partial class StrategyUpdate
 {
 	public class StrategyUpdate_ConstructUpdate : StrategyUpdateSubClass<ConstructUpdate>
 	{
-        public StrategyUpdate_ConstructUpdate(StrategyUpdate updater) : base(updater)
-        {
-        }
+		public StrategyUpdate_ConstructUpdate(StrategyUpdate updater) : base(updater)
+		{
+		}
 
-        protected override void Start()
+		protected override void Start()
 		{
 			updateList = new List<ConstructUpdate>();
 			var list = StrategyManager.Collector.SectorList;
@@ -18,7 +18,7 @@ public partial class StrategyUpdate
 			for (int i = 0 ; i < length ; i++)
 			{
 				var cb = list[i];
-				updateList.Add(new ConstructUpdate(this,cb));
+				updateList.Add(new ConstructUpdate(this, cb));
 			}
 		}
 		protected override void Update(in float deltaTime)
@@ -38,7 +38,7 @@ public partial class StrategyUpdate
 			public SectorObject sector;
 			public Facilities data;
 
-			public ConstructUpdate(StrategyUpdateSubClass<ConstructUpdate> thisSubClass, SectorObject sector):base(thisSubClass)
+			public ConstructUpdate(StrategyUpdateSubClass<ConstructUpdate> thisSubClass, SectorObject sector) : base(thisSubClass)
 			{
 				this.sector = sector;
 				this.data = sector.Facilities;
@@ -53,14 +53,18 @@ public partial class StrategyUpdate
 			protected override void OnUpdate(in float deltaTime)
 			{
 				if (sector == null || !sector.isActiveAndEnabled) return;
-				if((data ??= sector.Facilities) == null) return;
+				if ((data ??= sector.Facilities) == null) return;
 
 				var _data = data.GetData();
+				bool isChange = false;
 				int slotLength = _data.slotData.Length;
 				for (int i = 0 ; i < slotLength ; i++)
 				{
 					var slot = _data.slotData[i];
 					var constructing = slot.constructing;
+					var endTimer = constructing.endTimer;
+					if (!endTimer.HasTime) continue;
+
 					var oldFacilitiesKey = slot.facilitiesKey;
 					var nextFacilitiesKey = constructing.facilitiesKey;
 
@@ -70,19 +74,18 @@ public partial class StrategyUpdate
 						continue;
 					}
 
-					float timeRemaining = constructing.timeRemaining;
-					timeRemaining -= deltaTime;
-					if(timeRemaining <= 0)
+					if (endTimer.IsEnd)
 					{
+						endTimer.Dispose();
 						// 시설 공사 완료
 						sector.OnFinishFacilitiesConstruct(i, constructing.facilitiesKey);
+
+						constructing.endTimer = endTimer;
+						slot.constructing = constructing;
+						isChange = true;
 					}
-
-					slot.constructing = constructing;
-					_data.slotData[i] = slot;
 				}
-
-				data.SetData(_data);
+				if (isChange) data.SetData(_data);
 			}
 		}
 	}

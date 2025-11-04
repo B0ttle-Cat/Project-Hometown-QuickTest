@@ -5,8 +5,7 @@ using UnityEngine;
 using static StrategyGamePlayData;
 public partial class StrategyUpdate
 {
-
-	public class StrategyUpdate_ElectricSupply : StrategyUpdateSubClass<StrategyUpdate_ElectricSupply.ResourcesSupply>
+    public class StrategyUpdate_ElectricSupply : StrategyUpdateSubClass<StrategyUpdate_ElectricSupply.ResourcesSupply>
 	{
 		public StrategyUpdate_ElectricSupply(StrategyUpdate updater) : base(updater)
 		{

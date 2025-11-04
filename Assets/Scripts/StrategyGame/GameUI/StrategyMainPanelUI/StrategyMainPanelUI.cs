@@ -1,12 +1,21 @@
 ﻿using UnityEngine;
 
-public class StrategyMainPanelUI : MonoBehaviour, IGamePanelUI
+public class StrategyMainPanelUI : MonoBehaviour, IGamePanelUI, IStartGame
 {
-	public bool IsOpen { get; set; }
 	public void OpenUI()
 	{
 	}
 	public void CloseUI()
 	{
+	}
+
+    void IStartGame.OnStartGame()
+	{
+		OpenUI();
+	}
+
+    void IStartGame.OnStopGame()
+	{
+		CloseUI();
 	}
 }

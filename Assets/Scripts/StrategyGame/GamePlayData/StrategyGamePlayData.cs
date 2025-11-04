@@ -213,8 +213,6 @@ public partial class StrategyGamePlayData
 }
 public partial class StrategyGamePlayData // Prepared Data (준비된 데이터)
 {
-	public static int PlayerFactionID;
-	public static GameStartingData PreparedData;
 	[Serializable]
 	public class GameStartingData : GamePlayData<GameStartingData.Data>
 	{
@@ -225,6 +223,9 @@ public partial class StrategyGamePlayData // Prepared Data (준비된 데이터)
 		{
 			public Language.Type LanguageType;
 
+			public double unscaleGamePlayTime;
+			public double gamePlayTime;
+
 			public Overview overview;
 			public Mission mission;
 
@@ -233,6 +234,8 @@ public partial class StrategyGamePlayData // Prepared Data (준비된 데이터)
 				return new Data()
 				{
 					LanguageType = LanguageType,
+					unscaleGamePlayTime = unscaleGamePlayTime,
+					gamePlayTime = gamePlayTime,
 					overview = overview.Copy(),
 					mission = mission.Copy()
 				};
@@ -245,7 +248,7 @@ public partial class StrategyGamePlayData // Common Game Play Data
 	[Serializable]
 	public class CommonGamePlayData
 	{
-		public StrategyDetailsPanelUI.StrategyDetailsPanelType openStartType;
+		public StrategyDetailsPanelUI_old.StrategyDetailsPanelType openStartType;
 
 		public ObserverString selectSector;
 		public ObserverInt selectUnitID;
@@ -426,7 +429,8 @@ public partial class StrategyGamePlayData // Play Content Data
 			{
 				public string facilitiesKey;
 				public float  constructTime;
-				public float  timeRemaining;
+				public StrategyTime.GmaePlayTimer endTimer;
+				public float Duration => endTimer.duration;
 			}
 		}
 		[Serializable]

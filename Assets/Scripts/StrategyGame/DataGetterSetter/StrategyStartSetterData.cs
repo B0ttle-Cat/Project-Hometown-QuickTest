@@ -18,6 +18,10 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 	{
 		[ValueDropdown("GetFactionName")]
 		public string playerFactionName;
+
+		public double unscaleGamePlayTime;
+		public double gamePlayTime;
+
 		public Overview overview;
 		public Mission mission;
 

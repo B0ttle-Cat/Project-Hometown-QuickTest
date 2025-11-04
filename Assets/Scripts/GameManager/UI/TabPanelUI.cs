@@ -1,296 +1,213 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Sirenix.OdinInspector;
+
 using TMPro;
 
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TabPanelUI : MonoBehaviour
+public interface ITabControl
+{
+	ITabControl ClearTab();
+	ITabControl AddTab(params (string label, Action action)[] labels);
+	ITabControl RemoveTab(params string[] labels);
+	ITabControl GetTabControl();
+}
+public class TabPanelUI : MonoBehaviour, ITabControl
 {
 	[SerializeField]
-	protected RectTransform tabList;
+	private ToggleGroup toggleGroup;
 	[SerializeField]
-	protected RectTransform tabButtonSample;
-	[Space]
-	[SerializeField]
-	protected TMP_Text contentTitle;
-	[SerializeField]
-	protected RectTransform contentParent;
+	private GameObject toggleSample;
+
+	[SerializeField, ReadOnly]
+	private List<Tab> enableTabs;
+	[ShowInInspector, ReadOnly]
+	private Stack<Tab> disableTabs;
+
+	private List<Tab> EnableTabs { get => enableTabs ??= new List<Tab>(); }
+	private Stack<Tab> DisableTabs { get => disableTabs = new Stack<Tab>(); }
 
 	[Serializable]
-	protected class TabSlot : IDisposable
+	private class Tab : IDisposable
 	{
-		public string tabName;
-		private RectTransform tab;
-		private RectTransform content;
-		private ViewController contentView;
+		[SerializeField, ReadOnly]
+		private GameObject toggleObject;
+		[SerializeField, ReadOnly]
+		private Toggle toggle;
+		[SerializeField, ReadOnly]
+		private TMP_Text label;
+		private Action action;
+		private Action<Action> callback;
 
-		private RectTransform contentPrefab;
-		private RectTransform contentParent;
+		[ShowInInspector, ReadOnly]
+		public string LabelText => label != null ? label.text : "";
 
-		public RectTransform Tab { get => tab; }
-        public RectTransform Content { get => content; }
-
-        public TabSlot(string tabName, RectTransform tab, RectTransform contentPrefab, RectTransform contentParent, ViewController contentView )
+		public Tab(GameObject togglePrefab, ToggleGroup toggleGroup, Action<Action> callback)
 		{
-			this.tabName = tabName;
-			this.tab = tab;
-			this.contentPrefab = contentPrefab;
-			this.contentParent = contentParent;
-			this.contentView = contentView;
-		}
-		void CreateContentUI()
-		{
-			if (content != null) return;
-			if (contentPrefab == null) return;
+			toggleObject = GameObject.Instantiate(togglePrefab, toggleGroup.transform);
+			this.toggle = toggleObject.GetComponentInChildren<Toggle>(true);
+			this.label = toggleObject.GetComponentInChildren<TMP_Text>(true);
+			action = null;
+			this.callback = callback;
 
-			content = GameObject.Instantiate(contentPrefab, contentParent);
-			content.gameObject.name = contentPrefab.name;
-
-			content.localPosition = Vector3.zero;
-			content.localRotation = Quaternion.identity;
-			content.localScale = Vector3.one;
-
-			content.anchorMin = Vector2.zero;
-			content.anchorMax = Vector2.one;
-			content.anchoredPosition = Vector2.zero;
-			content.sizeDelta = Vector2.zero;
-			content.pivot = Vector3.one * 0.5f;
+			toggle.group = toggleGroup;
+			toggle.onValueChanged.RemoveAllListeners();
+			toggle.onValueChanged.AddListener(OnChangeValue);
 		}
 		public void Dispose()
 		{
-			if (tab != null)
+			if (toggle != null)
 			{
-				Destroy(tab.gameObject);
-				tab = null;
+				toggle.onValueChanged.RemoveAllListeners();
+				toggle = null;
 			}
-			if(contentPrefab == null)
+			label = null;
+			action = null;
+			callback = null;
+
+			if (toggleObject != null)
 			{
-				contentPrefab = null;
-			}
-			if (contentView != null)
-			{
-				contentView.Dispose();
-			}
-			if (content != null)
-			{
-				Destroy(content.gameObject);
-				content = null;
+				GameObject.Destroy(toggleObject);
+				toggleObject = null;
 			}
 		}
-
-		public void OnShowContent()
+		public void Enable()
 		{
-			if (Content == null)
+			if (toggleObject != null)
 			{
-				CreateContentUI();
-			}
-
-			if (Content == null) return;
-			Content.gameObject.SetActive(true);
-			if (Content.TryGetComponent<CanvasGroupUI>(out var groupUI))
-			{
-				groupUI.OnShow();
-			}
-
-			if (contentView != null)
-			{
-				contentView.OnShow(Content);
+				toggleObject.SetActive(true);
+				toggleObject.transform.SetAsLastSibling();
 			}
 		}
-		public void OnHideContent()
+		public void Disable()
 		{
-			if (Content == null) return;
-			if (Content.TryGetComponent<CanvasGroupUI>(out var groupUI))
+			if (toggleObject != null)
 			{
-				groupUI.OnHide();
+				toggleObject.SetActive(false);
+			}
+		}
+		public void ChangeIndexAndLabel(Action action, string labelText)
+		{
+			this.action = action;
+			if (label != null) label.text = labelText;
+		}
+		private void OnChangeValue(bool value)
+		{
+			if (!value || action == null) return;
+			if (!toggleObject.activeInHierarchy) return;
+			callback?.Invoke(action);
+		}
+	}
+
+	public void OnDestroy()
+	{
+		if (enableTabs != null)
+		{
+			int length = enableTabs.Count;
+			for (int i = 0 ; i < length ; i++)
+			{
+				enableTabs[i].Dispose();
+			}
+			enableTabs.Clear();
+			enableTabs = null;
+		}
+		if (disableTabs != null)
+		{
+			while (disableTabs.TryPop(out Tab tab) && tab != null)
+			{
+				tab.Dispose();
+			}
+			disableTabs = null;
+		}
+		toggleGroup = null;
+		toggleSample = null;
+	}
+	private void OnTabChange(Action action)
+	{
+		action.Invoke();
+	}
+
+	public ITabControl GetTabControl()
+	{
+		return this;
+	}
+	ITabControl ITabControl.ClearTab()
+	{
+		int length = EnableTabs.Count;
+		for (int i = 0 ; i < length ; i++)
+		{
+			EnableTabs[i].Disable();
+			DisableTabs.Push(EnableTabs[i]);
+		}
+		EnableTabs.Clear();
+		return this;
+	}
+
+	ITabControl ITabControl.AddTab(params (string label, Action action)[] labels)
+	{
+		var list = EnableTabs;
+		var stack = DisableTabs;
+
+		int length = labels == null ? 0 : labels.Length;
+		for (int i = 0 ; i < length ; i++)
+		{
+			string label = labels[i].label;
+			Action action = labels[i].action;
+			if(string.IsNullOrWhiteSpace(label)) continue;
+
+			int index = list.Count;
+			if (stack.TryPop(out Tab tab))
+			{
+				tab.ChangeIndexAndLabel(action, label);
+				list.Add(tab);
+				tab.Enable();
 			}
 			else
 			{
-				Content.gameObject.SetActive(true);
-			}
-
-			if (contentView != null)
-			{
-				contentView.OnHide();
+				Tab newTab = new Tab(toggleSample, toggleGroup, OnTabChange);
+				newTab.ChangeIndexAndLabel(action, label);
+				list.Add(newTab);
+				newTab.Enable();
 			}
 		}
+		return this;
 	}
 
-	[SerializeField]
-	protected List<TabSlot> tabSlots;
-
-	[Serializable]
-	public abstract class ContentController
+	ITabControl ITabControl.RemoveTab(params string[] labels)
 	{
-		protected TabPanelUI component;
+		var list = EnableTabs;
+		var stack = DisableTabs;
 
-		public ContentController(TabPanelUI component)
-		{
-			this.component = component;
-		}
-		public abstract void OnShow();
-		public abstract void OnHide();
-	}
-
-	[Serializable]
-	public abstract class ViewController : IDisposable
-	{
-		protected TabPanelUI component;
-		protected ContentController viewController;
-		public void Init(TabPanelUI component, ContentController viewModel) 
-		{
-			this.component = component;
-			this.viewController  = viewModel;
-		}
-		public void Dispose()
-		{
-			component = null;
-			viewController  = null;
-			OnDispose();
-		}
-		public virtual void OnInit() { }
-		public abstract void OnShow(RectTransform viewRect);
-		public abstract void OnHide();
-		public abstract void OnDispose();
-    }
-
-
-	protected void Init()
-	{
-		if (tabSlots == null) tabSlots = new List<TabSlot>();
-	}
-	protected void Deinit()
-	{
-		if (tabSlots == null) return;
-
-		int length = tabSlots.Count;
+		int length = labels == null ? 0 : labels.Length;
+		int tabCount = list.Count;
 		for (int i = 0 ; i < length ; i++)
 		{
-			var tab = tabSlots[i];
-			if (tab != null)
+			string label = labels[i];
+			for (int ii = 0 ; ii < tabCount ; ii++)
 			{
-				tabSlots[i] = null;
-				tab.Dispose();
+				Tab tab = list[ii];
+				if (tab != null && label.Equals(tab.LabelText))
+				{
+					if (tabCount > ii)
+					{
+						list.RemoveAt(ii);
+						if (stack.Count < 10)
+						{
+							tab.Disable();
+							stack.Push(tab);
+						}
+						else
+						{
+							tab.Dispose();
+						}
+						break;
+					}
+				}
 			}
 		}
-		tabSlots.Clear();
-	}
-
-	public void ContentTitleText(string titleName)
-	{
-		if (contentTitle == null) return;
-		contentTitle.text = titleName;
-	}
-
-	public void ClearAllContent()
-	{
-		ClearContent(-1);
-	}
-	public void ClearContent(string tabName)
-	{
-		if (tabSlots == null) return;
-
-		int length = tabSlots.Count;
-		for (int i = 0 ; i < length ; i++)
-		{
-			var tab = tabSlots[i];
-			if (tab != null && tab.tabName.Equals(tabName))
-			{
-				tabSlots.RemoveAt(i);
-				tab.Dispose();
-				return;
-			}
-		}
-	}
-	public void ClearContent(int index)
-	{
-		if (index < 0 || index >= tabSlots.Count)
-		{
-			Deinit();
-		}
-		else
-		{
-			var tab = tabSlots[index];
-			if (tab != null)
-			{
-				tabSlots.RemoveAt(index);
-				tab.Dispose();
-				return;
-			}
-		}
-	}
-
-	public TView AddTabAndContnet<TView>(string tabName, RectTransform prefab, ContentController thisModel, bool isOn = false) where TView : ViewController, new()
-	{
-		if (tabButtonSample == null) return null;
-		Init();
-
-		RectTransform tabRect = GameObject.Instantiate(tabButtonSample, tabList);
-		tabRect.gameObject.name = tabName + "_tab";
-		TMP_Text tabTitle = tabRect.GetComponentInChildren<TMP_Text>();
-		if (tabTitle != null)
-		{
-			tabTitle.text = tabName;
-		}
-
-		Toggle tabButton = tabRect.GetComponent<Toggle>();
-
-		if (tabButton == null)
-		{
-			Destroy(tabRect.gameObject);
-			return null;
-		}
-		ViewController tabContentView = new TView();
-		tabContentView.Init(this, thisModel);
-		var slot = new TabSlot(tabName, tabRect, prefab, contentParent , tabContentView);
-		tabSlots.Add(slot);
-			
-		// Tab Active
-		tabRect.gameObject.SetActive(true);
-		tabButton.onValueChanged.AddListener(TabValueChanged);
-		void TabValueChanged(bool _isOn)
-		{
-			if (_isOn) slot.OnShowContent();
-			else slot.OnHideContent();
-		}
-		if (tabButton.isOn == isOn)
-		{
-			TabValueChanged(isOn);
-		}
-		else
-		{
-			tabButton.isOn = isOn;
-		}
-		return tabContentView as TView;
-	}
-
-	public void SelectTabIndex(int index)
-	{
-		if (tabSlots == null) return;
-
-		if (index < 0 || index >= tabSlots.Count) return;
-
-		var tab = tabSlots[index];
-		if (tab != null && tab.Tab.TryGetComponent<Toggle>(out var ui))
-		{
-			if (ui != null && !ui.isOn) ui.isOn = true;
-		}
-	}
-	public int GetSelectTabIndex()
-	{
-		if (tabSlots == null) return -1;
-
-		int length = tabSlots.Count;
-		for (int i = 0 ; i < length ; i++)
-		{
-			var tab = tabSlots[i];
-			if (tab != null && tab.Tab.TryGetComponent<Toggle>(out var ui))
-			{
-				if (ui.isOn) return i;
-			}
-		}
-		return -1;
+		return this;
 	}
 }

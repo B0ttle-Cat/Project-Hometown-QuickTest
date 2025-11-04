@@ -87,9 +87,8 @@ public partial class SectorObject // SectorControl
     internal void OnShowDetail()
     {
 		var gamePlayData = StrategyManager.GamePlayData;
-		StrategyManager.GameUI.DetailsPanelUI.selectContent = StrategyDetailsPanelUI.StrategyDetailsPanelType.Sector; 
 		StrategyManager.GameUI.DetailsPanelUI.OpenUI();
-		//StrategyManager.GameUI.DetailsPanelUI.GetSectorDetailInfo();
+		StrategyManager.GameUI.DetailsPanelUI.OnShowSectorDetail(this);
 	}
 	internal void OnStartFacilitiesConstruct(int slotIndex, string facilitiesKey)
 	{

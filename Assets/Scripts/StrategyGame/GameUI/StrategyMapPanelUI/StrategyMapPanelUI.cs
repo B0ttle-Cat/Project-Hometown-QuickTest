@@ -33,7 +33,8 @@ public partial class StrategyMapPanelUI : MonoBehaviour, IGamePanelUI, IStartGam
 	}
 	void IStartGame.OnStartGame()
 	{
-		OpenUI();
+		EnableSectorLabelPanel();
+		EnableSectorSelectPanel();
 	}
 	void IStartGame.OnStopGame()
 	{

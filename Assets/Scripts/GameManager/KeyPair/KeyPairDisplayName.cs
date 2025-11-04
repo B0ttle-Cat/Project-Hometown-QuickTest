@@ -5,7 +5,7 @@ public class KeyPairDisplayName : KeyPairAssets<string>
 {
 	public override bool TryGetAsset(string key, out string result)
 	{
-		result = default;
+		result = key;
 		if (string.IsNullOrWhiteSpace(key)) return false;
 
 		string _key = key.Trim();

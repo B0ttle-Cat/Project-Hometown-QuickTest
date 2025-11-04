@@ -201,7 +201,7 @@ public partial class StrategyMissionTree // MissionCompute
 			int computeCount = 0;
 			StrategyManager.Collector.ForEachSector(cb =>
 			{
-				if(cb.CaptureFactionID == StrategyGamePlayData.PlayerFactionID)
+				if(cb.CaptureFactionID == StrategyManager.PlayerFactionID)
 				{
 					computeCount++;
 				}
@@ -258,7 +258,7 @@ public partial class StrategyMissionTree // MissionCompute
 			int computeCount = 0;
 			StrategyManager.Collector.ForEachSector(cb =>
 			{
-				if (cb.CaptureFactionID == StrategyGamePlayData.PlayerFactionID 
+				if (cb.CaptureFactionID == StrategyManager.PlayerFactionID 
 					&& targetList.Remove(cb.SectorName))
 				{
 					computeCount++;

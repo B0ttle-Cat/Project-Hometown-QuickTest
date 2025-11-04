@@ -4,109 +4,123 @@ using Sirenix.OdinInspector;
 
 using UnityEngine;
 
-public partial class StrategyDetailsPanelUI : TabPanelUI, IGamePanelUI
+public partial class StrategyDetailsPanelUI : MonoBehaviour, IGamePanelUI, IStartGame
 {
-	public enum StrategyDetailsPanelType
+	[SerializeField]
+	private  TabPanelUI tabPanelUI;
+	private ITabControl tabControl;
+
+	[SerializeField]
+	private RectTransform contentRoot;
+	[SerializeField, ReadOnly]
+	private RectTransform currrentContent;
+    public RectTransform CurrrentContent { get => currrentContent; private set => currrentContent = value; }
+	public void Reset()
 	{
-		None,
-		Menu = 10,
-
-		[HideInInspector]
-		FieldInfo = 100,
-		FieldInfo_Overview,
-		FieldInfo_MainMission,
-		FieldInfo_Statistics,
-		FieldInfo_Storyboard,
-
-		[HideInInspector]
-		Sector = 200,
-		Sector_Info,
-		Sector_Support,
-		Sector_Facilities,
-		Sector_Garrison,
-
-		[HideInInspector]
-		BattleUnit = 300,
-
-		[HideInInspector]
-		BattleSkill= 400,
+		Init();
 	}
-	
-	[Space]
-	[InlineButton("CloseUI")]
-	[InlineButton("OpenUI")]
-	public StrategyDetailsPanelType selectContent;
-	public StrategyContentController currentDetailsPanelItem;
-	public bool IsOpen { get; set; }
+	public void Awake()
+    {
+		Init();
+	}
+	private void Init()
+	{
+		fieldInfoDetailsPanelUI = null;
+		sectorDetailsPanelUI = null;
+	}
+    private void OnDestroy()
+    {
+		fieldInfoDetailsPanelUI?.Dispose();
+		sectorDetailsPanelUI?.Dispose();
+
+		fieldInfoDetailsPanelUI = null;
+		sectorDetailsPanelUI = null;
+	}
+
     public void OpenUI()
 	{
-		ClearAllContent();
-		Init();
-
-		currentDetailsPanelItem = selectContent switch
-		{
-			StrategyDetailsPanelType.Menu => new MainGameMenuUI(this),
-			>= StrategyDetailsPanelType.FieldInfo and < StrategyDetailsPanelType.Sector
-				=> new FieldInfoViewController(this),
-			>= StrategyDetailsPanelType.Sector and < StrategyDetailsPanelType.BattleUnit
-				=> new SectorUIStruct(this),
-			>= StrategyDetailsPanelType.Sector and < StrategyDetailsPanelType.BattleSkill
-				=> new BattleUnitUIStruct(this),
-			>= StrategyDetailsPanelType.BattleSkill
-				=> new BattleSkillUIStruct(this),
-			_ => null,
-		};
-
-		if (currentDetailsPanelItem != null)
-		{
-			currentDetailsPanelItem.initContent = selectContent;
-			currentDetailsPanelItem.OnShow();
-		}
+		tabControl = tabPanelUI.GetTabControl();
+		currrentContent = null;
+		gameObject.SetActive(true);
 	}
 	public void CloseUI()
 	{
-		if (currentDetailsPanelItem != null)
-		{
-			currentDetailsPanelItem.OnHide();
-		}
+		gameObject.SetActive(false);
 
-		ClearAllContent();
+		if(currrentContent != null)
+		{
+			fieldInfoDetailsPanelUI?.OnHideFieldInfoDetails();
+			sectorDetailsPanelUI?.OnHideSectorDetail();
+		}
+		currrentContent = null;
 	}
 
-	[Serializable]
-	public abstract class StrategyContentController : ContentController
+	void IStartGame.OnStartGame()
 	{
-		public StrategyDetailsPanelUI ThisComponent => component as StrategyDetailsPanelUI;
-		public StrategyDetailsPanelType initContent;
+		(this as IGamePanelUI).CloseUI();
+	}
 
-		protected StrategyContentController(StrategyDetailsPanelUI component) : base(component)
+	void IStartGame.OnStopGame()
+	{
+		(this as IGamePanelUI).CloseUI();
+	}
+
+	public abstract class DetailsContentPanel : IDisposable
+	{
+		private bool isShow;
+		private bool isDispose;
+		protected StrategyDetailsPanelUI ThisPanel;
+		protected RectTransform ThisContent;
+		protected IKeyPairChain PairChain;
+		protected DetailsContentPanel(StrategyDetailsPanelUI thisPanel, RectTransform contentPrefab)
 		{
+			ThisPanel = thisPanel;
+			ThisContent = GameObject.Instantiate(contentPrefab, thisPanel.contentRoot);
+			PairChain = ThisContent.gameObject.GetPairChain();
+			isShow = false;
+			isDispose = false;
+			ThisContent.gameObject.SetActive(false);
 		}
 
-		public void OnShow(StrategyDetailsPanelType openContent)
+		public virtual void Show()
 		{
-			initContent = openContent;
+			if (isShow) return;
+			isShow = true;
+
+			if (ThisPanel.CurrrentContent != null)
+			{
+				ThisPanel.CurrrentContent.gameObject.SetActive(false);
+			}
+			ThisPanel.CurrrentContent = ThisContent;
+			ThisContent.gameObject.SetActive(true);
 			OnShow();
 		}
-	}
-	[Serializable]
-	public abstract class StrategyViewController : ViewController
-	{
-		public StrategyDetailsPanelUI ThisComponent => component as StrategyDetailsPanelUI;
-		public StrategyContentController ThisViewController => viewController as StrategyContentController;
-	}
-	public class MainGameMenuUI : StrategyContentController
-	{
-		public MainGameMenuUI(StrategyDetailsPanelUI component) : base(component)
+		public virtual void Hide()
 		{
-		}
+			if (!isShow) return;
+			isShow = false;
 
-		public override void OnShow()
+			OnHide();
+			ThisContent.gameObject.SetActive(false);
+			ThisPanel.CurrrentContent = null;
+		}
+		public virtual void Dispose()
 		{
+			if (isDispose) return;
+			isDispose = true;
 
+			Hide();
+			OnDispose();
+			ThisPanel = null;
+			if (ThisContent != null)
+			{
+				GameObject.Destroy(ThisContent.gameObject);
+				ThisContent = null;
+			}
+			PairChain = null;
 		}
-		public override void OnHide()
-		{
-		}
+		protected abstract void OnShow();
+		protected abstract void OnHide();
+		protected abstract void OnDispose();
 	}
 }

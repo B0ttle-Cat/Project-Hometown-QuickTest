@@ -13,30 +13,31 @@ public class StrategyGameUI : MonoBehaviour
 	public StrategyControlPanelUI ControlPanelUI { get => controlPanelUI; private set => controlPanelUI = value; }
 	public StrategyMainPanelUI MainPanelUI { get => mainPanelUI; private set => mainPanelUI = value; }
 	public StrategyDetailsPanelUI DetailsPanelUI { get => detailsPanelUI; private set => detailsPanelUI = value; }
-	public void Reset()
+	private void Reset()
 	{
-		mapPanelUI = GetComponentInChildren<StrategyMapPanelUI>(true);
+		Init();
+	}
+	private void Awake()
+	{
+		Init();
+	}
+	private void OnDestroy()
+	{
+		DeInit();
+	}
+
+	public void Init()
+	{
+		MapPanelUI = GetComponentInChildren<StrategyMapPanelUI>(true);
 		ControlPanelUI = GetComponentInChildren<StrategyControlPanelUI>(true);
 		MainPanelUI = GetComponentInChildren<StrategyMainPanelUI>(true);
 		DetailsPanelUI = GetComponentInChildren<StrategyDetailsPanelUI>(true);
 	}
-	public void OnEnable()
+	public void DeInit()
 	{
-		mapPanelUI = GetComponentInChildren<StrategyMapPanelUI>(true);
-		ControlPanelUI = GetComponentInChildren<StrategyControlPanelUI>(true);
-		MainPanelUI = GetComponentInChildren<StrategyMainPanelUI>(true);
-		DetailsPanelUI = GetComponentInChildren<StrategyDetailsPanelUI>(true);
-	}
-	public void OnDisable()
-	{
-		mapPanelUI = null;
+		MapPanelUI = null;
 		ControlPanelUI = null;
 		MainPanelUI = null;
 		DetailsPanelUI = null;
 	}
-
-	public void CloseDetailsPanel()
-	{
-	}
-
 }

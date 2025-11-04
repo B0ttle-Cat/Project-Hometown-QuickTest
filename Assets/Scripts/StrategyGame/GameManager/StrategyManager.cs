@@ -13,10 +13,14 @@ public class StrategyManager : MonoBehaviour
 	public static StrategyElementCollector Collector => Manager == null ? null : Manager.collector;
 	public static StrategyMissionTree Mission => Manager == null ? null : Manager.mission;
 	public static StrategyStatistics Statistics => Manager == null ? null : Manager.statistics;
+	public static StrategyTime Time => Manager == null ? null : Manager.time;
 	public static StrategyUpdate Updater => Manager == null ? null : Manager.updater;
 	public static StrategyMouseSelecter Selecter => Manager == null ? null : Manager.selecter;
 	public static KeyPairDisplayName Key2Name => Manager == null ? null : Manager.key2Name;
 	public static KeyPairSprite Key2Sprite => Manager == null ? null : Manager.key2Sprite;
+
+	public static int PlayerFactionID;
+	public static GameStartingData PreparedData;
 	//public static 
 	public bool IsGameSceneReady { get; private set; }
 
@@ -27,6 +31,7 @@ public class StrategyManager : MonoBehaviour
 	private StrategyElementCollector collector;
 	private StrategyMissionTree mission;
 	private StrategyStatistics statistics;
+	private StrategyTime time;
 	private StrategyUpdate updater;
 	private StrategyMouseSelecter selecter;
 	private KeyPairDisplayName key2Name;
@@ -102,7 +107,12 @@ public class StrategyManager : MonoBehaviour
 
 		if ((gameUI = gameUI != null ? gameUI : FindAnyObjectByType<StrategyGameUI>()) != null)
 		{
+			gameUI.DeInit();
 			gameUI.enabled = false;
+		}
+		if ((time = time != null ? time : GetComponentInChildren<StrategyTime>()) != null)
+		{
+			time.enabled = false;
 		}
 		if ((updater = updater != null ? updater : GetComponentInChildren<StrategyUpdate>()) != null)
 		{
@@ -152,8 +162,10 @@ public class StrategyManager : MonoBehaviour
 		Collector.Init();
 		Mission.Init();
 		Statistics.Init();
-		key2Name = KeyPairDisplayName.Load(StrategyGamePlayData.PreparedData.GetData().LanguageType, "Strategy");
-		key2Sprite = KeyPairSprite.Load(StrategyGamePlayData.PreparedData.GetData().LanguageType, "Strategy");
+		Time.Init();
+		key2Name = KeyPairDisplayName.Load(StrategyManager.PreparedData.GetData().LanguageType, "_KeyPair");
+		key2Sprite = KeyPairSprite.Load(StrategyManager.PreparedData.GetData().LanguageType, "_KeyPair");
+		
 		
 		// 시작 세력 세팅
 		setter.OnStartSetter_Faction();
@@ -179,10 +191,15 @@ public class StrategyManager : MonoBehaviour
 		Destroy(setter);
 		setter = null;
 
-		if (gameUI != null) gameUI.enabled = true;
+		if (gameUI != null)
+		{
+			gameUI.enabled = true;
+			gameUI.Init();
+		}
 
 		if (updater == null) gameObject.AddComponent<StrategyUpdate>();
 		else updater.enabled = true;
+		updater.SetTime(time);
 
 		if (selecter == null) gameObject.AddComponent<StrategyMouseSelecter>();
 		else selecter.enabled = true;

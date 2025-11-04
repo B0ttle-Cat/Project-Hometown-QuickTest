@@ -36,12 +36,14 @@ public class StrategyStartSetter : MonoBehaviour
 
 	internal void OnSetPreparedData()
 	{
-		if (StrategyGamePlayData.PreparedData == null)
+		if (StrategyManager.PreparedData == null)
 		{
 			var data = strategyStartSetterData.GetData();
-			StrategyGamePlayData.PreparedData = new StrategyGamePlayData.GameStartingData(new()
+			StrategyManager.PreparedData = new StrategyGamePlayData.GameStartingData(new()
 			{
 				LanguageType = Language.Type.Korean,
+				unscaleGamePlayTime = data.unscaleGamePlayTime,
+				gamePlayTime = data.gamePlayTime,
 				overview = data.overview,
 				mission = data.mission,
 			});
@@ -59,7 +61,7 @@ public class StrategyStartSetter : MonoBehaviour
 			factionData.factionID = i;
 			if (factionData.factionName == data.playerFactionName)
 			{
-				StrategyGamePlayData.PlayerFactionID = i;
+				StrategyManager.PlayerFactionID = i;
 			}
 			Faction faction = new Faction(factionData);
 			collector.AddElement<Faction>(faction);
