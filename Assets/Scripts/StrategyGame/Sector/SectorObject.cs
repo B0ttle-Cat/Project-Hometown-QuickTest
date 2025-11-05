@@ -88,7 +88,7 @@ public partial class SectorObject // Getter
 	{
 		return (0, 0);
 	}
-	public (int value, int max) GetGarrison()
+	public (int value, int max) GetTroops()
 	{
 		return (0, 0);
 	}

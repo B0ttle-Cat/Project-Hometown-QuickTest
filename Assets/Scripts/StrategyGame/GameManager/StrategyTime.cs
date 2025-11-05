@@ -12,14 +12,12 @@ public class StrategyTime : MonoBehaviour
 		unscaledGamePlayTime = 0f;
 		gamePlayTime = 0f;
 	}
-
 	public void TimeUpdate()
 	{
 		if (!isActiveAndEnabled) return;
 		unscaledGamePlayTime += Time.unscaledDeltaTime;
 		gamePlayTime += Time.deltaTime;
 	}
-
 	internal void Init()
 	{
 		var data = StrategyManager.PreparedData.GetData();

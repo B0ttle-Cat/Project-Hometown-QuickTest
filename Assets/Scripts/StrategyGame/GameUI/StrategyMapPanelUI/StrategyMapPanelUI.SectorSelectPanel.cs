@@ -295,7 +295,7 @@ public partial class StrategyMapPanelUI // SectorSelectPanel
 			private void UpdateFillRectUI()
 			{
 				SetFillRectUI("Fill Durability", sector.GetDurability());
-				SetFillRectUI("Fill Garrison", sector.GetGarrison());
+				SetFillRectUI("Fill Troops", sector.GetTroops());
 				SetFillRectUI("Fill Material", sector.GetMaterial());
 				SetFillRectUI("Fill Electric", sector.GetElectric());
 			}

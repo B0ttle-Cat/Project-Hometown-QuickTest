@@ -1,4 +1,4 @@
-%YAML 1.1
+﻿%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!1 &16140432873502882
 GameObject:
@@ -2604,7 +2604,7 @@ GameObject:
   - component: {fileID: 6103764818290054026}
   - component: {fileID: 7586458835607349667}
   m_Layer: 5
-  m_Name: Garrison Slot
+  m_Name: Troops Slot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3606,7 +3606,7 @@ GameObject:
   - component: {fileID: 9160687793881023833}
   - component: {fileID: 4493694509899443362}
   m_Layer: 5
-  m_Name: Garrison List
+  m_Name: Troops List
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3667,7 +3667,7 @@ GameObject:
   - component: {fileID: 507834867649513029}
   - component: {fileID: 6651707313356212258}
   m_Layer: 5
-  m_Name: Garrison Control
+  m_Name: Troops Control
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4426,7 +4426,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6421724285848245500}
   m_Layer: 5
-  m_Name: Garrison Item
+  m_Name: Troops Item
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
