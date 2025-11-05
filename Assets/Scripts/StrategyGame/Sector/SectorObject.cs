@@ -19,7 +19,6 @@ public partial class SectorObject : MonoBehaviour
 	private StatsGroup supportStatsGroup;
 	// 상태 이상에 대한 스텟
 	private StatsGroup statusEffectStatsGroup;
-
 	// 카메라에서 보이는지 판단하는 기능
 	private CameraVisibilityGroup visibilityGroup;
 

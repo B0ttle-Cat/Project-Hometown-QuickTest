@@ -20,7 +20,6 @@ public partial class StrategyGamePlayData
 	[Serializable]
 	public abstract class GamePlayData<T> where T : IDataCopy<T>
 	{
-
 		public GamePlayData(T data)
 		{
 			_data = data;
@@ -207,9 +206,12 @@ public partial class StrategyGamePlayData
 				}
 			}
 		}
-	}
 
-	public static KeyValueData KeyValue;
+		public static KeyValueData Empty => new KeyValueData(new Data()
+		{
+			keyValueList = new List<KeyValue>()
+		});
+	}
 }
 public partial class StrategyGamePlayData // Prepared Data (준비된 데이터)
 {
@@ -248,10 +250,7 @@ public partial class StrategyGamePlayData // Common Game Play Data
 	[Serializable]
 	public class CommonGamePlayData
 	{
-		public StrategyDetailsPanelUI_old.StrategyDetailsPanelType openStartType;
 
-		public ObserverString selectSector;
-		public ObserverInt selectUnitID;
 	}
 }
 public partial class StrategyGamePlayData // Mission Data

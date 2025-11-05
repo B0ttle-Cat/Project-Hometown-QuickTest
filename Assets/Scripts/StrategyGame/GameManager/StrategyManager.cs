@@ -9,7 +9,7 @@ public class StrategyManager : MonoBehaviour
 	public static StrategyManager Manager;
 	public static Camera MainCamera => Manager == null ? null : Manager.mainCamera;
 	public static StrategyGameUI GameUI => Manager == null ? null : Manager.gameUI;
-	public static CommonGamePlayData GamePlayData => Manager == null ? null : Manager.gamePlayData;
+	public static KeyValueData GamePlayTempData => Manager == null ? null : Manager.gamePlayTempData;
 	public static StrategyElementCollector Collector => Manager == null ? null : Manager.collector;
 	public static StrategyMissionTree Mission => Manager == null ? null : Manager.mission;
 	public static StrategyStatistics Statistics => Manager == null ? null : Manager.statistics;
@@ -25,7 +25,7 @@ public class StrategyManager : MonoBehaviour
 	//public static 
 	public bool IsGameSceneReady { get; private set; }
 
-	CommonGamePlayData gamePlayData;
+	private KeyValueData gamePlayTempData;
 	[SerializeField]
 	private Camera mainCamera;
 	private StrategyGameUI gameUI;
@@ -44,7 +44,7 @@ public class StrategyManager : MonoBehaviour
 		Manager = this;
 		mainCamera = mainCamera == null ? Camera.main : mainCamera;
 		gameUI = FindAnyObjectByType<StrategyGameUI>();
-		gamePlayData = new CommonGamePlayData();
+		gamePlayTempData = KeyValueData.Empty;
 		collector = GetComponentInChildren<StrategyElementCollector>();
 		mission = GetComponentInChildren<StrategyMissionTree>();
 		statistics = GetComponentInChildren<StrategyStatistics>();

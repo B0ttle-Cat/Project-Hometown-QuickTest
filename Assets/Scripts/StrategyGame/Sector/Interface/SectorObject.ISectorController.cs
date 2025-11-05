@@ -71,7 +71,7 @@ public partial class SectorObject : ISectorController
 	}
 	void ISectorController.OnShowUI_Detail()
 	{
-		var gamePlayData = StrategyManager.GamePlayData;
+		var gamePlayData = StrategyManager.GamePlayTempData;
 		StrategyManager.GameUI.DetailsPanelUI.OpenUI();
 		StrategyManager.GameUI.DetailsPanelUI.OnShowSectorDetail(This);
 	}

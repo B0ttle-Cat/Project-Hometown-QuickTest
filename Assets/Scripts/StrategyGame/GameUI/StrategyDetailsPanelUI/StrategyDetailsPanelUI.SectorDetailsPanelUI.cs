@@ -365,7 +365,7 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 			void OnChangeSupportData(SectorData.Support.Data data)
 			{
 				UpdateFillRectUI();
-				UpdateStatePanel("Stats KeyValue", "Support Stats", selectSector.supportStatsGroup.GetValueList());
+				UpdateStatePanel("Stats KeyValue", "Support Stats", selectSector.SupportBuffGroup.GetValueList());
 			}
 			void UpdateFillRectUI()
 			{
