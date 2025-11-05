@@ -146,8 +146,9 @@ public partial class StrategyUpdate
 			public CaptureUpdate(StrategyUpdateSubClass<CaptureUpdate> thisSubClass, SectorObject sector) : base(thisSubClass)
 			{
 				this.sector = sector;
-				this.sectorTrigger = sector.GetComponentInChildren<SectorTrigger>();
-				this.sectorColor = sector.GetComponentInChildren<SectorColor>();
+				this.sectorTrigger = sector.GetComponentInChildren<SectorTrigger>(true);
+				this.sectorColor = sector.GetComponentInChildren<SectorColor>(true);
+				if(sectorColor == null) sectorColor = sector.gameObject.AddComponent<SectorColor>();
 
 				var data = sector.CaptureData;
 

@@ -701,7 +701,7 @@ public partial class StrategyDetailsPanelUI_old // SectorData UI
 					{
 						ProgressImage.enabled = true;
 						float installingTime = constructing.constructTime;
-						float timeRemaining = constructing.Duration;
+						float timeRemaining = constructing.duration;
 						if(installingTime < 1) installingTime = 1;
 						ProgressImage.fillAmount = 1f - (timeRemaining / installingTime);
 					}
@@ -896,7 +896,7 @@ public partial class StrategyDetailsPanelUI_old // SectorData UI
 
 		private void OnStartFacilitiesInstall(int slotIndex, string facilitiesKey)
 		{
-			selectSector.OnStartFacilitiesConstruct(slotIndex, facilitiesKey);
+			selectSector.Controller.OnFacilitiesConstruct_Start(slotIndex, facilitiesKey);
 		}
 
 		private void OnShowInfoText(string text)

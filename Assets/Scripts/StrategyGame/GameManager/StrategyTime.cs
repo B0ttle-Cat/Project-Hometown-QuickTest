@@ -15,6 +15,7 @@ public class StrategyTime : MonoBehaviour
 
 	public void TimeUpdate()
 	{
+		if (!isActiveAndEnabled) return;
 		unscaledGamePlayTime += Time.unscaledDeltaTime;
 		gamePlayTime += Time.deltaTime;
 	}
@@ -27,23 +28,41 @@ public class StrategyTime : MonoBehaviour
 	}
 
 	[Serializable]
-	public struct GmaePlayTimer	: IDisposable
+	public class GmaePlayTimer	: IDisposable
 	{
-		public double endedTime;
-		public bool HasTime => endedTime > 0;
-		public bool IsEnd => StrategyManager.Time.gamePlayTime > endedTime;
-		public float duration => (float)(endedTime - StrategyManager.Time.gamePlayTime);
-		public GmaePlayTimer(double endedTime)
+        private double endedTime;
+        private Action callback;
+
+		public double EndedTime => endedTime;
+		public bool HasTime => EndedTime > 0;
+		public bool IsEnd => StrategyManager.Time.gamePlayTime > EndedTime;
+		public float duration => (float)(EndedTime - StrategyManager.Time.gamePlayTime);
+
+        public GmaePlayTimer(Action timerCallback)
+		{
+			if (timerCallback == null) return;
+			callback += timerCallback;
+		}
+		public void SetEndedTime(double endedTime)
 		{
 			this.endedTime = endedTime;
 		}
-		public GmaePlayTimer(float duration)
+		public void SetDuration(float duration)
 		{
 			endedTime = StrategyManager.Time.gamePlayTime + duration;
+		}
+		public void TimeUpdate()
+		{
+			if (callback != null && IsEnd)
+			{
+				callback.Invoke();
+				callback = null;
+			}
 		}
 		public void Dispose()
 		{
 			endedTime = 0;
+			callback = null;
 		}
 	}
 }

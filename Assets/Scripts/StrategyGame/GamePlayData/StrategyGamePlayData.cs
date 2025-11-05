@@ -409,12 +409,11 @@ public partial class StrategyGamePlayData // Play Content Data
 			public struct Data : IDataCopy<Data>
 			{
 				public Slot[] slotData;
-
 				public Data Copy()
 				{
 					return new Data()
 					{
-						slotData = slotData.Clone() as Slot[]
+						slotData = slotData.Clone() as Slot[],
 					};
 				}
 			}
@@ -422,15 +421,19 @@ public partial class StrategyGamePlayData // Play Content Data
 			public struct Slot
 			{
 				public string facilitiesKey;
-				public Construct constructing;
+				public Constructing constructing;
 			}
 			[Serializable]
-			public struct Construct
+			public struct Constructing
 			{
 				public string facilitiesKey;
-				public float  constructTime;
-				public StrategyTime.GmaePlayTimer endTimer;
-				public float Duration => endTimer.duration;
+				public float constructTime;
+				public float duration;
+				public void Clear()
+				{
+					facilitiesKey = string.Empty;
+					duration = 0f;
+				}
 			}
 		}
 		[Serializable]

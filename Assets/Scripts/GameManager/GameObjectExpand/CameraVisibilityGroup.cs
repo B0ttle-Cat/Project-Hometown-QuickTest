@@ -6,7 +6,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 
 [DisallowMultipleComponent]
-public class CameraVisibilityGroup : MonoBehaviour
+public class CameraVisibilityGroup : MonoBehaviour 
 {
 	[SerializeField, ReadOnly] protected Camera targetCamera;
 	[SerializeField, ReadOnly] protected bool isVisible = false;

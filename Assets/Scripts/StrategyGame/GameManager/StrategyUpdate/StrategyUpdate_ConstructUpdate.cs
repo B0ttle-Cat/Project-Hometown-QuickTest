@@ -56,36 +56,45 @@ public partial class StrategyUpdate
 				if ((data ??= sector.Facilities) == null) return;
 
 				var _data = data.GetData();
-				bool isChange = false;
-				int slotLength = _data.slotData.Length;
-				for (int i = 0 ; i < slotLength ; i++)
+				int length = _data.slotData.Length;
+
+				Queue<(int,string)> finishList = new Queue<(int,string)>();
+
+				for (int i = 0 ; i < length ; i++)
 				{
 					var slot = _data.slotData[i];
 					var constructing = slot.constructing;
-					var endTimer = constructing.endTimer;
-					if (!endTimer.HasTime) continue;
+					int slotIndex  = i;
+					if (slotIndex < 0) continue;
+					string facilitiesKey = constructing.facilitiesKey;
+					if (string.IsNullOrWhiteSpace(facilitiesKey)) continue;
+					float constructTime = constructing.constructTime;
+					float duration = constructing.duration;
 
-					var oldFacilitiesKey = slot.facilitiesKey;
-					var nextFacilitiesKey = constructing.facilitiesKey;
+					var currFacilitiesKey = _data.slotData[slotIndex].facilitiesKey;
+					if (facilitiesKey.Equals(currFacilitiesKey)) continue;
 
-					if (string.IsNullOrWhiteSpace(nextFacilitiesKey)
-						|| nextFacilitiesKey.Equals(oldFacilitiesKey))
+					duration -= deltaTime;
+
+					constructing.duration = duration;
+					slot.constructing = constructing;
+					_data.slotData[i] = slot;
+
+					// 시설 건설 완료
+					if (duration <= 0f)
 					{
-						continue;
-					}
-
-					if (endTimer.IsEnd)
-					{
-						endTimer.Dispose();
-						// 시설 공사 완료
-						sector.OnFinishFacilitiesConstruct(i, constructing.facilitiesKey);
-
-						constructing.endTimer = endTimer;
-						slot.constructing = constructing;
-						isChange = true;
+						finishList.Enqueue((slotIndex, facilitiesKey));
 					}
 				}
-				if (isChange) data.SetData(_data);
+				data.SetData(_data, ignoreChangeEvent: true);
+				if (finishList.Count > 0)
+				{
+					while (finishList.Count > 0)
+					{
+						var item = finishList.Dequeue();
+						sector.Controller.OnFacilitiesConstruct_Finish(item.Item1, item.Item2);
+					}
+				}
 			}
 		}
 	}

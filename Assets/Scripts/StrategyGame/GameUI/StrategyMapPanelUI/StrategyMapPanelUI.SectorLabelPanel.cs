@@ -155,14 +155,14 @@ public partial class StrategyMapPanelUI // SectorLabelPanel
 
 				selectButton.onClick.RemoveAllListeners();
 				selectButton.onClick.AddListener(() => StrategyManager.Selecter.OnSystemSelectObject(Sector));
-				Sector.EffectStatsGroup.AddListener(OnChangeGroupKey, OnRemoveGroupKey);
+				Sector.StatusEffectStatsGroup.AddListener(OnChangeGroupKey, OnRemoveGroupKey);
 			}
 			public void Hide()
 			{
 				if (uiObject == null) return;
 				if (mapPanelItemUI != null) mapPanelItemUI.Hide();
 				if (selectButton != null) selectButton.onClick.RemoveAllListeners();
-				if (Sector != null) Sector.EffectStatsGroup.RemoveListener(OnChangeGroupKey, OnRemoveGroupKey);
+				if (Sector != null) Sector.StatusEffectStatsGroup.RemoveListener(OnChangeGroupKey, OnRemoveGroupKey);
 			}
 
 			public void OnChangeGroupKey(string key)
@@ -187,7 +187,7 @@ public partial class StrategyMapPanelUI // SectorLabelPanel
 					iconlist ??= new List<GameObject>();
 					iconlist.Clear();
 
-					var keyList = Sector.EffectStatsGroup.GetkeyList();
+					var keyList = Sector.StatusEffectStatsGroup.GetkeyList();
 					int length = keyList.Count;
 					for (int i = 0 ; i < length ; i++)
 					{

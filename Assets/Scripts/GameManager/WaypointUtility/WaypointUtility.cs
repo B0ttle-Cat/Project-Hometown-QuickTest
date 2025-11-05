@@ -13,6 +13,42 @@ public static class WaypointUtility
 		public float width;
 	}
 
+	public struct WaypointLine
+	{
+        private Vector3[] points;
+        private float distance;
+
+        public Vector3[] Points => points;
+		public float Distance => distance;
+
+        public WaypointLine(Vector3 start, Vector3 last, Waypoint[] waypoints, int samplesPerSegment = 10)
+        {
+			points = null;
+			distance = 0;
+
+			points = GetLineWithWaypoints(start, last, waypoints, samplesPerSegment);
+			distance = _Distance();
+		}
+
+		private float _Distance()
+		{
+			var points = this.points;
+			int length = this.points.Length;
+			if (length < 0) return 0f;
+
+			float distance = 0f;
+            Vector3 prev = this.points[0];
+			Vector3 next = prev;
+			for (int i = 0 ; i < length ; i++)
+			{
+				next = this.points[i];
+				distance += Vector3.Distance(prev, next);
+				prev = next;
+			}
+			return distance;
+		}
+	}
+
 	public static Vector3[] GetLineWithWaypoints(Vector3 start, Vector3 last, Waypoint[] waypoints, int samplesPerSegment = 10)
 	{
 		var result = new List<Vector3>();

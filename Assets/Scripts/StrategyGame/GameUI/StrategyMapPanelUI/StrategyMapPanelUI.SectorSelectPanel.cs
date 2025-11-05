@@ -199,11 +199,11 @@ public partial class StrategyMapPanelUI // SectorSelectPanel
 					OnChangeFacilities(sector.FacilitiesData);
 					OnChangeSupport(sector.SupportData);
 
-					onShowDetail = () => sector.OnShowDetail();
-					onDeployCombatantsClick = () => sector.OnDeployCombatants();
-					onConstructFacilitiesClick = () => sector.OnConstructFacilities();
-					onMoveTroopsClick = () => sector.OnMoveTroops();
-					onUseFacilitiesSkillButton = () => sector.OnUseFacilitiesSkill();
+					onShowDetail = () => sector.Controller.OnShowUI_Detail();
+					onDeployCombatantsClick = () => sector.Controller.OnControlButton_DeployCombatants();
+					onConstructFacilitiesClick = () => sector.Controller.OnControlButton_ConstructFacilities();
+					onMoveTroopsClick = () => sector.Controller.OnControlButton_MoveTroops();
+					onUseFacilitiesSkillButton = () => sector.Controller.OnControlButton_UseFacilitiesSkill();
 
 				}
 				void Deinit(SectorObject sector)

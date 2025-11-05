@@ -36,8 +36,7 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		[TableList]
 		public CaptureData[] captureDatas;
 		[Space]
-		public NetworkData[] networkData;
-
+		public SectorLinkData[] sectorLinkDatas;
 #if UNITY_EDITOR
 		private IEnumerable<string> GetFactionName()
 		{
@@ -226,33 +225,20 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 #endif
 	}
 	[Serializable]
-	public struct NetworkData
+	public struct SectorLinkData
 	{
 		[HorizontalGroup, ValueDropdown("@GetSectorNames($property)"), HideLabel, SuffixLabel("Sector A  ",overlay: true)]
 		public string sectorA;
 		[HorizontalGroup(width:80), HideLabel]
-		public ConnectDir connectDir;
+		public NetworkLine.ConnectDirType connectDir;
 		[HorizontalGroup, ValueDropdown("@GetSectorNames($property)"), HideLabel, SuffixLabel("Sector B  ",overlay: true)]
 		public string sectorB;
+		[TableList]
+		public WaypointUtility.Waypoint[] waypoint;		
+
 #if UNITY_EDITOR
 		[ShowInInspector]
 		public bool onShowEditPoint { get; set;}
-#endif
-		[TableList]
-		public WaypointUtility.Waypoint[] waypoint;		
-		public enum ConnectDir
-		{
-			[InspectorName("A ↔ B")]
-			Both,
-			[InspectorName("A → B")]
-			AtoB,
-			[InspectorName("A ← B")]
-			BtoA,
-			[InspectorName("A | B")]
-			None
-		}
-#if UNITY_EDITOR
-
 		private static IEnumerable<string> GetSectorNames(InspectorProperty property)
 		{
 			// 루트까지 올라감
@@ -268,6 +254,25 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 			return bases.Select(x => x.profileData.sectorName).Prepend("");
 		}
 #endif
+		public SectorLinkData ReverseDir
+		{
+			get
+			{
+				return new SectorLinkData()
+				{
+					sectorA = sectorB,
+					sectorB = sectorA,
+					connectDir = connectDir == NetworkLine.ConnectDirType.Forward ? NetworkLine.ConnectDirType.Backward :
+								 connectDir == NetworkLine.ConnectDirType.Backward ? NetworkLine.ConnectDirType.Forward :
+								 connectDir,
+					waypoint = waypoint?.Select(wp => new WaypointUtility.Waypoint()
+					{
+						point = wp.point,
+						width = wp.width
+					}).Reverse().ToArray()
+				};
+			}
+		}
 	}
 
 	[Serializable]
@@ -338,7 +343,7 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 	[ShowInInspector, FoldoutGroup("GizmoOption", order: -99)]
 	public bool onShowGizmo { get; set; } = false;
 	[ShowInInspector, FoldoutGroup("GizmoOption")]
-	public bool onShowWayPointsGizmo { get; set; } = false;
+	public bool onShowWayPointsGizmo { get; set; } = true;
 #endif
 	[Space, SerializeField, InlineProperty, HideLabel]
 	private Data data;

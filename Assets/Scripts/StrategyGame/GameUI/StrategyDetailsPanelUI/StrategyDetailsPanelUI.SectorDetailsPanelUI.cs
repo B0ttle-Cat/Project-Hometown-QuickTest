@@ -481,10 +481,10 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 				PairChain.FindPairChain("Supply", out var Supply);
 				PairChain.FindPairChain("Facilities", out var Facilities);
 
-				SetupSlider(Offensive, data.offensivePoint, selectSector.OnChangeSupport_Offensive);
-				SetupSlider(Defensive, data.defensivePoint, selectSector.OnChangeSupport_Defensive);
-				SetupSlider(Supply, data.supplyPoint, selectSector.OnChangeSupport_Supply);
-				SetupSlider(Facilities, data.facilitiesPoint, selectSector.OnChangeSupport_Facilities);
+				SetupSlider(Offensive, data.offensivePoint, selectSector.Controller.OnChangeSupport_Offensive);
+				SetupSlider(Defensive, data.defensivePoint, selectSector.Controller.OnChangeSupport_Defensive);
+				SetupSlider(Supply, data.supplyPoint, selectSector.Controller.OnChangeSupport_Supply);
+				SetupSlider(Facilities, data.facilitiesPoint, selectSector.Controller.OnChangeSupport_Facilities);
 
 				UpdateSupportState("Offensive", Offensive, offensiveItemList);
 				UpdateSupportState("Defensive", Defensive, defensiveItemList);
@@ -659,7 +659,7 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 					{
 						ProgressImage.enabled = true;
 						float installingTime = constructing.constructTime;
-						float timeRemaining = constructing.Duration;
+						float timeRemaining = constructing.duration;
 						if (installingTime < 1) installingTime = 1;
 						ProgressImage.fillAmount = 1f - (timeRemaining / installingTime);
 					}

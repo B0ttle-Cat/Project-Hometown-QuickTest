@@ -254,9 +254,9 @@ MonoBehaviour:
     - captureSector: Sector_02
       captureFaction: Faction_01
       captureProgress: 1
-    networkData:
+    sectorLinkDatas:
     - sectorA: Sector_00
-      connectType: 0
+      connectDir: 0
       sectorB: Sector_01
       waypoint:
       - point: {x: -5, y: 0, z: -25}
@@ -264,30 +264,30 @@ MonoBehaviour:
       - point: {x: 5, y: 0, z: -15}
         width: 1
     - sectorA: Sector_02
-      connectType: 0
+      connectDir: 0
       sectorB: Sector_01
       waypoint: []
     - sectorA: Sector_03
-      connectType: 0
+      connectDir: 0
       sectorB: Sector_01
       waypoint: []
     - sectorA: Sector_04
-      connectType: 0
+      connectDir: 0
       sectorB: Sector_01
       waypoint: []
     - sectorA: Sector_00
-      connectType: 1
+      connectDir: 1
       sectorB: Sector_03
       waypoint: []
     - sectorA: Sector_03
-      connectType: 1
+      connectDir: 1
       sectorB: Sector_02
       waypoint: []
     - sectorA: Sector_02
-      connectType: 1
+      connectDir: 1
       sectorB: Sector_04
       waypoint: []
     - sectorA: Sector_04
-      connectType: 1
+      connectDir: 1
       sectorB: Sector_00
       waypoint: []

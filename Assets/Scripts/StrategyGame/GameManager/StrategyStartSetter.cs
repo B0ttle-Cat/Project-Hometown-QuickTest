@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 using Sirenix.OdinInspector;
 
@@ -176,12 +177,14 @@ public class StrategyStartSetter : MonoBehaviour
 		}
 	}
 
-    internal async Awaitable OnStartSetter_Network(StrategySectorNetwork network)
+    internal async Awaitable OnStartSetter_SectorNetwork(StrategyNodeNetwork network)
     {
 		var data = strategyStartSetterData.GetData();
-		var networkDatas = data.networkData;
+		var networkDatas = data.sectorLinkDatas;
 
-		await network.Init(StrategyManager.Collector.SectorList, networkDatas);
+		await network.Init(
+			StrategyManager.Collector.SectorList.Select(s => new NetworkNode(s)).ToArray(),
+			networkDatas);
 	}
 
     internal void OnStartSetter_Mission(StrategyMissionTree mission)

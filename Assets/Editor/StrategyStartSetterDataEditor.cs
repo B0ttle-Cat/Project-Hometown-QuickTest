@@ -23,6 +23,8 @@ public class StrategyStartSetterDataEditor : OdinEditor
 	}
 	private void EditorOnSceneGUI(SceneView sceneView)
 	{
+		if (EditorApplication.isPlaying) return;
+
 		if (target is not StrategyStartSetterData _target) return;
 
 		if (_target == null || !_target.onShowGizmo) return;
@@ -47,7 +49,7 @@ public class StrategyStartSetterDataEditor : OdinEditor
 			}
 		}
 
-		var networkDatas = data.networkData;
+		var networkDatas = data.sectorLinkDatas;
 		if (networkDatas != null)
 		{
 			foreach (var net in networkDatas)
@@ -77,7 +79,7 @@ public class StrategyStartSetterDataEditor : OdinEditor
 		DrawLabel(obj.transform.position, Vector3.down, $"Capture: {captureData.captureFaction} {(int)(captureData.captureProgress * 100)}%", color);
 	}
 
-	private void DrawNetworkLink(StrategyStartSetterData target, StrategyStartSetterData.NetworkData net, StrategyStartSetterData.Data data)
+	private void DrawNetworkLink(StrategyStartSetterData target, StrategyStartSetterData.SectorLinkData net, StrategyStartSetterData.Data data)
 	{
 		// A와 B 섹터 위치 추출
 		var sectorA = data.sectorDatas.FirstOrDefault(s => s.profileData.sectorName == net.sectorA);
@@ -96,9 +98,9 @@ public class StrategyStartSetterDataEditor : OdinEditor
 		// 연결선 색상 설정
 		Color color = net.connectDir switch
 		{
-			StrategyStartSetterData.NetworkData.ConnectDir.Both => Color.green,
-			StrategyStartSetterData.NetworkData.ConnectDir.AtoB => Color.cyan,
-			StrategyStartSetterData.NetworkData.ConnectDir.BtoA => Color.magenta,
+			NetworkLine.ConnectDirType.Both => Color.green,
+			NetworkLine.ConnectDirType.Forward => Color.cyan,
+			NetworkLine.ConnectDirType.Backward => Color.magenta,
 			_ => Color.gray
 		};
 
@@ -138,9 +140,9 @@ public class StrategyStartSetterDataEditor : OdinEditor
 
 		string arrowText = net.connectDir switch
 		{
-			StrategyStartSetterData.NetworkData.ConnectDir.Both => "↔",
-			StrategyStartSetterData.NetworkData.ConnectDir.AtoB => "→",
-			StrategyStartSetterData.NetworkData.ConnectDir.BtoA => "←",
+			NetworkLine.ConnectDirType.Both => "↔",
+			NetworkLine.ConnectDirType.Forward => "→",
+			NetworkLine.ConnectDirType.Backward => "←",
 			_ => "|"
 		};
 
@@ -148,7 +150,7 @@ public class StrategyStartSetterDataEditor : OdinEditor
 		DrawLabel((posA + posB) * 0.5f, $"{net.sectorA} {arrowText} {net.sectorB}", color);
 	}
 
-	private void DrawArrow(Vector3 from, Vector3 to, StrategyStartSetterData.NetworkData.ConnectDir type)
+	private void DrawArrow(Vector3 from, Vector3 to, NetworkLine.ConnectDirType type)
 	{
 		Vector3 dir = (to - from).normalized;
 		Vector3 mid = Vector3.Lerp(from, to, 0.5f);
@@ -156,13 +158,13 @@ public class StrategyStartSetterDataEditor : OdinEditor
 
 		switch (type)
 		{
-			case StrategyStartSetterData.NetworkData.ConnectDir.AtoB:
+			case NetworkLine.ConnectDirType.Forward:
 			Handles.ConeHandleCap(0, mid - dir * size * 0.5f, Quaternion.LookRotation(dir), size, EventType.Repaint);
 			break;
-			case StrategyStartSetterData.NetworkData.ConnectDir.BtoA:
+			case NetworkLine.ConnectDirType.Backward:
 			Handles.ConeHandleCap(0, mid + dir * size * 0.5f, Quaternion.LookRotation(-dir), size, EventType.Repaint);
 			break;
-			case StrategyStartSetterData.NetworkData.ConnectDir.Both:
+			case NetworkLine.ConnectDirType.Both:
 			Handles.ConeHandleCap(0, mid - dir * size * 0.5f, Quaternion.LookRotation(dir), size, EventType.Repaint);
 			Handles.ConeHandleCap(0, mid + dir * size * 0.5f, Quaternion.LookRotation(-dir), size, EventType.Repaint);
 			break;

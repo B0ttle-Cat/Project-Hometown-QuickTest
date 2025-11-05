@@ -16,7 +16,7 @@ public class StrategyManager : MonoBehaviour
 	public static StrategyTime Time => Manager == null ? null : Manager.time;
 	public static StrategyUpdate Updater => Manager == null ? null : Manager.updater;
 	public static StrategyMouseSelecter Selecter => Manager == null ? null : Manager.selecter;
-	public static StrategySectorNetwork SectorNetwork => Manager == null ? null : Manager.network;
+	public static StrategyNodeNetwork SectorNetwork => Manager == null ? null : Manager.sectorNetwork;
 	public static KeyPairDisplayName Key2Name => Manager == null ? null : Manager.key2Name;
 	public static KeyPairSprite Key2Sprite => Manager == null ? null : Manager.key2Sprite;
 
@@ -35,7 +35,7 @@ public class StrategyManager : MonoBehaviour
 	private StrategyTime time;
 	private StrategyUpdate updater;
 	private StrategyMouseSelecter selecter;
-	private StrategySectorNetwork network;
+	private StrategyNodeNetwork sectorNetwork;
 	private KeyPairDisplayName key2Name;
 	private KeyPairSprite key2Sprite;
 	private void Awake()
@@ -50,7 +50,7 @@ public class StrategyManager : MonoBehaviour
 		statistics = GetComponentInChildren<StrategyStatistics>();
 		updater = GetComponentInChildren<StrategyUpdate>();
 		selecter = GetComponentInChildren<StrategyMouseSelecter>();
-		network = FindAnyObjectByType<StrategySectorNetwork>();
+		sectorNetwork = GetComponentInChildren<StrategyNodeNetwork>();
 	}
 	private void OnDestroy()
 	{
@@ -175,8 +175,8 @@ public class StrategyManager : MonoBehaviour
 		// Sector 세팅
 		await setter.OnStartSetter_Sector();
 
-		// Map Network 초기화
-		await setter.OnStartSetter_Network(network);
+		// Sector Network 초기화
+		await setter.OnStartSetter_SectorNetwork(sectorNetwork);
 
 		// Unit 세팅
 		await setter.OnStartSetter_Unit();
@@ -204,7 +204,12 @@ public class StrategyManager : MonoBehaviour
 		if (selecter == null) selecter = gameObject.AddComponent<StrategyMouseSelecter>();
 		else selecter.enabled = true;
 
-		updater.SetTime(time);
+		if(time != null)
+		{
+			updater.SetTime(time);
+			time.enabled = true;
+		}
+
 		OnStartGame();
 	}
 	private void OnStopGame()
