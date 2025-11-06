@@ -16,6 +16,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 100233aba0cc14949a40f77956287571, type: 2}
   prefix: 
   suffix: 
-  KeyPairTargetList:
-  - key: 
-    asset: {fileID: 0}
+  KeyPairTargetList: []

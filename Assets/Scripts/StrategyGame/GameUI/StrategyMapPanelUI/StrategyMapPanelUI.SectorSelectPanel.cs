@@ -131,10 +131,10 @@ public partial class StrategyMapPanelUI // SectorSelectPanel
 			private GameObject[] iconList;
 			public bool IsValid => panel != null && pairChain != null;
 			public event UnityAction onShowDetail;
-			public event UnityAction onDeployCombatantsClick;
-			public event UnityAction onConstructFacilitiesClick;
-			public event UnityAction onMoveTroopsClick;
-			public event UnityAction onUseFacilitiesSkillButton;
+			public event UnityAction onDeployUniqueUnit;
+			public event UnityAction onConstructFacilities;
+			public event UnityAction onPlanningTroopMovements;
+			public event UnityAction onUseFacilitiesSkill;
 			public SectorPanel(MapPanelItemUI panel)
 			{
 				this.panel = panel;
@@ -200,10 +200,10 @@ public partial class StrategyMapPanelUI // SectorSelectPanel
 					OnChangeSupport(sector.SupportData);
 
 					onShowDetail = () => sector.Controller.OnShowUI_Detail();
-					onDeployCombatantsClick = () => sector.Controller.OnControlButton_DeployCombatants();
-					onConstructFacilitiesClick = () => sector.Controller.OnControlButton_ConstructFacilities();
-					onMoveTroopsClick = () => sector.Controller.OnControlButton_MoveTroops();
-					onUseFacilitiesSkillButton = () => sector.Controller.OnControlButton_UseFacilitiesSkill();
+					onDeployUniqueUnit = () => sector.Controller.OnControlButton_DeployUniqueUnit();
+					onConstructFacilities = () => sector.Controller.OnControlButton_ConstructFacilities();
+					onPlanningTroopMovements = () => sector.Controller.OnControlButton_PlanningTroopMovements();
+					onUseFacilitiesSkill = () => sector.Controller.OnControlButton_UseFacilitiesSkill();
 
 				}
 				void Deinit(SectorObject sector)
@@ -216,10 +216,10 @@ public partial class StrategyMapPanelUI // SectorSelectPanel
 					sector.Support.RemoveListener(OnChangeSupport);
 
 					onShowDetail = null;
-					onDeployCombatantsClick = null;
-					onConstructFacilitiesClick = null;
-					onMoveTroopsClick = null;
-					onUseFacilitiesSkillButton = null;
+					onDeployUniqueUnit = null;
+					onConstructFacilities = null;
+					onPlanningTroopMovements = null;
+					onUseFacilitiesSkill = null;
 				}
 			}
 			private void OnChangeProfile(StrategyGamePlayData.SectorData.Profile.Data data)
@@ -330,22 +330,22 @@ public partial class StrategyMapPanelUI // SectorSelectPanel
 				if (pairChain.TryFindPair<Button>("전투원 배치", out var deployButton))
 				{
 					deployButton.onClick.RemoveAllListeners();
-					deployButton.onClick.AddListener(()=>onDeployCombatantsClick?.Invoke());
+					deployButton.onClick.AddListener(()=>onDeployUniqueUnit?.Invoke());
 				}
 				if (pairChain.TryFindPair<Button>("시설 건설", out var constructButton))
 				{
 					constructButton.onClick.RemoveAllListeners();
-					constructButton.onClick.AddListener(()=>onConstructFacilitiesClick?.Invoke());
+					constructButton.onClick.AddListener(()=>onConstructFacilities?.Invoke());
 				}
 				if (pairChain.TryFindPair<Button>("병력 이동", out var moveButton))
 				{
 					moveButton.onClick.RemoveAllListeners();
-					moveButton.onClick.AddListener(()=>onMoveTroopsClick?.Invoke());
+					moveButton.onClick.AddListener(()=>onPlanningTroopMovements?.Invoke());
 				}
 				if (pairChain.TryFindPair<Button>("시설 장비 사용", out var useButton))
 				{
 					useButton.onClick.RemoveAllListeners();
-					useButton.onClick.AddListener(()=>onUseFacilitiesSkillButton?.Invoke());
+					useButton.onClick.AddListener(()=>onUseFacilitiesSkill?.Invoke());
 				}
 			}
 			private void RemoveButtons()

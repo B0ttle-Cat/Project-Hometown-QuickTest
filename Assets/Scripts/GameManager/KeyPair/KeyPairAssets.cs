@@ -4,28 +4,28 @@ using Sirenix.OdinInspector;
 
 using UnityEngine;
 
-public abstract class KeyPairAssets<T> : ScriptableObject
+public abstract class KeyPairAssets<TKey,TValue> : ScriptableObject
 {
 	[PropertyOrder(-10)]
-	public KeyPairAssets<T>[] chains;
+	public KeyPairAssets<TKey,TValue>[] chains;
 
 	[Serializable]
 	protected struct KeyPairAssetsStruct
 	{
 		[HorizontalGroup, HideLabel, SuffixLabel("Key", overlay: true)]
-		public string key;
+		public TKey key;
 		//[HorizontalGroup, HideLabel, SuffixLabel("KeyValue Target", overlay: true)]
 		[HideIf("@true")]
-		public T asset;
+		public TValue asset;
 
 #if UNITY_EDITOR
 		private bool IsString() => asset is string;
-		[ShowIf("IsString"), ShowInInspector, HorizontalGroup, HideLabel, SuffixLabel("KeyValue Target", overlay: true)]
-		public T asset_string { get => asset; set => asset =value; }
+		[ShowIf("IsString"), ShowInInspector, HorizontalGroup, HideLabel]
+		public TValue asset_string { get => asset; set => asset =value; }
 		[HideIf("IsString"), ShowInInspector, HorizontalGroup, HideLabel, PreviewField]
-		public T asset_preview { get => asset; set => asset = value; }
+		public TValue asset_preview { get => asset; set => asset = value; }
 #endif
-		public KeyPairAssetsStruct(string key, T asset)
+		public KeyPairAssetsStruct(TKey key, TValue asset)
         {
             this.key = key;
             this.asset = asset;
@@ -47,18 +47,15 @@ public abstract class KeyPairAssets<T> : ScriptableObject
 
 
 #if UNITY_EDITOR
-	private bool autoUpdateAsset = false;
-
+	protected bool autoUpdateAsset = false;
 #endif
-	public T this[string key] => GetAsset(key);
+	public TValue this[TKey key] => GetAsset(key);
 
-	public virtual bool TryGetAsset(string key, out T result)
+	public virtual bool TryGetAsset(TKey key, out TValue result)
 	{
 		result = default;
-		if (string.IsNullOrWhiteSpace(key)) return false;
 
-		string _key = key.Trim();
-		if(_TryGetAsset(in _key, out result))
+		if(_TryGetAsset(in key, out result))
 		{
 			return true;
 		}
@@ -73,16 +70,17 @@ public abstract class KeyPairAssets<T> : ScriptableObject
 #endif
 		return false;
 	}
-	public virtual T GetAsset(string key)
+	public virtual TValue GetAsset(TKey key)
 	{
-		return TryGetAsset(key, out T result) ? result : default;
+		return TryGetAsset(key, out TValue result) ? result : default;
 	}
-	protected bool _TryGetAsset(in string key, out T value)
+	protected bool _TryGetAsset(in TKey key, out TValue value)
 	{
 		int length = KeyPairTargetList == null ? 0 : KeyPairTargetList.Length;
 		for (int i = 0 ; i < length ; i++)
 		{
-			string listKey = $"{prefix.Trim()}{KeyPairTargetList[i].key.Trim()}{suffix.Trim()}";
+			string keyString = KeyPairTargetList[i].key.ToString();
+			string listKey = $"{prefix.Trim()}{keyString.Trim()}{suffix.Trim()}";
 
 			if (listKey.Equals(key))
 			{
@@ -108,10 +106,34 @@ public abstract class KeyPairAssets<T> : ScriptableObject
 		return false;
 	}
 
-	protected void AddAsset(string key, T value)
+	protected void AddAsset(TKey key, TValue value)
 	{
 		int newSize = KeyPairTargetList.Length + 1;
 		Array.Resize(ref KeyPairTargetList, newSize);
 		KeyPairTargetList[^1] = new KeyPairAssetsStruct(key,value);
+	}
+}
+public abstract class KeyPairAssets<TValue> : KeyPairAssets<string, TValue>
+{
+	public override bool TryGetAsset(string key, out TValue result)
+	{
+		result = default;
+		if (string.IsNullOrWhiteSpace(key)) return false;
+
+		string _key = key.Trim();
+		if (_TryGetAsset(in _key, out result))
+		{
+			return true;
+		}
+		Debug.LogWarning($"{name}({GetType().Name}) 에서 해당하는 키({key})를 찾을 수 없습니다.");
+#if UNITY_EDITOR
+		if (autoUpdateAsset)
+		{
+			int newSize = KeyPairTargetList.Length +1;
+			Array.Resize(ref KeyPairTargetList, newSize);
+			KeyPairTargetList[^1] = new KeyPairAssetsStruct(key, default);
+		}
+#endif
+		return false;
 	}
 }

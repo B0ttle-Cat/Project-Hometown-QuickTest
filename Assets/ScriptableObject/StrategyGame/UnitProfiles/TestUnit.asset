@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: TestUnit
   m_EditorClassIdentifier: Assembly-CSharp::UnitProfile
   unitPrefab: {fileID: 2460545361625872358, guid: 47ee3d89ec6dbf842b177734ea94c8d2, type: 3}
-  unitKey: TestUnit
+  unitKey: 10
   weaponType: 1
-  protectType: 3
+  protectType: 2
   "\uC720\uB2DB_\uC778\uB825": 10
   "\uC720\uB2DB_\uBB3C\uC790": 10
   "\uC720\uB2DB_\uC804\uB825": 10

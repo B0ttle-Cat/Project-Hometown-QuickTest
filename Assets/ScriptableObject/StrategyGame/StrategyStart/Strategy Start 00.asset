@@ -80,6 +80,8 @@ MonoBehaviour:
         defensivePoint: 0
         supplyPoint: 0
         facilitiesPoint: 0
+      spawnTroopData:
+        supportInfos: []
     - profileData:
         sectorName: Sector_01
         environmentalKey: 
@@ -118,6 +120,8 @@ MonoBehaviour:
         defensivePoint: 0
         supplyPoint: 0
         facilitiesPoint: 0
+      spawnTroopData:
+        supportInfos: []
     - profileData:
         sectorName: Sector_02
         environmentalKey: 
@@ -156,6 +160,8 @@ MonoBehaviour:
         defensivePoint: 0
         supplyPoint: 0
         facilitiesPoint: 0
+      spawnTroopData:
+        supportInfos: []
     - profileData:
         sectorName: Sector_03
         environmentalKey: 
@@ -194,6 +200,8 @@ MonoBehaviour:
         defensivePoint: 0
         supplyPoint: 0
         facilitiesPoint: 0
+      spawnTroopData:
+        supportInfos: []
     - profileData:
         sectorName: Sector_04
         environmentalKey: 
@@ -232,6 +240,8 @@ MonoBehaviour:
         defensivePoint: 0
         supplyPoint: 0
         facilitiesPoint: 0
+      spawnTroopData:
+        supportInfos: []
     unitDatas:
     - unitName: Unit A
       factionName: Faction_00

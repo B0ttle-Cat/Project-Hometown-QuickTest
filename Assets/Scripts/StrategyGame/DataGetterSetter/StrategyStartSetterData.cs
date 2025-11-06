@@ -82,6 +82,7 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 			mainStatsData = Target.StatsData.Copy();
 			facilitiesStatsData = Target.FacilitiesData.Copy();
 			supportStatsData = Target.SupportData.Copy();
+			spawnTroopData = Target.SpawnTroopData.Copy();
 			captureTime = Target.CaptureData.captureTime;
 
 			profileData.sectorName = Target.gameObject.name;
@@ -93,6 +94,7 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 			Target.Stats.SetData(mainStatsData.Copy(), true);
 			Target.Facilities.SetData(facilitiesStatsData.Copy(), true);
 			Target.Support.SetData(supportStatsData.Copy(), true);
+			Target.SpawnTroop.SetData(spawnTroopData.Copy(),true);
 
 			var captureData =  Target.CaptureData;
 			captureData.captureTime = captureTime;
@@ -116,6 +118,8 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		public StrategyGamePlayData.SectorData.Facilities.Data facilitiesStatsData;
 		[InlineProperty, HideLabel, FoldoutGroup("@GroupName/Support")]
 		public StrategyGamePlayData.SectorData.Support.Data supportStatsData;
+		[InlineProperty, HideLabel, FoldoutGroup("@GroupName/Spawn")]
+		public StrategyGamePlayData.SectorData.SpawnTroop.Data spawnTroopData;
 	}
 	[Serializable]
 	public struct UnitData

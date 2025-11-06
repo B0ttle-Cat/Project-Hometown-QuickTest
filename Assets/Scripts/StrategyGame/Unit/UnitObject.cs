@@ -42,8 +42,8 @@ public partial class UnitObject : MonoBehaviour
 			unitName = unitName,
 			unitID = unitID,
 			factionID = -1,
-			weaponType = WeaponType.None,
-			protectType = ProtectionType.None,
+			weaponType = WeaponType.일반,
+			protectType = ProtectionType.일반,
 		});
 	}
 	public void Init(StrategyStartSetterData.UnitData data) // UnitData

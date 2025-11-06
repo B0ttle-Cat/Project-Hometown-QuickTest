@@ -1,4 +1,4 @@
-﻿%YAML 1.1
+%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!29 &1
 OcclusionCullingSettings:
@@ -4918,10 +4918,10 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1555327484}
-  - {fileID: 1234401990}
   - {fileID: 4796101}
+  - {fileID: 1234401990}
   - {fileID: 58857479}
+  - {fileID: 1555327484}
   m_Father: {fileID: 449196672}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -5678,7 +5678,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 122672813}
   m_Direction: 2
   m_Value: 0.9999998
-  m_Size: 0.5124801
+  m_Size: 0.51248
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

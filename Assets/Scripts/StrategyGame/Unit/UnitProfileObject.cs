@@ -1,4 +1,6 @@
-﻿using Sirenix.OdinInspector;
+﻿using System;
+
+using Sirenix.OdinInspector;
 
 using UnityEngine;
 
@@ -9,12 +11,19 @@ public class UnitProfileObject : ScriptableObject
 {
 	public GameObject unitPrefab;
 	[InlineButton("PushData"), InlineButton("PullData")]
-	public string unitKey;
+	public UnitKey unitKey;
 #if UNITY_EDITOR
 	private void PullData()
 	{
 		if (unitPrefab == null) return;
-		unitKey = unitPrefab.name;
+		if(Enum.TryParse(typeof(UnitKey), unitPrefab.name, out var tryKey))
+		{
+			unitKey = (UnitKey)tryKey;
+		}
+		else
+		{
+			unitKey = UnitKey.None;
+		}
 		if (unitPrefab.TryGetComponent<UnitObject>(out var unit))
 		{
 			var profileData = unit.ProfileData;

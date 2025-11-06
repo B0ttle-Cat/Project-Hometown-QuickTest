@@ -6,8 +6,8 @@
 	public void OnChangeSupport_Offensive(float changeLevel);
 	public void OnChangeSupport_Supply(float changeLevel);
 	public void OnControlButton_ConstructFacilities();
-	public void OnControlButton_DeployCombatants();
-	public void OnControlButton_MoveTroops();
+	public void OnControlButton_DeployUniqueUnit();
+	public void OnControlButton_PlanningTroopMovements();
 	public void OnControlButton_UseFacilitiesSkill();
 	public void OnFacilitiesConstruct_Finish(int slotIndex, string facilitiesKey);
 	public void OnFacilitiesConstruct_Start(int slotIndex, string facilitiesKey);
@@ -33,13 +33,15 @@ public partial class SectorObject : ISectorController
 	void ISectorController.OnControlButton_ConstructFacilities()
 	{
 	}
-	void ISectorController.OnControlButton_DeployCombatants()
-	{
-	}
-	void ISectorController.OnControlButton_MoveTroops()
-	{
-	}
-	void ISectorController.OnControlButton_UseFacilitiesSkill()
+    void ISectorController.OnControlButton_DeployUniqueUnit()
+    {
+    }
+
+    void ISectorController.OnControlButton_PlanningTroopMovements()
+    {
+    }
+
+    void ISectorController.OnControlButton_UseFacilitiesSkill()
 	{
 	}
 	void ISectorController.OnFacilitiesConstruct_Finish(int slotIndex, string facilitiesKey)

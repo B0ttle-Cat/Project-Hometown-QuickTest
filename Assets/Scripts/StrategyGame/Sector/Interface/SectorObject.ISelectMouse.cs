@@ -8,7 +8,7 @@ public partial class SectorObject : ISelectMouse
 	Vector3 ISelectMouse.ClickCenter => clickCenter;
 
 
-	void ISelectMouse.OnPointEnter()
+    void ISelectMouse.OnPointEnter()
 	{
 	}
 	void ISelectMouse.OnPointExit()
