@@ -3,7 +3,6 @@
 using UnityEngine;
 
 using static StrategyGamePlayData;
-using static StrategyGamePlayData.UnitData.Skill;
 
 public partial class UnitObject : MonoBehaviour
 {
@@ -19,14 +18,14 @@ public partial class UnitObject : MonoBehaviour
 	public UnitData.Skill Skill { get => skill; set => skill = value; }
 	public UnitData.ConnectSector Sector { get => sector; set => sector = value; }
 
-	public UnitData.Profile.Data ProfileData => Profile.GetData();
-	public UnitData.Stats.Data StatsData => Stats.GetData();
-	public UnitData.Skill.Data SkillData => Skill.GetData();
-	public UnitData.ConnectSector.Data SectorData => Sector.GetData();
+	public ref readonly UnitData.Profile.Data ProfileData => ref Profile.ReadonlyData();
+	public ref readonly UnitData.Stats.Data StatsData => ref Stats.ReadonlyData();
+	public ref readonly UnitData.Skill.Data SkillData => ref Skill.ReadonlyData();
+	public ref readonly UnitData.ConnectSector.Data SectorData => ref Sector.ReadonlyData();
 
-	public string UnitName => profile.GetData().unitName;
-	public int UnitID => profile.GetData().unitID;
-	public int FactionID => profile.GetData().factionID;
+	public string UnitName => ProfileData.unitName;
+	public int UnitID => ProfileData.unitID;
+	public int FactionID => ProfileData.factionID;
 	public Faction Faction
 	{
 		get => StrategyManager.Collector.FindFaction(FactionID);
@@ -67,7 +66,7 @@ public partial class UnitObject : MonoBehaviour
 		});
 		Skill = new UnitData.Skill(new()
 		{
-			skillDatas = data.skillData.Select(i=>new SkillData(i.x, i.y)).ToArray()
+			skillDatas = data.skillData.Select(i=>new UnitData.Skill.SkillData(i.x, i.y)).ToArray()
 		});
 		Sector = new UnitData.ConnectSector(new(data.connectSectorName));
 		InitOther(profile);
@@ -78,7 +77,7 @@ public partial class UnitObject : MonoBehaviour // Other
 	private SkillProfile[] connectSkill;
 	private CaptureTag captureTag;
 
-	public int GetStateValue(StatsType type) => Stats.GetData().GetValue(type);
+	public int GetStateValue(StatsType type) => StatsData.GetValue(type);
 
 	public SkillProfile[] ConnectSkill { get => connectSkill; set => connectSkill = value; }
 	public CaptureTag CaptureTag { get => captureTag; set => captureTag = value; }
@@ -86,7 +85,7 @@ public partial class UnitObject : MonoBehaviour // Other
 	public void InitOther(UnitProfileObject data)
 	{
 		ConnectSkill = data.connectSkill;
-		var 유닛_점령점수 = Stats.GetData().GetValue(StatsType.유닛_점령점수);
+		var 유닛_점령점수 = StatsData.GetValue(StatsType.유닛_점령점수);
 		if (유닛_점령점수 > 0)
 		{
 			if (CaptureTag == null) CaptureTag = GetComponentInChildren<CaptureTag>();

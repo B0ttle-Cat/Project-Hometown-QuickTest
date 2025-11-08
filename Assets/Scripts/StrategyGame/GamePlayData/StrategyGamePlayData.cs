@@ -13,11 +13,10 @@ public partial class StrategyGamePlayData
 {
 	public interface IDataCopy<T>
 	{
-
 		public T Copy();
 	}
 	[Serializable]
-	public abstract class GamePlayData<T> where T : IDataCopy<T>
+	public abstract class GamePlayData<T> where T : struct, IDataCopy<T>
 	{
 		public GamePlayData(T data)
 		{
@@ -27,15 +26,15 @@ public partial class StrategyGamePlayData
 		protected T _data;
 		private Action<T> onChangeData;
 		private Action<T> onLateChangeData;
-		public T GetData() => _GetData();
+		public T GetData() => _data;
+		public ref T RefData() => ref _data;
+		public ref readonly T ReadonlyData() => ref _data;
 		public void SetData(T data, bool ignoreChangeEvent = false)
 		{
-			_SetData(data);
+			_data = data;
 			if (ignoreChangeEvent) return;
 			Invoke();
 		}
-		protected virtual T _GetData() => _data;
-		protected virtual void _SetData(T data) => _data = data;
 		public virtual void ClearData(bool ignoreChangeEvent = false)
 		{
 			SetData(default, ignoreChangeEvent);
@@ -45,7 +44,7 @@ public partial class StrategyGamePlayData
 			if (onChangeData == null && onLateChangeData == null)
 				return;
 
-			T data = _GetData();
+			ref readonly T data = ref ReadonlyData();
 			if (onChangeData != null)
 			{
 				foreach (var handler in onChangeData.GetInvocationList())
@@ -229,7 +228,7 @@ public partial class StrategyGamePlayData // Prepared Data (준비된 데이터)
 
 			public Overview overview;
 			public Mission mission;
-
+	
 			public Data Copy()
 			{
 				return new Data()
@@ -326,7 +325,7 @@ public partial class StrategyGamePlayData
 				// 적용되어 있는 각종 효과
 				public EffectsFlag effects;
 
-				public string EffectString()
+				public readonly string EffectString()
 				{
 					return effects.ToString();
 				}
@@ -528,21 +527,21 @@ public partial class StrategyGamePlayData
 				{
 					this.stats = statsList ?? StatsList.UnitStatsList;
 				}
-				public Data Copy()
+				public readonly Data Copy()
 				{
 					return this;
 				}
-				public int GetValue(StatsType statsType)
+				public readonly int GetValue(StatsType statsType)
 				{
 					if (stats == null) return 0;
 					return stats.GetValue(statsType).Value;
 				}
-				public void SetValue(StatsType statsType, int value)
+				public readonly void SetValue(StatsType statsType, int value)
 				{
 					if (stats == null) return;
 					stats.SetValue(statsType, value);
 				}
-				public StatsList GetStatsList()
+				public readonly StatsList GetStatsList()
 				{
 					return stats;
 				}
@@ -654,9 +653,9 @@ public partial class StrategyGamePlayData
 
 	public static StatsType[] SectorSupplyStats_Max =new StatsType[]
 	{
-		StatsType.거점_인력_최대보유량,
-		StatsType.거점_물자_최대보유량,
-		StatsType.거점_전력_최대보유량,
+		StatsType.거점_인력_최대허용량,
+		StatsType.거점_물자_최대허용량,
+		StatsType.거점_전력_최대허용량,
 		StatsType.거점_인력_분당회복량,
 		StatsType.거점_물자_분당회복량,
 		StatsType.거점_전력_분당회복량,
@@ -816,9 +815,9 @@ public partial class StrategyGamePlayData
 				new StatsValue(StatsType.거점_최대내구도, 500),
 				new StatsValue(StatsType.거점_현재내구도, 500),
 
-				new StatsValue(StatsType.거점_인력_최대보유량, 100),
-				new StatsValue(StatsType.거점_물자_최대보유량, 1000),
-				new StatsValue(StatsType.거점_전력_최대보유량, 1000),
+				new StatsValue(StatsType.거점_인력_최대허용량, 100),
+				new StatsValue(StatsType.거점_물자_최대허용량, 1000),
+				new StatsValue(StatsType.거점_전력_최대허용량, 1000),
 
 				new StatsValue(StatsType.거점_인력_현재보유량, 50),
 				new StatsValue(StatsType.거점_물자_현재보유량, 50),
@@ -942,6 +941,15 @@ public partial class StrategyGamePlayData
 				return new StatsValue(statsType);
 			}
 			return values[findindex];
+		}
+		public float GetValueFloat(StatsType statsType)
+		{
+			int findindex = values.FindIndex(b=>b.StatsType == statsType);
+			if (findindex < 0)
+			{
+				return 0;
+			}
+			return values[findindex].Value;
 		}
 		public void SetValue(StatsType statsType, int value)
 		{

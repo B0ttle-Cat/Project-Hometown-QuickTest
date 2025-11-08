@@ -25,7 +25,7 @@ public class KeyPairTarget : MonoBehaviour, IKeyPairChain
 	[Serializable]
 	public struct Tag
 	{
-		[HorizontalGroup, HideLabel]
+		[HorizontalGroup, HideLabel,InlineButton("CopyKey","Copy")]
 		public string key;
 		[SerializeField, HideInInspector]
 		private GameObject target;
@@ -49,6 +49,12 @@ public class KeyPairTarget : MonoBehaviour, IKeyPairChain
 			if (string.IsNullOrWhiteSpace(key))
 				key = target.name;
 		}
+#if UNITY_EDITOR
+		private void CopyKey()
+		{
+			GUIUtility.systemCopyBuffer = key;
+		}
+#endif
 	}
 
 	public List<Tag> list = new List<Tag>();

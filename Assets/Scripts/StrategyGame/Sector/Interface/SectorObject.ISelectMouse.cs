@@ -25,16 +25,12 @@ public partial class SectorObject : ISelectMouse
 	}
 	void ISelectMouse.OnSingleSelect()
 	{
-		var sectorTargeting = StrategyManager.GameUI.MapPanelUI.SectorSelectTargeting;
-		if (sectorTargeting == null) return;
-		sectorTargeting.AddTarget(this);
+		Controller.OnShowUI_SelectUI();
 	}
 
 	void ISelectMouse.OnSingleDeselect()
 	{
-		var sectorTargeting = StrategyManager.GameUI.MapPanelUI.SectorSelectTargeting;
-		if (sectorTargeting == null) return;
-		sectorTargeting.RemoveTarget(this);
+		Controller.OnHideUI_SelectUI();
 	}
 
 	void ISelectMouse.OnFirstSelect()

@@ -1,4 +1,6 @@
-﻿using Sirenix.OdinInspector;
+﻿using System;
+
+using Sirenix.OdinInspector;
 
 using TMPro;
 
@@ -10,7 +12,7 @@ public class FillRectUI : MonoBehaviour
 	[SerializeField, Range(0f,1f)]
 	private float fillAmount;
 	[SerializeField]
-	private FillDiraction fillDiraction;
+	private Slider.Direction fillDiraction;
 
 	[SerializeField, HorizontalGroup("Mask"), LabelText("BG Mask")]
 	private RectMask2D bgMask;
@@ -18,7 +20,7 @@ public class FillRectUI : MonoBehaviour
 	private RectMask2D fillMask;
 
 	[SerializeField, HorizontalGroup("Rect"), LabelText("BG Rect")]
-	private RectTransform bgRect;
+	protected RectTransform bgRect;
 	[SerializeField, HorizontalGroup("Rect"), LabelText("Fill Rect")]
 	private RectTransform fillRect;
 
@@ -26,6 +28,8 @@ public class FillRectUI : MonoBehaviour
 	private Image bgImage;
 	[SerializeField, HorizontalGroup("Image"), LabelText("Fill Image")]
 	private Image fillImage;
+
+	private TMP_Text fillRectTextUI;
 
 	[FoldoutGroup("ImageConfig"), SerializeField]
 	private float pixelsPerUnit;
@@ -42,47 +46,26 @@ public class FillRectUI : MonoBehaviour
 	[FoldoutGroup("ImageConfig"), ShowInInspector, ReadOnly, EnableGUI]
 	private Color bgColor { get; set; }
 
-	private TMP_Text fillRectTextUI;
-	public enum FillDiraction
-	{
-		LeftToRight,
-		RightToLeft,
-		TopToBottom,
-		BottomToTop,
-	}
-
-	public void Reset()
-	{
-		fillAmount = 0.5f;
-		fillDiraction = FillDiraction.LeftToRight;
-		Image image = GetComponentInChildren<Image>();
-		if (image != null) fillColor = image.color;
-		else fillColor = Color.white;
-		bgSaturation = 0f;
-		bgBrightness = 1f;
-		fillAlpha = 1f;
-		bgAlpha = 1f;
-		pixelsPerUnit = image.pixelsPerUnitMultiplier;
-		FillUpdate();
-	}
-	public void OnValidate()
-	{
-		Init();
-		FillUpdate();
-		ColorUpdate();
-	}
-
 	public float Value
 	{
 		get => Mathf.Clamp01(fillAmount);
-		set { fillAmount = value; FillUpdate(); }
+		protected set {
+			if (Mathf.Approximately(value, fillAmount)) return;
+			fillAmount = value;
+			FillUpdate(); 
+		}
 	}
-	public FillDiraction Diraction
+	public Slider.Direction Diraction
 	{
 		get => fillDiraction;
-		set { fillDiraction = value; FillUpdate(); }
+		protected set
+		{
+			if (fillDiraction == value) return;
+			fillDiraction = value;
+			FillUpdate();
+		}
 	}
-	public string Text
+	public virtual string Text
 	{
 		get
 		{
@@ -98,16 +81,32 @@ public class FillRectUI : MonoBehaviour
 		}
 	}
 
-	public void SetValueText(float value, string text)
+	public void Reset()
 	{
-		Value = Mathf.Clamp01(value);
-		Text = text;
+		fillAmount = 0.5f;
+		fillDiraction = Slider.Direction.LeftToRight;
+		Image image = GetComponentInChildren<Image>();
+		if (image != null) fillColor = image.color;
+		else fillColor = Color.white;
+		bgSaturation = 0f;
+		bgBrightness = 1f;
+		fillAlpha = 1f;
+		bgAlpha = .5f;
+		pixelsPerUnit = image.pixelsPerUnitMultiplier;
+		FillUpdate();
 	}
-	 public void Awake()
+	public virtual void OnValidate()
+	{
+		Init();
+		FillUpdate();
+		ColorUpdate();
+	}
+	public virtual void Awake()
 	{
 		Init();
 		ColorUpdate();
 	}
+
 	private void Init()
 	{
 		var makss = GetComponentsInChildren<RectMask2D>();
@@ -129,15 +128,6 @@ public class FillRectUI : MonoBehaviour
 			{
 				bgImage = bgMask.GetComponentInChildren<Image>();
 			}
-			if (bgRect != null)
-			{
-				bgRect.anchorMin = Vector2.zero;
-				bgRect.anchorMax = Vector2.one;
-				bgRect.anchoredPosition = Vector2.zero;
-				bgRect.sizeDelta = Vector2.zero;
-				bgRect.pivot = Vector2.one * 0.5f;
-
-			}
 		}
 
 		if (fillMask == null)
@@ -154,13 +144,13 @@ public class FillRectUI : MonoBehaviour
 			{
 				fillImage = fillMask.GetComponentInChildren<Image>();
 			}
-			if (fillRect != null)
+			if (bgRect != null && fillRect != null)
 			{
-				fillRect.anchorMin = Vector2.zero;
-				fillRect.anchorMax = Vector2.one;
-				fillRect.anchoredPosition = Vector2.zero;
-				fillRect.sizeDelta = Vector2.zero;
-				fillRect.pivot = Vector2.one * 0.5f;
+				fillRect.anchorMin = bgRect.anchorMin;
+				fillRect.anchorMax = bgRect.anchorMax;
+				fillRect.anchoredPosition = bgRect.anchoredPosition;
+				fillRect.sizeDelta = bgRect.sizeDelta;
+				fillRect.pivot = bgRect.pivot;
 			}
 		}
 	}
@@ -209,28 +199,28 @@ public class FillRectUI : MonoBehaviour
 			if (bgMask == null || bgRect == null || bgImage == null) return;
 			switch (Diraction)
 			{
-				case FillDiraction.RightToLeft:
+				case Slider.Direction.RightToLeft:
 				{
 					float length = bgRect.rect.width;
 					float fill = length * (Value);
 					bgMask.padding = new Vector4(0f, 0f, fill, 0f);
 				}
 				break;
-				case FillDiraction.LeftToRight:
+				case Slider.Direction.LeftToRight:
 				{
 					float length = bgRect.rect.width;
 					float fill = length * (Value);
 					bgMask.padding = new Vector4(fill, 0f, 0f, 0f);
 				}
 				break;
-				case FillDiraction.BottomToTop:
+				case Slider.Direction.BottomToTop:
 				{
 					float length = bgRect.rect.height;
 					float fill = length * (Value);
 					bgMask.padding = new Vector4(0f, fill, 0f, 0f);
 				}
 				break;
-				case FillDiraction.TopToBottom:
+				case Slider.Direction.TopToBottom:
 				{
 					float length = bgRect.rect.height;
 					float fill = length * (Value);
@@ -244,28 +234,28 @@ public class FillRectUI : MonoBehaviour
 			if (fillMask == null || fillRect == null || fillImage == null) return;
 			switch (Diraction)
 			{
-				case FillDiraction.LeftToRight:
+				case Slider.Direction.LeftToRight:
 				{
 					float length = fillRect.rect.width;
 					float fill = length * (1f-Value);
 					fillMask.padding = new Vector4(0f, 0f, fill, 0f);
 				}
 				break;
-				case FillDiraction.RightToLeft:
+				case Slider.Direction.RightToLeft:
 				{
 					float length = fillRect.rect.width;
 					float fill = length * (1f-Value);
 					fillMask.padding = new Vector4(fill, 0f, 0f, 0f);
 				}
 				break;
-				case FillDiraction.TopToBottom:
+				case Slider.Direction.TopToBottom:
 				{
 					float length = fillRect.rect.height;
 					float fill = length * (1f-Value);
 					fillMask.padding = new Vector4(0f, fill, 0f, 0f);
 				}
 				break;
-				case FillDiraction.BottomToTop:
+				case Slider.Direction.BottomToTop:
 				{
 					float length = fillRect.rect.height;
 					float fill = length * (1f-Value);
@@ -274,5 +264,23 @@ public class FillRectUI : MonoBehaviour
 				break;
 			}
 		}
+	}
+
+	public virtual void SetValue(float value)
+	{
+		Value = Mathf.Clamp01(value);
+	}
+	public virtual void SetValueText(float value, string text)
+	{
+		SetValue(value);
+		Text = text;
+	}
+	public virtual float GetValue()
+	{
+		return Value;
+	}
+	public virtual void SetDirection(Slider.Direction direction)
+	{
+		Diraction = direction;
 	}
 }

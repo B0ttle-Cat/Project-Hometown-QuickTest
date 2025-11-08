@@ -1,24 +1,44 @@
-﻿public interface ISectorController
+﻿using static StrategyGamePlayData;
+
+public interface ISectorController
 {
-	public SectorObject This { get; }
-	public void OnChangeSupport_Defensive(float changeLevel);
-	public void OnChangeSupport_Facilities(float changeLevel);
-	public void OnChangeSupport_Offensive(float changeLevel);
-	public void OnChangeSupport_Supply(float changeLevel);
-	public void OnControlButton_ConstructFacilities();
-	public void OnControlButton_DeployUniqueUnit();
-	public void OnControlButton_PlanningTroopMovements();
-	public void OnControlButton_UseFacilitiesSkill();
-	public void OnFacilitiesConstruct_Finish(int slotIndex, string facilitiesKey);
-	public void OnFacilitiesConstruct_Start(int slotIndex, string facilitiesKey);
-	public void OnShowUI_Detail();
+	SectorObject This { get; }
+	void On_SpawnTroops(in SpawnTroopsInfo spawnTroopsInfp);
+	public readonly struct SpawnTroopsInfo
+	{
+		public readonly (UnitKey key, int count)[] organization;
+
+		public SpawnTroopsInfo(params (UnitKey, int)[] organization)
+		{
+			this.organization = organization;
+		}
+	}
+	void OnChangeSupport_Defensive(float changeLevel);
+	void OnChangeSupport_Facilities(float changeLevel);
+	void OnChangeSupport_Offensive(float changeLevel);
+	void OnChangeSupport_Supply(float changeLevel);
+	void OnControlButton_ConstructFacilities();
+	void OnControlButton_DeployUniqueUnit();
+	void OnControlButton_SpawnTroops();
+	void OnControlButton_UseFacilitiesSkill();
+	void OnFacilitiesConstruct_Finish(int slotIndex, string facilitiesKey);
+	void OnFacilitiesConstruct_Start(int slotIndex, string facilitiesKey);
+    void OnShowUI_SelectUI();
+    void OnShowUI_DetailUI();
+    void OnHideUI_SelectUI();
+
 }
 public partial class SectorObject : ISectorController
 {
 	public SectorObject This => this;
 	public ISectorController Controller => this;
 
-	void ISectorController.OnChangeSupport_Defensive(float changeLevel)
+    public void On_SpawnTroops(in ISectorController.SpawnTroopsInfo spawnTroopsInfo)
+    {
+
+    }
+
+    void ISectorController.OnChangeSupport_Defensive(float changeLevel)
 	{
 	}
 	void ISectorController.OnChangeSupport_Facilities(float changeLevel)
@@ -37,10 +57,12 @@ public partial class SectorObject : ISectorController
     {
     }
 
-    void ISectorController.OnControlButton_PlanningTroopMovements()
+    void ISectorController.OnControlButton_SpawnTroops()
     {
-    }
-
+		StrategyManager.GameUI.ControlPanelUI.OpenUI();
+		var selecter = StrategyManager.GameUI.ControlPanelUI.ShowSpawnTroops();
+		selecter.AddTarget(this);
+	}
     void ISectorController.OnControlButton_UseFacilitiesSkill()
 	{
 	}
@@ -71,10 +93,23 @@ public partial class SectorObject : ISectorController
 
 		Facilities.SetData(data);
 	}
-	void ISectorController.OnShowUI_Detail()
+
+    void ISectorController.OnHideUI_SelectUI()
+    {
+		StrategyManager.GameUI.ControlPanelUI.HideSectorSelectPanel();
+	}
+
+    void ISectorController.OnShowUI_DetailUI()
 	{
 		var gamePlayData = StrategyManager.GamePlayTempData;
 		StrategyManager.GameUI.DetailsPanelUI.OpenUI();
 		StrategyManager.GameUI.DetailsPanelUI.OnShowSectorDetail(This);
+	}
+
+    void ISectorController.OnShowUI_SelectUI()
+    {
+		StrategyManager.GameUI.ControlPanelUI.OpenUI();
+		var selecter = StrategyManager.GameUI.ControlPanelUI.ShowSectorSelectPanel();
+		selecter.AddTarget(this);
 	}
 }

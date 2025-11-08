@@ -55,15 +55,15 @@ public partial class StrategyUpdate
 				if (sector == null || !sector.isActiveAndEnabled) return;
 				if ((data ??= sector.Facilities) == null) return;
 
-				var _data = data.GetData();
+				ref readonly var _data = ref data.ReadonlyData();
 				int length = _data.slotData.Length;
 
 				Queue<(int,string)> finishList = new Queue<(int,string)>();
 
 				for (int i = 0 ; i < length ; i++)
 				{
-					var slot = _data.slotData[i];
-					var constructing = slot.constructing;
+					ref var slot = ref _data.slotData[i];
+					ref var constructing = ref slot.constructing;
 					int slotIndex  = i;
 					if (slotIndex < 0) continue;
 					string facilitiesKey = constructing.facilitiesKey;
@@ -75,10 +75,6 @@ public partial class StrategyUpdate
 					if (facilitiesKey.Equals(currFacilitiesKey)) continue;
 
 					duration -= deltaTime;
-
-					constructing.duration = duration;
-					slot.constructing = constructing;
-					_data.slotData[i] = slot;
 
 					// 시설 건설 완료
 					if (duration <= 0f)

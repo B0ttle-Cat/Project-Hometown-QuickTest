@@ -1,22 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Sirenix.OdinInspector;
+
 using UnityEngine;
 
-public partial class StrategyControlPanelUI : MonoBehaviour, IGamePanelUI, IStartGame
+public partial class StrategyControlPanelUI : MonoBehaviour, IGamePanelUI, IViewStack, IStartGame
 {
+	private Canvas thisCanvas;
+
+	public Stack<IViewPanelUI> ViewPanelUIStack { get; set; }
+	public IViewStack ViewStack => this;
 	public void OpenUI()
 	{
+		if (thisCanvas == null)
+			thisCanvas = GetComponent<Canvas>();
+
+		if (thisCanvas == null) return;
+		thisCanvas.enabled = true;
 	}
 	public void CloseUI()
 	{
-	}
+		ViewStack.ClearViewStack();
 
+		if (thisCanvas == null) return;
+		thisCanvas.enabled = false;
+	}
 	void IStartGame.OnStartGame()
 	{
 		CloseUI();
 	}
-
 	void IStartGame.OnStopGame()
 	{
 		CloseUI();
@@ -25,72 +38,142 @@ public partial class StrategyControlPanelUI : MonoBehaviour, IGamePanelUI, IStar
 
 public partial class StrategyControlPanelUI
 {
-	public abstract class ControlPanel : IDisposable
+	public interface IControlPanel : IPanelFloating, IViewPanelUI
 	{
-		protected StrategyControlPanelUI parentUI;
-		private bool isShow;
-		private bool isDispose;
-		public ControlPanel(StrategyControlPanelUI parentUI)
+	}
+
+	public abstract class ControlPanelUI : IViewPanelUI
+	{
+		protected StrategyControlPanelUI panelUI;
+
+		private GameObject panelPrefab;
+		private Transform panelRoot;
+
+		private GameObject panelObject;
+		protected FloatingPanelItemUI FloatingPanelUI { get; private set; }
+
+		public bool IsShow => panelObject != null && panelObject.activeSelf;
+		private bool IsDispose => panelObject != null;
+		public ControlPanelUI(GameObject prefab, Transform root, StrategyControlPanelUI panelUI)
 		{
-			this.parentUI = parentUI;
-			isShow = false;
-			isDispose = false;
+			this.panelUI = panelUI;
+			this.panelPrefab = prefab;
+			this.panelRoot = root;
+
+			panelObject = null;
+			FloatingPanelUI = null;
 		}
 		public void Dispose()
 		{
-			if (!isDispose) return;
-			isDispose = true;
+			if (!IsDispose) return;
 
-			parentUI = null;
+			Hide();
 			OnDispose();
+			if (panelObject != null)
+			{
+				Destroy(panelObject);
+				panelObject = null;
+			}
+			FloatingPanelUI = null;
+			panelPrefab = null;
+			panelRoot = null;
+			panelUI = null;
 		}
 		public void Show()
 		{
-			if (isShow) return;
-			isShow = true;
+			if (IsShow) return;
+			if (panelPrefab == null) return;
 
+			if (panelObject == null)
+			{
+				panelObject = GameObject.Instantiate(panelPrefab, panelRoot);
+				FloatingPanelUI = panelObject.GetComponentInChildren<FloatingPanelItemUI>();
+				if (FloatingPanelUI == null)
+				{
+					OffsetFloatingPanelItemUI offsetFloatingPanel = panelObject.AddComponent<OffsetFloatingPanelItemUI>();
+					offsetFloatingPanel.Pivot = Vector2.one;
+					offsetFloatingPanel.Offset = new Vector2(50f, 150f);
+					FloatingPanelUI = offsetFloatingPanel;
+				}
+			}
+			FloatingPanelUI.Show();
 			OnShow();
 		}
 		public void Hide()
 		{
-			if (!isShow) return;
-			isShow = false;
+			if (!IsShow) return;
 
-			OnHide();
+			FloatingPanelUI.Hide(() =>
+			{
+				OnHide();
+				if (this is IControlPanel iPanel)
+				{
+					iPanel.ClearTarget();
+				}
+			});
 		}
-
-		public abstract void OnShow();
-		public abstract void OnHide();
+		protected abstract void OnShow();
+		protected abstract void OnHide();
 		protected abstract void OnDispose();
-	}
-}
-public partial class StrategyControlPanelUI
-{
-	public class MoveTroopsControlPanelUI
-	{
-		StrategyControlPanelUI ThisPanel;
-		public MoveTroopsControlPanelUI(StrategyControlPanelUI thisPanel)
-		{
-			ThisPanel = thisPanel;
-		}
 
-		public class MoveTroops : ControlPanel
+		[Serializable]
+		protected abstract class ViewItem<TValue> : IViewItemUI, IDisposable where TValue : class
 		{
-			public List<SectorObject> fromSectors;
-			public Queue<SectorObject> waypoints;
-			public SectorObject toSector;
-			public MoveTroops(StrategyControlPanelUI parentUI) : base(parentUI)
+			[SerializeField, ReadOnly]
+			private TValue value;
+			[SerializeField, ReadOnly]
+			private ControlPanelUI panelUI;
+			private IKeyPairChain pairChain;
+			private bool isShow;
+			private bool isDispose;
+			public TValue Value => value;
+			public IViewPanelUI ViewPanelUI => panelUI;
+			public IKeyPairChain PairChain => pairChain;
+			public bool IsShow => isShow;
+			public bool IsViewValid => pairChain != null;
+			public ViewItem(ControlPanelUI panel, TValue sector)
 			{
+				value = sector;
+				panelUI = panel;
+				pairChain = panel.panelObject.GetPairChain();
+				isShow = false;
+				isDispose = false;
+				OnInit();
+				ChangeValue(Value);
 			}
-			public override void OnShow()
+			public void Dispose()
 			{
+				if (!isDispose) return;
+				isDispose = true;
+
+				Unvisible();
+				OnDispose();
+				value = null;
+				panelUI = null;
+				pairChain = null;
 			}
-			public override void OnHide()
+			public void Visible()
 			{
+				if (isShow) return;
+				OnVisible();
 			}
-			protected override void OnDispose()
+			public void Unvisible()
 			{
+				if (!isShow) return;
+				OnUnvisible();
 			}
+			public void ChangeValue(TValue value)
+			{
+				if (this.value != null) OnBeforeChangeValue();
+				this.value = value;
+				if (this.value != null) OnAfterChangeValue();
+			}
+			protected abstract void OnDispose();
+			protected abstract void OnInit();
+			protected abstract void OnVisible();
+			protected abstract void OnUnvisible();
+			protected abstract void OnBeforeChangeValue();
+			protected abstract void OnAfterChangeValue();
 		}
 	}
 }

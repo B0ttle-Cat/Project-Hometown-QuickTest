@@ -50,7 +50,6 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 	[Serializable]
 	public struct FactionData
 	{
-
 		[FoldoutGroup("@factionName")]
 		public string factionName;
 		public int factionID { get; set; }
@@ -60,11 +59,65 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		[FoldoutGroup("@factionName")]
 		public Sprite factionIcon;
 
-		[FoldoutGroup("@factionName")] public int maxPersonnel;
-		[FoldoutGroup("@factionName")] public int maxMaterialPoint;
-		[FoldoutGroup("@factionName")] public int maxElectricPoint;
+		[FoldoutGroup("@factionName/Stats")] public int maxTroopsPoint;
+		[FoldoutGroup("@factionName/Stats")] public int requireTroopsPoint;
+		[FoldoutGroup("@factionName/Stats")] public int currentTroopsPoint;
+		[Space]
+		[FoldoutGroup("@factionName/Stats")] public int maxMaterialPoint;
+		[FoldoutGroup("@factionName/Stats")] public int currentMaterialPoint;
+		[Space]
+		[FoldoutGroup("@factionName/Stats")] public int maxElectricPoint;
+		[FoldoutGroup("@factionName/Stats")] public int currentElectricPoint;
+		[Space]
+		[FoldoutGroup("@factionName/Stats")] public int captureSpeed;
 
 		[FoldoutGroup("@factionName")] public GameObject defaultUnitPrefab;
+
+		[FoldoutGroup("@factionName"),SerializeField]
+		private List<UnitKeySelecter> availableUnitKeyList;
+
+
+		[Serializable]
+		private struct UnitKeySelecter
+		{
+			[SerializeField, HorizontalGroup(20), ToggleLeft, HideLabel]
+			private bool Range;
+			[SerializeField, HorizontalGroup, HideLabel]
+			private  UnitKey unitKey;
+			[ShowIf("Range"), SerializeField, HorizontalGroup, LabelText(" ~ "), LabelWidth(20)]
+			private  UnitKey endUnitKey;
+			public List<UnitKey> GetUnitKeyList()
+			{
+				if (!Range)
+				{
+					return new List<UnitKey>() { unitKey };
+				}
+				// 모든 UnitKey를 선언 순서대로 가져옴
+				var allKeys = Enum.GetValues(typeof(UnitKey)).Cast<UnitKey>().ToList();
+
+				if (!Range)
+					return new List<UnitKey> { unitKey };
+
+				int startIndex = allKeys.IndexOf(unitKey);
+				int endIndex = allKeys.IndexOf(endUnitKey);
+
+				// 잘못된 입력 처리
+				if (startIndex == -1 || endIndex == -1)
+					return new List<UnitKey> { unitKey };
+
+				// 순서가 반대일 수도 있으니 정렬 보정
+				if (startIndex > endIndex)
+					(startIndex, endIndex) = (endIndex, startIndex);
+
+				// 범위 추출 (포함 범위)
+				return allKeys.GetRange(startIndex, endIndex - startIndex + 1);
+			}
+		}
+		public readonly List<UnitKey> AvailableUnitKeyList()
+		{
+			if (availableUnitKeyList == null) return new List<UnitKey>();
+			return availableUnitKeyList.SelectMany(k => k.GetUnitKeyList()).Distinct().ToList();
+		}
 	}
 	[Serializable]
 	public struct SectorData

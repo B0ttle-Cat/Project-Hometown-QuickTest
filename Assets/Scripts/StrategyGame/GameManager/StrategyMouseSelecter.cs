@@ -60,8 +60,11 @@ public partial class StrategyMouseSelecter : MonoBehaviour
 		public bool leftReleasedThisFrame;
 		public bool shift;
 		public bool alt;
+		public bool isDown;
 		public bool isDrag;
+
 	}
+
 	private void Awake()
 	{
 		onFirstSelected = null;
@@ -148,7 +151,7 @@ public partial class StrategyMouseSelecter : MonoBehaviour
 	private SelecterState UpdateSelecterState()
 	{
 		inputData.isPointerOver = eventSystem.IsPointerOverGameObject();
-		if(inputData.isPointerOver)
+		if (inputData.isPointerOver)
 		{
 			return selecterState;
 		}
@@ -161,23 +164,26 @@ public partial class StrategyMouseSelecter : MonoBehaviour
 		inputData.alt = keyboard.altKey.isPressed;
 		inputData.mouseCurrPosition = mouse.position.ReadValue();
 
-		if (inputData.leftReleasedThisFrame)
+		if (inputData.leftReleasedThisFrame && inputData.isDown)
 		{
+			inputData.isDown = false;
 			inputData.leftReleasedTime = Time.unscaledTime;
 			return SelecterState.Released;
 		}
 		else if (inputData.leftIsReleased)
 		{
+			inputData.isDown = false;
 			return SelecterState.None;
 		}
 		if (inputData.leftPressedThisFrame)
 		{
 			inputData.leftPressedTime = Time.unscaledTime;
 			inputData.mouseDownPosition = inputData.mouseCurrPosition;
+			inputData.isDown = true;
 			inputData.isDrag = false;
 			return SelecterState.Click;
 		}
-		if (inputData.leftIsPressed && !inputData.isDrag)
+		if (inputData.leftIsPressed && !inputData.isDrag && inputData.isDown)
 		{
 			float distance = Vector2.Distance(inputData.mouseDownPosition, inputData.mouseCurrPosition);
 			float dragThreshold = eventSystem.pixelDragThreshold;

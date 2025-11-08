@@ -40,7 +40,7 @@ public class FillRectUIAndLabel : MonoBehaviour
 	public float Value
 	{
 		get => _fillRectUI.Value;
-		set => _fillRectUI.Value = value;
+		set => _fillRectUI.SetValue(value);
 	}
 	public string Text
 	{

@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using Sirenix.OdinInspector;
 
 using UnityEngine;
 
+using static StrategyGamePlayData;
+
 [Serializable]
-public partial class Faction
+public partial class Faction : IEquatable<Faction> , IDisposable
 {
-	public Faction(StrategyStartSetterData.FactionData data)
+	public Faction(in StrategyStartSetterData.FactionData data)
 	{
 		factionID = data.factionID;
 		factionName = data.factionName;
@@ -15,23 +18,23 @@ public partial class Faction
 		factionIcon = data.factionIcon;
 		defaultUnitPrefab = data.defaultUnitPrefab;
 
-		MaxPersonnel = data.maxPersonnel;
-
-		captureSpeed = 1f;
-		suppletionSpeed = 1f;
+		factionStats = new StatsList(new StatsValue(StatsType.세력_점령속도비율, data.captureSpeed),
+			new StatsValue(StatsType.세력_병력_최대허용량, data.maxTroopsPoint),
+			new StatsValue(StatsType.세력_병력_편제요구량, data.requireTroopsPoint),
+			new StatsValue(StatsType.세력_병력_현재보유량, data.currentTroopsPoint),
+			new StatsValue(StatsType.세력_물자_최대허용량, data.maxMaterialPoint),
+			new StatsValue(StatsType.세력_물자_현재보유량, data.currentMaterialPoint),
+			new StatsValue(StatsType.세력_전력_최대허용량, data.maxElectricPoint),
+			new StatsValue(StatsType.세력_전력_현재보유량, data.currentElectricPoint)
+			);
+		availableUnitKeyList = data.AvailableUnitKeyList();
 	}
-
-	[ShowInInspector]
-	public string FactionName { get => factionName; set => factionName = value; }
-	[ShowInInspector]
-	public int FactionID { get => factionID; }
-	public Color FactionColor { get => factionColor; set => factionColor = value; }
-	public Sprite FactionIcon { get => factionIcon; set => factionIcon = value; }
-	public GameObject DefaultUnitPrefab { get => defaultUnitPrefab; set => defaultUnitPrefab = value; }
-
-	public int MaxPersonnel { get => maxPersonnel; set => maxPersonnel = value; }
-	public float SuppletionSpeed { get => suppletionSpeed; set => suppletionSpeed = value; }
-	public float CaptureSpeed { get => captureSpeed; set => captureSpeed = value; }
+	public void Dispose()
+	{
+		factionIcon = null;
+		defaultUnitPrefab = null;
+		availableUnitKeyList = null;
+	}
 
 	private string factionName;
 	private readonly int factionID;
@@ -40,9 +43,18 @@ public partial class Faction
 	private Sprite factionIcon;
 	private GameObject defaultUnitPrefab;
 
-	private int maxPersonnel;
-	private float captureSpeed;
-	private float suppletionSpeed;
+	private StatsList factionStats;
+	private List<UnitKey> availableUnitKeyList;
+
+	[ShowInInspector]
+	public string FactionName => factionName; 
+	[ShowInInspector]
+	public int FactionID => factionID; 
+	public Color FactionColor => factionColor; 
+	public Sprite FactionIcon => factionIcon; 
+	public GameObject DefaultUnitPrefab => defaultUnitPrefab;
+	public StatsList FactionStats => factionStats;
+	public List<UnitKey> AvailableUnitKeyList => availableUnitKeyList; 
 
 
 	public static bool TryFindFaction(string factionName, out Faction find)
@@ -53,6 +65,30 @@ public partial class Faction
 	{
 		return StrategyManager.Collector.TryFindElement<Faction>(f => f.factionID == factionID, out find);
 	}
+    public override bool Equals(object obj)
+    {
+        return Equals(obj as Faction);
+    }
+    public bool Equals(Faction other)
+    {
+        return other is not null &&
+               factionName == other.factionName &&
+               factionID == other.factionID;
+    }
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(factionName, factionID);
+    }
+
+
+    public static bool operator ==(Faction left, Faction right)
+    {
+        return EqualityComparer<Faction>.Default.Equals(left, right);
+    }
+    public static bool operator !=(Faction left, Faction right)
+    {
+        return !(left == right);
+    }
 }
 public partial class Faction : IStrategyElement
 {

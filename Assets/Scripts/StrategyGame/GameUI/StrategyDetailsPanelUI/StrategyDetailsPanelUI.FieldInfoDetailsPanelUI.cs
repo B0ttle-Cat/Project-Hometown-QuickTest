@@ -176,7 +176,7 @@ public partial class StrategyDetailsPanelUI // FieldInfoDetailsPanelUI
 			}
 			protected override void OnShow()
 			{
-				var data = StrategyManager.PreparedData.GetData();
+				ref readonly var data = ref StrategyManager.PreparedData.ReadonlyData();
 				var overviewData = data.overview;
 
 				if (PairChain.TryFindPair<TMP_Text>("Title", out var title))

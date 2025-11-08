@@ -3,7 +3,7 @@
 public class FloatingPanelUI : MonoBehaviour
 {
 	//[ShowInInspector]
-	//protected List<FloatingUI> floatingList;
+	//protected List<FloatingPanelUI> floatingList;
 
 
 

@@ -110,6 +110,7 @@ public class CanvasGroupUI : MonoBehaviour
 			while (!IsSyncOn)
 			{
 				await Awaitable.NextFrameAsync();
+				if(destroyCancellationToken.IsCancellationRequested) return;
 			}
 			awaitCallback?.Invoke();
 		}
@@ -126,6 +127,7 @@ public class CanvasGroupUI : MonoBehaviour
 			while (!IsSyncOn)
 			{
 				await Awaitable.NextFrameAsync();
+				if (destroyCancellationToken.IsCancellationRequested) return;
 			}
 			awaitCallback?.Invoke();
 		}
@@ -154,6 +156,8 @@ public class CanvasGroupUI : MonoBehaviour
 		isAwaitOn = !_isOn;
 		while (!IsSyncOn && canvasGroup != null)
 		{
+			if (destroyCancellationToken.IsCancellationRequested) break;
+
 			if (_isOn) on.SetWithoutAlpha(canvasGroup);
 			else off.SetWithoutAlpha(canvasGroup);
 

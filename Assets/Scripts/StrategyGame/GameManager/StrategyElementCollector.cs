@@ -468,32 +468,48 @@ public partial class StrategyElementCollector // Finder
 		}
 		return null;
 	}
+
+	public List<T> FindElementList<T>(Func<T, bool> condition)
+	{
+		List<T> find = new List<T>();
+		if (condition == null) return find;
+
+		var list = GetListByType<T>();
+		for (int i = 0 ; i < list.Count ; i++)
+		{
+			if (list[i] is T t && condition(t))
+			{
+				find.Add(t);
+			}
+		}
+		return find;
+	}
 	#endregion
 
 	#region Sector
-	public bool TryFindSector(string factionName, out SectorObject find)
+	public bool TryFindSector(string findName, out SectorObject find)
 	{
-		if (string.IsNullOrWhiteSpace(factionName))
+		if (string.IsNullOrWhiteSpace(findName))
 		{
 			find = null;
 			return false;
 		}
-		return TryFindElement<SectorObject>(f => f.SectorName == factionName, out find);
+		return TryFindElement<SectorObject>(f => f.SectorName == findName, out find);
 	}
-	public SectorObject FindSector(string factionName)
+	public SectorObject FindSector(string findName)
 	{
-		return FindElement<SectorObject>(f => f.SectorName == factionName);
+		return FindElement<SectorObject>(f => f.SectorName == findName);
 	}
 	#endregion
 
 	#region Faction
-	public bool TryFindFaction(string factionName, out Faction find)
+	public bool TryFindFaction(string findName, out Faction find)
 	{
-		return TryFindElement<Faction>(f => f.FactionName == factionName, out find);
+		return TryFindElement<Faction>(f => f.FactionName == findName, out find);
 	}
-	public Faction FindFaction(string factionName)
+	public Faction FindFaction(string findName)
 	{
-		return FindElement<Faction>(f => f.FactionName == factionName);
+		return FindElement<Faction>(f => f.FactionName == findName);
 	}
 	public bool TryFindFaction(int factionID, out Faction find)
 	{
@@ -511,9 +527,9 @@ public partial class StrategyElementCollector // Finder
 		}
 		return "";
 	}
-	public int FactionNameToID(string factionName)
+	public int FactionNameToID(string findName)
 	{
-		if (!string.IsNullOrWhiteSpace(factionName) && TryFindElement<Faction>(f => f.FactionName == factionName, out var find))
+		if (!string.IsNullOrWhiteSpace(findName) && TryFindElement<Faction>(f => f.FactionName == findName, out var find))
 		{
 			return find.FactionID;
 		}

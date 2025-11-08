@@ -586,8 +586,8 @@ public partial class StrategyMissionTree // _Init GamePlay
 
 	public void InitMainMission()
 	{
-		var Data = StrategyManager.PreparedData.GetData();
-		var missionData = Data.mission;
+		ref readonly var Data = ref StrategyManager.PreparedData.ReadonlyData();
+		ref readonly var missionData = ref Data.mission;
 		var victoryCommandList = MissionParser.ParseLines(missionData.victoryScript);
 		var defeatCommandList = MissionParser.ParseLines(missionData.defeatScript);
 
@@ -619,7 +619,7 @@ public partial class StrategyMissionTree // _Init GamePlay
 
 	public void InitSubMission()
 	{
-		var Data = StrategyManager.PreparedData.GetData();
+		ref readonly var Data = ref StrategyManager.PreparedData.ReadonlyData();
 		var missionData = Data.mission;
 		var subMissions = missionData.enableSubMissions;
 

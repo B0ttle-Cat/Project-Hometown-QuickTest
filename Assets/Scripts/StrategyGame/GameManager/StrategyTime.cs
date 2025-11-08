@@ -20,7 +20,7 @@ public class StrategyTime : MonoBehaviour
 	}
 	internal void Init()
 	{
-		var data = StrategyManager.PreparedData.GetData();
+		ref readonly var data = ref StrategyManager.PreparedData.ReadonlyData();
 		unscaledGamePlayTime = data.unscaleGamePlayTime;
 		gamePlayTime = data.gamePlayTime;
 	}

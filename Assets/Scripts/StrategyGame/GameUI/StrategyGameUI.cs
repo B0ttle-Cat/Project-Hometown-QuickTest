@@ -25,7 +25,6 @@ public class StrategyGameUI : MonoBehaviour
 	{
 		DeInit();
 	}
-
 	public void Init()
 	{
 		MapPanelUI = GetComponentInChildren<StrategyMapPanelUI>(true);

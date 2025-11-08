@@ -55,7 +55,8 @@ public abstract class KeyPairAssets<TKey,TValue> : ScriptableObject
 	{
 		result = default;
 
-		if(_TryGetAsset(in key, out result))
+		string keyString = key.ToString();
+		if (_TryGetAsset(in keyString, out result))
 		{
 			return true;
 		}
@@ -74,7 +75,7 @@ public abstract class KeyPairAssets<TKey,TValue> : ScriptableObject
 	{
 		return TryGetAsset(key, out TValue result) ? result : default;
 	}
-	protected bool _TryGetAsset(in TKey key, out TValue value)
+	protected bool _TryGetAsset(in string key, out TValue value)
 	{
 		int length = KeyPairTargetList == null ? 0 : KeyPairTargetList.Length;
 		for (int i = 0 ; i < length ; i++)

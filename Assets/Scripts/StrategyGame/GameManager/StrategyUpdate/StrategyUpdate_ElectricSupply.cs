@@ -36,7 +36,7 @@ public partial class StrategyUpdate
 		{
 			private SectorObject sector;
 
-			private const StatsType MaxType = StatsType.거점_전력_최대보유량;
+			private const StatsType MaxType = StatsType.거점_전력_최대허용량;
 			private const StatsType SupplyType = StatsType.거점_전력_분당회복량;
 			private const StatsType CurrType = StatsType.거점_전력_현재보유량;
 			private const float resupplyTime = 1f;

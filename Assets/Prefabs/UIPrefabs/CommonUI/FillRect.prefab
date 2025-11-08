@@ -109,7 +109,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -186,11 +186,11 @@ MonoBehaviour:
   bgImage: {fileID: 7031273550108875670}
   fillImage: {fileID: 6799196330362347954}
   pixelsPerUnit: 2
-  fillColor: {r: 0, g: 0, b: 0, a: 0}
-  fillAlpha: 0
-  bgSaturation: 0
-  bgBrightness: 0
-  bgAlpha: 0
+  fillColor: {r: 1, g: 1, b: 1, a: 1}
+  fillAlpha: 1
+  bgSaturation: 1
+  bgBrightness: 1
+  bgAlpha: 0.5
 --- !u!1 &5713316749639528765
 GameObject:
   m_ObjectHideFlags: 0
@@ -249,7 +249,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.5}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

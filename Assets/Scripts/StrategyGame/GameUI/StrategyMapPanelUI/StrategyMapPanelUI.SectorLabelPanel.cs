@@ -18,15 +18,15 @@ public partial class StrategyMapPanelUI // SectorLabelPanel
 	[SerializeField, FoldoutGroup("SectorLabel"), InlineProperty, HideLabel]
 	private SectorLabelPanel sectorLabelPanel;
 
-	private void EnableSectorLabelPanel()
+	private void ShowSectorLabelPanel()
 	{
 		sectorLabelPanel = new SectorLabelPanel(sectorLabelPreafab, sectorLabelRoot, this);
-		sectorLabelPanel.Enable();
+		sectorLabelPanel.Show();
 	}
-	private void DisableSectorLabelPanel()
+	private void HideSectorLabelPanel()
 	{
 		if (sectorLabelPanel == null) return;
-		sectorLabelPanel.Disable();
+		sectorLabelPanel.Hide();
 		sectorLabelPanel.Dispose();
 		sectorLabelPanel = null;
 	}
@@ -38,7 +38,7 @@ public partial class StrategyMapPanelUI // SectorLabelPanel
 
 
 	[Serializable]
-	public class SectorLabelPanel : MapPanelUI , IMapPanelTargeting
+	public class SectorLabelPanel : MapPanelUI , IMapPanel
 	{
 		private GameObject mapPanelPreafab;
 		private Transform mapPanelRoot;
@@ -58,7 +58,7 @@ public partial class StrategyMapPanelUI // SectorLabelPanel
 			private Action<GameObject> pushUIObject;
 
 			private GameObject uiObject;
-			private MapPanelItemUI mapPanelItemUI;
+			private FloatingPanelItemUI mapPanelItemUI;
 			private IKeyPairChain keyPairChain;
 			private Button selectButton;
 
@@ -124,7 +124,7 @@ public partial class StrategyMapPanelUI // SectorLabelPanel
 				if (popUIObject != null)
 				{
 					uiObject = popUIObject.Invoke();
-					mapPanelItemUI = uiObject.GetComponentInChildren<MapPanelItemUI>();
+					mapPanelItemUI = uiObject.GetComponentInChildren<FloatingPanelItemUI>();
 					keyPairChain = uiObject.GetPairChain();
 					iconlist = new List<GameObject>();
 				}
@@ -225,15 +225,15 @@ public partial class StrategyMapPanelUI // SectorLabelPanel
 				disableUIObject = null;
 			}
 		}
-		protected override void OnEnable()
+		protected override void OnShow()
 		{
 			StrategyManager.Collector.AddChangeListener<SectorObject>(OnChangeList, out IList currentList);
 			InitList(currentList);
 		}
-		protected override void OnDisable()
+		protected override void OnHide()
 		{
 			StrategyManager.Collector.RemoveChangeListener<SectorObject>(OnChangeList);
-			if (this is IMapPanelTargeting target)
+			if (this is IPanelFloating target)
 				target.ClearTarget();
 		}
 		protected override bool OnEnableCondition()
@@ -254,7 +254,7 @@ public partial class StrategyMapPanelUI // SectorLabelPanel
 				var sector = sectorList[i];
 				if (sector == null) continue;
 
-				if (this is IMapPanelTargeting target)
+				if (this is IPanelFloating target)
 					target.AddTarget(sector);
 			}
 		}
@@ -264,12 +264,12 @@ public partial class StrategyMapPanelUI // SectorLabelPanel
 			else OnChangeList_Remove();
 			void OnChangeList_Add()
 			{
-				if(this is IMapPanelTargeting target)
+				if(this is IPanelFloating target)
 					target.AddTarget(element);
 			}
 			void OnChangeList_Remove()
 			{
-				if (this is IMapPanelTargeting target)
+				if (this is IPanelFloating target)
 					target.RemoveTarget(element);
 			}
 		}
@@ -294,7 +294,7 @@ public partial class StrategyMapPanelUI // SectorLabelPanel
 			else Destroy(uiObject);
 		}
 
-        void IMapPanelTargeting.AddTarget(IStrategyElement element)
+        void IPanelFloating.AddTarget(IStrategyElement element)
 		{
 			if (element == null || element is not SectorObject sector) return;
 			int findIndex = sectorPanelList.FindIndex(p=>p.Sector == sector);
@@ -303,7 +303,7 @@ public partial class StrategyMapPanelUI // SectorLabelPanel
 				sectorPanelList.Add(new SectorLabel(sector, mapPanelRoot, PopUIObject, PushUIObject));
 			}
 		}
-        void IMapPanelTargeting.RemoveTarget(IStrategyElement element)
+        void IPanelFloating.RemoveTarget(IStrategyElement element)
 		{
 			if (element == null || element is not SectorObject sector) return;
 			int findIndex = sectorPanelList.FindIndex(p=>p.Sector == sector);
@@ -314,7 +314,7 @@ public partial class StrategyMapPanelUI // SectorLabelPanel
 				item.Dispose();
 			}
 		}
-        void IMapPanelTargeting.ClearTarget()
+        void IPanelFloating.ClearTarget()
 		{
 			if (sectorPanelList != null)
 			{

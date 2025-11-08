@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 
@@ -47,7 +47,7 @@ namespace TMPro.Examples
                     //textMeshPro.Text = "!";
 
 
-                    // Spawn Floating Text
+                    // Spawn FloatingPanelUI Text
                     floatingText_Script = go.AddComponent<TextMeshProFloatingText>();
                     floatingText_Script.SpawnType = 0;
                 }
@@ -68,7 +68,7 @@ namespace TMPro.Examples
                     textMesh.color = new Color32(255, 255, 0, 255);
                     textMesh.text = "!";
 
-                    // Spawn Floating Text
+                    // Spawn FloatingPanelUI Text
                     floatingText_Script = go.AddComponent<TextMeshProFloatingText>();
                     floatingText_Script.SpawnType = 1;
                 }

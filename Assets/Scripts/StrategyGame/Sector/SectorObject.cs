@@ -27,7 +27,7 @@ public partial class SectorObject : MonoBehaviour
 	{
 		visibilityGroup = GetComponent<CameraVisibilityGroupInStrategy>();
 	}
-	public void Init(StrategyStartSetterData.SectorData data)
+	public void Init(in StrategyStartSetterData.SectorData data)
 	{
 		if (profile == null) profile = new SectorData.Profile(data.profileData.Copy());
 		else profile.SetData(data.profileData.Copy());
@@ -48,13 +48,14 @@ public partial class SectorObject : MonoBehaviour
 		if (support == null) support = new SectorData.Support(data.supportStatsData.Copy());
 		else support.SetData(data.supportStatsData.Copy());
 	}
-	public void Init(StrategyStartSetterData.CaptureData data)
+	public void Init(in StrategyStartSetterData.CaptureData data)
 	{
 		SectorData.Capture.Data initData = new ()
 		{
 			captureFactionID = StrategyManager.Collector.TryFindFaction(data.captureFaction, out var find) ? find.FactionID : -1,
 			captureProgress = data.captureProgress,
-			captureTime = capture == null ? 0 : capture.GetData().captureTime,
+
+			captureTime = capture == null ? 0 :  CaptureData.captureTime,
 		};
 
 		if (capture == null) capture = new SectorData.Capture(initData);
@@ -69,22 +70,22 @@ public partial class SectorObject // Getter
 	public SectorData.Facilities Facilities => facilities;
 	public SectorData.Support Support => support;
 	public SectorData.SpawnTroop SpawnTroop => spawnTroop;
-	public SectorData.Profile.Data ProfileData => profile.GetData();
-	public SectorData.Capture.Data CaptureData => capture.GetData();
-	public SectorData.MainStats.Data StatsData => mainStats.GetData();
-	public SectorData.Facilities.Data FacilitiesData => facilities.GetData();
-	public SectorData.Support.Data SupportData => support.GetData();
-	public SectorData.SpawnTroop.Data SpawnTroopData => spawnTroop.GetData();
+	public ref readonly SectorData.Profile.Data ProfileData => ref profile.ReadonlyData();
+	public ref readonly SectorData.Capture.Data CaptureData => ref capture.ReadonlyData();
+	public ref readonly SectorData.MainStats.Data StatsData => ref mainStats.ReadonlyData();
+	public ref readonly SectorData.Facilities.Data FacilitiesData => ref facilities.ReadonlyData();
+	public ref readonly SectorData.Support.Data SupportData => ref support.ReadonlyData();
+	public ref readonly SectorData.SpawnTroop.Data SpawnTroopData => ref spawnTroop.ReadonlyData();
 
 	public StatsList MainStatsList => StatsData.GetStatsList();
 	public StatsGroup FacilitiesBuffGroup => facilitiesStatsGroup ??= new StatsGroup();
 	public StatsGroup SupportBuffGroup => supportStatsGroup ??= new StatsGroup();
 	public StatsGroup StatusEffectStatsGroup => statusEffectStatsGroup ??= new StatsGroup();
 
-	public string SectorName => profile.GetData().sectorName;
+	public string SectorName => ProfileData.sectorName;
 	public Faction CaptureFaction => StrategyManager.Collector.FindFaction(CaptureFactionID);
-	public int CaptureFactionID => capture.GetData().captureFactionID;
-	public float CaptureProgress => capture.GetData().captureProgress;
+	public int CaptureFactionID => CaptureData.captureFactionID;
+	public float CaptureProgress => CaptureData.captureProgress;
 
 	public (int value, int max) GetDurability()
 	{
@@ -104,10 +105,10 @@ public partial class SectorObject // Getter
 	}
 	public void SetCaptureData(int factionID, float progress)
 	{
-		var data= capture.GetData();
+		ref var data = ref capture.RefData();
 		data.captureFactionID = factionID;
 		data.captureProgress = progress;
-		capture.SetData(data);
+		capture.Invoke();
 	}
 }
 public partial class SectorObject : IStrategyElement

@@ -14,16 +14,12 @@ public partial class StrategyMapPanelUI : MonoBehaviour, IGamePanelUI, IStartGam
 	public void OpenUI()
 	{
 		IsOpen = true;
-
-		EnableSectorLabelPanel();
-		EnableSectorSelectPanel();
+		ShowSectorLabelPanel();
 	}
 	public void CloseUI()
 	{
 		IsOpen = false;
-
-		DisableSectorLabelPanel();
-		DisableSectorSelectPanel();
+		HideSectorLabelPanel();
 	}
 	public void Update()
 	{
@@ -33,8 +29,7 @@ public partial class StrategyMapPanelUI : MonoBehaviour, IGamePanelUI, IStartGam
 	}
 	void IStartGame.OnStartGame()
 	{
-		EnableSectorLabelPanel();
-		EnableSectorSelectPanel();
+		ShowSectorLabelPanel();
 	}
 	void IStartGame.OnStopGame()
 	{
@@ -43,7 +38,10 @@ public partial class StrategyMapPanelUI : MonoBehaviour, IGamePanelUI, IStartGam
 }
 public partial class StrategyMapPanelUI
 {
-	public abstract class MapPanelUI : IDisposable 
+	public interface IMapPanel : IPanelFloating
+	{
+	}
+	public abstract class MapPanelUI : IDisposable, IViewPanelUI
 	{
 		protected StrategyMapPanelUI ThisPanel { get; private set; }
 		private bool? isShow = null;
@@ -54,44 +52,38 @@ public partial class StrategyMapPanelUI
 		}
 		public void Dispose()
 		{
-			if (isShow ?? false) Disable();
+			if (isShow ?? false) Hide();
 		
 			OnDispose();
 			ThisPanel = null;
 			isShow = null;
 		}
-		public void Enable()
+		public void Show()
 		{
 			if (isShow ?? false) return;
 			isShow = true;
-			OnEnable();
+			OnShow();
 		}
-		public void Disable()
+		public void Hide()
 		{
 			if (!isShow ?? true) return;
 			isShow = false;
-			OnDisable();
+			OnHide();
 		}
 		public void Update()
 		{
 			if (OnEnableCondition())
 			{
-				Enable();
+				Show();
 			}
 			else
 			{
-				Disable();
+				Hide();
 			}
 		}
 		protected virtual bool OnEnableCondition() => true;
-		protected abstract void OnEnable();
-		protected abstract void OnDisable();
+		protected abstract void OnShow();
+		protected abstract void OnHide();
 		protected abstract void OnDispose();
     }
-	public interface IMapPanelTargeting
-	{
-		public void AddTarget(IStrategyElement element);
-		public void RemoveTarget(IStrategyElement element);
-		public void ClearTarget();
-	}
 }

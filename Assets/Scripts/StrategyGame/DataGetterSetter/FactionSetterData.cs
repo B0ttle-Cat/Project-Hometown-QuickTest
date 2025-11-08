@@ -13,7 +13,7 @@
 //		public Color factionColor;
 //		public Sprite factionIcon;
 
-//		public int maxPersonnel;
+//		public int maxTroopsPoint;
 
 //		public GameObject defaultUnitPrefab;
 //	}
@@ -24,7 +24,7 @@
 //	{			
 //	}
 
-//	public override Data GetData()
+//	public override Data ReadonlyData()
 //	{
 //		return capture;
 //	}
