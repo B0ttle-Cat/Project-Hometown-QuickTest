@@ -12,7 +12,6 @@ public partial class Faction : IEquatable<Faction> , IDisposable
 {
 	public Faction(in StrategyStartSetterData.FactionData data)
 	{
-		factionID = data.factionID;
 		factionName = data.factionName;
 		factionColor = data.factionColor;
 		factionIcon = data.factionIcon;
@@ -37,7 +36,7 @@ public partial class Faction : IEquatable<Faction> , IDisposable
 	}
 
 	private string factionName;
-	private readonly int factionID;
+	private int factionID;
 
 	private Color factionColor;
 	private Sprite factionIcon;
@@ -92,8 +91,11 @@ public partial class Faction : IEquatable<Faction> , IDisposable
 }
 public partial class Faction : IStrategyElement
 {
+	public IStrategyElement ThisElement => this;
 	public bool IsInCollector { get; set; }
-	public void InStrategyCollector()
+    int IStrategyElement.ID { get => factionID; set => factionID = value; }
+
+    public void InStrategyCollector()
 	{
 	}
 	public void OutStrategyCollector()

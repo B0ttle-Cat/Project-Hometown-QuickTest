@@ -12465,13 +12465,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c43786e0ac819c4b9c26b0675f5e22f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StrategyGameObjectCollector
-  sectors:
+  sectorList:
     list: []
-  factions:
+  factionList:
     list: []
-  units:
+  unitList:
     list: []
-  skills:
+  troopsList:
+    list: []
+  skillList:
     list: []
 --- !u!114 &1572051159
 MonoBehaviour:

@@ -52,7 +52,6 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 	{
 		[FoldoutGroup("@factionName")]
 		public string factionName;
-		public int factionID { get; set; }
 
 		[FoldoutGroup("@factionName")]
 		public Color factionColor;
@@ -177,29 +176,25 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 	[Serializable]
 	public struct UnitData
 	{
-		[FoldoutGroup("@unitName")]
-		public string unitName;
-		public int unitID { get; set; }
-		[FoldoutGroup("@unitName")]
+		[FoldoutGroup("@unitKey")]
+		public UnitKey unitKey;
+		[FoldoutGroup("@unitKey")]
 		[ValueDropdown("@GetFactionNames($property)")]
 		[InlineButton("Clear_factionName","Clear")]
 		public string factionName;
-		[FoldoutGroup("@unitName")]
+		[FoldoutGroup("@unitKey")]
 		public UnitProfileObject unitProfile;
 
-		[FoldoutGroup("@unitName")]
+		[FoldoutGroup("@unitKey")]
 		public Vector3 position;
-		[FoldoutGroup("@unitName")]
+		[FoldoutGroup("@unitKey")]
 		public Vector3 rotation;
 
-		[FoldoutGroup("@unitName")]
+		[FoldoutGroup("@unitKey")]
 		[ValueDropdown("@GetSectorNames($property)")]
 		[LabelText("SectorName")]
 		[InlineButton("Clear_connectSectorName","Clear")]
 		public string connectSectorName;
-
-		[FoldoutGroup("@unitName")]
-		public Vector2Int[] skillData;
 #if UNITY_EDITOR
 		private void Clear_factionName()
 		{
@@ -235,8 +230,13 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 
 			return bases.Select(x => x.profileData.sectorName).Prepend("");
 		}
+
+        public readonly string DisplayName()
+        {
+			return unitProfile != null ? unitProfile.displayName : StrategyManager.Key2UnitInfo.GetAsset(unitKey).DisplayName;
+        }
 #endif
-	}
+    }
 	[Serializable]
 	public struct CaptureData
 	{

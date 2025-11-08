@@ -15,17 +15,14 @@ public class ScrollViewContentAutoMovementWithChildCount : MonoBehaviour
 	private RectTransform thisRect;
 	public bool scrollViewAutoActive = true;
 
-
-	Vector2 anchorMin;
-	Vector2 anchorMax;
-	Vector2 anchoredPosition;
-	Vector2 sizeDelta;
-	Vector2 pivot;
+	private Vector2 anchorMin;
+	private Vector2 anchorMax;
+	private Vector2 anchoredPosition;
+	private Vector2 sizeDelta;
+	private Vector2 pivot;
 
 	private void Awake()
     {
-
-
 		OnTransformChildrenChanged();
 	}
 	public void ControlChildSize(bool isOn)

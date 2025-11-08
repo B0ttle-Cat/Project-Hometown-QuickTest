@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01138e3740eb94e45849d76ac51ac1b8, type: 3}
+  m_Name: HumankindUnit
+  m_EditorClassIdentifier: Assembly-CSharp::KeyPairUnitName
+  chains: []
+  prefix: 
+  suffix: 
+  KeyPairTargetList:
+  - key: 2100
+    asset:
+      unitKey: 2100
+      displayName: "\uC804\uC120\uBCF4\uBCD1"
+      unitProfileObject: {fileID: 11400000, guid: fd1a628a64a2c604e97b4e6dec68d0a8, type: 2}
+  - key: 2101
+    asset:
+      unitKey: 2101
+      displayName: "\uC911\uC7A5\uAC11\uBCF4\uBCD1"
+      unitProfileObject: {fileID: 11400000, guid: cf801c4dfe4138d44a44b03f9f322c08, type: 2}
+  - key: 2102
+    asset:
+      unitKey: 2102
+      displayName: "\uB300\uAE30\uAC11\uBCF4\uBCD1"
+      unitProfileObject: {fileID: 11400000, guid: 38e0054b8fc1220499ee391fa4d6ac68, type: 2}
+  - key: 2103
+    asset:
+      unitKey: 2103
+      displayName: "\uBC15\uACA9\uD3EC\uBCD1"
+      unitProfileObject: {fileID: 11400000, guid: bd70ba7c46732fa4dbaebd6ac9474c83, type: 2}
+  - key: 2110
+    asset:
+      unitKey: 2110
+      displayName: "\uC804\uD22C\uC758\uBB34\uBCD1"
+      unitProfileObject: {fileID: 11400000, guid: 1aa4f183ada7d1d4f96d1311548647ef, type: 2}
+  - key: 2111
+    asset:
+      unitKey: 2111
+      displayName: "\uBCF4\uAE09\uBCD1"
+      unitProfileObject: {fileID: 11400000, guid: ba17fda6597a24b49a157922516f153f, type: 2}
+  - key: 2112
+    asset:
+      unitKey: 2112
+      displayName: "\uC804\uD22C\uACF5\uBCD1"
+      unitProfileObject: {fileID: 11400000, guid: 233d4d2d76294c6468b4da2b78a4a0ad, type: 2}
+  - key: 2113
+    asset:
+      unitKey: 2113
+      displayName: "\uC5ED\uC7A5\uBCF4\uBCD1"
+      unitProfileObject: {fileID: 11400000, guid: d061e72cc1df07a46be2b54851c41591, type: 2}
+  - key: 2120
+    asset:
+      unitKey: 2120
+      displayName: "\uC804\uC220\uC815\uCC30\uBCD1"
+      unitProfileObject: {fileID: 11400000, guid: 097f5da8612334841a967734510f9389, type: 2}
+  - key: 2121
+    asset:
+      unitKey: 2121
+      displayName: "\uC804\uC790\uC804\uBCD1"
+      unitProfileObject: {fileID: 11400000, guid: ee51d7b0c0c890b40b1929790176c5b1, type: 2}

@@ -128,7 +128,7 @@ public partial class StrategyControlPanelUI // SpawnTroopsPanel
 				if (세력_병력_신규편재 > 세력_병력_최대허용량) return;
 
 				var infoList = numericSliders.Select(i=>(i.Item1,Mathf.RoundToInt(i.Item2.Value)));
-				selectSector.Controller.On_SpawnTroops(new SpawnTroopsInfo(infoList.ToArray()));
+				selectSector.Controller.On_SpawnTroops(new SpawnTroopsInfo(Value.FactionID, infoList.ToArray()));
 
 				viewStack.ClearViewStack();
 			}
@@ -204,7 +204,8 @@ public partial class StrategyControlPanelUI // SpawnTroopsPanel
 				for (int i = 0 ; i < length ; i++)
 				{
 					(UnitKey key, NumericSliderUI slider) = numericSliders[i];
-					slider.Label = StrategyManager.Key2UnitName.GetAsset(key);
+					var info = StrategyManager.Key2UnitInfo.GetAsset(key);
+					slider.Label = info.DisplayName;
 					slider.SetMinMax(0, 세력_병력_여유용량, true);
 					slider.AddOnValueChange(OnChangeSliderValue);
 				}

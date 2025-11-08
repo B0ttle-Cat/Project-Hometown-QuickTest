@@ -500,7 +500,6 @@ public partial class StrategyMouseSelecter
 		public DragSelecter(StrategyMouseSelecter selecter) : base(selecter)
 		{
 		}
-
 		public override void Start()
 		{
 		}

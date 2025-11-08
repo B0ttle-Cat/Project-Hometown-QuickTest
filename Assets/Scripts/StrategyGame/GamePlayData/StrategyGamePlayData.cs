@@ -324,12 +324,10 @@ public partial class StrategyGamePlayData
 				public string environmentalKey;
 				// 적용되어 있는 각종 효과
 				public EffectsFlag effects;
-
 				public readonly string EffectString()
 				{
 					return effects.ToString();
 				}
-
 				public Data Copy()
 				{
 					return new Data()
@@ -500,7 +498,7 @@ public partial class StrategyGamePlayData
 			public struct Data : IDataCopy<Data>
 			{
 				public UnitKey unitKey;     // 원본과 매칭되는 키
-				public string unitName;     // 유닛 이름
+				public string displayName;  // 유닛 이름
 				public int unitID;          // 씬에 배치된 유닛 고유번호
 				public int factionID;       // 유닛이 속한 세력 번호
 
@@ -513,6 +511,12 @@ public partial class StrategyGamePlayData
 				{
 					return this;
 				}
+			}
+
+			public void SetUnitID(int unitID)
+			{
+				ref var data = ref RefData();
+				data.unitID = unitID;
 			}
 		}
 		[Serializable]

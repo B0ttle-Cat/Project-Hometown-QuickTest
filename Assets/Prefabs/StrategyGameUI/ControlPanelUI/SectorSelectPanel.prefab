@@ -34,8 +34,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 371, y: -75}
-  m_SizeDelta: {x: 366, y: 20}
+  m_AnchoredPosition: {x: 271, y: -75}
+  m_SizeDelta: {x: 266, y: 20}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &8069871829111220910
 MonoBehaviour:
@@ -122,7 +122,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uBCD1\uB825 \uC774\uB3D9"
+  m_text: "\uBCD1\uB825 \uD3B8\uC131"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c375f864aca777e4fb8e10f833491ee4, type: 2}
   m_sharedMaterial: {fileID: 263857912245452909, guid: c375f864aca777e4fb8e10f833491ee4, type: 2}
@@ -206,7 +206,7 @@ GameObject:
   - component: {fileID: 3296004700300940540}
   - component: {fileID: 3641909780308522750}
   m_Layer: 5
-  m_Name: "\uBCD1\uB825 \uC774\uB3D9"
+  m_Name: "\uBCD1\uB825 \uD3B8\uC131"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -870,7 +870,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 346}
+  m_SizeDelta: {x: 0, y: 246}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8604168389360688625
 CanvasRenderer:
@@ -1122,7 +1122,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 26.1
+  m_fontSize: 19.75
   m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1824,9 +1824,9 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 5645723427820813432}
   - {fileID: 3134880483963751810}
   - {fileID: 6846274080984406780}
-  - {fileID: 5645723427820813432}
   - {fileID: 1128200091656813268}
   - {fileID: 7933932448153083450}
   - {fileID: 6440277354655911348}
@@ -2105,7 +2105,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uC804\uD22C\uC6D0 \uBC30\uCE58"
+  m_text: "\uD2B9\uC218 \uC720\uB2DB \uBC30\uCE58"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c375f864aca777e4fb8e10f833491ee4, type: 2}
   m_sharedMaterial: {fileID: 263857912245452909, guid: c375f864aca777e4fb8e10f833491ee4, type: 2}
@@ -2791,7 +2791,7 @@ GameObject:
   - component: {fileID: 4013569677459739122}
   - component: {fileID: 2855639944840427356}
   m_Layer: 5
-  m_Name: "\uC804\uD22C\uC6D0 \uBC30\uCE58"
+  m_Name: "\uD2B9\uC218 \uC720\uB2DB \uBC30\uCE58"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -5,7 +5,9 @@ using Sirenix.OdinInspector;
 
 using UnityEngine;
 
-public class StrategyStartSetter : MonoBehaviour
+using static StrategyStartSetterData;
+
+public partial class StrategyStartSetter : MonoBehaviour
 {
 	private StrategyManager thisManager;
 	private StrategyElementCollector collector;
@@ -34,7 +36,6 @@ public class StrategyStartSetter : MonoBehaviour
 		}
 		return true;
 	}
-
 	internal void OnSetPreparedData()
 	{
 		if (StrategyManager.PreparedData == null)
@@ -50,7 +51,6 @@ public class StrategyStartSetter : MonoBehaviour
 			});
 		}
 	}
-
 	internal void OnStartSetter_Faction()
 	{
 		var data = strategyStartSetterData.GetData();
@@ -59,7 +59,6 @@ public class StrategyStartSetter : MonoBehaviour
 		for (int i = 0 ; i < length ; i++)
 		{
 			var factionData = factions[i];
-			factionData.factionID = i;
 			if (factionData.factionName == data.playerFactionName)
 			{
 				StrategyManager.PlayerFactionID = i;
@@ -107,15 +106,14 @@ public class StrategyStartSetter : MonoBehaviour
 		for (int i = 0 ; i < dataLength ; i++)
 		{
 			var unitData = unitDatas[i];
-			unitData.unitID = i;
-			string unitName = unitData.unitName;
+			string unitName = unitData.DisplayName();
 			if (TryFindUnitAlready(unitName, out UnitObject unitObject))
 			{
-				UnitInstantiater.ResetWithData(unitObject, in unitData);
+				ResetWithData(unitObject, in unitData);
 			}
 			else
 			{
-				unitObject = UnitInstantiater.Instantiate(in unitData);
+				unitObject = Instantiate(in unitData);
 			}
 			collector.AddElement(unitObject);
 		}
@@ -126,7 +124,7 @@ public class StrategyStartSetter : MonoBehaviour
 			int length = includeSceneUnits.Count;
 			for (int i = 0 ; i < length ; i++)
 			{
-				if (includeSceneUnits[i].ProfileData.unitName == unitName)
+				if (includeSceneUnits[i].ProfileData.displayName == unitName)
 				{
 					unitObject = includeSceneUnits[i];
 					includeSceneUnits.RemoveAt(i);
@@ -142,8 +140,6 @@ public class StrategyStartSetter : MonoBehaviour
 			var unit = includeSceneUnits[i];
 			if (collector.FindUnit(unit.UnitID) == null)
 			{
-				string name = $"Unit_{dataLength + i:00}";
-				unit.gameObject.name = name;
 				unit.Init(name, dataLength + i);
 				collector.AddElement(unit);
 			}
@@ -176,7 +172,6 @@ public class StrategyStartSetter : MonoBehaviour
 			});
 		}
 	}
-
     internal async Awaitable OnStartSetter_SectorNetwork(StrategyNodeNetwork network)
     {
 		var data = strategyStartSetterData.GetData();
@@ -186,7 +181,6 @@ public class StrategyStartSetter : MonoBehaviour
 			StrategyManager.Collector.SectorList.Select(s => new NetworkNode(s)).ToArray(),
 			networkDatas);
 	}
-
     internal void OnStartSetter_Mission(StrategyMissionTree mission)
     {
 		// 메인 미션 세팅
@@ -194,5 +188,36 @@ public class StrategyStartSetter : MonoBehaviour
 
 		// 서브 미션 세팅
 		mission.InitSubMission();
+	}
+}
+public partial class StrategyStartSetter // Instantiate
+{
+	private UnitObject Instantiate(in UnitData unitData)
+	{
+		var original = unitData.unitProfile.unitPrefab;
+		var position = unitData.position;
+		var rotation = Quaternion.Euler(unitData.rotation);
+		GameObject unitObject = GameObject.Instantiate( original, position, rotation);
+
+		unitObject.gameObject.name = name;
+
+		UnitObject unit = unitObject.GetComponent<UnitObject>();
+		if (unit == null) unit = unitObject.AddComponent<UnitObject>();
+
+		unit.Init(unitData);
+
+		return unit;
+	}
+	private void ResetWithData(UnitObject unit, in UnitData unitData)
+	{
+		if (unit == null) return;
+
+		GameObject unitObject = unit.gameObject;
+
+		var position = unitData.position;
+		var rotation = Quaternion.Euler(unitData.rotation);
+		unitObject.transform.SetPositionAndRotation(position, rotation);
+		unitObject.gameObject.name = name;
+		unit.Init(unitData);
 	}
 }

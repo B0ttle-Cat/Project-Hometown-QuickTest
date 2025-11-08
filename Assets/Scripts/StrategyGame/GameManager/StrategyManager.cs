@@ -19,7 +19,7 @@ public class StrategyManager : MonoBehaviour
 	public static StrategyNodeNetwork SectorNetwork => Manager == null ? null : Manager.sectorNetwork;
 	public static KeyPairDisplayName Key2Name => Manager == null ? null : Manager.key2Name;
 	public static KeyPairSprite Key2Sprite => Manager == null ? null : Manager.key2Sprite;
-	public static KeyPairUnitName Key2UnitName => Manager == null ? null : Manager.key2UnitName;
+	public static KeyPairUnitInfo Key2UnitInfo => Manager == null ? null : Manager.key2UnitInfp;
 
 	public static int PlayerFactionID;
 	public static GameStartingData PreparedData;
@@ -39,7 +39,7 @@ public class StrategyManager : MonoBehaviour
 	private StrategyNodeNetwork sectorNetwork;
 	private KeyPairDisplayName key2Name;
 	private KeyPairSprite key2Sprite;
-	private KeyPairUnitName key2UnitName;
+	private KeyPairUnitInfo key2UnitInfp;
 	private void Awake()
 	{
 		IsGameSceneReady = false;
@@ -171,7 +171,7 @@ public class StrategyManager : MonoBehaviour
 		var preparedData = StrategyManager.PreparedData.GetData();
 		key2Name = KeyPairDisplayName.Load(preparedData.LanguageType, "_Default");
 		key2Sprite = KeyPairSprite.Load(preparedData.LanguageType, "_Default");
-		key2UnitName = KeyPairUnitName.Load(preparedData.LanguageType, "_Default");
+		key2UnitInfp = KeyPairUnitInfo.Load(preparedData.LanguageType, "_Default");
 		// 시작 세력 세팅
 		setter.OnStartSetter_Faction();
 

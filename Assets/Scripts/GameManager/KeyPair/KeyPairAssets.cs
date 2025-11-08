@@ -20,10 +20,14 @@ public abstract class KeyPairAssets<TKey,TValue> : ScriptableObject
 
 #if UNITY_EDITOR
 		private bool IsString() => asset is string;
+		private bool IsAssets() => asset is UnityEngine.Object;
+		private bool IsVaule() => asset.GetType().IsValueType;
 		[ShowIf("IsString"), ShowInInspector, HorizontalGroup, HideLabel]
-		public TValue asset_string { get => asset; set => asset =value; }
-		[HideIf("IsString"), ShowInInspector, HorizontalGroup, HideLabel, PreviewField]
-		public TValue asset_preview { get => asset; set => asset = value; }
+		private TValue asset_string { get => asset; set => asset =value; }
+		[ShowIf("IsAssets"), ShowInInspector, HorizontalGroup, HideLabel, PreviewField]
+		private TValue asset_preview { get => asset; set => asset = value; }
+		[ShowIf("IsVaule"), ShowInInspector, BoxGroup, HideLabel, InlineProperty]
+		private TValue asset_value { get => asset; set => asset = value; }
 #endif
 		public KeyPairAssetsStruct(TKey key, TValue asset)
         {

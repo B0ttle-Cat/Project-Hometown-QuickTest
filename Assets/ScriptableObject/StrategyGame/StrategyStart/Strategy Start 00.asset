@@ -261,14 +261,14 @@ MonoBehaviour:
       spawnTroopData:
         supportInfos: []
     unitDatas:
-    - unitName: Unit A
+    - unitKey: 2100
       factionName: Faction_00
       unitProfile: {fileID: 11400000, guid: ef441d73e230ad44d8ad139f1663ba71, type: 2}
       position: {x: 10, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0}
       connectSectorName: 
       skillData: []
-    - unitName: Unit B
+    - unitKey: 1100
       factionName: Faction_01
       unitProfile: {fileID: 11400000, guid: ef441d73e230ad44d8ad139f1663ba71, type: 2}
       position: {x: 0, y: 0, z: 10}

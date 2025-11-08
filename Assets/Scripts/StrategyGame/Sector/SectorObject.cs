@@ -113,9 +113,11 @@ public partial class SectorObject // Getter
 }
 public partial class SectorObject : IStrategyElement
 {
+	public IStrategyElement ThisElement => this;
 	public bool IsInCollector { get; set; }
+    int IStrategyElement.ID { get; set; }
 
-	public void InStrategyCollector()
+    public void InStrategyCollector()
 	{
 	}
 

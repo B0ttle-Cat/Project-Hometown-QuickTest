@@ -19,13 +19,17 @@ public partial class SkillObject : MonoBehaviour
 	private string skillName;
 	private int skillID;
 	private int casterUnitID;
+	private int skillInstanceID;
 }
 
 public partial class SkillObject : IStrategyElement
 {
 	public bool IsInCollector { get; set; }
 
-	public void InStrategyCollector()
+	public IStrategyElement ThisElement => this;
+	int IStrategyElement.ID { get => skillID; set => skillID = value; }
+
+    public void InStrategyCollector()
 	{
 	}
 

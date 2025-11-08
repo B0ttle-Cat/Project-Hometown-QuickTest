@@ -7,7 +7,8 @@ public class SkillProfile : ScriptableObject
 	private SkillObject skillPrefab;
 
 	public string skillName;
-	public int skillID;
+	public int skillKey;
+	public int skillLevel;
 
 	public int spConsumption;
 	public int mpConsumption;
