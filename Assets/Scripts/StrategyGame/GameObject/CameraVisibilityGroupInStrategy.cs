@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class CameraVisibilityGroupInStrategy : CameraVisibilityGroup, IStartGame
+public class CameraVisibilityGroupInStrategy : CameraVisibilityGroup, IStrategyStartGame
 {
 	protected bool isPause = false;
 
@@ -22,14 +22,14 @@ public class CameraVisibilityGroupInStrategy : CameraVisibilityGroup, IStartGame
         base.LateUpdate();
     }
 
-    void IStartGame.OnStartGame()
+    void IStrategyStartGame.OnStartGame()
     {
 		isPause = false;
 		RefreshRenderers();
 		RefreshCamera();
 	}
 
-    void IStartGame.OnStopGame()
+    void IStrategyStartGame.OnStopGame()
     {
 		isPause = true;
 	}

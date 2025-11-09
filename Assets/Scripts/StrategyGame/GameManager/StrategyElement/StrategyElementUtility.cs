@@ -34,14 +34,6 @@ public static class StrategyElementUtility
 		newGameObject.SetActive(false);
 		TroopsObject troopsObject = newGameObject.AddComponent<TroopsObject>();
 
-		var influencer = new GameObject("Influencer");
-		var followers = new GameObject("Followers");
-		influencer.transform.SetParent(newGameObject.transform);
-		followers.transform.SetParent(newGameObject.transform);
-
-		troopsObject.influencer = influencer.transform;
-		troopsObject.followers = followers.transform;
-
 		newGameObject.SetActive(true);
 		troopsObject.Init(in troopsInfo);
 		StrategyManager.Collector.AddElement<TroopsObject>(troopsObject);

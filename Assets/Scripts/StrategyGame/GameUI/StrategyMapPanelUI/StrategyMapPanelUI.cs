@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-public partial class StrategyMapPanelUI : MonoBehaviour, IGamePanelUI, IStartGame
+public partial class StrategyMapPanelUI : MonoBehaviour, IGamePanelUI, IStrategyStartGame
 {
 	public bool IsOpen { get; set; }
 
@@ -27,11 +27,11 @@ public partial class StrategyMapPanelUI : MonoBehaviour, IGamePanelUI, IStartGam
 
 		SectorLabelPanelUpdate();
 	}
-	void IStartGame.OnStartGame()
+	void IStrategyStartGame.OnStartGame()
 	{
 		ShowSectorLabelPanel();
 	}
-	void IStartGame.OnStopGame()
+	void IStrategyStartGame.OnStopGame()
 	{
 		CloseUI();
 	}

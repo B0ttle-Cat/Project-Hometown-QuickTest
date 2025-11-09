@@ -5,49 +5,6 @@ using System.Collections.Generic;
 using NUnit.Framework;
 
 using UnityEngine;
-
-public interface IStrategyElement : IStartGame
-{
-	public IStrategyElement ThisElement { get; }
-	public bool IsInCollector { get; set; }
-	public int ID { get; set; }
-	void _InStrategyCollector()
-	{
-		if (IsInCollector) return;
-		IsInCollector = true;
-		InStrategyCollector();
-	}
-	void _OutStrategyCollector()
-	{
-		if (!IsInCollector) return;
-		IsInCollector = false;
-		OutStrategyCollector();
-	}
-	void InStrategyCollector();
-	void OutStrategyCollector();
-}
-public interface IStartGame
-{
-	public static int Default = 0;
-	int StartEventOrder() => Default;
-	int StopEventOrder() => Default;
-	void OnStartGame();
-	void OnStopGame();
-}
-public interface ISelectMouse
-{
-	Vector3 ClickCenter { get; }
-	bool IsPointEnter { get; set; }
-	bool IsSelectMouse { get; set; }
-	void OnPointEnter() { }
-	void OnPointExit() { }
-	bool OnSelect();
-	bool OnDeselect();
-	void OnSingleSelect();
-	void OnSingleDeselect();
-	void OnFirstSelect();
-	void OnLastDeselect();
-}
 public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 {
 	public abstract class ElementList

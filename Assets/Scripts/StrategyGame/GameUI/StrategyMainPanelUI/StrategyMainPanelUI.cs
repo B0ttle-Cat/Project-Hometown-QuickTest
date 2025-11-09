@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class StrategyMainPanelUI : MonoBehaviour, IGamePanelUI, IStartGame
+public class StrategyMainPanelUI : MonoBehaviour, IGamePanelUI, IStrategyStartGame
 {
 	public void OpenUI()
 	{
@@ -9,12 +9,12 @@ public class StrategyMainPanelUI : MonoBehaviour, IGamePanelUI, IStartGame
 	{
 	}
 
-    void IStartGame.OnStartGame()
+    void IStrategyStartGame.OnStartGame()
 	{
 		OpenUI();
 	}
 
-    void IStartGame.OnStopGame()
+    void IStrategyStartGame.OnStopGame()
 	{
 		CloseUI();
 	}

@@ -5,7 +5,7 @@ using Sirenix.OdinInspector;
 
 using UnityEngine;
 
-public partial class StrategyControlPanelUI : MonoBehaviour, IGamePanelUI, IViewStack, IStartGame
+public partial class StrategyControlPanelUI : MonoBehaviour, IGamePanelUI, IViewStack, IStrategyStartGame
 {
 	private Canvas thisCanvas;
 
@@ -26,11 +26,11 @@ public partial class StrategyControlPanelUI : MonoBehaviour, IGamePanelUI, IView
 		if (thisCanvas == null) return;
 		thisCanvas.enabled = false;
 	}
-	void IStartGame.OnStartGame()
+	void IStrategyStartGame.OnStartGame()
 	{
 		CloseUI();
 	}
-	void IStartGame.OnStopGame()
+	void IStrategyStartGame.OnStopGame()
 	{
 		CloseUI();
 	}

@@ -11,10 +11,9 @@ public partial class UnitObject : MonoBehaviour
 	private UnitData.Stats stats;
 	private UnitData.Skill skill;
 	private UnitData.ConnectSector sector;
+	private CaptureTag captureTag;
 
-	private StatsGroup skillBuffGroup;
-	
-	[ShowInInspector,ReadOnly]
+	[ShowInInspector, ReadOnly]
 	public UnitData.Profile Profile { get => profile; set => profile = value; }
 	[ShowInInspector, ReadOnly]
 	public UnitData.Stats Stats { get => stats; set => stats = value; }
@@ -22,11 +21,12 @@ public partial class UnitObject : MonoBehaviour
 	public UnitData.Skill Skill { get => skill; set => skill = value; }
 	[ShowInInspector, ReadOnly]
 	public UnitData.ConnectSector Sector { get => sector; set => sector = value; }
+	[ShowInInspector, ReadOnly]
+	public CaptureTag CaptureTag { get => captureTag; set => captureTag = value; }
 	public ref readonly UnitData.Profile.Data ProfileData => ref Profile.ReadonlyData();
 	public ref readonly UnitData.Stats.Data StatsData => ref Stats.ReadonlyData();
 	public ref readonly UnitData.Skill.Data SkillData => ref Skill.ReadonlyData();
 	public ref readonly UnitData.ConnectSector.Data SectorData => ref Sector.ReadonlyData();
-
 	public string UnitName => ProfileData.displayName;
 	public int UnitID => ProfileData.unitID;
 	public int FactionID => ProfileData.factionID;
@@ -35,8 +35,7 @@ public partial class UnitObject : MonoBehaviour
 		get => StrategyManager.Collector.FindFaction(FactionID);
 	}
 
-	public StatsList MainStatsList => StatsData.GetStatsList();
-	public StatsGroup SkillBuffGroup => skillBuffGroup ??= new StatsGroup();
+
 
 	public void Init(string displayName = "", int factionID = -1)
 	{
@@ -91,15 +90,6 @@ public partial class UnitObject : MonoBehaviour
 
 		InitOther(profileObj);
 	}
-}
-public partial class UnitObject : MonoBehaviour // Other
-{
-	private CaptureTag captureTag;
-
-	public int GetStateValue(StatsType type) => StatsData.GetValue(type);
-
-	public CaptureTag CaptureTag { get => captureTag; set => captureTag = value; }
-
 	private void InitOther(UnitProfileObject data)
 	{
 		Stats = new UnitData.Stats(new()
@@ -130,65 +120,22 @@ public partial class UnitObject : MonoBehaviour // Other
 		}
 	}
 }
-public partial class UnitObject : IStrategyElement
+public partial class UnitObject // StateValue
 {
-	public IStrategyElement ThisElement => this;
-	public bool IsInCollector { get; set; }
-	int IStrategyElement.ID { get => UnitID; set => Profile.SetUnitID(value); }
-
-	public void InStrategyCollector()
-	{
-		string name = $"{ProfileData.displayName}_{UnitID:00}";
-		gameObject.name = name;
-	}
-
-	public void OutStrategyCollector()
-	{
-	}
-
-	void IStartGame.OnStartGame()
-	{
-	}
-
-	void IStartGame.OnStopGame()
-	{
-	}
+	private StatsGroup skillBuffGroup;
+	public  StatsList MainStatsList => StatsData.GetStatsList();
+	public StatsGroup SkillBuffGroup => skillBuffGroup ??= new StatsGroup();
+	public int GetStateValue(StatsType type) => MainStatsList.GetValueInt(type) + SkillBuffGroup.GetValueInt(type);
 }
-public partial class UnitObject : ISelectMouse
+
+public partial class UnitObject // TroopBelong
 {
-	public Vector3 clickCenter => transform.position;
-	bool ISelectMouse.IsSelectMouse { get; set; }
-	bool ISelectMouse.IsPointEnter { get; set; }
-	Vector3 ISelectMouse.ClickCenter => clickCenter;
+	private TroopsObject troopBelong;
+	[ShowInInspector]
+	public TroopsObject TroopBelong { get => troopBelong; private set => troopBelong = value; }
 
-
-	void ISelectMouse.OnPointEnter()
+	public void SetTroopBelong(TroopsObject troopObject)
 	{
-	}
-	void ISelectMouse.OnPointExit()
-	{
-	}
-	bool ISelectMouse.OnSelect()
-	{
-		return true;
-	}
-	bool ISelectMouse.OnDeselect()
-	{
-		return true;
-	}
-	void ISelectMouse.OnSingleSelect()
-	{
-	}
-
-	void ISelectMouse.OnSingleDeselect()
-	{
-	}
-
-	void ISelectMouse.OnFirstSelect()
-	{
-	}
-
-	void ISelectMouse.OnLastDeselect()
-	{
+		TroopBelong = troopObject;
 	}
 }

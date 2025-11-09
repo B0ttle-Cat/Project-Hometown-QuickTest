@@ -125,11 +125,11 @@ public partial class SectorObject : IStrategyElement
 	{
 	}
 
-	void IStartGame.OnStartGame()
+	void IStrategyStartGame.OnStartGame()
 	{
 	}
 
-	void IStartGame.OnStopGame()
+	void IStrategyStartGame.OnStopGame()
 	{
 	}
 }

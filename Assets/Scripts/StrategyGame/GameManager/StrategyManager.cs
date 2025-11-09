@@ -218,7 +218,7 @@ public class StrategyManager : MonoBehaviour
 	private void OnStopGame()
 	{
 		var allComponent = GameObject.FindObjectsByType<Component>(FindObjectsInactive.Include, FindObjectsSortMode.InstanceID);
-		var allList = allComponent.Where(c => c is IStartGame).Select(c => c as IStartGame).OrderBy(i => i.StopEventOrder());
+		var allList = allComponent.Where(c => c is IStrategyStartGame).Select(c => c as IStrategyStartGame).OrderBy(i => i.StopEventOrder());
 		foreach (var item in allList)
 		{
 			item.OnStopGame();
@@ -227,7 +227,7 @@ public class StrategyManager : MonoBehaviour
 	private void OnStartGame()
 	{
 		var allComponent = GameObject.FindObjectsByType<Component>(FindObjectsInactive.Include, FindObjectsSortMode.InstanceID);
-		var allList = allComponent.Where(c => c is IStartGame).Select(c => c as IStartGame).OrderBy(i => i.StartEventOrder());
+		var allList = allComponent.Where(c => c is IStrategyStartGame).Select(c => c as IStrategyStartGame).OrderBy(i => i.StartEventOrder());
 		foreach (var item in allList)
 		{
 			item.OnStartGame();

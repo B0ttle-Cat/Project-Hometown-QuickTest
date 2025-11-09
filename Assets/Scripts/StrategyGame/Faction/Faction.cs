@@ -102,11 +102,11 @@ public partial class Faction : IStrategyElement
 	{
 	}
 
-    void IStartGame.OnStartGame()
+    void IStrategyStartGame.OnStartGame()
     {
     }
 
-    void IStartGame.OnStopGame()
+    void IStrategyStartGame.OnStopGame()
     {
     }
 }

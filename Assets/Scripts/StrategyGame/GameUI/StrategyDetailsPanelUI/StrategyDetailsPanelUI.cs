@@ -4,7 +4,7 @@ using Sirenix.OdinInspector;
 
 using UnityEngine;
 
-public partial class StrategyDetailsPanelUI : MonoBehaviour, IGamePanelUI, IStartGame
+public partial class StrategyDetailsPanelUI : MonoBehaviour, IGamePanelUI, IStrategyStartGame
 {
 	[SerializeField]
 	private  TabPanelUI tabPanelUI;
@@ -55,12 +55,12 @@ public partial class StrategyDetailsPanelUI : MonoBehaviour, IGamePanelUI, IStar
 		currrentContent = null;
 	}
 
-	void IStartGame.OnStartGame()
+	void IStrategyStartGame.OnStartGame()
 	{
 		(this as IGamePanelUI).CloseUI();
 	}
 
-	void IStartGame.OnStopGame()
+	void IStrategyStartGame.OnStopGame()
 	{
 		(this as IGamePanelUI).CloseUI();
 	}

@@ -13,7 +13,7 @@ using UnityEngine;
 
 using static WaypointUtility;
 
-public partial class StrategyNodeNetwork : MonoBehaviour, IStartGame
+public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 {
 	[SerializeField,ReadOnly] private NetworkNode[] networkNodes = Array.Empty<NetworkNode>();
 	[SerializeField,ReadOnly] private NetworkLine[] networkLines = Array.Empty<NetworkLine>();
@@ -65,11 +65,11 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStartGame
 		buildConnectGroups = new Dictionary<ConnectConditions, ConnectGroup[]>();
 		BuildConnectGroups(ConnectConditions.Forward);
 	}
-	void IStartGame.OnStartGame()
+	void IStrategyStartGame.OnStartGame()
 	{
 
 	}
-	void IStartGame.OnStopGame()
+	void IStrategyStartGame.OnStopGame()
 	{
 		if (networkNodes != null)
 		{

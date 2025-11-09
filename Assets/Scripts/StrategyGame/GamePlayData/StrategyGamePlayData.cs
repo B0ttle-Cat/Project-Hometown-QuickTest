@@ -946,7 +946,7 @@ public partial class StrategyGamePlayData
 			}
 			return values[findindex];
 		}
-		public float GetValueFloat(StatsType statsType)
+		public int GetValueInt(StatsType statsType)
 		{
 			int findindex = values.FindIndex(b=>b.StatsType == statsType);
 			if (findindex < 0)
@@ -1140,6 +1140,18 @@ public partial class StrategyGamePlayData
 			{
 				if (values[i].List == null) continue;
 				statsValue += values[i].List.GetValue(statsType);
+			}
+			return statsValue;
+		}
+		public int GetValueInt(StatsType statsType)
+		{
+			int statsValue = 0;
+			int length = values.Count;
+			for (int i = 0 ; i < length ; i++)
+			{
+				var list = values[i].List;
+				if (list == null) continue;
+				statsValue += list.GetValueInt(statsType);
 			}
 			return statsValue;
 		}

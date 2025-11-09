@@ -24,22 +24,22 @@ public partial class StrategyMouseSelecter : MonoBehaviour
 	[SerializeField] private LayerMask layerMask;
 	[SerializeField, ReadOnly] private SelecterState selecterState;
 	[SerializeField, ReadOnly] private BaseSelecter currentSelecter;
-	[ShowInInspector, ReadOnly] private HashSet<ISelectMouse> selectItemList;
-	[ShowInInspector, ReadOnly] private ISelectMouse singleSelectItem;
-	[ShowInInspector, ReadOnly] private HashSet<ISelectMouse> enterItemList;
+	[ShowInInspector, ReadOnly] private HashSet<ISelectableByMouse> selectItemList;
+	[ShowInInspector, ReadOnly] private ISelectableByMouse singleSelectItem;
+	[ShowInInspector, ReadOnly] private HashSet<ISelectableByMouse> enterItemList;
 
-	[ShowInInspector, ReadOnly] private ISelectMouse uiSelect;
+	[ShowInInspector, ReadOnly] private ISelectableByMouse uiSelect;
 
-	public HashSet<ISelectMouse> GetCurrentSelectList => selectItemList;
+	public HashSet<ISelectableByMouse> GetCurrentSelectList => selectItemList;
 
-	private Action<ISelectMouse> onSelected;
-	private Action<ISelectMouse> onDeselected;
+	private Action<ISelectableByMouse> onSelected;
+	private Action<ISelectableByMouse> onDeselected;
 
-	private Action<ISelectMouse> onSingleSelected;
-	private Action<ISelectMouse> onSingleDeselected;
+	private Action<ISelectableByMouse> onSingleSelected;
+	private Action<ISelectableByMouse> onSingleDeselected;
 
-	private Action<ISelectMouse> onFirstSelected;
-	private Action<ISelectMouse> onLastDeselected;
+	private Action<ISelectableByMouse> onFirstSelected;
+	private Action<ISelectableByMouse> onLastDeselected;
 
 	public InputData GetInputData => inputData;
 
@@ -77,7 +77,7 @@ public partial class StrategyMouseSelecter : MonoBehaviour
 		eventSystem = EventSystem.current;
 		selecterState = SelecterState.None;
 		currentSelecter = null;
-		selectItemList = new HashSet<ISelectMouse>();
+		selectItemList = new HashSet<ISelectableByMouse>();
 	}
 	private void OnDisable()
 	{
@@ -194,13 +194,13 @@ public partial class StrategyMouseSelecter : MonoBehaviour
 		}
 		return selecterState;
 	}
-	public void OnSystemSelectObject(ISelectMouse target, bool beforeClearList = true)
+	public void OnSystemSelectObject(ISelectableByMouse target, bool beforeClearList = true)
 	{
 		if (target == null) return;
 		if (beforeClearList) ClearInSelectItemList();
 		AddInSelectItemList(target);
 	}
-	public void OnSystemDeselectObject(ISelectMouse target)
+	public void OnSystemDeselectObject(ISelectableByMouse target)
 	{
 		if (target == null) return;
 		RemoveInSelectItemList(target);
@@ -216,7 +216,7 @@ public partial class StrategyMouseSelecter : MonoBehaviour
 		SelecterState.Drag => new DragSelecter(this),
 		_ => null
 	};
-	public void AddListener_OnSelectedAndDeselected(Action<ISelectMouse> onSelected, Action<ISelectMouse> onDeselected)
+	public void AddListener_OnSelectedAndDeselected(Action<ISelectableByMouse> onSelected, Action<ISelectableByMouse> onDeselected)
 	{
 		if (onSelected != null)
 		{
@@ -229,7 +229,7 @@ public partial class StrategyMouseSelecter : MonoBehaviour
 			this.onDeselected += onDeselected;
 		}
 	}
-	public void RemoveListener_OnSelectedAndDeselected(Action<ISelectMouse> onSelected, Action<ISelectMouse> onDeselected)
+	public void RemoveListener_OnSelectedAndDeselected(Action<ISelectableByMouse> onSelected, Action<ISelectableByMouse> onDeselected)
 	{
 		if (onSelected != null)
 		{
@@ -240,7 +240,7 @@ public partial class StrategyMouseSelecter : MonoBehaviour
 			this.onDeselected -= onDeselected;
 		}
 	}
-	public void AddListener_OnSingleAndDeselected(Action<ISelectMouse> onSingleSelected, Action<ISelectMouse> onSingleDeselected)
+	public void AddListener_OnSingleAndDeselected(Action<ISelectableByMouse> onSingleSelected, Action<ISelectableByMouse> onSingleDeselected)
 	{
 		if (onSingleSelected != null)
 		{
@@ -253,7 +253,7 @@ public partial class StrategyMouseSelecter : MonoBehaviour
 			this.onSingleDeselected += onSingleDeselected;
 		}
 	}
-	public void AddListener_OnSingleSelectedAndDeselected(Action<ISelectMouse> onSelected, Action<ISelectMouse> onSingleDeselected)
+	public void AddListener_OnSingleSelectedAndDeselected(Action<ISelectableByMouse> onSelected, Action<ISelectableByMouse> onSingleDeselected)
 	{
 		if (onSelected != null)
 		{
@@ -264,7 +264,7 @@ public partial class StrategyMouseSelecter : MonoBehaviour
 			this.onSingleDeselected -= onSingleDeselected;
 		}
 	}
-	public void AddListener_OnFirstAndLast(Action<ISelectMouse> onFirstSelected, Action<ISelectMouse> onLastDeselected)
+	public void AddListener_OnFirstAndLast(Action<ISelectableByMouse> onFirstSelected, Action<ISelectableByMouse> onLastDeselected)
 	{
 		if (onFirstSelected != null)
 		{
@@ -277,7 +277,7 @@ public partial class StrategyMouseSelecter : MonoBehaviour
 			this.onLastDeselected += onLastDeselected;
 		}
 	}
-	public void RemoveListener_OnFirsAndLast(Action<ISelectMouse> onFirstSelected, Action<ISelectMouse> onLastDeselected)
+	public void RemoveListener_OnFirsAndLast(Action<ISelectableByMouse> onFirstSelected, Action<ISelectableByMouse> onLastDeselected)
 	{
 		if (onFirstSelected != null)
 		{
@@ -289,11 +289,18 @@ public partial class StrategyMouseSelecter : MonoBehaviour
 		}
 	}
 
-	private bool AddInSelectItemList(ISelectMouse target)
+	private bool AddInSelectItemList(ISelectableByMouse target)
 	{
 		if (target != null && selectItemList.Add(target))
 		{
 			target.IsSelectMouse = true;
+			HashSet<ISelectableByMouse> passingList = new (){ target };
+			while (target.HasPass(out var pass))
+			{
+				if (pass == null || !passingList.Add(pass)) break;
+				target = pass;
+			}
+
 			if (target.OnSelect())
 			{
 				onSelected?.Invoke(target);
@@ -321,7 +328,7 @@ public partial class StrategyMouseSelecter : MonoBehaviour
 		}
 		return false;
 	}
-	private bool RemoveInSelectItemList(ISelectMouse target)
+	private bool RemoveInSelectItemList(ISelectableByMouse target)
 	{
 		if (target != null && selectItemList.Remove(target))
 		{
@@ -356,18 +363,18 @@ public partial class StrategyMouseSelecter : MonoBehaviour
 		}
 		return false;
 	}
-	private bool ContainsInSelectItemList(ISelectMouse target)
+	private bool ContainsInSelectItemList(ISelectableByMouse target)
 	{
 		return target != null && selectItemList.Contains(target);
 	}
 	private void ClearInSelectItemList()
 	{
-		ISelectMouse last = null;
-		foreach (ISelectMouse target in selectItemList)
+		ISelectableByMouse last = null;
+		foreach (ISelectableByMouse target in selectItemList)
 		{
 			if (target == null) continue;
-			last = target;
 			target.OnDeselect();
+			last = target;
 			onDeselected?.Invoke(target);
 			if (target == singleSelectItem)
 			{
@@ -411,7 +418,7 @@ public partial class StrategyMouseSelecter
 		public abstract bool Valid();
 		public abstract void Pressed();
 		public abstract void Released();
-		protected ISelectMouse GetTargetUnderMouse(in Vector2 mousePosition)
+		protected ISelectableByMouse GetTargetUnderMouse(in Vector2 mousePosition)
 		{
 			if (StrategyManager.MainCamera == null) return null;
 			if (MainEventSystem.IsPointerOverGameObject()) return null;
@@ -425,16 +432,16 @@ public partial class StrategyMouseSelecter
 
 			foreach (var hit in hits)
 			{
-				var target = hit.collider.GetComponentInParent<ISelectMouse>();
+				var target = hit.collider.GetComponentInParent<ISelectableByMouse>();
 				if (target != null) return target;
 			}
 			return null;
 		}
-		protected void SelectNew(ISelectMouse target)
+		protected void SelectNew(ISelectableByMouse target)
 		{
 			Selecter.AddInSelectItemList(target);
 		}
-		protected void Deselect(ISelectMouse target)
+		protected void Deselect(ISelectableByMouse target)
 		{
 			Selecter.RemoveInSelectItemList(target);
 		}
@@ -442,7 +449,7 @@ public partial class StrategyMouseSelecter
 		{
 			Selecter.ClearInSelectItemList();
 		}
-		protected void ToggleSelect(ISelectMouse target)
+		protected void ToggleSelect(ISelectableByMouse target)
 		{
 			if (target == null) return;
 			if (Selecter.ContainsInSelectItemList(target)) Deselect(target);
@@ -457,7 +464,7 @@ public partial class StrategyMouseSelecter
 	[Serializable]
 	public class ClickSelecter : BaseSelecter
 	{
-		protected ISelectMouse mouseDownTarget;
+		protected ISelectableByMouse mouseDownTarget;
 		public ClickSelecter(StrategyMouseSelecter selecter) : base(selecter)
 		{
 			mouseDownTarget = null;
@@ -536,7 +543,7 @@ public partial class StrategyMouseSelecter
 			{
 				foreach (IStrategyElement item in list)
 				{
-					if (item is not ISelectMouse target) continue;
+					if (item is not ISelectableByMouse target) continue;
 
 					Vector2 screenPos = StrategyManager.MainCamera.WorldToScreenPoint(target.ClickCenter);
 					if (rect.Contains(screenPos))
