@@ -18,7 +18,7 @@ public class FloatingPanelItemUI : MonoBehaviour
 	[SerializeField]
 	protected CanvasGroupUI canvasGroupUI;
 
-    protected virtual Transform MapTarget  => mapTarget;
+    protected virtual Transform MapTarget => mapTarget;
 
     protected virtual void Reset()
 	{
@@ -120,8 +120,7 @@ public class FloatingPanelItemUI : MonoBehaviour
 		Camera camera = Camera.main;
 		if (camera == null) return;
 
-		Vector3 screenMapTarget = camera.WorldToScreenPoint(MapTarget.transform.position);
-		screenMapTarget.z = 0;
+		Vector2 screenMapTarget = camera.WorldToScreenPoint(MapTarget.transform.position);
 		rectTransform.position = screenMapTarget;
 	}
 }

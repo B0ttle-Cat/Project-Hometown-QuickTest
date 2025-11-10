@@ -14282,8 +14282,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fbc767c7681fbe448377b547da23c17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StrategyMapPanelUI
-  operationLabelPreafab: {fileID: 0}
-  operationLabelRoot: {fileID: 0}
+  operationLabelPreafab: {fileID: 7158623961847931186, guid: 9cc50d14d0ed9064d9fbbf7a5e186d85, type: 3}
+  operationLabelRoot: {fileID: 906578735}
   sectorLabelPreafab: {fileID: 7158623961847931186, guid: 06101bf9da42dbf4fbca0f7c222cc4fa, type: 3}
   sectorLabelRoot: {fileID: 2010381860}
 --- !u!114 &1711988336
