@@ -228,7 +228,7 @@ public partial class StrategyGamePlayData // Prepared Data (준비된 데이터)
 
 			public Overview overview;
 			public Mission mission;
-	
+
 			public Data Copy()
 			{
 				return new Data()
@@ -307,7 +307,7 @@ public partial class StrategyGamePlayData // Mission Data
 	}
 }
 public partial class StrategyGamePlayData
-	// Play Content Data
+// Play Content Data
 {
 	[Serializable]
 	public class SectorData
@@ -640,7 +640,7 @@ public partial class StrategyGamePlayData
 		}
 	}
 
-	
+
 
 	public static StatsType[] SectorDurabilityStats =new StatsType[]
 	{

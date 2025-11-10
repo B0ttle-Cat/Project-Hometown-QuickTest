@@ -40,6 +40,7 @@ public static class StrategyElementUtility
 		for (int i = 0 ; i < length ; i++)
 		{
 			(UnitKey key, int count) = organizations[i];
+			if (key == UnitKey.None || count <= 0) continue;
 			UnitObject unit = Instantiate(key, factionID);
 			spawnUnitIds.Add(unit.UnitID);
 		}

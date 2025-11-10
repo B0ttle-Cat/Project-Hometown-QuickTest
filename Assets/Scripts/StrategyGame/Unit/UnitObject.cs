@@ -52,6 +52,7 @@ public partial class UnitObject : MonoBehaviour
 			protectType = ProtectionType.일반,
 		});
 		sector = new UnitData.ConnectSector(new());
+		troopID = -1;
 	}
 	public void Init(UnitProfileObject data, int factionID = -1)
 	{
@@ -68,13 +69,14 @@ public partial class UnitObject : MonoBehaviour
 			protectType = data.protectType,
 		});
 		sector = new UnitData.ConnectSector(new());
-
+		troopID = -1;
 		InitOther(data);
 	}
 	public void Init(in StrategyStartSetterData.UnitData data) // UnitData
 	{
 		int unitID = profile != null ? UnitID : -1;
 		int factionID = StrategyManager.Collector.FactionNameToID(data.factionName);
+
 		UnitProfileObject profileObj = data.unitProfile;
 
 		profile = new UnitData.Profile(new()
@@ -87,7 +89,7 @@ public partial class UnitObject : MonoBehaviour
 			protectType = profileObj.protectType,
 		});
 		sector = new UnitData.ConnectSector(new(data.connectSectorName));
-
+		troopID = -1;
 		InitOther(profileObj);
 	}
 	private void InitOther(UnitProfileObject data)
@@ -98,7 +100,7 @@ public partial class UnitObject : MonoBehaviour
 		});
 		Skill = new UnitData.Skill(new()
 		{
-			skillDatas = data.personalSkills.Clone() as SkillData[]
+			skillDatas = data.personalSkills == null ? new SkillData[0] : data.personalSkills.Clone() as SkillData[]
 		});
 
 		var 유닛_점령점수 = StatsData.GetValue(StatsType.유닛_점령점수);
@@ -131,10 +133,13 @@ public partial class UnitObject // StateValue
 public partial class UnitObject // TroopBelong
 {
 	private int troopID;
-	[ShowInInspector]
+	public int TroopID => troopID;
+	[ShowInInspector, FoldoutGroup("TroopBelong", VisibleIf = "IsTroopBelong"), InlineProperty, HideLabel]
 	public TroopsObject TroopBelong => StrategyManager.Collector.FindTroops(troopID);
-	public bool IsTroopBelong => TroopBelong != null;
-	public void SetTroopBelong(TroopsObject troopObject)
+	public bool IsTroopBelong => TroopID >= 0;
+
+
+    public void SetTroopBelong(TroopsObject troopObject)
 	{
 		troopID = troopObject == null ? -1 : troopObject.TroopsID;
 	}

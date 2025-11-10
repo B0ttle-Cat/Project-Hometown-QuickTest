@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using Sirenix.OdinInspector;
@@ -52,9 +53,11 @@ public partial class TroopsObject
 			}
 		}
 	}
+	[Serializable]
 	public class UnitListInTroops
 	{
 		private TroopsObject troops;
+		[SerializeField]
 		private List<int> unitIDs;
 		public List<int> UnitIDList => unitIDs;
 
@@ -144,7 +147,31 @@ public partial class TroopsObject
 }
 public partial class TroopsObject // Stats
 {
-	public int GetMoveSpeed()
+	int computeFrame = -1;
+
+	private Vector3 position;
+	private int moveSpeed;
+	public void ComputeTroopsValue()
+	{
+		int thisFrame = Time.frameCount;
+		if(computeFrame == thisFrame) return;
+		computeFrame = thisFrame;
+		position = GetPosition();
+		moveSpeed = GetMoveSpeed();
+	}
+	private Vector3 GetPosition()
+	{
+		int count = 0;
+		Vector3 point = Vector3.zero;
+		foreach (var item in GetAllUnitObject)
+		{
+			point += item.ThisMovement.CurrentPosition;
+			++count;
+		}
+		if (count > 1) point /= count;
+		return point;
+	}
+	private int GetMoveSpeed()
 	{
 		float average = (float)GetAllUnitObject.Select(i => i.GetStateValue(StatsType.유닛_이동속도)).Average();
 		return Mathf.RoundToInt(average);
@@ -170,7 +197,6 @@ public partial class TroopsObject : IStrategyElement
 }
 public partial class TroopsObject : INodeMovement
 {
-	private Vector3 position;
 	private Vector3 velocity;
 	private float smoothTime;
 	public INodeMovement ThisMovement => this;
@@ -181,7 +207,7 @@ public partial class TroopsObject : INodeMovement
 	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
 	float INodeMovement.SmoothTime => smoothTime;
 	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
-	float INodeMovement.MaxSpeed => GetMoveSpeed();
+	float INodeMovement.MaxSpeed => moveSpeed;
 	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
 	int INodeMovement.RecentVisitedNode => 0;
 	LinkedList<INodeMovement.MovementPlan> INodeMovement.MovementPlanList { get; set; }
@@ -206,7 +232,13 @@ public partial class TroopsObject : INodeMovement
 	}
 	void INodeMovement.OnSetPositionAndVelocity(in Vector3 position, in Vector3 velocity)
 	{
+		Vector3 delteMove = position - this.position;
 		this.position = position;
 		this.velocity = velocity;
+
+		foreach (var unit in GetAllUnitObject)
+		{
+			unit.ThisMovement.OnSetPositionAndVelocity(position, velocity);
+		}
 	}
 }

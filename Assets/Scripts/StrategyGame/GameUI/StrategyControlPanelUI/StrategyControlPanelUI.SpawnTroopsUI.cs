@@ -127,7 +127,9 @@ public partial class StrategyControlPanelUI // SpawnTroopsPanel
 				if (selectSector == null) return;
 				if (세력_병력_신규편재 > 세력_병력_최대허용량) return;
 
-				var infoList = numericSliders.Select(i=>(i.Item1,Mathf.RoundToInt(i.Item2.Value)));
+				var infoList = numericSliders
+					.Select(i=>(i.Item1,Mathf.RoundToInt(i.Item2.Value)))
+					.Where(i=>i.Item1 != UnitKey.None && i.Item2 > 0);
 				selectSector.Controller.On_SpawnTroops(new SpawnTroopsInfo(Value.FactionID, infoList.ToArray()));
 
 				viewStack.ClearViewStack();

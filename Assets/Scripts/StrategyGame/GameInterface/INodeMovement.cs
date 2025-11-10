@@ -58,6 +58,13 @@ public interface INodeMovement
 			MovementPlanList.Clear();
 	}
 
+	public Vector3 SmoothDampMove(Vector3 target, out Vector3 velocity, in float deltaTime)
+	{
+		Vector3 position = CurrentPosition;
+		velocity = CurrentVelocity;
+		float smoothTime = SmoothTime;
+		return Vector3.SmoothDamp(position, target, ref velocity, smoothTime, MaxSpeed, deltaTime);
+	}
 
 	void OnMoveStart();
 	void OnExitFirstNode();
