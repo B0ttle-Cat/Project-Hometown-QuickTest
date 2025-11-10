@@ -7,7 +7,7 @@ using UnityEngine;
 using static StrategyStartSetterData;
 
 [Serializable]
-public struct NetworkLine: IEquatable<NetworkLine>
+public struct NetworkLink: IEquatable<NetworkLink>
 {
 	[SerializeField, ReadOnly]
 	private Vector3 position;
@@ -41,7 +41,7 @@ public struct NetworkLine: IEquatable<NetworkLine>
 	public string NodeNameB { get => nodeNameB; }
 	public ConnectDirType ConnectDir { get => connectDir; }
 
-	public NetworkLine(SectorLinkData data)
+	public NetworkLink(SectorLinkData data)
 	{
 		if (data.connectDir == ConnectDirType.Backward)
 			data = data.ReverseDir;
@@ -73,10 +73,10 @@ public struct NetworkLine: IEquatable<NetworkLine>
 
     public override bool Equals(object obj)
     {
-        return obj is NetworkLine line && Equals(line);
+        return obj is NetworkLink line && Equals(line);
     }
 
-    public bool Equals(NetworkLine other)
+    public bool Equals(NetworkLink other)
     {
         return nodeNameA == other.nodeNameA &&
                nodeNameB == other.nodeNameB &&

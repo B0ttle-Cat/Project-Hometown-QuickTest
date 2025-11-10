@@ -539,7 +539,7 @@ public partial class StrategyMouseSelecter
 			float yMax = Mathf.Max(start.y, end.y);
 
 			Rect rect = Rect.MinMaxRect(xMin, yMin, xMax, yMax);
-			foreach (IList list in StrategyManager.Collector.GetAllLists())
+			foreach (IList list in StrategyManager.Collector.GetAllEnumerable())
 			{
 				foreach (IStrategyElement item in list)
 				{

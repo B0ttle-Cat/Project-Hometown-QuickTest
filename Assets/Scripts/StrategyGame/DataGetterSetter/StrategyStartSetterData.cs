@@ -287,7 +287,7 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		[HorizontalGroup, ValueDropdown("@GetSectorNames($property)"), HideLabel, SuffixLabel("Sector A  ",overlay: true)]
 		public string sectorA;
 		[HorizontalGroup(width:80), HideLabel]
-		public NetworkLine.ConnectDirType connectDir;
+		public NetworkLink.ConnectDirType connectDir;
 		[HorizontalGroup, ValueDropdown("@GetSectorNames($property)"), HideLabel, SuffixLabel("Sector B  ",overlay: true)]
 		public string sectorB;
 		[TableList]
@@ -319,8 +319,8 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 				{
 					sectorA = sectorB,
 					sectorB = sectorA,
-					connectDir = connectDir == NetworkLine.ConnectDirType.Forward ? NetworkLine.ConnectDirType.Backward :
-								 connectDir == NetworkLine.ConnectDirType.Backward ? NetworkLine.ConnectDirType.Forward :
+					connectDir = connectDir == NetworkLink.ConnectDirType.Forward ? NetworkLink.ConnectDirType.Backward :
+								 connectDir == NetworkLink.ConnectDirType.Backward ? NetworkLink.ConnectDirType.Forward :
 								 connectDir,
 					waypoint = waypoint?.Select(wp => new WaypointUtility.Waypoint()
 					{

@@ -133,7 +133,7 @@ public partial class UnitObject // TroopBelong
 	private TroopsObject troopBelong;
 	[ShowInInspector]
 	public TroopsObject TroopBelong { get => troopBelong; private set => troopBelong = value; }
-
+	public bool IsTroopBelong => TroopBelong != null;
 	public void SetTroopBelong(TroopsObject troopObject)
 	{
 		TroopBelong = troopObject;

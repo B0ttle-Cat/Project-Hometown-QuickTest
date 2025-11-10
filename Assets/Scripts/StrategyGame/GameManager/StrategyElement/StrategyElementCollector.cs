@@ -328,7 +328,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 	public List<IStrategyElement> OtherList => otherList?.List ?? new List<IStrategyElement>();
 	private Dictionary<Type, IList> _listCache;
 
-	public IEnumerable<IList> GetAllLists()
+	public IEnumerable<IList> GetAllEnumerable()
 	{
 		yield return SectorList;
 		yield return FactionList;
@@ -464,6 +464,12 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 		element.OnAddListener(action);
 
 		getCurrentList = element.IList is List<T> ? element.IList : null;
+	}
+	public void AddChangeListener<T>(Action<IStrategyElement, bool> action) where T : class, IStrategyElement
+	{
+		var element = GetElementByType<T>();
+
+		element.OnAddListener(action);
 	}
 	public void RemoveChangeListener<T>(Action<IStrategyElement, bool> action) where T : class, IStrategyElement
 	{
@@ -668,7 +674,7 @@ public partial class StrategyElementCollector // ForEach
 	#region Foreach
 	public void ForEachAll(Action<IStrategyElement> func)
 	{
-		foreach (var list in GetAllLists())
+		foreach (var list in GetAllEnumerable())
 		{
 			for (int i = 0 ; i < list.Count ; i++)
 			{

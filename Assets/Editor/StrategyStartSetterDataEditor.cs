@@ -98,9 +98,9 @@ public class StrategyStartSetterDataEditor : OdinEditor
 		// 연결선 색상 설정
 		Color color = net.connectDir switch
 		{
-			NetworkLine.ConnectDirType.Both => Color.green,
-			NetworkLine.ConnectDirType.Forward => Color.cyan,
-			NetworkLine.ConnectDirType.Backward => Color.magenta,
+			NetworkLink.ConnectDirType.Both => Color.green,
+			NetworkLink.ConnectDirType.Forward => Color.cyan,
+			NetworkLink.ConnectDirType.Backward => Color.magenta,
 			_ => Color.gray
 		};
 
@@ -140,9 +140,9 @@ public class StrategyStartSetterDataEditor : OdinEditor
 
 		string arrowText = net.connectDir switch
 		{
-			NetworkLine.ConnectDirType.Both => "↔",
-			NetworkLine.ConnectDirType.Forward => "→",
-			NetworkLine.ConnectDirType.Backward => "←",
+			NetworkLink.ConnectDirType.Both => "↔",
+			NetworkLink.ConnectDirType.Forward => "→",
+			NetworkLink.ConnectDirType.Backward => "←",
 			_ => "|"
 		};
 
@@ -150,7 +150,7 @@ public class StrategyStartSetterDataEditor : OdinEditor
 		DrawLabel((posA + posB) * 0.5f, $"{net.sectorA} {arrowText} {net.sectorB}", color);
 	}
 
-	private void DrawArrow(Vector3 from, Vector3 to, NetworkLine.ConnectDirType type)
+	private void DrawArrow(Vector3 from, Vector3 to, NetworkLink.ConnectDirType type)
 	{
 		Vector3 dir = (to - from).normalized;
 		Vector3 mid = Vector3.Lerp(from, to, 0.5f);
@@ -158,13 +158,13 @@ public class StrategyStartSetterDataEditor : OdinEditor
 
 		switch (type)
 		{
-			case NetworkLine.ConnectDirType.Forward:
+			case NetworkLink.ConnectDirType.Forward:
 			Handles.ConeHandleCap(0, mid - dir * size * 0.5f, Quaternion.LookRotation(dir), size, EventType.Repaint);
 			break;
-			case NetworkLine.ConnectDirType.Backward:
+			case NetworkLink.ConnectDirType.Backward:
 			Handles.ConeHandleCap(0, mid + dir * size * 0.5f, Quaternion.LookRotation(-dir), size, EventType.Repaint);
 			break;
-			case NetworkLine.ConnectDirType.Both:
+			case NetworkLink.ConnectDirType.Both:
 			Handles.ConeHandleCap(0, mid - dir * size * 0.5f, Quaternion.LookRotation(dir), size, EventType.Repaint);
 			Handles.ConeHandleCap(0, mid + dir * size * 0.5f, Quaternion.LookRotation(-dir), size, EventType.Repaint);
 			break;
