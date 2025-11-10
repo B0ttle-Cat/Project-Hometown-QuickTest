@@ -58,9 +58,9 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		[FoldoutGroup("@factionName")]
 		public Sprite factionIcon;
 
-		[FoldoutGroup("@factionName/Stats")] public int maxTroopsPoint;
-		[FoldoutGroup("@factionName/Stats")] public int requireTroopsPoint;
-		[FoldoutGroup("@factionName/Stats")] public int currentTroopsPoint;
+		[FoldoutGroup("@factionName/Stats")] public int maxOperationPoint;
+		[FoldoutGroup("@factionName/Stats")] public int requireOperationPoint;
+		[FoldoutGroup("@factionName/Stats")] public int currentOperationPoint;
 		[Space]
 		[FoldoutGroup("@factionName/Stats")] public int maxMaterialPoint;
 		[FoldoutGroup("@factionName/Stats")] public int currentMaterialPoint;
@@ -134,7 +134,7 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 			mainStatsData = Target.StatsData.Copy();
 			facilitiesStatsData = Target.FacilitiesData.Copy();
 			supportStatsData = Target.SupportData.Copy();
-			spawnTroopData = Target.SpawnTroopData.Copy();
+			spawnOperationData = Target.SpawnOperationData.Copy();
 			captureTime = Target.CaptureData.captureTime;
 
 			profileData.sectorName = Target.gameObject.name;
@@ -146,7 +146,7 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 			Target.Stats.SetData(mainStatsData.Copy(), true);
 			Target.Facilities.SetData(facilitiesStatsData.Copy(), true);
 			Target.Support.SetData(supportStatsData.Copy(), true);
-			Target.SpawnTroop.SetData(spawnTroopData.Copy(),true);
+			Target.SpawnOperation.SetData(spawnOperationData.Copy(),true);
 
 			var captureData =  Target.CaptureData;
 			captureData.captureTime = captureTime;
@@ -171,7 +171,7 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		[InlineProperty, HideLabel, FoldoutGroup("@GroupName/Support")]
 		public StrategyGamePlayData.SectorData.Support.Data supportStatsData;
 		[InlineProperty, HideLabel, FoldoutGroup("@GroupName/Spawn")]
-		public StrategyGamePlayData.SectorData.SpawnTroop.Data spawnTroopData;
+		public StrategyGamePlayData.SectorData.SpawnOperation.Data spawnOperationData;
 	}
 	[Serializable]
 	public struct UnitData

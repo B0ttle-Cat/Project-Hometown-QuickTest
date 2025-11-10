@@ -3,7 +3,7 @@
 public interface ISectorController
 {
 	SectorObject This { get; }
-	void On_SpawnTroops(in SpawnTroopsInfo spawnTroopsInfp);
+	void On_SpawnTroops(in SpawnTroopsInfo spawnTroopsInfo);
 	public readonly struct SpawnTroopsInfo
 	{
 		public readonly int factionID;
@@ -20,7 +20,7 @@ public interface ISectorController
 	void OnChangeSupport_Supply(float changeLevel);
 	void OnControlButton_ConstructFacilities();
 	void OnControlButton_DeployUniqueUnit();
-	void OnControlButton_SpawnTroops();
+	void OnControlButton_SpawnOperation();
 	void OnControlButton_UseFacilitiesSkill();
 	void OnFacilitiesConstruct_Finish(int slotIndex, string facilitiesKey);
 	void OnFacilitiesConstruct_Start(int slotIndex, string facilitiesKey);

@@ -314,7 +314,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 	[SerializeField]
 	private ElementList<UnitObject> unitList;
 	[SerializeField]
-	public ElementList<TroopsObject> troopsList;
+	public ElementList<OperationObject> operationList;
 	[SerializeField]
 	private ElementList<SkillObject> skillList;
 	[SerializeField]
@@ -323,7 +323,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 	public List<SectorObject> SectorList => sectorList?.List ?? new List<SectorObject>();
 	public List<Faction> FactionList => factionList?.List ?? new List<Faction>();
 	public List<UnitObject> UnitList => unitList?.List ?? new List<UnitObject>();
-	public List<TroopsObject> TroopsList => troopsList?.List ?? new List<TroopsObject>();
+	public List<OperationObject> OperationList => operationList?.List ?? new List<OperationObject>();
 	public List<SkillObject> SkillList => skillList?.List ?? new List<SkillObject>();
 	public List<IStrategyElement> OtherList => otherList?.List ?? new List<IStrategyElement>();
 	private Dictionary<Type, IList> _listCache;
@@ -333,7 +333,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 		yield return SectorList;
 		yield return FactionList;
 		yield return UnitList;
-		yield return TroopsList;
+		yield return OperationList;
 		yield return SkillList;
 		yield return OtherList;
 	}
@@ -342,7 +342,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 		InitSector();
 		InitFaction();
 		InitUnit();
-		InitTroops();
+		InitOperation();
 		InitSkill();
 		InitOther();
 	}
@@ -353,7 +353,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 			[typeof(SectorObject)] = SectorList,
 			[typeof(Faction)] = FactionList,
 			[typeof(UnitObject)] = UnitList,
-			[typeof(TroopsObject)] = TroopsList,
+			[typeof(OperationObject)] = OperationList,
 			[typeof(SkillObject)] = SkillList,
 			[typeof(IStrategyElement)] = OtherList
 		};
@@ -365,7 +365,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 			[typeof(SectorObject)] = sectorList,
 			[typeof(Faction)] = factionList,
 			[typeof(UnitObject)] = unitList,
-			[typeof(TroopsObject)] = troopsList,
+			[typeof(OperationObject)] = operationList,
 			[typeof(SkillObject)] = skillList,
 			[typeof(IStrategyElement)] = otherList,
 		};
@@ -373,7 +373,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 	public void InitSector() => (sectorList ??= new ElementList<SectorObject>()).Init(32);
 	public void InitFaction() => (factionList ??= new ElementList<Faction>()).Init(8);
 	public void InitUnit() => (unitList ??= new ElementList<UnitObject>()).Init(512);
-	public void InitTroops() => (troopsList ??= new ElementList<TroopsObject>()).Init(32);
+	public void InitOperation() => (operationList ??= new ElementList<OperationObject>()).Init(32);
 	public void InitSkill() => (skillList ??= new ElementList<SkillObject>()).Init(512);
 	public void InitOther() => (otherList ??= new ElementList<IStrategyElement>()).Init(64);
 	public void Dispose()
@@ -381,7 +381,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 		sectorList?.Dispose();
 		factionList?.Dispose();
 		unitList?.Dispose();
-		troopsList?.Dispose();
+		operationList?.Dispose();
 		skillList?.Dispose();
 		otherList?.Dispose();
 	}
@@ -392,7 +392,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 			IEnumerable<SectorObject> item => sectorList.AddElement(item),
 			IEnumerable<Faction> item => factionList.AddElement(item),
 			IEnumerable<UnitObject> item => unitList.AddElement(item),
-			IEnumerable<TroopsObject> item => troopsList.AddElement(item),
+			IEnumerable<OperationObject> item => operationList.AddElement(item),
 			IEnumerable<SkillObject> item => skillList.AddElement(item),
 			_ => otherList.AddElement(elements),
 		};
@@ -404,7 +404,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 			SectorObject item => sectorList.AddElement(item),
 			Faction item => factionList.AddElement(item),
 			UnitObject item => unitList.AddElement(item),
-			TroopsObject item => troopsList.AddElement(item),
+			OperationObject item => operationList.AddElement(item),
 			SkillObject item => skillList.AddElement(item),
 			_ => otherList.AddElement(element),
 		};
@@ -416,7 +416,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 			SectorObject item => sectorList.RemoveElement(item),
 			Faction item => factionList.RemoveElement(item),
 			UnitObject item => unitList.RemoveElement(item),
-			TroopsObject item => troopsList.RemoveElement(item),
+			OperationObject item => operationList.RemoveElement(item),
 			SkillObject item => skillList.RemoveElement(item),
 			_ => otherList.RemoveElement(element),
 		};
@@ -612,14 +612,14 @@ public partial class StrategyElementCollector // Finder
 	}
 	#endregion
 
-	#region Troops
-	public bool TryFindTroops(int troopsID, out TroopsObject find)
+	#region Operation
+	public bool TryFindOperation(int operationID, out OperationObject find)
 	{
-		return TryFindElement<TroopsObject>(f => f.ThisElement.ID == troopsID, out find);
+		return TryFindElement<OperationObject>(f => f.ThisElement.ID == operationID, out find);
 	}
-	public TroopsObject FindTroops(int troopsID)
+	public OperationObject FindOperation(int operationID)
 	{
-		return FindElement<TroopsObject>(f => f.ThisElement.ID == troopsID);
+		return FindElement<OperationObject>(f => f.ThisElement.ID == operationID);
 	}
 	#endregion
 
@@ -718,11 +718,11 @@ public partial class StrategyElementCollector // ForEach
 	public void ForEachUnit(Action<UnitObject, ForeachIndex> func) => ForEach(func);
 	#endregion
 
-	#region Troops
-	public void ForEachTroops(Func<TroopsObject, bool> func) => ForEach(func);
-	public void ForEachTroops(Action<TroopsObject> func) => ForEach(func);
-	public void ForEachTroops(Func<TroopsObject, ForeachIndex, bool> func) => ForEach(func);
-	public void ForEachTroops(Action<TroopsObject, ForeachIndex> func) => ForEach(func);
+	#region Operation
+	public void ForEachOperation(Func<OperationObject, bool> func) => ForEach(func);
+	public void ForEachOperation(Action<OperationObject> func) => ForEach(func);
+	public void ForEachOperation(Func<OperationObject, ForeachIndex, bool> func) => ForEach(func);
+	public void ForEachOperation(Action<OperationObject, ForeachIndex> func) => ForEach(func);
 	#endregion
 
 	#region Skill

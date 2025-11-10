@@ -17,8 +17,9 @@ public partial class UnitObject : INodeMovement
 	float INodeMovement.SmoothTime => smoothTime;
 	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
 	float INodeMovement.MaxSpeed => GetStateValue(StrategyGamePlayData.StatsType.유닛_이동속도);
-	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
-	int INodeMovement.RecentVisitedNode => StrategyManager.SectorNetwork.NameToIndex(SectorData.ConnectSectorName);
+	[HideInEditorMode, FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
+	int INodeMovement.RecentVisitedNode => StrategyManager.IsNotReady ? default
+		: StrategyManager.SectorNetwork.NameToIndex(SectorData.ConnectSectorName);
 	LinkedList<INodeMovement.MovementPlan> INodeMovement.MovementPlanList { get; set; }
 	
     void INodeMovement.OnMoveStart()

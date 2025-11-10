@@ -463,9 +463,9 @@ public partial class StrategyGamePlayData
 		}
 
 		[Serializable]
-		public class SpawnTroop : GamePlayData<SpawnTroop.Data>
+		public class SpawnOperation : GamePlayData<SpawnOperation.Data>
 		{
-			public SpawnTroop(Data data) : base(data)
+			public SpawnOperation(Data data) : base(data)
 			{
 			}
 			[Serializable]

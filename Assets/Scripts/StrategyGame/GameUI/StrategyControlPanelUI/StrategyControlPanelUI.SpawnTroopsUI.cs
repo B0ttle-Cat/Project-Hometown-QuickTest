@@ -9,32 +9,32 @@ using UnityEngine.UI;
 
 using static ISectorController;
 using static StrategyGamePlayData;
-public partial class StrategyControlPanelUI // SpawnTroopsPanel
+public partial class StrategyControlPanelUI // SpawnOperationPanel
 {
-	[SerializeField, FoldoutGroup("SpawnTroops")]
-	private GameObject spawnTroopsPrefab;
-	[SerializeField, FoldoutGroup("SpawnTroops")]
-	private Transform spawnTroopsRoot;
-	[SerializeField, FoldoutGroup("SpawnTroops"), InlineProperty, HideLabel]
-	private SpawnTroopsPanel spawnTroopsPanel;
-	public IControlPanel ShowSpawnTroops()
+	[SerializeField, FoldoutGroup("SpawnOperation")]
+	private GameObject spawnOperationPrefab;
+	[SerializeField, FoldoutGroup("SpawnOperation")]
+	private Transform spawnOperationRoot;
+	[SerializeField, FoldoutGroup("SpawnOperation"), InlineProperty, HideLabel]
+	private SpawnOperationPanel spawnOperationPanel;
+	public IControlPanel ShowSpawnOperation()
 	{
-		spawnTroopsPanel = new SpawnTroopsPanel(spawnTroopsPrefab, spawnTroopsRoot, this);
-		ViewStack.Push(spawnTroopsPanel);
-		return spawnTroopsPanel;
+		spawnOperationPanel = new SpawnOperationPanel(spawnOperationPrefab, spawnOperationRoot, this);
+		ViewStack.Push(spawnOperationPanel);
+		return spawnOperationPanel;
 	}
-	public void HideSpawnTroops()
+	public void HideSpawnOperation()
 	{
-		if (spawnTroopsPanel == null) return;
-		ViewStack.Pop(spawnTroopsPanel);
-		spawnTroopsPanel = null;
+		if (spawnOperationPanel == null) return;
+		ViewStack.Pop(spawnOperationPanel);
+		spawnOperationPanel = null;
 	}
 	[Serializable]
-	public class SpawnTroopsPanel : ControlPanelUI, IControlPanel
+	public class SpawnOperationPanel : ControlPanelUI, IControlPanel
 	{
 		[SerializeField, FoldoutGroup("FloatingPanelUI"), InlineProperty, HideLabel]
 		private SpawnPanel sectorPanel;
-		public SpawnTroopsPanel(GameObject prefab, Transform root, StrategyControlPanelUI panelUI) : base(prefab, root, panelUI)
+		public SpawnOperationPanel(GameObject prefab, Transform root, StrategyControlPanelUI panelUI) : base(prefab, root, panelUI)
 		{
 			sectorPanel = null;
 		}

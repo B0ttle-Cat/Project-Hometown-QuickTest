@@ -8,14 +8,14 @@ using UnityEngine;
 
 using static StrategyGamePlayData;
 
-public partial class TroopsObject
+public partial class OperationObject
 {
 	[SerializeField]
-	private int troopsID;
+	private int operationID;
 	[SerializeField]
 	private int factionID;
 	[ShowInInspector]
-	private Dictionary<UnitKey, UnitListInTroops> unitOrganization;
+	private Dictionary<UnitKey, UnitListInOperation> unitOrganization;
 	private IEnumerable<int> GetAllUnitID
 	{
 		get
@@ -54,16 +54,16 @@ public partial class TroopsObject
 		}
 	}
 	[Serializable]
-	public class UnitListInTroops
+	public class UnitListInOperation
 	{
-		private TroopsObject troops;
+		private OperationObject operation;
 		[SerializeField]
 		private List<int> unitIDs;
 		public List<int> UnitIDList => unitIDs;
 
-		public UnitListInTroops(TroopsObject troops)
+		public UnitListInOperation(OperationObject operation)
 		{
-			this.troops = troops;
+			this.operation = operation;
 			unitIDs = new List<int>();
 		}
 		public bool Add(UnitObject unitObject)
@@ -76,7 +76,7 @@ public partial class TroopsObject
 			if (unitIDs.Contains(unitID)) return false;
 
 			unitIDs.Add(unitID);
-			unitObject.SetTroopBelong(troops);
+			unitObject.SetOperationBelong(operation);
 			return true;
 		}
 		public bool Remove(UnitObject unitObject)
@@ -88,19 +88,19 @@ public partial class TroopsObject
 
 			if (unitIDs.Remove(unitID))
 			{
-				unitObject.RelaseTroopBelong();
+				unitObject.RelaseOperationBelong();
 				return true;
 			}
 			return false;
 		}
 	}
 
-	public int TroopsID { get => troopsID; private set => troopsID = value; }
+	public int OperationID { get => operationID; private set => operationID = value; }
 
-	public TroopsObject(int factionID, List<int> unitList)
+	public OperationObject(int factionID, List<int> unitList)
 	{
 		this.factionID = factionID;
-		unitOrganization = new Dictionary<UnitKey, UnitListInTroops>();
+		unitOrganization = new Dictionary<UnitKey, UnitListInOperation>();
 
 		int length = unitList.Count;
 		for (int i = 0 ; i < length ; i++)
@@ -128,7 +128,7 @@ public partial class TroopsObject
 		}
 		else
 		{
-			unitList = new UnitListInTroops(this);
+			unitList = new UnitListInOperation(this);
 			unitList.Add(unitObject);
 			unitOrganization.Add(unitKey, unitList);
 		}
@@ -145,13 +145,13 @@ public partial class TroopsObject
 		}
 	}
 }
-public partial class TroopsObject // Stats
+public partial class OperationObject // Stats
 {
 	int computeFrame = -1;
 
 	private Vector3 position;
 	private int moveSpeed;
-	public void ComputeTroopsValue()
+	public void ComputeOperationValue()
 	{
 		int thisFrame = Time.frameCount;
 		if(computeFrame == thisFrame) return;
@@ -177,11 +177,11 @@ public partial class TroopsObject // Stats
 		return Mathf.RoundToInt(average);
 	}
 }
-public partial class TroopsObject : IStrategyElement
+public partial class OperationObject : IStrategyElement
 {
 	public IStrategyElement ThisElement => this;
 	bool IStrategyElement.IsInCollector { get; set; }
-	int IStrategyElement.ID { get => TroopsID; set => TroopsID = value; }
+	int IStrategyElement.ID { get => OperationID; set => OperationID = value; }
 	void IStrategyElement.InStrategyCollector()
 	{
 	}
@@ -195,7 +195,7 @@ public partial class TroopsObject : IStrategyElement
 	{
 	}
 }
-public partial class TroopsObject : INodeMovement
+public partial class OperationObject : INodeMovement
 {
 	private Vector3 velocity;
 	private float smoothTime;

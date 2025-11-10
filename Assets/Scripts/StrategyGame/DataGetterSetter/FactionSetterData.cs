@@ -13,7 +13,7 @@
 //		public Color factionColor;
 //		public Sprite factionIcon;
 
-//		public int maxTroopsPoint;
+//		public int maxOperationPoint;
 
 //		public GameObject defaultUnitPrefab;
 //	}

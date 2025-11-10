@@ -5,7 +5,7 @@
 
     public void On_SpawnTroops(in ISectorController.SpawnTroopsInfo spawnTroopsInfo)
     {
-		StrategyElementUtility.Instantiate(in spawnTroopsInfo);
+		StrategyElementUtility.Instantiate(this, in spawnTroopsInfo);
 	}
 
     void ISectorController.OnChangeSupport_Defensive(float changeLevel)
@@ -27,10 +27,10 @@
     {
     }
 
-    void ISectorController.OnControlButton_SpawnTroops()
+    void ISectorController.OnControlButton_SpawnOperation()
     {
 		StrategyManager.GameUI.ControlPanelUI.OpenUI();
-		var selecter = StrategyManager.GameUI.ControlPanelUI.ShowSpawnTroops();
+		var selecter = StrategyManager.GameUI.ControlPanelUI.ShowSpawnOperation();
 		selecter.AddTarget(this);
 	}
     void ISectorController.OnControlButton_UseFacilitiesSkill()

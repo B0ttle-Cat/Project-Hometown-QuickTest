@@ -90,7 +90,7 @@ public partial class StrategyControlPanelUI // SectorSelectPanel
 			public event UnityAction onShowDetail;
 			public event UnityAction onDeployUniqueUnit;
 			public event UnityAction onConstructFacilities;
-			public event UnityAction onPlanningTroopMovements;
+			public event UnityAction onPlanningOperationMovements;
 			public event UnityAction onUseFacilitiesSkill;
 			public SectorPanel(ControlPanelUI panel, SectorObject sector) : base(panel, sector) {}
 			protected override void OnInit()
@@ -123,7 +123,7 @@ public partial class StrategyControlPanelUI // SectorSelectPanel
 				onShowDetail = null;
 				onDeployUniqueUnit = null;
 				onConstructFacilities = null;
-				onPlanningTroopMovements = null;
+				onPlanningOperationMovements = null;
 				onUseFacilitiesSkill = null;
 			}
 			protected override void OnAfterChangeValue()
@@ -141,7 +141,7 @@ public partial class StrategyControlPanelUI // SectorSelectPanel
 				onShowDetail = () => Value.Controller.OnShowUI_DetailUI();
 				onDeployUniqueUnit = () => Value.Controller.OnControlButton_DeployUniqueUnit();
 				onConstructFacilities = () => Value.Controller.OnControlButton_ConstructFacilities();
-				onPlanningTroopMovements = () => Value.Controller.OnControlButton_SpawnTroops();
+				onPlanningOperationMovements = () => Value.Controller.OnControlButton_SpawnOperation();
 				onUseFacilitiesSkill = () => Value.Controller.OnControlButton_UseFacilitiesSkill();
 			}
 			private void OnChangeProfile(StrategyGamePlayData.SectorData.Profile.Data data)
@@ -217,7 +217,7 @@ public partial class StrategyControlPanelUI // SectorSelectPanel
 			private void UpdateFillRectUI()
 			{
 				SetFillRectUI("Fill Durability", Value.GetDurability());
-				SetFillRectUI("Fill Troops", Value.GetTroops());
+				SetFillRectUI("Fill Operation", Value.GetOperation());
 				SetFillRectUI("Fill Material", Value.GetMaterial());
 				SetFillRectUI("Fill Electric", Value.GetElectric());
 			}
@@ -261,7 +261,7 @@ public partial class StrategyControlPanelUI // SectorSelectPanel
 				if (PairChain.TryFindPair<Button>("병력 이동", out var moveButton))
 				{
 					moveButton.onClick.RemoveAllListeners();
-					moveButton.onClick.AddListener(()=>onPlanningTroopMovements?.Invoke());
+					moveButton.onClick.AddListener(()=>onPlanningOperationMovements?.Invoke());
 				}
 				if (PairChain.TryFindPair<Button>("시설 장비 사용", out var useButton))
 				{

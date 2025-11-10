@@ -1,4 +1,4 @@
-%YAML 1.1
+﻿%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!29 &1
 OcclusionCullingSettings:
@@ -1719,9 +1719,9 @@ MonoBehaviour:
     sectorPanel:
       value: {fileID: 0}
       iconList: []
-  spawnTroopsPrefab: {fileID: 3327491519791233530, guid: 0b08b9717e980de44a4c9fa735a2b93a, type: 3}
-  spawnTroopsRoot: {fileID: 293437780}
-  spawnTroopsPanel:
+  spawnOperationPrefab: {fileID: 3327491519791233530, guid: 0b08b9717e980de44a4c9fa735a2b93a, type: 3}
+  spawnOperationRoot: {fileID: 293437780}
+  spawnOperationPanel:
     sectorPanel: {}
 --- !u!223 &117014631
 Canvas:
@@ -2272,7 +2272,7 @@ MonoBehaviour:
     mainInfo: {fileID: 638748987557167112, guid: fee8ccb1d840c8d47a53695f3f01c015, type: 3}
     support: {fileID: 6440992554431209310, guid: d9aa4dfba9e54a742b4868b952e0a019, type: 3}
     facilities: {fileID: 4447532916768258166, guid: 3d31b2933d4aeac4b83fcaa683f7afb1, type: 3}
-    troops: {fileID: 5509376157138346954, guid: 0ad1cf9819428a544b25a1aea5ec9eb8, type: 3}
+    operation: {fileID: 5509376157138346954, guid: 0ad1cf9819428a544b25a1aea5ec9eb8, type: 3}
   sectorDetailsPanelUI:
     lastDetailsType: 0
 --- !u!1 &169643300
@@ -3151,7 +3151,7 @@ GameObject:
   m_Component:
   - component: {fileID: 293437780}
   m_Layer: 5
-  m_Name: SpawnTroops
+  m_Name: SpawnOperation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4459,7 +4459,7 @@ GameObject:
   - component: {fileID: 388215295}
   - component: {fileID: 388215294}
   m_Layer: 5
-  m_Name: Button_Troops
+  m_Name: Button_Operation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8002,7 +8002,7 @@ GameObject:
   m_Component:
   - component: {fileID: 906578735}
   m_Layer: 5
-  m_Name: TroopsLabelRoot
+  m_Name: OperationLabelRoot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16072,7 +16072,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2025135604}
   m_Layer: 5
-  m_Name: SectorTroops
+  m_Name: SectorOperation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

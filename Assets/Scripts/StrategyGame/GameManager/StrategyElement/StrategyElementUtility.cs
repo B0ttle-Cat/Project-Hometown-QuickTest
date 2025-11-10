@@ -30,11 +30,13 @@ public static class StrategyElementUtility
 
 		return unitObject;
 	}
-	public static TroopsObject Instantiate(in ISectorController.SpawnTroopsInfo troopsInfo)
+	public static OperationObject Instantiate(SectorObject sector, in ISectorController.SpawnTroopsInfo spawnTroopsInfo)
 	{
-		int factionID = troopsInfo.factionID;
-		var organizations = troopsInfo.organizations;
+		int factionID = spawnTroopsInfo.factionID;
+		var organizations = spawnTroopsInfo.organizations;
 		int length = organizations.Length;
+
+		Vector3 randomPosCenter = sector.transform.position;
 
 		List<int> spawnUnitIds = new List<int>(length);
 		for (int i = 0 ; i < length ; i++)
@@ -42,11 +44,12 @@ public static class StrategyElementUtility
 			(UnitKey key, int count) = organizations[i];
 			if (key == UnitKey.None || count <= 0) continue;
 			UnitObject unit = Instantiate(key, factionID);
+			unit.transform.position = randomPosCenter;
 			spawnUnitIds.Add(unit.UnitID);
 		}
 
-        var troopsObject = new TroopsObject(troopsInfo.factionID, spawnUnitIds);
-		StrategyManager.Collector.AddElement<TroopsObject>(troopsObject);
-		return troopsObject;
+        var operationObject = new OperationObject(spawnTroopsInfo.factionID, spawnUnitIds);
+		StrategyManager.Collector.AddElement<OperationObject>(operationObject);
+		return operationObject;
 	}
 }

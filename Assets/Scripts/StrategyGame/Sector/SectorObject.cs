@@ -12,7 +12,7 @@ public partial class SectorObject : MonoBehaviour
 	private SectorData.MainStats mainStats;
 	private SectorData.Facilities facilities;
 	private SectorData.Support support;
-	private SectorData.SpawnTroop spawnTroop;
+	private SectorData.SpawnOperation spawnOperation;
 
 	// 시설물에 대한 스텟
 	private StatsGroup facilitiesStatsGroup;
@@ -69,13 +69,13 @@ public partial class SectorObject // Getter
 	public SectorData.MainStats Stats => mainStats;
 	public SectorData.Facilities Facilities => facilities;
 	public SectorData.Support Support => support;
-	public SectorData.SpawnTroop SpawnTroop => spawnTroop;
+	public SectorData.SpawnOperation SpawnOperation => spawnOperation;
 	public ref readonly SectorData.Profile.Data ProfileData => ref profile.ReadonlyData();
 	public ref readonly SectorData.Capture.Data CaptureData => ref capture.ReadonlyData();
 	public ref readonly SectorData.MainStats.Data StatsData => ref mainStats.ReadonlyData();
 	public ref readonly SectorData.Facilities.Data FacilitiesData => ref facilities.ReadonlyData();
 	public ref readonly SectorData.Support.Data SupportData => ref support.ReadonlyData();
-	public ref readonly SectorData.SpawnTroop.Data SpawnTroopData => ref spawnTroop.ReadonlyData();
+	public ref readonly SectorData.SpawnOperation.Data SpawnOperationData => ref spawnOperation.ReadonlyData();
 
 	public StatsList MainStatsList => StatsData.GetStatsList();
 	public StatsGroup FacilitiesBuffGroup => facilitiesStatsGroup ??= new StatsGroup();
@@ -91,7 +91,7 @@ public partial class SectorObject // Getter
 	{
 		return (0, 0);
 	}
-	public (int value, int max) GetTroops()
+	public (int value, int max) GetOperation()
 	{
 		return (0, 0);
 	}

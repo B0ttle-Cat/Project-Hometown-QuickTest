@@ -52,7 +52,7 @@ public partial class UnitObject : MonoBehaviour
 			protectType = ProtectionType.일반,
 		});
 		sector = new UnitData.ConnectSector(new());
-		troopID = -1;
+		operationID = -1;
 	}
 	public void Init(UnitProfileObject data, int factionID = -1)
 	{
@@ -69,7 +69,7 @@ public partial class UnitObject : MonoBehaviour
 			protectType = data.protectType,
 		});
 		sector = new UnitData.ConnectSector(new());
-		troopID = -1;
+		operationID = -1;
 		InitOther(data);
 	}
 	public void Init(in StrategyStartSetterData.UnitData data) // UnitData
@@ -89,7 +89,7 @@ public partial class UnitObject : MonoBehaviour
 			protectType = profileObj.protectType,
 		});
 		sector = new UnitData.ConnectSector(new(data.connectSectorName));
-		troopID = -1;
+		operationID = -1;
 		InitOther(profileObj);
 	}
 	private void InitOther(UnitProfileObject data)
@@ -130,27 +130,28 @@ public partial class UnitObject // StateValue
 	public int GetStateValue(StatsType type) => MainStatsList.GetValueInt(type) + SkillBuffGroup.GetValueInt(type);
 }
 
-public partial class UnitObject // TroopBelong
+public partial class UnitObject // OperationBelong
 {
-	private int troopID;
-	public int TroopID => troopID;
-	[ShowInInspector, FoldoutGroup("TroopBelong", VisibleIf = "IsTroopBelong"), InlineProperty, HideLabel]
-	public TroopsObject TroopBelong => StrategyManager.Collector.FindTroops(troopID);
-	public bool IsTroopBelong => TroopID >= 0;
+	private int operationID;
+	public int OperationID => operationID;
+	[HideInEditorMode, FoldoutGroup("OperationBelong", VisibleIf = "IsOperationBelong"), InlineProperty, HideLabel]
+	public OperationObject OperationBelong => StrategyManager.IsNotReady ? default : 
+		StrategyManager.Collector.FindOperation(operationID);
+	public bool IsOperationBelong => OperationID >= 0;
 
 
-    public void SetTroopBelong(TroopsObject troopObject)
+    public void SetOperationBelong(OperationObject operationObject)
 	{
-		troopID = troopObject == null ? -1 : troopObject.TroopsID;
+		operationID = operationObject == null ? -1 : operationObject.OperationID;
 	}
-	public void RelaseTroopBelong()
+	public void RelaseOperationBelong()
 	{
-		troopID = -1;
+		operationID = -1;
 	}
-	public void HideWithTroop()
+	public void HideWithOperation()
 	{
 	}
-	public void ShowWithTroop()
+	public void ShowWithOperation()
 	{
 	}
 }

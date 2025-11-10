@@ -40,7 +40,7 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 			public RectTransform mainInfo;
 			public RectTransform support;
 			public RectTransform facilities;
-			public RectTransform troops;
+			public RectTransform operation;
 		}
 		public enum DetailsType
 		{
@@ -48,7 +48,7 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 			MainInfo,
 			Support,
 			Facilities,
-			Troops,
+			Operation,
 		}
 
 		private  StrategyDetailsPanelUI ThisPanelUI;
@@ -72,25 +72,25 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 		[ShowInInspector, HideInEditorMode]
 		private SectorDetails_Facilities sectorDetails_Facilities { get; set; }
 		[ShowInInspector, HideInEditorMode]
-		private SectorDetails_Troops sectorDetails_Troops { get; set; }
+		private SectorDetails_Operation sectorDetails_Operation { get; set; }
 		public void OnShowSectorDetail(SectorObject sectorObject, DetailsType detailsType = DetailsType.None)
 		{
 			sectorDetails_MainInfo?.Dispose();
 			sectorDetails_Support?.Dispose();
 			sectorDetails_Facilities?.Dispose();
-			sectorDetails_Troops?.Dispose();
+			sectorDetails_Operation?.Dispose();
 
 			sectorDetails_MainInfo = new SectorDetails_Info(sectorObject, ThisPanelUI, uiPrefabStruct.mainInfo);
 			sectorDetails_Support = new SectorDetails_Support(sectorObject, ThisPanelUI, uiPrefabStruct.support);
 			sectorDetails_Facilities = new SectorDetails_Facilities(sectorObject, ThisPanelUI, uiPrefabStruct.facilities);
-			sectorDetails_Troops = new SectorDetails_Troops(sectorObject, ThisPanelUI, uiPrefabStruct.troops);
+			sectorDetails_Operation = new SectorDetails_Operation(sectorObject, ThisPanelUI, uiPrefabStruct.operation);
 
 			ThisPanelUI.tabControl.ClearTab();
 			ThisPanelUI.tabControl.AddTab(("", null),
 				("거점 정보", ShowTabAndContnet_Info),
 				("지원 정책", ShowTabAndContnet_Support),
 				("설치 시설", ShowTabAndContnet_Facilities),
-				("주둔 병력", ShowTabAndContnet_Troops)
+				("주둔 병력", ShowTabAndContnet_Operation)
 				);
 
 			if (detailsType == DetailsType.None) detailsType = lastDetailsType;
@@ -99,7 +99,7 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 				DetailsType.MainInfo => ShowTabAndContnet_Info,
 				DetailsType.Support => ShowTabAndContnet_Support,
 				DetailsType.Facilities => ShowTabAndContnet_Facilities,
-				DetailsType.Troops => ShowTabAndContnet_Troops,
+				DetailsType.Operation => ShowTabAndContnet_Operation,
 				_ => ShowTabAndContnet_Info,
 			};
 			onShow();
@@ -109,7 +109,7 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 
 				sectorDetails_Support.Hide();
 				sectorDetails_Facilities.Hide();
-				sectorDetails_Troops.Hide();
+				sectorDetails_Operation.Hide();
 
 				sectorDetails_MainInfo.Show();
 			}
@@ -119,7 +119,7 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 
 				sectorDetails_MainInfo.Hide();
 				sectorDetails_Facilities.Hide();
-				sectorDetails_Troops.Hide();
+				sectorDetails_Operation.Hide();
 
 				sectorDetails_Support.Show();
 			}
@@ -129,19 +129,19 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 
 				sectorDetails_MainInfo.Hide();
 				sectorDetails_Support.Hide();
-				sectorDetails_Troops.Hide();
+				sectorDetails_Operation.Hide();
 
 				sectorDetails_Facilities.Show();
 			}
-			void ShowTabAndContnet_Troops()
+			void ShowTabAndContnet_Operation()
 			{
-				lastDetailsType = DetailsType.Troops;
+				lastDetailsType = DetailsType.Operation;
 
 				sectorDetails_MainInfo.Hide();
 				sectorDetails_Support.Hide();
 				sectorDetails_Facilities.Hide();
 
-				sectorDetails_Troops.Show();
+				sectorDetails_Operation.Show();
 			}
 		}
 		public void OnHideSectorDetail()
@@ -149,12 +149,12 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 			sectorDetails_MainInfo?.Dispose();
 			sectorDetails_Support?.Dispose();
 			sectorDetails_Facilities?.Dispose();
-			sectorDetails_Troops?.Dispose();
+			sectorDetails_Operation?.Dispose();
 
 			sectorDetails_MainInfo = null;
 			sectorDetails_Support = null;
 			sectorDetails_Facilities = null;
-			sectorDetails_Troops = null;
+			sectorDetails_Operation = null;
 		}
 		public abstract class SectorContentPanel : DetailsContentPanel
 		{
@@ -370,7 +370,7 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 			void UpdateFillRectUI()
 			{
 				SetFillRectUI("Fill Durability", selectSector.GetDurability(), "방어벽 없음");
-				SetFillRectUI("Fill Troops", selectSector.GetTroops(), "병력 보충 불가");
+				SetFillRectUI("Fill Operation", selectSector.GetOperation(), "병력 보충 불가");
 				SetFillRectUI("Fill Material", selectSector.GetMaterial(), "물자 보충 불가");
 				SetFillRectUI("Fill Electric", selectSector.GetElectric(), "전력 보충 불가");
 			}
@@ -779,9 +779,9 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 			}
 		}
 		[Serializable]
-		public class SectorDetails_Troops : SectorContentPanel
+		public class SectorDetails_Operation : SectorContentPanel
 		{
-			public SectorDetails_Troops(SectorObject sectorObject, StrategyDetailsPanelUI thisPanel, RectTransform contentPrefab)
+			public SectorDetails_Operation(SectorObject sectorObject, StrategyDetailsPanelUI thisPanel, RectTransform contentPrefab)
 				: base(sectorObject, thisPanel, contentPrefab)
 			{
 

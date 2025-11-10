@@ -7,6 +7,9 @@ using static StrategyGamePlayData;
 public class StrategyManager : MonoBehaviour
 {
 	public static StrategyManager Manager;
+	
+	public static bool IsReady => Manager != null && Manager.didAwake;
+	public static bool IsNotReady => !IsReady;
 	public static Camera MainCamera => Manager == null ? null : Manager.mainCamera;
 	public static StrategyGameUI GameUI => Manager == null ? null : Manager.gameUI;
 	public static KeyValueData GamePlayTempData => Manager == null ? null : Manager.gamePlayTempData;
@@ -26,10 +29,10 @@ public class StrategyManager : MonoBehaviour
 	//public static 
 	public bool IsGameSceneReady { get; private set; }
 
-	private KeyValueData gamePlayTempData;
 	[SerializeField]
 	private Camera mainCamera;
 	private StrategyGameUI gameUI;
+	private KeyValueData gamePlayTempData;
 	private StrategyElementCollector collector;
 	private StrategyMissionTree mission;
 	private StrategyStatistics statistics;
