@@ -2,7 +2,6 @@
 
 public partial class UnitObject : ISelectableByMouse
 {
-
 	public Vector3 clickCenter => transform.position;
 	bool ISelectableByMouse.IsSelectMouse { get; set; }
 	bool ISelectableByMouse.IsPointEnter { get; set; }
@@ -12,11 +11,6 @@ public partial class UnitObject : ISelectableByMouse
 	}
 	void ISelectableByMouse.OnPointExit()
 	{
-	}
-	bool ISelectableByMouse.HasPass(out ISelectableByMouse pass)
-	{
-		pass = TroopBelong;
-		return pass != null;
 	}
 	bool ISelectableByMouse.OnSelect()
 	{

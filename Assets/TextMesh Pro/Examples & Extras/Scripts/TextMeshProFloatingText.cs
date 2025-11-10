@@ -191,7 +191,7 @@ namespace TMPro.Examples
 
                 int_counter = (int)current_Count;
                 m_textMesh.text = int_counter.ToString();
-                //Debug.Log("Current Count:" + current_Count.ToString("f2"));
+                //Debug.Log("Current CurrCount:" + current_Count.ToString("f2"));
 
                 m_textMesh.color = new Color32(start_color.r, start_color.g, start_color.b, (byte)alpha);
 

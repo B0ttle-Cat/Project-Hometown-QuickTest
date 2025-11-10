@@ -16,7 +16,7 @@ namespace TMPro.Examples
         //private TMP_InputField m_inputfield;
 
 
-        private const string k_label = "The count is <#0080ff>{0}</color>";
+        private const string k_label = "The currCount is <#0080ff>{0}</color>";
         private int count;
 
         void Awake()

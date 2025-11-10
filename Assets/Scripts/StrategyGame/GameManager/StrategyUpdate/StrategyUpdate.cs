@@ -12,7 +12,6 @@ public interface IStrategyUpdater : IDisposable
 public partial class StrategyUpdate : MonoBehaviour
 {
 	private StrategyUpdateTempData tempData;
-
 	private List<(UpdateLogicSort type, IStrategyUpdater updater)> updateList;
 	public StrategyUpdateTempData TempData => tempData;
 
@@ -142,9 +141,7 @@ public partial class StrategyUpdate : MonoBehaviour
 			}
 		}
 	}
-
 	private StrategyTime ThisTime { get; set; }
-
 	internal void SetTime(StrategyTime time)
 	{
 		ThisTime = time;

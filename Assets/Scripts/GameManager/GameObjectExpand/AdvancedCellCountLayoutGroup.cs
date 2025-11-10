@@ -5,7 +5,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
-[AddComponentMenu("Layout/Advanced Cell Count Layout Group")]
+[AddComponentMenu("Layout/Advanced Cell CurrCount Layout Group")]
 public class AdvancedCellCountLayoutGroup : LayoutGroup
 {
 	public enum CellAxis { Horizontal, Vertical }

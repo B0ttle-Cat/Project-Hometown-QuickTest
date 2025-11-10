@@ -176,21 +176,21 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 	[Serializable]
 	public struct UnitData
 	{
-		[FoldoutGroup("@unitKey")]
+		[FoldoutGroup("@UnitKey")]
 		public UnitKey unitKey;
-		[FoldoutGroup("@unitKey")]
+		[FoldoutGroup("@UnitKey")]
 		[ValueDropdown("@GetFactionNames($property)")]
 		[InlineButton("Clear_factionName","Clear")]
 		public string factionName;
-		[FoldoutGroup("@unitKey")]
+		[FoldoutGroup("@UnitKey")]
 		public UnitProfileObject unitProfile;
 
-		[FoldoutGroup("@unitKey")]
+		[FoldoutGroup("@UnitKey")]
 		public Vector3 position;
-		[FoldoutGroup("@unitKey")]
+		[FoldoutGroup("@UnitKey")]
 		public Vector3 rotation;
 
-		[FoldoutGroup("@unitKey")]
+		[FoldoutGroup("@UnitKey")]
 		[ValueDropdown("@GetSectorNames($property)")]
 		[LabelText("SectorName")]
 		[InlineButton("Clear_connectSectorName","Clear")]

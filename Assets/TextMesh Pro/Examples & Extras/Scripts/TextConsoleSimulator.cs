@@ -58,7 +58,7 @@ namespace TMPro.Examples
             {
                 if (hasTextChanged)
                 {
-                    totalVisibleCharacters = textInfo.characterCount; // OnUpdate visible character count.
+                    totalVisibleCharacters = textInfo.characterCount; // OnUpdate visible character currCount.
                     hasTextChanged = false; 
                 }
 

@@ -9,11 +9,11 @@ public interface ISectorController
 	public readonly struct SpawnTroopsInfo
 	{
 		public readonly int factionID;
-		public readonly (UnitKey key, int count, int limit)[] organizations;
+		public readonly (UnitKey key, int plan, int count)[] organizations;
 		public SpawnTroopsInfo(int factionID, params (UnitKey, int)[] organizations)
 		{
 			this.factionID = factionID;
-			this.organizations = organizations.Select(o => (o.Item1, 0, o.Item2)).ToArray();
+			this.organizations = organizations.Select(o => (o.Item1, o.Item2, 0)).ToArray();
 		}
 		public SpawnTroopsInfo(int factionID, params (UnitKey, int, int)[] organizations)
 		{

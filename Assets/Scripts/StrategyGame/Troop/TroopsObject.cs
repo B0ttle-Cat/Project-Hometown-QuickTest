@@ -14,106 +14,74 @@ public partial class TroopsObject : MonoBehaviour
 	[SerializeField]
 	private int factionID;
 	[ShowInInspector]
-	private  Dictionary<UnitKey, OrganizationPlan> planList;
-
-	private UnitKey influencerKey;
-	public UnitObject InfluencerUnit {get
-		{
-			if(!planList.TryGetValue(influencerKey, out var plan))
-			{
-				return null;
-			}
-			return plan.UnitObject;
-		}
-	}
+	private  Dictionary<UnitKey, OrganizationCounter> organizationPlan;
 
 	[Serializable]
-	public struct OrganizationPlan
+	public struct OrganizationCounter
 	{
-		private readonly UnitKey unitKey;   // 어떤 타입의 유닛이 편제 되었는지?
-		private readonly int unitID;        // 편제된 유닛의 ID
-		private int count;                  // 편제된 유닛의 현재 수
-		private int limit;                  // 편제된 유닛 회복 제한
-		public OrganizationPlan(UnitKey unitKey, int unitID, int count, int limit)
+		public readonly UnitKey UnitKey;   // 편제된 유닛 타입
+		public int planCount;              // 편제된 계획
+		public int currCount;              // 편제된 현제 수
+		public readonly int PlanCount => planCount;
+		public readonly int CurrCount => currCount;
+		public OrganizationCounter(UnitKey unitKey, int planCount, int currCount)
 		{
-			this.unitKey = unitKey;
-			this.unitID = unitID;
-			this.count = count;
-			this.limit = limit;
+			this.UnitKey = unitKey;
+			this.planCount = planCount;
+			this.currCount = currCount;
 		}
-		public void SetCount(int count)
+		public void SetCurrCount(int count)
 		{
-			if (count < 0) count = 0;
-			this.count = count;
+			this.currCount = count;
 		}
-		public void SetLimit(int limit)
+		public void SetPlanCount(int count)
 		{
-			if (limit < 0) limit = 0;
-			this.limit = limit;
+			planCount = count;
 		}
-		public void SetCountAndLimit(int count, int limit)
+		public void SetCount(int planCount, int currCount)
 		{
-			if (count < 0) count = 0;
-			if (limit < 0) limit = 0;
-			this.count = count;
-			this.limit = limit;
+			this.planCount = planCount;
+			this.currCount = currCount;
 		}
-
-		public readonly UnitKey UnitKey => unitKey;
-		public readonly int UnitID => unitID;
-		public readonly int Count => count;
-		public readonly int Limit => limit;
-		public readonly UnitObject UnitObject => StrategyManager.Collector.FindUnit(unitID);
+		public static OrganizationCounter operator +(OrganizationCounter a, OrganizationCounter b)
+		{
+			return new OrganizationCounter(a.UnitKey,
+				a.PlanCount + b.PlanCount,
+				a.CurrCount + b.CurrCount);
+		}
+		public static OrganizationCounter operator -(OrganizationCounter a, OrganizationCounter b)
+		{
+			return new OrganizationCounter(a.UnitKey,
+				a.PlanCount - b.PlanCount,
+				a.CurrCount - b.CurrCount);
+		}
 	}
-
 	public void Init(in ISectorController.SpawnTroopsInfo troopsInfo)
 	{
 		factionID = troopsInfo.factionID;
-		planList = new Dictionary<UnitKey, OrganizationPlan>();
+		organizationPlan = new Dictionary<UnitKey, OrganizationCounter>();
 		var organizations  = troopsInfo.organizations;
 		int length = organizations.Length;
-		influencerKey = UnitKey.None;
 		for (int i = 0 ; i < length ; i++)
 		{
-			(UnitKey key, int count, int limit) = organizations[i];
-			if (key == UnitKey.None || count <= 0) continue;
-			if (CreatePlanAndUnitObject(in factionID, in key, in count, in limit))
-			{
-				if (influencerKey == UnitKey.None) influencerKey = key;
-			}
+			(UnitKey key, int plan, int count) = organizations[i];
+			if (key == UnitKey.None || plan <= 0) continue;
+
+			UpdateOrganizationPlan(in key, plan, count, false);
 		}
 	}
-	private bool CreatePlanAndUnitObject(in int factionID, in UnitKey key, in int count = 0, in int limit = 0)
+	private void UpdateOrganizationPlan(in UnitKey key, int plan, int count, bool cleanPlan = true)
 	{
-		if (planList.TryGetValue(key, out var unit))
+		OrganizationCounter organizationCounter = new OrganizationCounter(key,plan,count);
+		if (!cleanPlan && organizationPlan.TryGetValue(key, out var counter))
 		{
-			unit.SetCountAndLimit(unit.Count + count, unit.Limit + limit);
+			organizationCounter += counter;
 		}
-		else
-		{
-			var unitObject = StrategyElementUtility.Instantiate(key, factionID, this.transform);
-			if (unitObject == null) return false;
-			unitObject.SetTroopBelong(this);
-			unit = new OrganizationPlan(key, unitObject.UnitID, count, limit);
-		}
-		planList[key] = unit;
-		return true;
+		organizationPlan[key] = organizationCounter;
 	}
-	public OrganizationPlan GetPlan(in UnitKey unitKey)
+	public bool HasPlan(in UnitKey unitKey)
 	{
-		planList.TryGetValue(unitKey, out var plan);
-		return planList[unitKey];
-	}
-	public bool HasUnitKey(in UnitKey unitKey)
-	{
-		return planList.ContainsKey(unitKey);
-	}
-	public void SetCountAndLimit(in UnitKey unitKey, in int count, in int limit)
-	{
-		CreatePlanAndUnitObject(in factionID, in unitKey);
-		var _plan = GetPlan(unitKey);
-		_plan.SetCountAndLimit(count, limit);
-		planList[unitKey] = _plan;
+		return organizationPlan.ContainsKey(unitKey);
 	}
 }
 
@@ -132,33 +100,6 @@ public partial class TroopsObject : IStrategyElement
 	{
 	}
 	void IStrategyStartGame.OnStopGame()
-	{
-	}
-}
-public partial class TroopsObject : ISelectableByMouse
-{
-	Vector3 ISelectableByMouse.ClickCenter { get; }
-	bool ISelectableByMouse.IsPointEnter { get; set; }
-	bool ISelectableByMouse.IsSelectMouse { get; set; }
-
-	bool ISelectableByMouse.OnDeselect()
-	{
-		return true;
-	}
-	void ISelectableByMouse.OnFirstSelect()
-	{
-	}
-	void ISelectableByMouse.OnLastDeselect()
-	{
-	}
-	bool ISelectableByMouse.OnSelect()
-	{
-		return true;
-	}
-	void ISelectableByMouse.OnSingleDeselect()
-	{
-	}
-	void ISelectableByMouse.OnSingleSelect()
 	{
 	}
 }
