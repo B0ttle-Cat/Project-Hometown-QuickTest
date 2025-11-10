@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using UnityEngine;
+
 public interface IGamePanelUI
 {
 	public void OpenUI();
@@ -59,17 +61,35 @@ public interface IViewStack
 }
 public interface IViewPanelUI : IDisposable
 {
-	public void Show();
-	public void Hide();
+	void Show();
+	void Hide();
 }
 public interface IViewItemUI : IDisposable
 {
-	public void Visible();
-	public void Unvisible();
+	void Visible();
+	void Unvisible();
 }
 public interface IPanelFloating
 {
-	public void AddTarget(IStrategyElement element);
-	public void RemoveTarget(IStrategyElement element);
-	public void ClearTarget();
+	FloatingPanelItemUI FloatingPanelUI { get; }
+	void FloatingUpdate()
+	{
+		if (FloatingPanelUI == null) return;
+		FloatingPanelUI.ForceUpdateThisFrame();
+	}
+	void AddTarget(IStrategyElement element)
+	{
+		if (FloatingPanelUI == null) return;
+		FloatingPanelUI.SetTargetInMap(element == null ? null : element as Component);
+	}
+	void RemoveTarget(IStrategyElement element)
+	{
+		if (FloatingPanelUI == null) return;
+		FloatingPanelUI.RemoveTargetInMap(element == null ? null : element as Component);
+	}
+	void ClearTarget()
+	{
+		if (FloatingPanelUI == null) return;
+		FloatingPanelUI.RemoveTargetInMap();
+	}
 }

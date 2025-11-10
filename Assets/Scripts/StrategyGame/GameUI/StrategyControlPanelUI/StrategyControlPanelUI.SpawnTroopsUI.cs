@@ -111,12 +111,12 @@ public partial class StrategyControlPanelUI // SpawnOperationPanel
 
 			protected override void OnVisible()
 			{
-				if (PairChain.TryFindPair<Button>("배치하기", out var confirm))
+				if (KeyPair.TryFindPair<Button>("배치하기", out var confirm))
 				{
 					confirm.onClick.RemoveAllListeners();
 					confirm.onClick.AddListener(OnClick_Confirm);
 				}
-				if (PairChain.TryFindPair<Button>("취소", out var cancel))
+				if (KeyPair.TryFindPair<Button>("취소", out var cancel))
 				{
 					cancel.onClick.RemoveAllListeners();
 					cancel.onClick.AddListener(OnClick_Cancel);
@@ -165,7 +165,7 @@ public partial class StrategyControlPanelUI // SpawnOperationPanel
 				UpdateFaction();
 				void UpdateContent()
 				{
-					if (!PairChain.TryFindPair("Content", out var content)) return;
+					if (!KeyPair.TryFindPair("Content", out var content)) return;
 					Transform parent = content.transform;
 
 					var unitKeyList = Value.GetAvailableUnitKeyList();
@@ -175,7 +175,7 @@ public partial class StrategyControlPanelUI // SpawnOperationPanel
 						var unitKey = unitKeyList[i];
 						int findIndex = numericSliders.FindIndex((item) => item.Item1==unitKey);
 						if (findIndex >= 0) continue;
-						PairChain.FindPairChainAndCopy<NumericSliderUI>("SliderSample", parent, out NumericSliderUI sliderUI);
+						KeyPair.FindPairChainAndCopy<NumericSliderUI>("SliderSample", parent, out NumericSliderUI sliderUI);
 						sliderUI.gameObject.SetActive(true);
 						numericSliders.Add((unitKey, sliderUI));
 					}
@@ -234,11 +234,11 @@ public partial class StrategyControlPanelUI // SpawnOperationPanel
 			{
 				if (세력_병력_최대허용량 <= 0)
 				{
-					if (PairChain.TryFindPair<FillRectUI>("TotalFill", out var fill))
+					if (KeyPair.TryFindPair<FillRectUI>("TotalFill", out var fill))
 					{
 						fill.SetValueText(0, "편성 불가");
 					}
-					if (PairChain.TryFindPair<Button>("배치하기", out var confirm))
+					if (KeyPair.TryFindPair<Button>("배치하기", out var confirm))
 					{
 						confirm.interactable = false;
 					}
@@ -247,13 +247,13 @@ public partial class StrategyControlPanelUI // SpawnOperationPanel
 				{
 					float 세력_병력_예상치 = 세력_병력_신규편재 +  세력_병력_편제요구량;
 
-					if (PairChain.TryFindPair<FillRectUI>("TotalFill", out var fill))
+					if (KeyPair.TryFindPair<FillRectUI>("TotalFill", out var fill))
 					{
 						float rate = (float)세력_병력_예상치 / (float)세력_병력_최대허용량;
 						fill.SetValueText(rate, $"{세력_병력_예상치} / {세력_병력_최대허용량}");
 					}
 
-					if (PairChain.TryFindPair<Button>("배치하기", out var confirm))
+					if (KeyPair.TryFindPair<Button>("배치하기", out var confirm))
 					{
 						confirm.interactable = 세력_병력_예상치 <= 세력_병력_최대허용량;
 					}

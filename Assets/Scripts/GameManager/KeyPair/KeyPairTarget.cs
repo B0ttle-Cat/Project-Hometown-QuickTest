@@ -202,15 +202,15 @@ public interface IKeyPairChain
 
 public static class KeyPairTargetEx
 {
-	public static IKeyPairChain GetPairChain(this GameObject gameObject)
+	public static IKeyPairChain GetKeyPairChain(this GameObject gameObject)
 	{
 		if (gameObject == null) return null;
 		KeyPairTarget keyPairTarget = gameObject.GetComponentInParent<KeyPairTarget>(true);
 		return keyPairTarget;
 	}
-	public static bool TryFindPairChain(this GameObject gameObject, out IKeyPairChain pairChain)
+	public static bool TryGetKeyPairChain(this GameObject gameObject, out IKeyPairChain KeyPair)
 	{
-		return (pairChain = gameObject.GetPairChain()) != null;
+		return (KeyPair = gameObject.GetKeyPairChain()) != null;
 	}
 
 	public static GameObject FindPair(this GameObject gameObject, string key)

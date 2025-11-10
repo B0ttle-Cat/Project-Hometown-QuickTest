@@ -2,6 +2,7 @@
 
 public class CameraVisibilityGroupInStrategy : CameraVisibilityGroup, IStrategyStartGame
 {
+	protected Component visibleTarget;
 	protected bool isPause = false;
 
 	protected override void RefreshRenderers()
@@ -33,4 +34,18 @@ public class CameraVisibilityGroupInStrategy : CameraVisibilityGroup, IStrategyS
     {
 		isPause = true;
 	}
+
+	protected override Component GetVisibleTarget()
+	{
+		if(visibleTarget == null)
+		{ 
+			var element = GetComponentInParent<IStrategyElement>();
+			if(element is Component component)
+			{
+				visibleTarget = component;
+			}
+		}
+		return visibleTarget;
+	}
+
 }

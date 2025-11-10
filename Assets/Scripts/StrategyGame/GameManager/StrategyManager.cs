@@ -20,6 +20,7 @@ public class StrategyManager : MonoBehaviour
 	public static StrategyUpdate Updater => Manager == null ? null : Manager.updater;
 	public static StrategyMouseSelecter Selecter => Manager == null ? null : Manager.selecter;
 	public static StrategyNodeNetwork SectorNetwork => Manager == null ? null : Manager.sectorNetwork;
+	public static StrategyViewAndControlModeChanger ViewAndControl => Manager == null ? null : Manager.viewAndControl;
 	public static KeyPairDisplayName Key2Name => Manager == null ? null : Manager.key2Name;
 	public static KeyPairSprite Key2Sprite => Manager == null ? null : Manager.key2Sprite;
 	public static KeyPairUnitInfo Key2UnitInfo => Manager == null ? null : Manager.key2UnitInfo;
@@ -40,6 +41,8 @@ public class StrategyManager : MonoBehaviour
 	private StrategyUpdate updater;
 	private StrategyMouseSelecter selecter;
 	private StrategyNodeNetwork sectorNetwork;
+	private StrategyViewAndControlModeChanger viewAndControl;
+
 	private KeyPairDisplayName key2Name;
 	private KeyPairSprite key2Sprite;
 	private KeyPairUnitInfo key2UnitInfo;
@@ -56,6 +59,8 @@ public class StrategyManager : MonoBehaviour
 		updater = GetComponentInChildren<StrategyUpdate>();
 		selecter = GetComponentInChildren<StrategyMouseSelecter>();
 		sectorNetwork = GetComponentInChildren<StrategyNodeNetwork>();
+		viewAndControl = GetComponentInChildren<StrategyViewAndControlModeChanger>();
+
 	}
 	private void OnDestroy()
 	{
@@ -171,6 +176,7 @@ public class StrategyManager : MonoBehaviour
 		Mission.Init();
 		Statistics.Init();
 		Time.Init();
+		ViewAndControl.Init();
 		var preparedData = StrategyManager.PreparedData.GetData();
 		key2Name = KeyPairDisplayName.Load(preparedData.LanguageType, "_Default");
 		key2Sprite = KeyPairSprite.Load(preparedData.LanguageType, "_Default");

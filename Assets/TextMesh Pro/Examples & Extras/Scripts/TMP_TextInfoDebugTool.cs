@@ -194,7 +194,7 @@ namespace TMPro.Examples
                 DrawSquare(advancePosition, 0.025f / m_ScaleMultiplier, Color.yellow);
                 DrawCrosshair(advancePosition, 0.0125f / m_ScaleMultiplier, Color.yellow);
 
-                // Draw Text labels for metrics
+                // Draw Text rects for metrics
                if (m_HandleSize < 0.5f)
                {
                    GUIStyle style = new GUIStyle(GUI.skin.GetStyle("_label"));
@@ -518,7 +518,7 @@ namespace TMPro.Examples
                 Handles.color = Color.yellow;
                 Handles.DrawDottedLine(descentLineStart, descentLineEnd, dottedLineSize);
 
-                // Draw Text labels for metrics
+                // Draw Text rects for metrics
                 if (m_HandleSize < 1.0f)
                 {
                     GUIStyle style = new GUIStyle();

@@ -71,12 +71,12 @@ public partial class StrategyDetailsPanelUI : MonoBehaviour, IGamePanelUI, IStra
 		private bool isDispose;
 		protected StrategyDetailsPanelUI ThisPanel;
 		protected RectTransform ThisContent;
-		protected IKeyPairChain PairChain;
+		protected IKeyPairChain KeyPair;
 		protected DetailsContentPanel(StrategyDetailsPanelUI thisPanel, RectTransform contentPrefab)
 		{
 			ThisPanel = thisPanel;
 			ThisContent = GameObject.Instantiate(contentPrefab, thisPanel.contentRoot);
-			PairChain = ThisContent.gameObject.GetPairChain();
+			KeyPair = ThisContent.gameObject.GetKeyPairChain();
 			isShow = false;
 			isDispose = false;
 			ThisContent.gameObject.SetActive(false);
@@ -117,7 +117,7 @@ public partial class StrategyDetailsPanelUI : MonoBehaviour, IGamePanelUI, IStra
 				GameObject.Destroy(ThisContent.gameObject);
 				ThisContent = null;
 			}
-			PairChain = null;
+			KeyPair = null;
 		}
 		protected abstract void OnShow();
 		protected abstract void OnHide();

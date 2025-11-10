@@ -1,4 +1,4 @@
-﻿%YAML 1.1
+%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!29 &1
 OcclusionCullingSettings:
@@ -1719,8 +1719,8 @@ MonoBehaviour:
     sectorPanel:
       value: {fileID: 0}
       iconList: []
-  spawnOperationPrefab: {fileID: 3327491519791233530, guid: 0b08b9717e980de44a4c9fa735a2b93a, type: 3}
-  spawnOperationRoot: {fileID: 293437780}
+  spawnOperationPrefab: {fileID: 0}
+  spawnOperationRoot: {fileID: 0}
   spawnOperationPanel:
     sectorPanel: {}
 --- !u!223 &117014631
@@ -2272,7 +2272,7 @@ MonoBehaviour:
     mainInfo: {fileID: 638748987557167112, guid: fee8ccb1d840c8d47a53695f3f01c015, type: 3}
     support: {fileID: 6440992554431209310, guid: d9aa4dfba9e54a742b4868b952e0a019, type: 3}
     facilities: {fileID: 4447532916768258166, guid: 3d31b2933d4aeac4b83fcaa683f7afb1, type: 3}
-    operation: {fileID: 5509376157138346954, guid: 0ad1cf9819428a544b25a1aea5ec9eb8, type: 3}
+    operation: {fileID: 0}
   sectorDetailsPanelUI:
     lastDetailsType: 0
 --- !u!1 &169643300
@@ -5187,10 +5187,10 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1234401990}
   - {fileID: 4796101}
-  - {fileID: 1555327484}
   - {fileID: 58857479}
+  - {fileID: 1555327484}
+  - {fileID: 1234401990}
   m_Father: {fileID: 449196672}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -9926,7 +9926,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uD5E5\uC2EC \uC778\uB825"
+  m_text: "\uD575\uC2EC \uC778\uB825"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c375f864aca777e4fb8e10f833491ee4, type: 2}
   m_sharedMaterial: {fileID: 263857912245452909, guid: c375f864aca777e4fb8e10f833491ee4, type: 2}
@@ -12789,6 +12789,7 @@ GameObject:
   - component: {fileID: 1572051161}
   - component: {fileID: 1572051160}
   - component: {fileID: 1572051163}
+  - component: {fileID: 1572051164}
   m_Layer: 0
   m_Name: StrategyGameManager
   m_TagString: Untagged
@@ -12939,6 +12940,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StrategySectorNetwork
   networkNodes: []
   networkLinks: []
+--- !u!114 &1572051164
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1572051154}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6808f35fa6c0fb942a7855e40b64e5e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StrategyViewModeChanger
+  currentMode: 0
 --- !u!1 &1573788716
 GameObject:
   m_ObjectHideFlags: 0
@@ -14187,6 +14201,7 @@ GameObject:
   - component: {fileID: 1711988334}
   - component: {fileID: 1711988333}
   - component: {fileID: 1711988335}
+  - component: {fileID: 1711988336}
   m_Layer: 5
   m_Name: MapPanelUI
   m_TagString: Untagged
@@ -14267,10 +14282,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fbc767c7681fbe448377b547da23c17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StrategyMapPanelUI
-  sectorLabelPreafab: {fileID: 7158623961847931186, guid: 9cc50d14d0ed9064d9fbbf7a5e186d85, type: 3}
+  operationLabelPreafab: {fileID: 0}
+  operationLabelRoot: {fileID: 0}
+  sectorLabelPreafab: {fileID: 7158623961847931186, guid: 06101bf9da42dbf4fbca0f7c222cc4fa, type: 3}
   sectorLabelRoot: {fileID: 2010381860}
-  sectorLabelPanel:
-    sectorPanelList: []
+--- !u!114 &1711988336
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1711988331}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f2b2972cb8f7d44ad9586cb4485435, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RectUICollisionAvoidance
+  repulsionStrength: 80
+  smoothTime: 0.1
 --- !u!1001 &1722599988
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -179,12 +179,12 @@ public partial class StrategyDetailsPanelUI // FieldInfoDetailsPanelUI
 				ref readonly var data = ref StrategyManager.PreparedData.ReadonlyData();
 				var overviewData = data.overview;
 
-				if (PairChain.TryFindPair<TMP_Text>("Title", out var title))
+				if (KeyPair.TryFindPair<TMP_Text>("Title", out var title))
 				{
 					title.text = overviewData.title;
 				}
 
-				if (PairChain.TryFindPair<TMP_Text>("Content", out var overview))
+				if (KeyPair.TryFindPair<TMP_Text>("Content", out var overview))
 				{
 					overview.text = overviewData.description;
 				}
@@ -314,9 +314,9 @@ public partial class StrategyDetailsPanelUI // FieldInfoDetailsPanelUI
 			public FieldInfo_Statistics(StrategyDetailsPanelUI thisPanel, RectTransform contentPrefab)
 				: base(thisPanel, contentPrefab)
 			{
-				if (!PairChain.TryFindPair("Content", out contentParent)) return;
-				if (!PairChain.TryFindPair("Group", out groupPrefab)) return;
-				if (!PairChain.TryFindPair("KeyValue", out itemPrefab)) return;
+				if (!KeyPair.TryFindPair("Content", out contentParent)) return;
+				if (!KeyPair.TryFindPair("Group", out groupPrefab)) return;
+				if (!KeyPair.TryFindPair("KeyValue", out itemPrefab)) return;
 			}
 			protected override void OnDispose()
 			{
@@ -462,17 +462,17 @@ public partial class StrategyDetailsPanelUI // FieldInfoDetailsPanelUI
 			}
 			protected override void OnShow()
 			{
-				PairChain.FindPairChain<TMP_Text>("KeyValue", out var itemPrefab);
+				KeyPair.FindPairChain<TMP_Text>("KeyValue", out var itemPrefab);
 				if (itemPrefab == null) return;
 
 				victoryMissionView?.Dispose();
 				defeatMissionView?.Dispose();
 
-				if (PairChain.TryFindPair("Victory", out GameObject victory))
+				if (KeyPair.TryFindPair("Victory", out GameObject victory))
 				{
 					victoryMissionView = new MissionTreeView(StrategyManager.Mission.VictoryMission, victory, itemPrefab);
 				}
-				if (PairChain.TryFindPair("Defeat", out GameObject defeat))
+				if (KeyPair.TryFindPair("Defeat", out GameObject defeat))
 				{
 					defeatMissionView = new MissionTreeView(StrategyManager.Mission.DefeatMission, defeat, itemPrefab);
 				}

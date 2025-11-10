@@ -38,18 +38,13 @@ public partial class OperationObject
 		get
 		{
 			if (unitOrganization == null) yield break;
-			foreach (var item in unitOrganization)
+			foreach (var item in GetAllUnitID)
 			{
-				var list = item.Value;
-				if (list == null || list.UnitIDList == null) continue;
-				var idList = list.UnitIDList;
-				foreach (int id in idList)
+				if (StrategyManager.Collector.TryFindUnit(item, out var unitObject))
 				{
-					if(StrategyManager.Collector.TryFindUnit(id, out var unitObject))
-					{
-						yield return unitObject;
-					}
+					yield return unitObject;
 				}
+
 			}
 		}
 	}
@@ -154,7 +149,7 @@ public partial class OperationObject // Stats
 	public void ComputeOperationValue()
 	{
 		int thisFrame = Time.frameCount;
-		if(computeFrame == thisFrame) return;
+		if (computeFrame == thisFrame) return;
 		computeFrame = thisFrame;
 		position = GetPosition();
 		moveSpeed = GetMoveSpeed();

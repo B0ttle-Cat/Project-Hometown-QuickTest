@@ -50,7 +50,7 @@ public partial class StrategyControlPanelUI
 		private Transform panelRoot;
 
 		private GameObject panelObject;
-		protected FloatingPanelItemUI FloatingPanelUI { get; private set; }
+		public FloatingPanelItemUI FloatingPanelUI { get; private set; }
 
 		public bool IsShow => panelObject != null && panelObject.activeSelf;
 		private bool IsDispose => panelObject != null;
@@ -123,19 +123,19 @@ public partial class StrategyControlPanelUI
 			private TValue value;
 			[SerializeField, ReadOnly]
 			private ControlPanelUI panelUI;
-			private IKeyPairChain pairChain;
+			private IKeyPairChain keyPair;
 			private bool isShow;
 			private bool isDispose;
 			public TValue Value => value;
 			public IViewPanelUI ViewPanelUI => panelUI;
-			public IKeyPairChain PairChain => pairChain;
+			public IKeyPairChain KeyPair => keyPair;
 			public bool IsShow => isShow;
-			public bool IsViewValid => pairChain != null;
+			public bool IsViewValid => keyPair != null;
 			public ViewItem(ControlPanelUI panel, TValue sector)
 			{
 				value = sector;
 				panelUI = panel;
-				pairChain = panel.panelObject.GetPairChain();
+				keyPair = panel.panelObject.GetKeyPairChain();
 				isShow = false;
 				isDispose = false;
 				OnInit();
@@ -150,7 +150,7 @@ public partial class StrategyControlPanelUI
 				OnDispose();
 				value = null;
 				panelUI = null;
-				pairChain = null;
+				keyPair = null;
 			}
 			public void Visible()
 			{

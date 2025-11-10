@@ -146,7 +146,7 @@ public partial class StrategyControlPanelUI // SectorSelectPanel
 			}
 			private void OnChangeProfile(StrategyGamePlayData.SectorData.Profile.Data data)
 			{
-				PairChain
+				KeyPair
 					.FindPairChain<TMP_Text>("Name", out var name)
 					.FindPairChain("IconParent", out GameObject iconParent)
 					.FindPairChain("IconSample", out GameObject iconSample)
@@ -225,7 +225,7 @@ public partial class StrategyControlPanelUI // SectorSelectPanel
 			{
 				int value = item.value;
 				int max = item.max;
-				PairChain.FindPairChain<FillRectUI>(fillRectName, out var fillRect);
+				KeyPair.FindPairChain<FillRectUI>(fillRectName, out var fillRect);
 				if (fillRect == null) return;
 
 				if (max > 0)
@@ -243,27 +243,27 @@ public partial class StrategyControlPanelUI // SectorSelectPanel
 			{
 				if (!IsViewValid) return;
 
-				if (PairChain.TryFindPair<Button>("ShowDetail", out var showDetail))
+				if (KeyPair.TryFindPair<Button>("ShowDetail", out var showDetail))
 				{
 					showDetail.onClick.RemoveAllListeners();
 					showDetail.onClick.AddListener(()=>onShowDetail?.Invoke());
 				}
-				if (PairChain.TryFindPair<Button>("전투원 배치", out var deployButton))
+				if (KeyPair.TryFindPair<Button>("전투원 배치", out var deployButton))
 				{
 					deployButton.onClick.RemoveAllListeners();
 					deployButton.onClick.AddListener(()=>onDeployUniqueUnit?.Invoke());
 				}
-				if (PairChain.TryFindPair<Button>("시설 건설", out var constructButton))
+				if (KeyPair.TryFindPair<Button>("시설 건설", out var constructButton))
 				{
 					constructButton.onClick.RemoveAllListeners();
 					constructButton.onClick.AddListener(()=>onConstructFacilities?.Invoke());
 				}
-				if (PairChain.TryFindPair<Button>("병력 이동", out var moveButton))
+				if (KeyPair.TryFindPair<Button>("병력 이동", out var moveButton))
 				{
 					moveButton.onClick.RemoveAllListeners();
 					moveButton.onClick.AddListener(()=>onPlanningOperationMovements?.Invoke());
 				}
-				if (PairChain.TryFindPair<Button>("시설 장비 사용", out var useButton))
+				if (KeyPair.TryFindPair<Button>("시설 장비 사용", out var useButton))
 				{
 					useButton.onClick.RemoveAllListeners();
 					useButton.onClick.AddListener(()=>onUseFacilitiesSkill?.Invoke());
@@ -273,23 +273,23 @@ public partial class StrategyControlPanelUI // SectorSelectPanel
 			{
 				if (!IsViewValid) return;
 
-				if (PairChain.TryFindPair<Button>("ShowDetail", out var showDetail))
+				if (KeyPair.TryFindPair<Button>("ShowDetail", out var showDetail))
 				{
 					showDetail.onClick.RemoveAllListeners();
 				}
-				if (PairChain.TryFindPair<Button>("전투원 배치", out var deployButton))
+				if (KeyPair.TryFindPair<Button>("전투원 배치", out var deployButton))
 				{
 					deployButton.onClick.RemoveAllListeners();
 				}
-				if (PairChain.TryFindPair<Button>("시설 건설", out var constructButton))
+				if (KeyPair.TryFindPair<Button>("시설 건설", out var constructButton))
 				{
 					constructButton.onClick.RemoveAllListeners();
 				}
-				if (PairChain.TryFindPair<Button>("병력 이동", out var moveButton))
+				if (KeyPair.TryFindPair<Button>("병력 이동", out var moveButton))
 				{
 					moveButton.onClick.RemoveAllListeners();
 				}
-				if (PairChain.TryFindPair<Button>("시설 장비 사용", out var useButton))
+				if (KeyPair.TryFindPair<Button>("시설 장비 사용", out var useButton))
 				{
 					useButton.onClick.RemoveAllListeners();
 				}

@@ -209,7 +209,7 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 			// 루트까지 올라감
 			var root = property.Tree.WeakTargets.FirstOrDefault() as StrategyStartSetterData;
 			if (root == null)
-				return new[] { "(No Root Data)" };
+				return new[] { "(No Parent Data)" };
 
 			var bases = root.data.factionDatas;
 			if (bases == null || bases.Length == 0)
@@ -222,7 +222,7 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 			// 루트까지 올라감
 			var root = property.Tree.WeakTargets.FirstOrDefault() as StrategyStartSetterData;
 			if (root == null)
-				return new[] { "(No Root Data)" };
+				return new[] { "(No Parent Data)" };
 
 			var bases = root.data.sectorDatas;
 			if (bases == null || bases.Length == 0)
@@ -257,7 +257,7 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 			// 루트까지 올라감
 			var root = property.Tree.WeakTargets.FirstOrDefault() as StrategyStartSetterData;
 			if (root == null)
-				return new[] { "(No Root Data)" };
+				return new[] { "(No Parent Data)" };
 
 			var bases = root.data.sectorDatas;
 			if (bases == null || bases.Length == 0)
@@ -271,7 +271,7 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 			// 루트까지 올라감
 			var root = property.Tree.WeakTargets.FirstOrDefault() as StrategyStartSetterData;
 			if (root == null)
-				return new[] { "(No Root Data)" };
+				return new[] { "(No Parent Data)" };
 
 			var bases = root.data.factionDatas;
 			if (bases == null || bases.Length == 0)
@@ -301,7 +301,7 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 			// 루트까지 올라감
 			var root = property.Tree.WeakTargets.FirstOrDefault() as StrategyStartSetterData;
 			if (root == null)
-				return new[] { "(No Root Data)" };
+				return new[] { "(No Parent Data)" };
 
 			var bases = root.data.sectorDatas;
 			if (bases == null || bases.Length == 0)

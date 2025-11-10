@@ -183,7 +183,7 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 			{
 				int value = item.value;
 				int max = item.max;
-				PairChain.FindPairChain<FillRectUI>(fillRectName, out var fillRectUI);
+				KeyPair.FindPairChain<FillRectUI>(fillRectName, out var fillRectUI);
 				if (fillRectUI == null) return;
 
 				if (max > 0)
@@ -203,7 +203,7 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 			{
 				int value = item.value;
 				int max = item.max;
-				PairChain.FindPairChain<FillRectUIAndLabel>(fillRectName, out var fillRectUI);
+				KeyPair.FindPairChain<FillRectUIAndLabel>(fillRectName, out var fillRectUI);
 				if (fillRectUI == null) return;
 
 				if (max > 0)
@@ -236,7 +236,7 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 			}
 			protected virtual LabelTextUI NewLabelTextUI(string pairKey, string label, string text, Transform parent)
 			{
-				PairChain.FindPairChainAndCopy<LabelTextUI>(pairKey, parent, out var statsItem);
+				KeyPair.FindPairChainAndCopy<LabelTextUI>(pairKey, parent, out var statsItem);
 				if (statsItem == null) return null;
 				statsItem.gameObject.SetActive(true);
 				statsItem.SetText(label, text);
@@ -315,7 +315,7 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 
 			void OnChangeProfileData(SectorData.Profile.Data data)
 			{
-				PairChain
+				KeyPair
 					.FindPairChain<Image>("MainImage", out var mainImage)
 					.FindPairChain<TMP_Text>("NameText", out var nameText)
 					.FindPairChain<TMP_Text>("EffectText", out var effectText)
@@ -336,7 +336,7 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 			}
 			void OnChangeCaptureData(SectorData.Capture.Data data)
 			{
-				PairChain
+				KeyPair
 				  .FindPairChain<TMP_Text>("CaptureText", out var captureText)
 				  ;
 
@@ -378,10 +378,10 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 			{
 				if (list == null) return;
 
-				PairChain.FindPairChain(stateItemName, out var statsItem);
+				KeyPair.FindPairChain(stateItemName, out var statsItem);
 				if (statsItem == null) return;
 
-				PairChain.FindPairChain(statePanelName, out var baseStats);
+				KeyPair.FindPairChain(statePanelName, out var baseStats);
 				if (baseStats == null) return;
 
 				int length = list == null ? 0 : list.Count;
@@ -470,16 +470,16 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 			}
 			void OnChangeSupportData(SectorData.Support.Data data)
 			{
-				PairChain.FindPairChain<TMP_Text>("PointText", out var PointText);
+				KeyPair.FindPairChain<TMP_Text>("PointText", out var PointText);
 				if (PointText != null)
 				{
 					PointText.text = $"잉여 점수: {data.supportPoint}";
 				}
 
-				PairChain.FindPairChain("Offensive", out var Offensive);
-				PairChain.FindPairChain("Defensive", out var Defensive);
-				PairChain.FindPairChain("Supply", out var Supply);
-				PairChain.FindPairChain("Facilities", out var Facilities);
+				KeyPair.FindPairChain("Offensive", out var Offensive);
+				KeyPair.FindPairChain("Defensive", out var Defensive);
+				KeyPair.FindPairChain("Supply", out var Supply);
+				KeyPair.FindPairChain("Facilities", out var Facilities);
 
 				SetupSlider(Offensive, data.offensivePoint, selectSector.Controller.OnChangeSupport_Offensive);
 				SetupSlider(Defensive, data.defensivePoint, selectSector.Controller.OnChangeSupport_Defensive);
@@ -554,9 +554,9 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 			public SectorDetails_Facilities(SectorObject sectorObject, StrategyDetailsPanelUI thisPanel, RectTransform contentPrefab)
 				: base(sectorObject, thisPanel, contentPrefab)
 			{
-				PairChain.FindPairChain<TMP_Text>("InfoText", out facilitiesInfoText);
-				facilitiesControlUI = PairChain.FindSubPairChain("Facilities Control");
-				facilitiesInstallableUI = PairChain.FindSubPairChain("Facilities Installable");
+				KeyPair.FindPairChain<TMP_Text>("InfoText", out facilitiesInfoText);
+				facilitiesControlUI = KeyPair.FindSubPairChain("Facilities Control");
+				facilitiesInstallableUI = KeyPair.FindSubPairChain("Facilities Installable");
 
 				facilitiesSlots ??= new();
 				facilitiesItemList ??= new();
@@ -607,7 +607,7 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 				{
 					UpdateSlotInfo(i, slotData[i]);
 				}
-				PairChain.FindPairChain("Total Statistics", out var statistics);
+				KeyPair.FindPairChain("Total Statistics", out var statistics);
 				UpdateFacilitiesState(statistics, facilitiesItemList);
 
 
@@ -616,11 +616,11 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 			{
 				if (facilitiesSlots.Count == 0)
 				{
-					PairChain.FindPairChain("Facilities List", out var slotParent);
+					KeyPair.FindPairChain("Facilities List", out var slotParent);
 
 					for (int i = 0 ; i < slotSize ; i++)
 					{
-						PairChain.FindPairChainAndCopy("Facilities Slot", slotParent.transform, out var newSlot);
+						KeyPair.FindPairChainAndCopy("Facilities Slot", slotParent.transform, out var newSlot);
 						if (newSlot == null) break;
 						if (newSlot.TryGetComponent<KeyPairTarget>(out var slotObject))
 						{

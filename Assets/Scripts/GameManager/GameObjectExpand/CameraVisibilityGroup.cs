@@ -13,8 +13,8 @@ public class CameraVisibilityGroup : MonoBehaviour
 	[SerializeField, ReadOnly] protected List<Renderer> renderers = new List<Renderer>();
 	[SerializeField, ReadOnly] private Rect visibleScreenRect = Rect.zero;
 	[SerializeField, ReadOnly] private Bounds visibleWorldBounds = default;
-	public event Action OnVisibleEnter;
-	public event Action OnVisibleExit;
+	public event Action<Component> OnVisibleEnter;
+	public event Action<Component> OnVisibleExit;
 
 	private Vector3[] corners = new Vector3[8];
 
@@ -103,12 +103,26 @@ public class CameraVisibilityGroup : MonoBehaviour
 		if (anyVisible && !isVisible)
 		{
 			isVisible = true;
-			OnVisibleEnter?.Invoke();
+			var visibleTarget = GetVisibleTarget();
+			if(visibleTarget != null)
+			{
+				OnVisibleEnter?.Invoke(visibleTarget);
+			}
 		}
 		else if (!anyVisible && isVisible)
 		{
 			isVisible = false;
-			OnVisibleExit?.Invoke();
+			var visibleTarget = GetVisibleTarget();
+			if (visibleTarget != null)
+			{
+				OnVisibleExit?.Invoke(visibleTarget);
+			}
 		}
 	}
+
+	protected virtual Component GetVisibleTarget()
+	{
+		return this;
+	}
+
 }

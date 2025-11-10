@@ -6,16 +6,21 @@ using UnityEngine;
 
 public class FloatingPanelItemUI : MonoBehaviour
 {
-	[SerializeField,ReadOnly]
-	protected Transform mapTarget;
-	[SerializeField]
+	private int updateThisFrame;
+
+    [SerializeField,ReadOnly]
+    private Transform mapTarget;
+    [SerializeField]
 	protected RectTransform rectTransform;
 
 	[SerializeField]
 	protected Canvas canvas;
 	[SerializeField]
 	protected CanvasGroupUI canvasGroupUI;
-	protected virtual void Reset()
+
+    protected virtual Transform MapTarget  => mapTarget;
+
+    protected virtual void Reset()
 	{
 		canvas = GetComponent<Canvas>();
 		canvasGroupUI = GetComponent<CanvasGroupUI>();
@@ -27,8 +32,8 @@ public class FloatingPanelItemUI : MonoBehaviour
 		canvasGroupUI = canvasGroupUI == null ? GetComponent<CanvasGroupUI>() : canvasGroupUI;
 		rectTransform = rectTransform == null ? GetComponent<RectTransform>() : rectTransform;
 	}
-	public void SetTargetInMap(Component target) => SetTargetInMap(target.transform);
-	public void SetTargetInMap(GameObject target) => SetTargetInMap(target.transform);
+	public void SetTargetInMap(Component target) => SetTargetInMap(target == null ? null : target.transform);
+	public void SetTargetInMap(GameObject target) => SetTargetInMap(target == null ? null : target.transform);
 	public virtual void SetTargetInMap(Transform mapTarget = null)
 	{
 		rectTransform = rectTransform == null ? GetComponent<RectTransform>() : rectTransform;
@@ -37,8 +42,15 @@ public class FloatingPanelItemUI : MonoBehaviour
 		this.mapTarget = mapTarget;
 		if(mapTarget != null) InitTarget(mapTarget);
 	}
-	public void RemoveTargetInMap() => SetTargetInMap();
-
+	public virtual void RemoveTargetInMap(Component target)	=> RemoveTargetInMap(target == null ? null : target.transform);
+	public virtual void RemoveTargetInMap(GameObject target) => RemoveTargetInMap(target == null ? null : target.transform);
+	public virtual void RemoveTargetInMap(Transform mapTarget = null)
+	{
+		if(mapTarget == null)
+			SetTargetInMap();
+		else if(this.MapTarget == mapTarget)
+			SetTargetInMap();
+	}
 	protected virtual void ReleaseTarget(Transform mapTarget)
 	{
 	
@@ -77,8 +89,15 @@ public class FloatingPanelItemUI : MonoBehaviour
 
 	protected void LateUpdate()
 	{
-		if (rectTransform == null || mapTarget == null) return;
+		if (rectTransform == null || MapTarget == null) return;
+		int fameCount = Time.frameCount;
+		if (updateThisFrame == fameCount) return;
+		updateThisFrame = fameCount;
 		OnUpdate();
+	}
+	public void ForceUpdateThisFrame()
+	{
+		LateUpdate();
 	}
 	protected virtual void OnShow()
 	{
@@ -101,7 +120,7 @@ public class FloatingPanelItemUI : MonoBehaviour
 		Camera camera = Camera.main;
 		if (camera == null) return;
 
-		Vector3 screenMapTarget = camera.WorldToScreenPoint(mapTarget.transform.position);
+		Vector3 screenMapTarget = camera.WorldToScreenPoint(MapTarget.transform.position);
 		screenMapTarget.z = 0;
 		rectTransform.position = screenMapTarget;
 	}
