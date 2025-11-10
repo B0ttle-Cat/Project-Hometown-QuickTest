@@ -130,12 +130,22 @@ public partial class UnitObject // StateValue
 
 public partial class UnitObject // TroopBelong
 {
-	private TroopsObject troopBelong;
+	private int troopID;
 	[ShowInInspector]
-	public TroopsObject TroopBelong { get => troopBelong; private set => troopBelong = value; }
+	public TroopsObject TroopBelong => StrategyManager.Collector.FindTroops(troopID);
 	public bool IsTroopBelong => TroopBelong != null;
 	public void SetTroopBelong(TroopsObject troopObject)
 	{
-		TroopBelong = troopObject;
+		troopID = troopObject == null ? -1 : troopObject.TroopsID;
+	}
+	public void RelaseTroopBelong()
+	{
+		troopID = -1;
+	}
+	public void HideWithTroop()
+	{
+	}
+	public void ShowWithTroop()
+	{
 	}
 }

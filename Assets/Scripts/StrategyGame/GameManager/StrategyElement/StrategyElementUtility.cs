@@ -1,10 +1,12 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+
+using UnityEngine;
 
 using static StrategyGamePlayData;
 
 public static class StrategyElementUtility
 {
-	public static UnitObject Instantiate(UnitKey unitKey, int factionID = -1, Transform parent = null)
+	public static UnitObject Instantiate(UnitKey unitKey, int factionID = -1)
 	{
 		if (!StrategyManager.Key2UnitInfo.TryGetAsset(unitKey, out var info))
 		{
@@ -15,7 +17,7 @@ public static class StrategyElementUtility
 		var prefab = profile.unitPrefab;
 		if(prefab == null) return null;
 
-		var newObject = GameObject.Instantiate(prefab, parent);
+		var newObject = GameObject.Instantiate(prefab);
 
 		if(!newObject.TryGetComponent<UnitObject>(out UnitObject unitObject))
 		{
@@ -30,12 +32,19 @@ public static class StrategyElementUtility
 	}
 	public static TroopsObject Instantiate(in ISectorController.SpawnTroopsInfo troopsInfo)
 	{
-		var newGameObject = new GameObject();
-		newGameObject.SetActive(false);
-		TroopsObject troopsObject = newGameObject.AddComponent<TroopsObject>();
+		int factionID = troopsInfo.factionID;
+		var organizations = troopsInfo.organizations;
+		int length = organizations.Length;
 
-		newGameObject.SetActive(true);
-		troopsObject.Init(in troopsInfo);
+		List<int> spawnUnitIds = new List<int>(length);
+		for (int i = 0 ; i < length ; i++)
+		{
+			(UnitKey key, int count) = organizations[i];
+			UnitObject unit = Instantiate(key, factionID);
+			spawnUnitIds.Add(unit.UnitID);
+		}
+
+        var troopsObject = new TroopsObject(troopsInfo.factionID, spawnUnitIds);
 		StrategyManager.Collector.AddElement<TroopsObject>(troopsObject);
 		return troopsObject;
 	}
