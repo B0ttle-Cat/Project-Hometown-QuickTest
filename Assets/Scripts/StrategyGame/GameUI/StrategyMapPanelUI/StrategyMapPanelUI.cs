@@ -75,7 +75,7 @@ public partial class StrategyMapPanelUI : IViewAndControlModeChange
 		}
 	}
 }
-public partial class StrategyMapPanelUI
+public partial class StrategyMapPanelUI // MapPanelUI
 {
 	public interface IMapPanel : IPanelFloating
 	{
@@ -243,8 +243,8 @@ public partial class StrategyMapPanelUI
 			public FloatingPanelItemUI FloatingPanelUI { get; set; }
 
 			private bool isShow = false;
-			private float unvisibleTimeLimit;
-			private float unvisibleTime;
+			private float invisibleTimeLimit;
+			private float invisibleTime;
 			public bool IsShow => isShow;
 
 			protected MapLabel(GameObject uiObject, MapLabelGroup<T> group)
@@ -253,7 +253,7 @@ public partial class StrategyMapPanelUI
 				UIObject = uiObject;
 				FloatingPanelUI = UIObject.GetComponent<FloatingPanelItemUI>();
 				KeyPair = UIObject.GetKeyPairChain();
-				unvisibleTime = unvisibleTimeLimit = 10;
+				invisibleTime = invisibleTimeLimit = 10;
 				isShow = false;
 			}
 			public void Dispose()
@@ -263,7 +263,7 @@ public partial class StrategyMapPanelUI
 
 				ThisGroup?.PushLabelUiObject(this as T);
 
-				if (isShow && this is IViewItemUI view) view.Unvisible();
+				if (isShow && this is IViewItemUI view) view.Invisible();
 				ThisGroup = null;
 				UIObject = null;
 				if (this is IPanelFloating floating) floating.ClearTarget();
@@ -282,8 +282,8 @@ public partial class StrategyMapPanelUI
 
 				if (!isShow)
 				{
-					unvisibleTime -= Time.unscaledDeltaTime;
-					if (unvisibleTime < 0)
+					invisibleTime -= Time.unscaledDeltaTime;
+					if (invisibleTime < 0)
 					{
 						Dispose();
 						isSizeChange = true;
@@ -294,27 +294,22 @@ public partial class StrategyMapPanelUI
 			{
 				if (isShow) return;
 				isShow = true;
-				unvisibleTime = unvisibleTimeLimit;
+				invisibleTime = invisibleTimeLimit;
 				if (FloatingPanelUI != null) FloatingPanelUI.Show();
 				Visible();
 			}
-			void IViewItemUI.Unvisible()
+			void IViewItemUI.Invisible()
 			{
 				if (!isShow) return;
 				isShow = false;
-				unvisibleTime = unvisibleTimeLimit;
+				invisibleTime = invisibleTimeLimit;
 				if (FloatingPanelUI != null) FloatingPanelUI.Hide();
-				Unvisible();
+				Invisible();
 			}
 			protected abstract void OnDispose();
 			protected abstract void Visible();
-			protected abstract void Unvisible();
+			protected abstract void Invisible();
 			protected virtual void OnUpdate() { }
 		}
 	}
-}
-
-public partial class StrategyMapPanelUI
-{
-
 }

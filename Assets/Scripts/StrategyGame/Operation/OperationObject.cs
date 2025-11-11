@@ -13,6 +13,8 @@ public partial class OperationObject
 	[SerializeField]
 	private int operationID;
 	[SerializeField]
+	private string teamName;
+	[SerializeField]
 	private int factionID;
 	[ShowInInspector]
 	private Dictionary<UnitKey, UnitListInOperation> unitOrganization;
@@ -91,9 +93,26 @@ public partial class OperationObject
 	}
 
 	public int OperationID { get => operationID; private set => operationID = value; }
-
+	public string TeamName
+	{
+		get
+		{
+			if (string.IsNullOrWhiteSpace(teamName))
+			{
+				if (operationID < 0) return "임시 편성 부대";
+				return $"제{operationID:oo}부대";
+			}
+			return teamName;
+		}
+		set
+		{
+			teamName = value;
+		}
+	}
 	public OperationObject(int factionID, List<int> unitList)
 	{
+		operationID = -1;
+		teamName = "";
 		this.factionID = factionID;
 		unitOrganization = new Dictionary<UnitKey, UnitListInOperation>();
 
@@ -172,6 +191,37 @@ public partial class OperationObject // Stats
 		return Mathf.RoundToInt(average);
 	}
 }
+public partial class OperationObject // VisibleCheck
+{
+	public bool IsVisibleAnybody => (visibleUnitList == null ? 0 : visibleUnitList.Count) > 0;
+	private HashSet<UnitObject> visibleUnitList;
+	public void ChangeVisibleUnit(UnitObject unitObject)
+	{
+		visibleUnitList ??= new HashSet<UnitObject>();
+		if (visibleUnitList.Add(unitObject))
+		{
+			if (visibleUnitList.Count == 1)
+			{
+				OnVisibleAnybody?.Invoke(this);
+			}
+		}
+	}
+	public void ChangeInvisibleUnit(UnitObject unitObject)
+	{
+		if (visibleUnitList == null) return;
+
+		if (visibleUnitList.Remove(unitObject))
+		{
+			if (visibleUnitList.Count == 0)
+			{
+				OnInvisibleEverybody?.Invoke(this);
+			}
+		}
+	}
+
+	public event Action<OperationObject> OnVisibleAnybody;
+	public event Action<OperationObject> OnInvisibleEverybody;
+}
 public partial class OperationObject : IStrategyElement
 {
 	public IStrategyElement ThisElement => this;
@@ -188,52 +238,5 @@ public partial class OperationObject : IStrategyElement
 	}
 	void IStrategyStartGame.OnStopGame()
 	{
-	}
-}
-public partial class OperationObject : INodeMovement
-{
-	private Vector3 velocity;
-	private float smoothTime;
-	public INodeMovement ThisMovement => this;
-	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
-	Vector3 INodeMovement.CurrentPosition => position;
-	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
-	Vector3 INodeMovement.CurrentVelocity => velocity;
-	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
-	float INodeMovement.SmoothTime => smoothTime;
-	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
-	float INodeMovement.MaxSpeed => moveSpeed;
-	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
-	int INodeMovement.RecentVisitedNode => 0;
-	LinkedList<INodeMovement.MovementPlan> INodeMovement.MovementPlanList { get; set; }
-
-	void INodeMovement.OnMoveStart()
-	{
-		velocity = Vector3.zero;
-		smoothTime = 0.5f;
-	}
-	void INodeMovement.OnExitFirstNode()
-	{
-		smoothTime = 0f;
-	}
-	void INodeMovement.OnEnterLastNode()
-	{
-		smoothTime = 0.5f;
-	}
-	void INodeMovement.OnMoveEnded()
-	{
-		velocity = Vector3.zero;
-		smoothTime = 0.5f;
-	}
-	void INodeMovement.OnSetPositionAndVelocity(in Vector3 position, in Vector3 velocity)
-	{
-		Vector3 delteMove = position - this.position;
-		this.position = position;
-		this.velocity = velocity;
-
-		foreach (var unit in GetAllUnitObject)
-		{
-			unit.ThisMovement.OnSetPositionAndVelocity(position, velocity);
-		}
 	}
 }

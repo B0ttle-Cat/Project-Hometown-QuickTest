@@ -30,7 +30,7 @@ public static class StrategyElementUtility
 
 		return unitObject;
 	}
-	public static OperationObject Instantiate(SectorObject sector, in ISectorController.SpawnTroopsInfo spawnTroopsInfo)
+	public static OperationObject Instantiate(SectorObject sector, in SpawnTroopsInfo spawnTroopsInfo)
 	{
 		int factionID = spawnTroopsInfo.factionID;
 		var organizations = spawnTroopsInfo.organizations;

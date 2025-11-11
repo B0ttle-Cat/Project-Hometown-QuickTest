@@ -3,7 +3,7 @@
 	public SectorObject This => this;
 	public ISectorController Controller => this;
 
-    public void On_SpawnTroops(in ISectorController.SpawnTroopsInfo spawnTroopsInfo)
+    public void On_SpawnTroops(in SpawnTroopsInfo spawnTroopsInfo)
     {
 		StrategyElementUtility.Instantiate(this, in spawnTroopsInfo);
 	}

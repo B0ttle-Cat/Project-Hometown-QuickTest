@@ -67,7 +67,7 @@ public interface IViewPanelUI : IDisposable
 public interface IViewItemUI : IDisposable
 {
 	void Visible();
-	void Unvisible();
+	void Invisible();
 }
 public interface IPanelFloating
 {

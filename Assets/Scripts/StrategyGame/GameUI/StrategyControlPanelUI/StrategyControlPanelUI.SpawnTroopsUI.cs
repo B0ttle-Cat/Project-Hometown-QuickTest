@@ -49,7 +49,7 @@ public partial class StrategyControlPanelUI // SpawnOperationPanel
 		}
 		protected override void OnHide()
 		{
-			sectorPanel?.Unvisible();
+			sectorPanel?.Invisible();
 		}
 		void IPanelFloating.AddTarget(IStrategyElement element)
 		{
@@ -67,13 +67,13 @@ public partial class StrategyControlPanelUI // SpawnOperationPanel
 		void IPanelFloating.RemoveTarget(IStrategyElement element)
 		{
 			if (!IsShow) return;
-			sectorPanel?.Unvisible();
+			sectorPanel?.Invisible();
 			FloatingPanelUI.RemoveTargetInMap();
 		}
 		void IPanelFloating.ClearTarget()
 		{
 			if (!IsShow) return;
-			sectorPanel?.Unvisible();
+			sectorPanel?.Invisible();
 			sectorPanel?.Dispose();
 			sectorPanel = null;
 		}
@@ -105,7 +105,7 @@ public partial class StrategyControlPanelUI // SpawnOperationPanel
 				numericSliders?.Clear();
 				numericSliders = null;
 			}
-			protected override void OnUnvisible()
+			protected override void OnInvisible()
 			{
 			}
 

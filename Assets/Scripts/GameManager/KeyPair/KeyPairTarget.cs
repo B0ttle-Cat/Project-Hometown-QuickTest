@@ -22,10 +22,11 @@ public class KeyPairTarget : MonoBehaviour, IKeyPairChain
 			return parent;
 		}
 	}
+
 	[Serializable]
 	public struct Tag
 	{
-		[HorizontalGroup, HideLabel,InlineButton("CopyKey","Copy")]
+		[HorizontalGroup, HideLabel, InlineButton("CopyKey", "Copy")]
 		public string key;
 		[SerializeField, HideInInspector]
 		private GameObject target;
@@ -49,6 +50,7 @@ public class KeyPairTarget : MonoBehaviour, IKeyPairChain
 			if (string.IsNullOrWhiteSpace(key))
 				key = target.name;
 		}
+
 #if UNITY_EDITOR
 		private void CopyKey()
 		{
@@ -58,40 +60,69 @@ public class KeyPairTarget : MonoBehaviour, IKeyPairChain
 	}
 
 	public List<Tag> list = new List<Tag>();
-#if UNITY_EDITOR
 
-#endif
 	public void Reset()
 	{
 		list = new List<Tag>();
 	}
+
 	public void OnValidate()
 	{
 		RePairing();
 	}
+
 #if UNITY_EDITOR
+	[Button("AllCopy")]
+	private void AllCopy()
+	{
+		if (list == null || list.Count == 0)
+			return;
+
+		System.Text.StringBuilder sb = new System.Text.StringBuilder();
+		sb.AppendLine("KeyPair");
+
+		foreach (var tag in list)
+		{
+			if (string.IsNullOrWhiteSpace(tag.key))
+				continue;
+
+			string key = tag.key.Trim();
+			// 변수명은 key에서 공백, 특수문자 제거
+			string varName = MakeValidVariableName(key);
+
+			sb.AppendLine($"\t.FindPairChain(\"{key}\", out var {varName})");
+		}
+		sb.AppendLine("\t;");
+
+		GUIUtility.systemCopyBuffer = sb.ToString();
+		Debug.Log("복사 완료:\n" + sb);
+	}
+
+	private static string MakeValidVariableName(string key)
+	{
+		// 변수명으로 쓸 수 없거나 특수문자, 공백 제거
+		var clean = System.Text.RegularExpressions.Regex.Replace(key, @"[^a-zA-Z0-9_]", "_");
+		// 숫자로 시작하면 접두사 붙이기
+		if (char.IsDigit(clean[0]))
+			clean = "_" + clean;
+		return clean;
+	}
+
 	public void RePairing()
 	{
 		if (list == null || list.Count == 0) return;
 
-		Transform root = transform;
-
-		int length = list.Count;
-		for (int i = 0 ; i < length ; i++)
+		for (int i = 0 ; i < list.Count ; i++)
 		{
 			var tag = list[i];
-			var target = tag.Target;
-
-			string key = tag.key;
-			if (!string.IsNullOrWhiteSpace(key))
+			if (!string.IsNullOrWhiteSpace(tag.key))
 			{
-				tag.key = key.Trim();
+				tag.key = tag.key.Trim();
 			}
 			else if (tag.Target != null)
 			{
 				tag.key = tag.Target.name;
 			}
-
 			list[i] = tag;
 		}
 	}
@@ -109,6 +140,7 @@ public class KeyPairTarget : MonoBehaviour, IKeyPairChain
 		}
 		return null;
 	}
+
 	public GameObject FindPairAndCopy(string key, Transform parent)
 	{
 		GameObject gameObject = FindPair(key);
@@ -123,10 +155,34 @@ public class KeyPairTarget : MonoBehaviour, IKeyPairChain
 		return this;
 	}
 }
+
 public interface IKeyPairChain
 {
 	public KeyPairTarget This { get; }
 	public IKeyPairChain FindPairChain(string key, out GameObject find);
+	public IKeyPairChain FindPairChainAndCopy(string key, Transform parent, out GameObject find)
+	{
+		find = null;
+		FindPairChain(key, out var obj);
+		if(obj == null)
+		{
+			return this;
+		}
+
+		find = GameObject.Instantiate(obj, parent);
+		return this;
+	}
+	public bool TryFindPair(string key, out GameObject find)
+	{
+		FindPairChain(key, out find);
+		return find != null;
+	}
+	public bool TryFindPairAndCopy(string key, Transform parent, out GameObject find)
+	{
+		FindPairChainAndCopy(key, parent, out find);
+		return find != null;
+	}
+
 	public IKeyPairChain FindPairChain<T>(string key, out T find) where T : Component
 	{
 		find = null;
@@ -139,18 +195,6 @@ public interface IKeyPairChain
 		{
 			find = component;
 		}
-		return this;
-	}
-	public IKeyPairChain FindPairChainAndCopy(string key, Transform parent, out GameObject find)
-	{
-		find = null;
-		FindPairChain(key, out var obj);
-		if(obj == null)
-		{
-			return this;
-		}
-
-		find = GameObject.Instantiate(obj, parent);
 		return this;
 	}
 	public IKeyPairChain FindPairChainAndCopy<T>(string key, Transform parent, out T find) where T : Component
@@ -167,25 +211,189 @@ public interface IKeyPairChain
 		}
 		return this;
 	}
-	public bool TryFindPair(string key, out GameObject find)
-	{
-		FindPairChain(key, out find);
-		return find != null;
-	}
 	public bool TryFindPair<T>(string key, out T find) where T : Component
 	{
 		FindPairChain<T>(key, out find);
-		return find != null;
-	}
-	public bool TryFindPairAndCopy(string key, Transform parent, out GameObject find)
-	{
-		FindPairChainAndCopy(key, parent, out find);
 		return find != null;
 	}
 	public bool TryFindPairAndCopy<T>(string key, Transform parent, out T find) where T : Component
 	{
 		FindPairChainAndCopy<T>(key, parent, out find);
 		return find != null;
+	}
+
+	// T1, T2
+	public IKeyPairChain FindPairChain<T1, T2>(string key, out T1 find1, out T2 find2)
+		where T1 : Component
+		where T2 : Component
+	{
+		find1 = null;
+		find2 = null;
+
+		FindPairChain(key, out GameObject obj);
+		if (obj != null)
+		{
+			obj.TryGetComponent<T1>(out find1);
+			obj.TryGetComponent<T2>(out find2);
+		}
+		return this;
+	}
+
+	public IKeyPairChain FindPairChainAndCopy<T1, T2>(string key, Transform parent, out T1 find1, out T2 find2)
+		where T1 : Component
+		where T2 : Component
+	{
+		find1 = null;
+		find2 = null;
+
+		FindPairChain(key, out GameObject obj);
+		if (obj != null)
+		{
+			var copy = GameObject.Instantiate(obj, parent);
+			copy.TryGetComponent<T1>(out find1);
+			copy.TryGetComponent<T2>(out find2);
+		}
+		return this;
+	}
+
+	public bool TryFindPair<T1, T2>(string key, out T1 find1, out T2 find2)
+		where T1 : Component
+		where T2 : Component
+	{
+		FindPairChain<T1, T2>(key, out find1, out find2);
+		return find1 != null || find2 != null;
+	}
+
+	public bool TryFindPairAndCopy<T1, T2>(string key, Transform parent, out T1 find1, out T2 find2)
+		where T1 : Component
+		where T2 : Component
+	{
+		FindPairChainAndCopy<T1, T2>(key, parent, out find1, out find2);
+		return find1 != null || find2 != null;
+	}
+
+	// T1, T2, T3
+	public IKeyPairChain FindPairChain<T1, T2, T3>(string key, out T1 find1, out T2 find2, out T3 find3)
+		where T1 : Component
+		where T2 : Component
+		where T3 : Component
+	{
+		find1 = null;
+		find2 = null;
+		find3 = null;
+
+		FindPairChain(key, out GameObject obj);
+		if (obj != null)
+		{
+			obj.TryGetComponent<T1>(out find1);
+			obj.TryGetComponent<T2>(out find2);
+			obj.TryGetComponent<T3>(out find3);
+		}
+		return this;
+	}
+
+	public IKeyPairChain FindPairChainAndCopy<T1, T2, T3>(string key, Transform parent, out T1 find1, out T2 find2, out T3 find3)
+		where T1 : Component
+		where T2 : Component
+		where T3 : Component
+	{
+		find1 = null;
+		find2 = null;
+		find3 = null;
+
+		FindPairChain(key, out GameObject obj);
+		if (obj != null)
+		{
+			var copy = GameObject.Instantiate(obj, parent);
+			copy.TryGetComponent<T1>(out find1);
+			copy.TryGetComponent<T2>(out find2);
+			copy.TryGetComponent<T3>(out find3);
+		}
+		return this;
+	}
+
+	public bool TryFindPair<T1, T2, T3>(string key, out T1 find1, out T2 find2, out T3 find3)
+		where T1 : Component
+		where T2 : Component
+		where T3 : Component
+	{
+		FindPairChain<T1, T2, T3>(key, out find1, out find2, out find3);
+		return find1 != null || find2 != null || find3 != null;
+	}
+
+	public bool TryFindPairAndCopy<T1, T2, T3>(string key, Transform parent, out T1 find1, out T2 find2, out T3 find3)
+		where T1 : Component
+		where T2 : Component
+		where T3 : Component
+	{
+		FindPairChainAndCopy<T1, T2, T3>(key, parent, out find1, out find2, out find3);
+		return find1 != null || find2 != null || find3 != null;
+	}
+
+	// T1, T2, T3, T4
+	public IKeyPairChain FindPairChain<T1, T2, T3, T4>(string key, out T1 find1, out T2 find2, out T3 find3, out T4 find4)
+		where T1 : Component
+		where T2 : Component
+		where T3 : Component
+		where T4 : Component
+	{
+		find1 = null;
+		find2 = null;
+		find3 = null;
+		find4 = null;
+
+		FindPairChain(key, out GameObject obj);
+		if (obj != null)
+		{
+			obj.TryGetComponent<T1>(out find1);
+			obj.TryGetComponent<T2>(out find2);
+			obj.TryGetComponent<T3>(out find3);
+			obj.TryGetComponent<T4>(out find4);
+		}
+		return this;
+	}
+
+	public IKeyPairChain FindPairChainAndCopy<T1, T2, T3, T4>(string key, Transform parent, out T1 find1, out T2 find2, out T3 find3, out T4 find4)
+		where T1 : Component
+		where T2 : Component
+		where T3 : Component
+		where T4 : Component
+	{
+		find1 = null;
+		find2 = null;
+		find3 = null;
+		find4 = null;
+
+		FindPairChain(key, out GameObject obj);
+		if (obj != null)
+		{
+			var copy = GameObject.Instantiate(obj, parent);
+			copy.TryGetComponent<T1>(out find1);
+			copy.TryGetComponent<T2>(out find2);
+			copy.TryGetComponent<T3>(out find3);
+			copy.TryGetComponent<T4>(out find4);
+		}
+		return this;
+	}
+
+	public bool TryFindPair<T1, T2, T3, T4>(string key, out T1 find1, out T2 find2, out T3 find3, out T4 find4)
+		where T1 : Component
+		where T2 : Component
+		where T3 : Component
+		where T4 : Component
+	{
+		FindPairChain<T1, T2, T3, T4>(key, out find1, out find2, out find3, out find4);
+		return find1 != null || find2 != null || find3 != null || find4 != null;
+	}
+
+	public bool TryFindPairAndCopy<T1, T2, T3, T4>(string key, Transform parent, out T1 find1, out T2 find2, out T3 find3, out T4 find4)
+		where T1 : Component
+		where T2 : Component
+		where T3 : Component
+		where T4 : Component
+	{
+		FindPairChainAndCopy<T1, T2, T3, T4>(key, parent, out find1, out find2, out find3, out find4);
+		return find1 != null || find2 != null || find3 != null || find4 != null;
 	}
 
 	public IKeyPairChain FindSubPairChain(string key)

@@ -1,19 +1,8 @@
-﻿using static StrategyGamePlayData;
-
-public interface ISectorController
+﻿public partial interface ISectorController
 {
 	SectorObject This { get; }
+	ISectorController Controller { get; }
 	void On_SpawnTroops(in SpawnTroopsInfo spawnTroopsInfo);
-	public readonly struct SpawnTroopsInfo
-	{
-		public readonly int factionID;
-		public readonly (UnitKey key, int count)[] organizations;
-		public SpawnTroopsInfo(int factionID, params (UnitKey, int)[] organizations)
-		{
-			this.factionID = factionID;
-			this.organizations = organizations;
-		}
-	}
 	void OnChangeSupport_Defensive(float changeLevel);
 	void OnChangeSupport_Facilities(float changeLevel);
 	void OnChangeSupport_Offensive(float changeLevel);

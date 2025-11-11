@@ -146,7 +146,7 @@ public partial class StrategyControlPanelUI
 				if (!isDispose) return;
 				isDispose = true;
 
-				Unvisible();
+				Invisible();
 				OnDispose();
 				value = null;
 				panelUI = null;
@@ -157,10 +157,10 @@ public partial class StrategyControlPanelUI
 				if (isShow) return;
 				OnVisible();
 			}
-			public void Unvisible()
+			public void Invisible()
 			{
 				if (!isShow) return;
-				OnUnvisible();
+				OnInvisible();
 			}
 			public void ChangeValue(TValue value)
 			{
@@ -171,7 +171,7 @@ public partial class StrategyControlPanelUI
 			protected abstract void OnDispose();
 			protected abstract void OnInit();
 			protected abstract void OnVisible();
-			protected abstract void OnUnvisible();
+			protected abstract void OnInvisible();
 			protected abstract void OnBeforeChangeValue();
 			protected abstract void OnAfterChangeValue();
 		}

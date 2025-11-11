@@ -72,7 +72,7 @@ public class FloatingPanelItemUI : MonoBehaviour
 			onVisible?.Invoke();
 		}
 	}
-	public void Hide(Action onUnvisible = null)
+	public void Hide(Action onInvisible = null)
 	{
 		OnHide();
 		if (canvasGroupUI != null) canvasGroupUI.OnHide(_Hide);
@@ -81,8 +81,8 @@ public class FloatingPanelItemUI : MonoBehaviour
 		void _Hide()
 		{
 			if (canvas != null) canvas.enabled = false;
-			OnUnvisible();
-			onUnvisible?.Invoke();
+			OnInvisible();
+			onInvisible?.Invoke();
 			gameObject.SetActive(false);
 		}
 	}
@@ -111,7 +111,7 @@ public class FloatingPanelItemUI : MonoBehaviour
 	{
 
 	}
-	protected virtual void OnUnvisible()
+	protected virtual void OnInvisible()
 	{
 
 	}
