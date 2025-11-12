@@ -52,8 +52,8 @@ public partial class StrategyMapPanelUI // SectorLabelGroup
 				foreach (var visibility in aliveVisibility)
 				{
 					if (visibility == null) continue;
-					visibility.OnVisibleEnter -= Visibility_OnVisibleEnter;
-					visibility.OnVisibleExit -= Visibility_OnVisibleExit;
+					visibility.OnChangeVisible -= Visibility_OnChangeVisible;
+					visibility.OnChangeInvisible -= Visibility_OnChangeInvisible;
 				}
 				aliveVisibility.Clear();
 				aliveVisibility = null;
@@ -100,8 +100,8 @@ public partial class StrategyMapPanelUI // SectorLabelGroup
 				var visibility = sector.GetComponentInChildren<CameraVisibilityGroup>(true);
 				if (visibility != null && aliveVisibility.Add(visibility))
 				{
-					visibility.OnVisibleEnter += Visibility_OnVisibleEnter;
-					visibility.OnVisibleExit += Visibility_OnVisibleExit;
+					visibility.OnChangeVisible += Visibility_OnChangeVisible;
+					visibility.OnChangeInvisible += Visibility_OnChangeInvisible;
 				}
 				if (visibility.IsVisible) Visibility_OnVisibleEnter(sector);
 				else Visibility_OnVisibleExit(sector);
@@ -111,17 +111,17 @@ public partial class StrategyMapPanelUI // SectorLabelGroup
 				var visibility = sector.GetComponentInChildren<CameraVisibilityGroup>(true);
 				if (visibility != null && aliveVisibility.Remove(visibility))
 				{
-					visibility.OnVisibleEnter -= Visibility_OnVisibleEnter;
-					visibility.OnVisibleExit -= Visibility_OnVisibleExit;
+					visibility.OnChangeVisible -= Visibility_OnChangeVisible;
+					visibility.OnChangeInvisible -= Visibility_OnChangeInvisible;
 				}
 			}
 		}
-		private void Visibility_OnVisibleEnter(Component target)
+		private void Visibility_OnChangeVisible(Component target)
 		{
 			if (target == null || target is not SectorObject sector) return;
 			Visibility_OnVisibleEnter(sector);
 		}
-		private void Visibility_OnVisibleExit(Component target)
+		private void Visibility_OnChangeInvisible(Component target)
 		{
 			if (target == null || target is not SectorObject sector) return;
 			Visibility_OnVisibleExit(sector);
@@ -327,8 +327,8 @@ public partial class StrategyMapPanelUI // SectorLabelGroup
 					Hide();
 				}
 
-				visibility.OnVisibleEnter += Visibility_OnVisibleEnter;
-				visibility.OnVisibleExit += Visibility_OnVisibleExit;
+				visibility.OnChangeVisible += Visibility_OnVisibleEnter;
+				visibility.OnChangeInvisible += Visibility_OnVisibleExit;
 			}
 			public void Dispose()
 			{

@@ -44,7 +44,7 @@ public partial class OperationObject : INodeMovement
 		this.position = position;
 		this.velocity = velocity;
 
-		foreach (var unit in GetAllUnitObject)
+		foreach (var unit in GetAllUnitObj)
 		{
 			unit.ThisMovement.OnSetPositionAndVelocity(position, velocity);
 		}

@@ -4,6 +4,7 @@ using Sirenix.OdinInspector;
 
 using UnityEngine;
 
+[RequireComponent(typeof(RectTransform))]
 public class FloatingPanelItemUI : MonoBehaviour
 {
 	private int updateThisFrame;

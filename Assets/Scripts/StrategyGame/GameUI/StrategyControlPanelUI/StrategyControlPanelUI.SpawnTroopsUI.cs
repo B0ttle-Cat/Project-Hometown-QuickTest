@@ -7,19 +7,18 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
-using static ISectorController;
 using static StrategyGamePlayData;
-public partial class StrategyControlPanelUI // SpawnOperationPanel
+public partial class StrategyControlPanelUI // SpawnTroops
 {
-	[SerializeField, FoldoutGroup("SpawnOperation")]
+	[SerializeField, FoldoutGroup("SpawnTroops")]
 	private GameObject spawnOperationPrefab;
-	[SerializeField, FoldoutGroup("SpawnOperation")]
+	[SerializeField, FoldoutGroup("SpawnTroops")]
 	private Transform spawnOperationRoot;
-	[SerializeField, FoldoutGroup("SpawnOperation"), InlineProperty, HideLabel]
-	private SpawnOperationPanel spawnOperationPanel;
-	public IControlPanel ShowSpawnOperation()
+	[SerializeField, FoldoutGroup("SpawnTroops"), InlineProperty, HideLabel]
+	private SpawnTroopsPanel spawnOperationPanel;
+	public IControlPanel ShowSpawnTroops()
 	{
-		spawnOperationPanel = new SpawnOperationPanel(spawnOperationPrefab, spawnOperationRoot, this);
+		spawnOperationPanel = new SpawnTroopsPanel(spawnOperationPrefab, spawnOperationRoot, this);
 		ViewStack.Push(spawnOperationPanel);
 		return spawnOperationPanel;
 	}
@@ -30,11 +29,11 @@ public partial class StrategyControlPanelUI // SpawnOperationPanel
 		spawnOperationPanel = null;
 	}
 	[Serializable]
-	public class SpawnOperationPanel : ControlPanelUI, IControlPanel
+	public class SpawnTroopsPanel : ControlPanelUI, IControlPanel
 	{
 		[SerializeField, FoldoutGroup("FloatingPanelUI"), InlineProperty, HideLabel]
 		private SpawnPanel sectorPanel;
-		public SpawnOperationPanel(GameObject prefab, Transform root, StrategyControlPanelUI panelUI) : base(prefab, root, panelUI)
+		public SpawnTroopsPanel(GameObject prefab, Transform root, StrategyControlPanelUI panelUI) : base(prefab, root, panelUI)
 		{
 			sectorPanel = null;
 		}
@@ -130,9 +129,15 @@ public partial class StrategyControlPanelUI // SpawnOperationPanel
 				var infoList = numericSliders
 					.Select(i=>(i.Item1,Mathf.RoundToInt(i.Item2.Value)))
 					.Where(i=>i.Item1 != UnitKey.None && i.Item2 > 0);
-				selectSector.Controller.On_SpawnTroops(new SpawnTroopsInfo(Value.FactionID, infoList.ToArray()));
 
-				viewStack.ClearViewStack();
+				if(selectSector.Controller.OnConfirmButton_SpawnTroops(new SpawnTroopsInfo(Value.FactionID, infoList.ToArray())))
+				{
+					viewStack.ClearViewStack();
+				}
+				else
+				{
+					viewStack.Pop(ViewPanelUI);
+				}
 			}
 			private void OnClick_Cancel()
 			{

@@ -8,7 +8,7 @@ using UnityEngine;
 
 using static StrategyGamePlayData;
 
-public partial class OperationObject
+public partial class OperationObject // Main
 {
 	[SerializeField]
 	private int operationID;
@@ -16,81 +16,6 @@ public partial class OperationObject
 	private string teamName;
 	[SerializeField]
 	private int factionID;
-	[ShowInInspector]
-	private Dictionary<UnitKey, UnitListInOperation> unitOrganization;
-	private IEnumerable<int> GetAllUnitID
-	{
-		get
-		{
-			if (unitOrganization == null) yield break;
-			foreach (var item in unitOrganization)
-			{
-				var list = item.Value;
-				if (list == null || list.UnitIDList == null) continue;
-				var idList = list.UnitIDList;
-				foreach (int id in idList)
-				{
-					yield return id;
-				}
-			}
-		}
-	}
-	private IEnumerable<UnitObject> GetAllUnitObject
-	{
-		get
-		{
-			if (unitOrganization == null) yield break;
-			foreach (var item in GetAllUnitID)
-			{
-				if (StrategyManager.Collector.TryFindUnit(item, out var unitObject))
-				{
-					yield return unitObject;
-				}
-
-			}
-		}
-	}
-	[Serializable]
-	public class UnitListInOperation
-	{
-		private OperationObject operation;
-		[SerializeField]
-		private List<int> unitIDs;
-		public List<int> UnitIDList => unitIDs;
-
-		public UnitListInOperation(OperationObject operation)
-		{
-			this.operation = operation;
-			unitIDs = new List<int>();
-		}
-		public bool Add(UnitObject unitObject)
-		{
-			if (unitObject == null) return false;
-
-			int unitID = unitObject.ProfileData.unitID;
-			if (unitID < 0) return false;
-
-			if (unitIDs.Contains(unitID)) return false;
-
-			unitIDs.Add(unitID);
-			unitObject.SetOperationBelong(operation);
-			return true;
-		}
-		public bool Remove(UnitObject unitObject)
-		{
-			if (unitObject == null) return false;
-
-			int unitID = unitObject.ProfileData.unitID;
-			if (unitID < 0) return false;
-
-			if (unitIDs.Remove(unitID))
-			{
-				unitObject.RelaseOperationBelong();
-				return true;
-			}
-			return false;
-		}
-	}
 
 	public int OperationID { get => operationID; private set => operationID = value; }
 	public string TeamName
@@ -100,7 +25,7 @@ public partial class OperationObject
 			if (string.IsNullOrWhiteSpace(teamName))
 			{
 				if (operationID < 0) return "임시 편성 부대";
-				return $"제{operationID:oo}부대";
+				return $"제{operationID:00}부대";
 			}
 			return teamName;
 		}
@@ -114,7 +39,7 @@ public partial class OperationObject
 		operationID = -1;
 		teamName = "";
 		this.factionID = factionID;
-		unitOrganization = new Dictionary<UnitKey, UnitListInOperation>();
+		unitOrganization = new Dictionary<UnitKey, OrganizationInfo>();
 
 		int length = unitList.Count;
 		for (int i = 0 ; i < length ; i++)
@@ -125,6 +50,54 @@ public partial class OperationObject
 			AddUnitObject(unitObj);
 		}
 	}
+
+}
+
+public partial class OperationObject // Organization
+{
+	[ShowInInspector]
+	private Dictionary<UnitKey, OrganizationInfo> unitOrganization;
+	public event Action<OperationObject> OnChangeUnitList;
+	private IEnumerable<UnitObject> allUnit;
+	private int[] allUnitID;
+	private UnitObject[] allUnitObj;
+
+	public IEnumerable<UnitObject> GetAllUnit => allUnit;
+	public int[] GetAllUnitID => allUnitID;
+	public UnitObject[] GetAllUnitObj => allUnitObj;
+	[Serializable]
+	public class OrganizationInfo
+	{
+		[ShowInInspector]
+		private HashSet<int> unitIDs;
+		public HashSet<int> UnitIDList => unitIDs;
+
+		public OrganizationInfo()
+		{
+			unitIDs = new HashSet<int>();
+		}
+		public bool Add(UnitObject unitObject)
+		{
+			if (unitObject == null) return false;
+
+			int unitID = unitObject.ProfileData.unitID;
+			if (unitID < 0) return false;
+
+			if (unitIDs.Contains(unitID)) return false;
+
+			return unitIDs.Add(unitID);
+		}
+		public bool Remove(UnitObject unitObject)
+		{
+			if (unitObject == null) return false;
+
+			int unitID = unitObject.ProfileData.unitID;
+			if (unitID < 0) return false;
+
+			return unitIDs.Remove(unitID);
+		}
+	}
+
 	public bool HasUnitType(in UnitKey unitKey)
 	{
 		return unitOrganization.ContainsKey(unitKey);
@@ -136,15 +109,30 @@ public partial class OperationObject
 
 		UnitKey unitKey = unitObject.ProfileData.unitKey;
 
+		bool onChange = false;
 		if (unitOrganization.TryGetValue(unitKey, out var unitList))
 		{
-			unitList.Add(unitObject);
+			if (unitList.Add(unitObject))
+			{
+				unitObject.SetOperationBelong(this);
+				onChange = true;
+			}
 		}
 		else
 		{
-			unitList = new UnitListInOperation(this);
-			unitList.Add(unitObject);
-			unitOrganization.Add(unitKey, unitList);
+			unitList = new OrganizationInfo();
+			if (unitList.Add(unitObject))
+			{
+				unitOrganization.Add(unitKey, unitList);
+				unitObject.SetOperationBelong(this);
+				onChange = true;
+			}
+		}
+
+		if (onChange)
+		{
+			ChangeUnitListUpdate();
+
 		}
 	}
 	public void RemoveUnitObject(UnitObject unitObject)
@@ -153,12 +141,52 @@ public partial class OperationObject
 
 		UnitKey unitKey = unitObject.ProfileData.unitKey;
 
+		bool onChange = false;
 		if (unitOrganization.TryGetValue(unitKey, out var unitList))
 		{
-			unitList.Remove(unitObject);
+			if (unitList.Remove(unitObject))
+			{
+				onChange = true;
+				unitObject.RelaseOperationBelong();
+			}
+		}
+
+		if (onChange)
+		{
+			ChangeUnitListUpdate();
+		}
+	}
+	private void ChangeUnitListUpdate()
+	{
+		if (unitOrganization == null) return;
+		HashSet<UnitObject> unitList = new HashSet<UnitObject>();
+
+		foreach (var item in unitOrganization)
+		{
+			var value = item.Value;
+			if (value == null || value.UnitIDList == null) continue;
+			var list = value.UnitIDList;
+			foreach (int id in list)
+			{
+				if (StrategyManager.Collector.TryFindUnit(id, out var unitObject))
+				{
+					unitList.Add(unitObject);
+				}
+			}
+		}
+
+		allUnit = unitList;
+		allUnitObj = allUnit.ToArray();
+		allUnitID = allUnit.Select(i => i.UnitID).ToArray();
+
+
+		if (OnChangeUnitList != null)
+		{
+			OnChangeUnitList.Invoke(this);
 		}
 	}
 }
+
 public partial class OperationObject // Stats
 {
 	int computeFrame = -1;
@@ -177,7 +205,7 @@ public partial class OperationObject // Stats
 	{
 		int count = 0;
 		Vector3 point = Vector3.zero;
-		foreach (var item in GetAllUnitObject)
+		foreach (var item in GetAllUnitObj)
 		{
 			point += item.ThisMovement.CurrentPosition;
 			++count;
@@ -187,13 +215,27 @@ public partial class OperationObject // Stats
 	}
 	private int GetMoveSpeed()
 	{
-		float average = (float)GetAllUnitObject.Select(i => i.GetStateValue(StatsType.유닛_이동속도)).Average();
+		float average = (float)GetAllUnitObj.Select(i => i.GetStateValue(StatsType.유닛_이동속도)).Average();
 		return Mathf.RoundToInt(average);
 	}
 }
-public partial class OperationObject // VisibleCheck
+public partial class OperationObject : IVisibilityEvent<OperationObject>
 {
-	public bool IsVisibleAnybody => (visibleUnitList == null ? 0 : visibleUnitList.Count) > 0;
+	public IVisibilityEvent<OperationObject> ThisVisibility => this;
+	bool IVisibilityEvent<OperationObject>.IsVisible => (visibleUnitList == null ? 0 : visibleUnitList.Count) > 0;
+	private Action<OperationObject> onChangeVisible;
+	private Action<OperationObject> onChangeInvisible;
+	event Action<OperationObject> IVisibilityEvent<OperationObject>.OnChangeInvisible
+	{
+		add => onChangeVisible += value;
+		remove => onChangeVisible -= value;
+	}
+
+	event Action<OperationObject> IVisibilityEvent<OperationObject>.OnChangeVisible
+	{
+		add => onChangeInvisible += value;
+		remove => onChangeInvisible -= value;
+	}
 	private HashSet<UnitObject> visibleUnitList;
 	public void ChangeVisibleUnit(UnitObject unitObject)
 	{
@@ -202,7 +244,7 @@ public partial class OperationObject // VisibleCheck
 		{
 			if (visibleUnitList.Count == 1)
 			{
-				OnVisibleAnybody?.Invoke(this);
+				onChangeVisible?.Invoke(this);
 			}
 		}
 	}
@@ -214,13 +256,11 @@ public partial class OperationObject // VisibleCheck
 		{
 			if (visibleUnitList.Count == 0)
 			{
-				OnInvisibleEverybody?.Invoke(this);
+				onChangeInvisible?.Invoke(this);
 			}
 		}
 	}
 
-	public event Action<OperationObject> OnVisibleAnybody;
-	public event Action<OperationObject> OnInvisibleEverybody;
 }
 public partial class OperationObject : IStrategyElement
 {

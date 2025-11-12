@@ -5,43 +5,69 @@ using Sirenix.OdinInspector;
 
 using UnityEngine;
 
-[DisallowMultipleComponent]
-public class CameraVisibilityGroup : MonoBehaviour 
+public interface IVisibilityEvent<T> where T : class
 {
+	IVisibilityEvent<T> ThisVisibility { get; }
+	bool IsVisible { get; }
+	event Action<T> OnChangeInvisible;
+	event Action<T> OnChangeVisible;
+}
+
+[DisallowMultipleComponent]
+public class CameraVisibilityGroup : MonoBehaviour, IVisibilityEvent<Component>
+{
+	public IVisibilityEvent<Component> ThisVisibility => this;
 	[SerializeField, ReadOnly] protected Camera targetCamera;
 	[SerializeField, ReadOnly] protected bool isVisible = false;
 	[SerializeField, ReadOnly] protected List<Renderer> renderers = new List<Renderer>();
 	[SerializeField, ReadOnly] private Rect visibleScreenRect = Rect.zero;
 	[SerializeField, ReadOnly] private Bounds visibleWorldBounds = default;
-	public event Action<Component> OnVisibleEnter;
-	public event Action<Component> OnVisibleExit;
+	public event Action<Component> OnChangeVisible;
+	public event Action<Component> OnChangeInvisible;
 
 	private Vector3[] corners = new Vector3[8];
 
 	public bool IsVisible => isVisible;
 	public Rect VisibleScreenRect => visibleScreenRect;
 	public Bounds VisibleWorldBounds => visibleWorldBounds;
-	void Awake()
+    private void Reset()
+    {
+        
+    }
+
+    void Awake()
 	{
 		if (targetCamera == null) targetCamera = Camera.main;
 		visibleScreenRect = Rect.zero;
-		RefreshRenderers();
-		RefreshCamera();
+		OnRefreshRenderers();
+		OnRefreshCamera();
+		VisibilityUpdate();
 	}
 
 	void OnEnable()
 	{
-		RefreshRenderers();
+		OnRefreshRenderers();
 	}
 
 	void OnTransformChildrenChanged()
 	{
-		RefreshRenderers();
+		OnRefreshRenderers();
 	}
 
+	protected void OnRefreshRenderers()
+	{
+		if (renderers == null)
+			renderers = new List<Renderer>();
+		else
+			renderers.Clear();
+		RefreshRenderers();
+	}
+	protected void OnRefreshCamera()
+	{
+		RefreshCamera();
+	}
 	protected virtual void RefreshRenderers()
 	{
-		renderers.Clear();
 		GetComponentsInChildren(true, renderers);
 	}
 	protected virtual void RefreshCamera()
@@ -50,9 +76,13 @@ public class CameraVisibilityGroup : MonoBehaviour
 	}
 	protected virtual void LateUpdate()
 	{
+		VisibilityUpdate();
+	}
+	protected virtual void VisibilityUpdate()
+	{
 		if (targetCamera == null)
 		{
-			RefreshCamera();
+			OnRefreshCamera();
 			if (targetCamera == null) return;
 		}
 
@@ -106,7 +136,7 @@ public class CameraVisibilityGroup : MonoBehaviour
 			var visibleTarget = GetVisibleTarget();
 			if(visibleTarget != null)
 			{
-				OnVisibleEnter?.Invoke(visibleTarget);
+				OnChangeVisible?.Invoke(visibleTarget);
 			}
 		}
 		else if (!anyVisible && isVisible)
@@ -115,7 +145,7 @@ public class CameraVisibilityGroup : MonoBehaviour
 			var visibleTarget = GetVisibleTarget();
 			if (visibleTarget != null)
 			{
-				OnVisibleExit?.Invoke(visibleTarget);
+				OnChangeInvisible?.Invoke(visibleTarget);
 			}
 		}
 	}

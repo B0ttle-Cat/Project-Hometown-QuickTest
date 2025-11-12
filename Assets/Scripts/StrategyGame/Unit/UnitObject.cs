@@ -1,4 +1,6 @@
-﻿using Sirenix.OdinInspector;
+﻿using System;
+
+using Sirenix.OdinInspector;
 
 using UnityEngine;
 
@@ -35,8 +37,6 @@ public partial class UnitObject : MonoBehaviour
 		get => StrategyManager.Collector.FindFaction(FactionID);
 	}
 
-
-
 	public void Init(string displayName = "", int factionID = -1)
 	{
 		int unitID = profile != null ? UnitID : -1;
@@ -52,7 +52,7 @@ public partial class UnitObject : MonoBehaviour
 			protectType = ProtectionType.일반,
 		});
 		sector = new UnitData.ConnectSector(new());
-		operationID = -1;
+		InitOther(null);
 	}
 	public void Init(UnitProfileObject data, int factionID = -1)
 	{
@@ -69,7 +69,6 @@ public partial class UnitObject : MonoBehaviour
 			protectType = data.protectType,
 		});
 		sector = new UnitData.ConnectSector(new());
-		operationID = -1;
 		InitOther(data);
 	}
 	public void Init(in StrategyStartSetterData.UnitData data) // UnitData
@@ -89,18 +88,40 @@ public partial class UnitObject : MonoBehaviour
 			protectType = profileObj.protectType,
 		});
 		sector = new UnitData.ConnectSector(new(data.connectSectorName));
-		operationID = -1;
 		InitOther(profileObj);
 	}
-	private void InitOther(UnitProfileObject data)
+
+
+	private void InitOther(UnitProfileObject profileObj)
 	{
+		InitProfileObject(profileObj);
+		operationObject = null;
+		InitVisibility();
+	}
+	partial void InitProfileObject(UnitProfileObject profileObj);
+	partial void InitVisibility();
+	partial void InitOperationObject();
+}
+public partial class UnitObject // StateValue
+{
+
+	private StatsGroup skillBuffGroup;
+	public StatsList MainStatsList => StatsData.GetStatsList();
+	public StatsGroup SkillBuffGroup => skillBuffGroup ??= new StatsGroup();
+	public int GetStateValue(StatsType type) => MainStatsList.GetValueInt(type) + SkillBuffGroup.GetValueInt(type);
+
+
+	partial void InitProfileObject(UnitProfileObject profileObj)
+	{
+		if (profileObj == null) return;
+
 		Stats = new UnitData.Stats(new()
 		{
-			stats = new StatsList(data.ConvertStatsValues())
+			stats = new StatsList(profileObj.ConvertStatsValues())
 		});
 		Skill = new UnitData.Skill(new()
 		{
-			skillDatas = data.personalSkills == null ? new SkillData[0] : data.personalSkills.Clone() as SkillData[]
+			skillDatas = profileObj.personalSkills == null ? new SkillData[0] : profileObj.personalSkills.Clone() as SkillData[]
 		});
 
 		var 유닛_점령점수 = StatsData.GetValue(StatsType.유닛_점령점수);
@@ -110,7 +131,7 @@ public partial class UnitObject : MonoBehaviour
 			if (CaptureTag == null) CaptureTag = gameObject.AddComponent<CaptureTag>();
 
 			CaptureTag.factionID = FactionID;
-			CaptureTag.pointValue = data.유닛_점령점수;
+			CaptureTag.pointValue = profileObj.유닛_점령점수;
 		}
 		else
 		{
@@ -122,36 +143,96 @@ public partial class UnitObject : MonoBehaviour
 		}
 	}
 }
-public partial class UnitObject // StateValue
-{
-	private StatsGroup skillBuffGroup;
-	public  StatsList MainStatsList => StatsData.GetStatsList();
-	public StatsGroup SkillBuffGroup => skillBuffGroup ??= new StatsGroup();
-	public int GetStateValue(StatsType type) => MainStatsList.GetValueInt(type) + SkillBuffGroup.GetValueInt(type);
-}
 
 public partial class UnitObject // OperationBelong
 {
-	private int operationID;
-	public int OperationID => operationID;
 	[HideInEditorMode, FoldoutGroup("OperationBelong", VisibleIf = "IsOperationBelong"), InlineProperty, HideLabel]
-	public OperationObject OperationBelong => StrategyManager.IsNotReady ? default : 
-		StrategyManager.Collector.FindOperation(operationID);
+	public OperationObject operationObject;
+	public int OperationID => operationObject == null ? -1 : operationObject.OperationID;
 	public bool IsOperationBelong => OperationID >= 0;
 
-
-    public void SetOperationBelong(OperationObject operationObject)
+	partial void InitOperationObject()
 	{
-		operationID = operationObject == null ? -1 : operationObject.OperationID;
+		operationObject = null;
+	}
+	public void SetOperationBelong(OperationObject operationObject)
+	{
+		this.operationObject = operationObject;
+		if (operationObject == null) return;
+
+		ThisVisibility.OnChangeVisible -= operationObject.ChangeVisibleUnit;
+		ThisVisibility.OnChangeVisible += operationObject.ChangeVisibleUnit;
+
+		ThisVisibility.OnChangeInvisible -= operationObject.ChangeInvisibleUnit;
+		ThisVisibility.OnChangeInvisible += operationObject.ChangeInvisibleUnit;
+		if (ThisVisibility.IsVisible)
+		{
+			operationObject.ChangeVisibleUnit(this);
+		}
+		else
+		{
+			operationObject.ChangeInvisibleUnit(this);
+		}
 	}
 	public void RelaseOperationBelong()
 	{
-		operationID = -1;
+		if (operationObject != null)
+		{
+			ThisVisibility.OnChangeVisible -= operationObject.ChangeVisibleUnit;
+			ThisVisibility.OnChangeInvisible -= operationObject.ChangeInvisibleUnit;
+			operationObject = null;
+		}
 	}
-	public void HideWithOperation()
+}
+
+public partial class UnitObject : IVisibilityEvent<UnitObject>
+{
+	private IVisibilityEvent<Component> ChildVisibility => childVisibility;
+	private CameraVisibilityGroup childVisibility;
+	public IVisibilityEvent<UnitObject> ThisVisibility => this;
+	bool IVisibilityEvent<UnitObject>.IsVisible => ChildVisibility == null ? false : ChildVisibility.IsVisible;
+	private Action<UnitObject> onChangeVisible;
+	private Action<UnitObject> onChangeInvisible;
+	event Action<UnitObject> IVisibilityEvent<UnitObject>.OnChangeVisible
 	{
+		add {onChangeVisible += value;}
+		remove{onChangeVisible += value;}
 	}
-	public void ShowWithOperation()
+
+	event Action<UnitObject> IVisibilityEvent<UnitObject>.OnChangeInvisible
 	{
+		add {onChangeInvisible += value;}
+		remove{onChangeInvisible += value;}
+	}
+
+	partial void InitVisibility()
+	{
+		if (childVisibility != null) return;
+		childVisibility = GetComponentInChildren<CameraVisibilityGroup>();
+		if (childVisibility == null) return;
+		childVisibility.OnChangeVisible += CameraVisibilityGroup_OnChangeVisible;
+		childVisibility.OnChangeInvisible += CameraVisibilityGroup_OnChangeInvisible;
+		if (ChildVisibility.IsVisible)
+		{
+			CameraVisibilityGroup_OnChangeVisible(this);
+		}
+		else
+		{
+			CameraVisibilityGroup_OnChangeInvisible(this);
+		}
+	}
+	private void CameraVisibilityGroup_OnChangeVisible(Component obj)
+	{
+		if (obj == null) return;
+		if (obj is not UnitObject unit || unit != this) return;
+		if (onChangeVisible == null) return;
+		onChangeVisible.Invoke(unit);
+	}
+	private void CameraVisibilityGroup_OnChangeInvisible(Component obj)
+	{
+		if (obj == null) return;
+		if (obj is not UnitObject unit || unit != this) return;
+		if (onChangeInvisible == null) return;
+		onChangeInvisible.Invoke(unit);
 	}
 }

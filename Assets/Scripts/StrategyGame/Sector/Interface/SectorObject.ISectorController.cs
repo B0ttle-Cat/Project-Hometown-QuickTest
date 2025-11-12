@@ -2,12 +2,6 @@
 {
 	public SectorObject This => this;
 	public ISectorController Controller => this;
-
-    public void On_SpawnTroops(in SpawnTroopsInfo spawnTroopsInfo)
-    {
-		StrategyElementUtility.Instantiate(this, in spawnTroopsInfo);
-	}
-
     void ISectorController.OnChangeSupport_Defensive(float changeLevel)
 	{
 	}
@@ -20,6 +14,12 @@
 	void ISectorController.OnChangeSupport_Supply(float changeLevel)
 	{
 	}
+	bool ISectorController.OnConfirmButton_SpawnTroops(in SpawnTroopsInfo spawnTroopsInfo)
+	{
+		OperationObject operationObject = StrategyElementUtility.Instantiate(this, in spawnTroopsInfo);
+		return operationObject != null;
+	}
+
 	void ISectorController.OnControlButton_ConstructFacilities()
 	{
 	}
@@ -30,7 +30,7 @@
     void ISectorController.OnControlButton_SpawnOperation()
     {
 		StrategyManager.GameUI.ControlPanelUI.OpenUI();
-		var selecter = StrategyManager.GameUI.ControlPanelUI.ShowSpawnOperation();
+		var selecter = StrategyManager.GameUI.ControlPanelUI.ShowSpawnTroops();
 		selecter.AddTarget(this);
 	}
     void ISectorController.OnControlButton_UseFacilitiesSkill()

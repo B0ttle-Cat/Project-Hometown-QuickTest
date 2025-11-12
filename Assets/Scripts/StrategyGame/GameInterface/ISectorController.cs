@@ -2,11 +2,11 @@
 {
 	SectorObject This { get; }
 	ISectorController Controller { get; }
-	void On_SpawnTroops(in SpawnTroopsInfo spawnTroopsInfo);
 	void OnChangeSupport_Defensive(float changeLevel);
 	void OnChangeSupport_Facilities(float changeLevel);
 	void OnChangeSupport_Offensive(float changeLevel);
 	void OnChangeSupport_Supply(float changeLevel);
+	bool OnConfirmButton_SpawnTroops(in SpawnTroopsInfo spawnTroopsInfo);
 	void OnControlButton_ConstructFacilities();
 	void OnControlButton_DeployUniqueUnit();
 	void OnControlButton_SpawnOperation();

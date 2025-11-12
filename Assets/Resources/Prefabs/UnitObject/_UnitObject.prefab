@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4132202085799089646}
   - component: {fileID: 7935832438594412248}
   - component: {fileID: 5482022783912854521}
+  - component: {fileID: 7235125821253552112}
   m_Layer: 21
   m_Name: _UnitObject
   m_TagString: Untagged
@@ -110,6 +111,30 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
+--- !u!114 &7235125821253552112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2460545361625872358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 555862edee3cca244b61f0b9c701a18d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraVisibilityGroupInStrategy
+  targetCamera: {fileID: 0}
+  isVisible: 0
+  renderers: []
+  visibleScreenRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  visibleWorldBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
 --- !u!1 &2609880498311265087
 GameObject:
   m_ObjectHideFlags: 0

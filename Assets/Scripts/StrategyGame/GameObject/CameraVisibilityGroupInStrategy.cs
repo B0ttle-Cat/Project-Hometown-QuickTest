@@ -7,7 +7,6 @@ public class CameraVisibilityGroupInStrategy : CameraVisibilityGroup, IStrategyS
 
 	protected override void RefreshRenderers()
 	{
-		renderers.Clear();
 		renderers.AddRange(GetComponentsInChildren<MeshRenderer>(true));
 	}
 
@@ -16,18 +15,18 @@ public class CameraVisibilityGroupInStrategy : CameraVisibilityGroup, IStrategyS
 		targetCamera = StrategyManager.MainCamera;
 	}
 
-    protected override void LateUpdate()
+    protected override void VisibilityUpdate()
     {
 		if (isPause) return;
-
-        base.LateUpdate();
+        base.VisibilityUpdate();
     }
 
     void IStrategyStartGame.OnStartGame()
     {
 		isPause = false;
-		RefreshRenderers();
-		RefreshCamera();
+		OnRefreshRenderers();
+		OnRefreshCamera();
+		VisibilityUpdate();
 	}
 
     void IStrategyStartGame.OnStopGame()

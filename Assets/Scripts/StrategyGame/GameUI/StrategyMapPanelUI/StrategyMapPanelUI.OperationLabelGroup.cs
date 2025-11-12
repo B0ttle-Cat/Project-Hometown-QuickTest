@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 using Sirenix.OdinInspector;
 
@@ -53,8 +54,9 @@ public partial class StrategyMapPanelUI // OperationLabelGroup
 				foreach (var item in aliveOperation)
 				{
 					if (item == null) continue;
-					item.OnVisibleAnybody -= Operation_OnVisibleAnybody;
-					item.OnInvisibleEverybody -= Operation_OnInvisibleEverybody;
+					if (item is not IVisibilityEvent<OperationObject> visibility) continue;
+					visibility.OnChangeVisible -= Operation_OnChangeVisible;
+					visibility.OnChangeInvisible -= Operation_OnChangeInvisible;
 				}
 				aliveOperation.Clear();
 				aliveOperation = null;
@@ -90,21 +92,23 @@ public partial class StrategyMapPanelUI // OperationLabelGroup
 			else OnChangeList_Remove();
 			void OnChangeList_Add()
 			{
+				if (operation is not IVisibilityEvent<OperationObject> visibility) return;
 				if (!aliveOperation.Add(operation)) return;
-				operation.OnVisibleAnybody += Operation_OnVisibleAnybody;
-				operation.OnInvisibleEverybody += Operation_OnInvisibleEverybody;
-				if (operation.IsVisibleAnybody) Operation_OnVisibleAnybody(operation);
-				else Operation_OnInvisibleEverybody(operation);
+				visibility.OnChangeVisible += Operation_OnChangeVisible;
+				visibility.OnChangeInvisible += Operation_OnChangeInvisible;
+				if (visibility.IsVisible) Operation_OnChangeVisible(operation);
+				else Operation_OnChangeInvisible(operation);
 			}
 			void OnChangeList_Remove()
 			{
+				if (operation is not IVisibilityEvent<OperationObject> visibility) return;
 				if (!aliveOperation.Remove(operation)) return;
-				operation.OnVisibleAnybody -= Operation_OnVisibleAnybody;
-				operation.OnInvisibleEverybody -= Operation_OnInvisibleEverybody;
+				visibility.OnChangeVisible -= Operation_OnChangeVisible;
+				visibility.OnChangeInvisible -= Operation_OnChangeInvisible;
 			}
 		}
 
-		private void Operation_OnVisibleAnybody(OperationObject operation)
+		private void Operation_OnChangeVisible(OperationObject operation)
 		{
 			if (operation == null) return;
 
@@ -131,7 +135,7 @@ public partial class StrategyMapPanelUI // OperationLabelGroup
 			}
 		}
 
-		private void Operation_OnInvisibleEverybody(OperationObject operation)
+		private void Operation_OnChangeInvisible(OperationObject operation)
 		{
 			if (operation == null) return;
 
@@ -221,6 +225,8 @@ public partial class StrategyMapPanelUI // OperationLabelGroup
 				if (tooltipDivide != null) tooltipDivide.RemoveAllListener();
 
 				if (tooltipUI != null) tooltipUI.SetActive(false);
+
+				if (operation != null) operation.OnChangeUnitList -= Operation_OnChangeUnitList;
 			}
 
 			protected override void Visible()
@@ -276,9 +282,18 @@ public partial class StrategyMapPanelUI // OperationLabelGroup
 					(EventTriggerType.PointerExit, (data) => HideTooltip())
 				);
 
+				if (operation != null) operation.OnChangeUnitList += Operation_OnChangeUnitList;
+				Operation_OnChangeUnitList(operation);
 			}
 
-		
+			private void Operation_OnChangeUnitList(OperationObject operation)
+			{
+				if (operation == null) return;
+				if (FloatingPanelUI == null || FloatingPanelUI is not CenterFloatingPanelItemUI centerFloating) return;
+				
+				centerFloating.SetTargetInMap(operation.GetAllUnit.Select(i=>i.transform).ToArray());
+			}
+
 			private void OnClick_Delete()
 			{
 				// 팝업 메니저에서 먼저 띄워주고 정말 삭제할 건지 물어본다.
@@ -294,8 +309,8 @@ public partial class StrategyMapPanelUI // OperationLabelGroup
 				// 그리고 그 결과를 SpawnTroopsInfo 로 받으면 
 				// SpawnTroopsInfo 만큼 편제를 변경.
 				SpawnTroopsInfo edit = default;
-				if(Operation.Controller.OnOrganization_CheckValid(in edit))
-					if(Operation.Controller.OnOrganization_Edit(in edit))
+				if (Operation.Controller.OnOrganization_CheckValid(in edit))
+					if (Operation.Controller.OnOrganization_Edit(in edit))
 					{
 						// 편집 성공
 					}
@@ -307,7 +322,7 @@ public partial class StrategyMapPanelUI // OperationLabelGroup
 				// 선택된 부대를 제외한 다른 부재는 삭제한다.
 				SpawnTroopsInfo merge = default;
 				if (Operation.Controller.OnOrganization_CheckValid(in merge))
-					if(Operation.Controller.OnOrganization_Merge(in merge))
+					if (Operation.Controller.OnOrganization_Merge(in merge))
 					{
 						// 합치기 성공
 					}
@@ -319,7 +334,7 @@ public partial class StrategyMapPanelUI // OperationLabelGroup
 				// SpawnTroopsInfo 만큼 분리된 새로운 부대를 생성.
 				SpawnTroopsInfo divide = default;
 				if (Operation.Controller.OnOrganization_CheckValid(in divide))
-					if(Operation.Controller.OnOrganization_Divide(in divide))
+					if (Operation.Controller.OnOrganization_Divide(in divide))
 					{
 						// 나누기 성공
 					}

@@ -17,6 +17,8 @@ public enum ViewAndControlModeType
 
 public class StrategyViewAndControlModeChanger : MonoBehaviour, IStrategyStartGame
 {
+	[SerializeField, HideInPlayMode]
+	private ViewAndControlModeType startingMode;
 	[SerializeField,ReadOnly]
 	private ViewAndControlModeType currentMode;
 
@@ -45,7 +47,7 @@ public class StrategyViewAndControlModeChanger : MonoBehaviour, IStrategyStartGa
 	}
 	void IStrategyStartGame.OnStartGame()
 	{
-		ModeChange(ViewAndControlModeType.TacticsMode);
+		ModeChange(startingMode);
 	}
 	void IStrategyStartGame.OnStopGame()
 	{

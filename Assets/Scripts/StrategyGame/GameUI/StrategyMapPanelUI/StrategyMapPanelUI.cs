@@ -246,7 +246,6 @@ public partial class StrategyMapPanelUI // MapPanelUI
 			private float invisibleTimeLimit;
 			private float invisibleTime;
 			public bool IsShow => isShow;
-
 			protected MapLabel(GameObject uiObject, MapLabelGroup<T> group)
 			{
 				ThisGroup = group;
@@ -270,7 +269,6 @@ public partial class StrategyMapPanelUI // MapPanelUI
 				FloatingPanelUI = null;
 				KeyPair = null;
 				isShow = false;
-
 			}
 			public void Update(ref bool isSizeChange)
 			{
