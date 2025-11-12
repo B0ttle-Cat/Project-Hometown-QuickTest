@@ -1,8 +1,7 @@
 ﻿public interface IOperationController
 {
 	OperationObject This { get; }
-	IOperationController Controller { get; }
-
+    IOperationController Controller => This;
     void DeleteThis();
     void OnOrder_Cancel();
     void OnOrder_Execute();

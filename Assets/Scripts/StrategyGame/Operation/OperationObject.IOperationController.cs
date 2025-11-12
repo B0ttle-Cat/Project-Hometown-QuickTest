@@ -1,9 +1,8 @@
 ﻿public partial class OperationObject : IOperationController
 {
-	public OperationObject This { get; }
-	public IOperationController Controller { get; }
+	public IOperationController Controller => this;
 
-    void IOperationController.DeleteThis()
+	void IOperationController.DeleteThis()
     {
         // 스스로에게 파괴 명령
     }

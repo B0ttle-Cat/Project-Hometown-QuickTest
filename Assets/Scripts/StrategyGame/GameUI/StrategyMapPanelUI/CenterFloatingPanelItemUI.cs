@@ -12,7 +12,6 @@ public class CenterFloatingPanelItemUI : FloatingPanelItemUI
 		MinMax = 0,
 		Aaverage,
 		Avoid_MinMax,
-		//Avoid_Aaverage,
 	}
 
 	[SerializeField] private CenterMode mode;

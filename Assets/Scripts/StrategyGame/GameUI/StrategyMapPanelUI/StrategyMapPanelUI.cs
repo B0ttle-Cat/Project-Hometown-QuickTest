@@ -146,8 +146,8 @@ public partial class StrategyMapPanelUI // MapPanelUI
 		{
 			if (LabelList != null)
 			{
-				int length = LabelList.Count;
-				for (int i = 0 ; i < length ; i++)
+				// Dispose 에서 싸이즈 변경됨
+				for (int i = 0 ; i < LabelList.Count ; i++)
 				{
 					var label = LabelList[i];
 					if (label == null) continue;
@@ -215,23 +215,16 @@ public partial class StrategyMapPanelUI // MapPanelUI
 
 		protected override void OnUpdate()
 		{
-			int length = LabelList.Count;
-			bool isSizeChange = false;
-			for (int i = 0 ; i < length ; i++)
+			for (int i = 0 ; i < LabelList.Count ; i++)
 			{
-				OnLabelUpdate(LabelList[i], ref isSizeChange);
-				if (isSizeChange)
-				{
-					length = LabelList.Count;
-					isSizeChange = false;
-				}
+				OnLabelUpdate(LabelList[i]);
 			}
 		}
-		protected virtual void OnLabelUpdate(T target, ref bool isSizeChange)
+		protected virtual void OnLabelUpdate(T target)
 		{
 			if (target != null)
 			{
-				target.Update(ref isSizeChange);
+				target.Update();
 			}
 		}
 
@@ -270,7 +263,7 @@ public partial class StrategyMapPanelUI // MapPanelUI
 				KeyPair = null;
 				isShow = false;
 			}
-			public void Update(ref bool isSizeChange)
+			public void Update()
 			{
 				if (ThisGroup == null) return;
 
@@ -284,7 +277,6 @@ public partial class StrategyMapPanelUI // MapPanelUI
 					if (invisibleTime < 0)
 					{
 						Dispose();
-						isSizeChange = true;
 					}
 				}
 			}

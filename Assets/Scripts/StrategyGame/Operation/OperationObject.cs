@@ -17,6 +17,7 @@ public partial class OperationObject // Main
 	[SerializeField]
 	private int factionID;
 
+	public OperationObject This => this;
 	public int OperationID { get => operationID; private set => operationID = value; }
 	public string TeamName
 	{
