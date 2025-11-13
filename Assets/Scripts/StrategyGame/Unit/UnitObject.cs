@@ -39,14 +39,13 @@ public partial class UnitObject : MonoBehaviour
 
 	public void Init(string displayName = "", int factionID = -1)
 	{
-		int unitID = profile != null ? UnitID : -1;
 		factionID = (factionID == -1 && profile != null) ? FactionID : factionID;
 
 		profile = new UnitData.Profile(new UnitData.Profile.Data()
 		{
 			unitKey = UnitKey.None,
 			displayName = displayName,
-			unitID = unitID,
+			unitID = unitElementID,
 			factionID = factionID,
 			weaponType = WeaponType.일반,
 			protectType = ProtectionType.일반,
@@ -56,14 +55,13 @@ public partial class UnitObject : MonoBehaviour
 	}
 	public void Init(UnitProfileObject data, int factionID = -1)
 	{
-		int unitID = profile != null ? UnitID : -1;
 		factionID = (factionID == -1 && profile != null) ? FactionID : factionID;
 
 		profile = new UnitData.Profile(new UnitData.Profile.Data()
 		{
 			unitKey = data.unitKey,
 			displayName = data.displayName,
-			unitID = unitID,
+			unitID = unitElementID,
 			factionID = factionID,
 			weaponType = data.weaponType,
 			protectType = data.protectType,
@@ -73,7 +71,6 @@ public partial class UnitObject : MonoBehaviour
 	}
 	public void Init(in StrategyStartSetterData.UnitData data) // UnitData
 	{
-		int unitID = profile != null ? UnitID : -1;
 		int factionID = StrategyManager.Collector.FactionNameToID(data.factionName);
 
 		UnitProfileObject profileObj = data.unitProfile;
@@ -82,7 +79,7 @@ public partial class UnitObject : MonoBehaviour
 		{
 			unitKey = profileObj.unitKey,
 			displayName = profileObj.displayName,
-			unitID = unitID,
+			unitID = unitElementID,
 			factionID = factionID,
 			weaponType = profileObj.weaponType,
 			protectType = profileObj.protectType,
@@ -90,17 +87,19 @@ public partial class UnitObject : MonoBehaviour
 		sector = new UnitData.ConnectSector(new(data.connectSectorName));
 		InitOther(profileObj);
 	}
-
-
 	private void InitOther(UnitProfileObject profileObj)
 	{
 		InitProfileObject(profileObj);
-		operationObject = null;
+		InitOperationObject();
 		InitVisibility();
 	}
 	partial void InitProfileObject(UnitProfileObject profileObj);
 	partial void InitVisibility();
 	partial void InitOperationObject();
+
+	public void Deinit()
+	{
+	}
 }
 public partial class UnitObject // StateValue
 {

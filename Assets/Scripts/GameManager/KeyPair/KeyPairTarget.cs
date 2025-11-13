@@ -148,23 +148,21 @@ public class KeyPairTarget : MonoBehaviour, IKeyPairChain
 		gameObject = GameObject.Instantiate(gameObject, parent);
 		return gameObject;
 	}
-
-	public IKeyPairChain FindPairChain(string key, out GameObject find)
-	{
-		find = FindPair(key);
-		return this;
-	}
 }
 
 public interface IKeyPairChain
 {
 	public KeyPairTarget This { get; }
-	public IKeyPairChain FindPairChain(string key, out GameObject find);
+	public IKeyPairChain FindPairChain(string key, out GameObject find)
+	{
+		find = This.FindPair(key);
+		return this;
+	}
 	public IKeyPairChain FindPairChainAndCopy(string key, Transform parent, out GameObject find)
 	{
 		find = null;
 		FindPairChain(key, out var obj);
-		if(obj == null)
+		if (obj == null)
 		{
 			return this;
 		}
@@ -433,7 +431,7 @@ public static class KeyPairTargetEx
 	{
 		return (find = FindPair(gameObject, key)) != null;
 	}
-	
+
 	public static T FindPair<T>(this GameObject gameObject, string key) where T : Component
 	{
 		if (TryFindPair(gameObject, key, out GameObject find))

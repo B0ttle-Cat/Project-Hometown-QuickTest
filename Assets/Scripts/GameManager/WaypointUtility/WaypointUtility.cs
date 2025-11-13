@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 
+using Sirenix.OdinInspector;
+
 using UnityEngine;
 
 public static class WaypointUtility
@@ -13,20 +15,29 @@ public static class WaypointUtility
 		public float width;
 	}
 
-	public struct WaypointLine
+	public record WaypointLine
 	{
-        private Vector3[] points;
-        private float distance;
-
-        public Vector3[] Points => points;
+		[SerializeField,ReadOnly]
+		private readonly int networkID;
+		[SerializeField,ReadOnly]
+		private readonly int startNodeID;
+		[SerializeField,ReadOnly]
+		private readonly int lastNodeID;
+		[SerializeField,ReadOnly]
+		private readonly Vector3[] points;
+		[SerializeField,ReadOnly]
+		private readonly float distance;
+		public int NetworkID => networkID;
+		public (int start, int last) Tips => (startNodeID, lastNodeID); 
+		public Vector3[] Points => points;
 		public float Distance => distance;
 
-        public WaypointLine(Vector3 start, Vector3 last, Waypoint[] waypoints, int samplesPerSegment = 10)
-        {
-			points = null;
-			distance = 0;
-
-			points = GetLineWithWaypoints(start, last, waypoints, samplesPerSegment);
+		public WaypointLine(int id, NetworkNode startNode, NetworkNode lastNode, Waypoint[] waypoints, int samplesPerSegment = 10)
+		{
+			networkID = id;
+			startNodeID = startNode.NetworkID;
+			lastNodeID = lastNode.NetworkID; 
+			points = GetLineWithWaypoints(startNode.Position, lastNode.Position, waypoints, samplesPerSegment);
 			distance = _Distance();
 		}
 
@@ -37,7 +48,7 @@ public static class WaypointUtility
 			if (length < 0) return 0f;
 
 			float distance = 0f;
-            Vector3 prev = this.points[0];
+			Vector3 prev = this.points[0];
 			Vector3 next = prev;
 			for (int i = 0 ; i < length ; i++)
 			{
@@ -52,7 +63,7 @@ public static class WaypointUtility
 	public static Vector3[] GetLineWithWaypoints(Vector3 start, Vector3 last, Waypoint[] waypoints, int samplesPerSegment = 10)
 	{
 		var result = new List<Vector3>();
-		if(waypoints == null || waypoints.Length == 0)
+		if (waypoints == null || waypoints.Length == 0)
 		{
 			result.Add(start);
 			result.Add(last);

@@ -21,8 +21,8 @@ public class StrategyViewAndControlModeChanger : MonoBehaviour, IStrategyStartGa
 	private ViewAndControlModeType startingMode;
 	[SerializeField,ReadOnly]
 	private ViewAndControlModeType currentMode;
-
 	private IViewAndControlModeChange[] interfaceList;
+	public ViewAndControlModeType CurrentMode => currentMode;
 	private void Awake()
 	{
 		currentMode = ViewAndControlModeType.None;
@@ -53,4 +53,28 @@ public class StrategyViewAndControlModeChanger : MonoBehaviour, IStrategyStartGa
 	{
 		ModeChange(ViewAndControlModeType.None);
 	}
+
+#if UNITY_EDITOR
+	// === 테스트용 런타임 버튼 ===
+	private void OnGUI()
+	{
+		const float width = 160f;
+		const float height = 40f;
+		float x = 10f;
+		float y = 10f;
+
+		foreach (ViewAndControlModeType mode in System.Enum.GetValues(typeof(ViewAndControlModeType)))
+		{
+			GUI.enabled = currentMode != mode;
+
+			if (GUI.Button(new Rect(x, y, width, height), $"Switch: {mode}"))
+			{
+				ModeChange(mode);
+			}
+
+			y += height + 5f;
+		}
+		GUI.enabled = true;
+	}
+#endif
 }

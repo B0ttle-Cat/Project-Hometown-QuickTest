@@ -31,7 +31,7 @@ namespace TMPro.Examples
             // Load a new font asset and assign it to the Text object.
             m_text.font = Resources.Load<TMP_FontAsset>("Fonts & Materials/Anton SDF");
 
-            // Load a new material preset which was created with the context menu duplicate.
+            // Load a new propertyBlock preset which was created with the context menu duplicate.
             m_text.fontSharedMaterial = Resources.Load<Material>("Fonts & Materials/Anton SDF - Drop Shadow");
 
             // Set the size of the font.

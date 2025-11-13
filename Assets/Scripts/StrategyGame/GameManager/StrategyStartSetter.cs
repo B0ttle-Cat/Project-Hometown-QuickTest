@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 using Sirenix.OdinInspector;
 
@@ -113,7 +112,7 @@ public partial class StrategyStartSetter : MonoBehaviour
 			}
 			else
 			{
-				unitObject = Instantiate(in unitData);
+				unitObject = StrategyElementUtility.Instantiate(in unitData);
 			}
 			collector.AddElement(unitObject);
 		}
@@ -140,8 +139,8 @@ public partial class StrategyStartSetter : MonoBehaviour
 			var unit = includeSceneUnits[i];
 			if (collector.FindUnit(unit.UnitID) == null)
 			{
-				unit.Init(name, dataLength + i);
 				collector.AddElement(unit);
+				unit.Init(name, dataLength + i);
 			}
 		}
 	}
@@ -176,10 +175,16 @@ public partial class StrategyStartSetter : MonoBehaviour
     {
 		var data = strategyStartSetterData.GetData();
 		var networkDatas = data.sectorLinkDatas;
+		var sectors = StrategyManager.Collector.SectorList;
+		int length = sectors.Count;
+		NetworkNode[] nodes = new NetworkNode[length];
+        for (int i = 0 ; i < length ; i++)
+        {
+			var sector = sectors[i];
+			nodes[i]=new NetworkNode(i, sector);
+		}
 
-		await network.Init(
-			StrategyManager.Collector.SectorList.Select(s => new NetworkNode(s)).ToArray(),
-			networkDatas);
+        await network.Init(nodes, sectors.ToArray(),networkDatas);
 	}
     internal void OnStartSetter_Mission(StrategyMissionTree mission)
     {
@@ -192,22 +197,6 @@ public partial class StrategyStartSetter : MonoBehaviour
 }
 public partial class StrategyStartSetter // Instantiate
 {
-	private UnitObject Instantiate(in UnitData unitData)
-	{
-		var original = unitData.unitProfile.unitPrefab;
-		var position = unitData.position;
-		var rotation = Quaternion.Euler(unitData.rotation);
-		GameObject unitObject = GameObject.Instantiate( original, position, rotation);
-
-		unitObject.gameObject.name = name;
-
-		UnitObject unit = unitObject.GetComponent<UnitObject>();
-		if (unit == null) unit = unitObject.AddComponent<UnitObject>();
-
-		unit.Init(unitData);
-
-		return unit;
-	}
 	private void ResetWithData(UnitObject unit, in UnitData unitData)
 	{
 		if (unit == null) return;

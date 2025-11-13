@@ -80,7 +80,7 @@ public partial class StrategyMapPanelUI // MapPanelUI
 	public interface IMapPanel : IPanelFloating
 	{
 	}
-	public abstract class MapPanelUI : IDisposable, IViewPanelUI
+	public abstract class MapPanelUI : IDisposable, IPanelItemUI
 	{
 		protected StrategyMapPanelUI ThisPanel { get; private set; }
 		protected GameObject Preafab { get; private set; }
@@ -130,7 +130,6 @@ public partial class StrategyMapPanelUI // MapPanelUI
 		protected abstract void OnDispose();
 		protected virtual void OnUpdate() { }
 	}
-
 	public abstract class MapLabelGroup<T> : MapPanelUI where T : MapLabelGroup<T>.MapLabel
 	{
 		private List<T> labelList;

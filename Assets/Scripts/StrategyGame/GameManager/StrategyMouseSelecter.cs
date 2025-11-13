@@ -7,8 +7,15 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+[DefaultExecutionOrder(-1)]
 public partial class StrategyMouseSelecter : MonoBehaviour
 {
+	public enum ClickSelectMode
+	{
+		NoSelect,
+		SaveSelect,
+		TempSelect,
+	}
 	public enum SelecterState
 	{
 		None,
@@ -19,50 +26,61 @@ public partial class StrategyMouseSelecter : MonoBehaviour
 
 	[SerializeField, ReadOnly] private Mouse mouse;
 	[SerializeField, ReadOnly] private Keyboard keyboard;
-	[SerializeField, ReadOnly] private InputData inputData;
 	[SerializeField, ReadOnly] private EventSystem eventSystem;
 	[SerializeField] private LayerMask layerMask;
-	[SerializeField, ReadOnly] private SelecterState selecterState;
-	[SerializeField, ReadOnly] private BaseSelecter currentSelecter;
-	[ShowInInspector, ReadOnly] private HashSet<ISelectableByMouse> selectItemList;
-	[ShowInInspector, ReadOnly] private ISelectableByMouse singleSelectItem;
-	[ShowInInspector, ReadOnly] private HashSet<ISelectableByMouse> enterItemList;
 
-	[ShowInInspector, ReadOnly] private ISelectableByMouse uiSelect;
+	[SerializeField, ReadOnly] private InputData inputData;
+	[SerializeField, ReadOnly] private SelecterState leftSelecterState;
+	[SerializeField, ReadOnly] private BaseSelecter leftCurrentSelecter;
 
-	public HashSet<ISelectableByMouse> GetCurrentSelectList => selectItemList;
+	[SerializeField, ReadOnly] private SelecterState rightSelecterState;
+	[SerializeField, ReadOnly] private BaseSelecter rightCurrentSelecter;
 
-	private Action<ISelectableByMouse> onSelected;
-	private Action<ISelectableByMouse> onDeselected;
+	[ShowInInspector, ReadOnly] private HashSet<ISelectable> selectItemList;
+	[ShowInInspector, ReadOnly] private ISelectable singleSelectItem;
 
-	private Action<ISelectableByMouse> onSingleSelected;
-	private Action<ISelectableByMouse> onSingleDeselected;
+	public HashSet<ISelectable> GetCurrentSelectList => selectItemList;
 
-	private Action<ISelectableByMouse> onFirstSelected;
-	private Action<ISelectableByMouse> onLastDeselected;
+	private event Action<ISelectable> onSelected;
+	private event Action<ISelectable> onDeselected;
 
+	private event Action<ISelectable> onSingleSelected;
+	private event Action<ISelectable> onSingleDeselected;
+
+	private event Action<ISelectable> onFirstSelected;
+	private event Action<ISelectable> onLastDeselected;
+
+	private event Action<ISelectable> onPointingTarget;
 	public InputData GetInputData => inputData;
 
 	[Serializable]
 	public struct InputData
 	{
-		public Vector2 mouseDownPosition;
 		public Vector2 mouseCurrPosition;
-
+		public Vector2 mouseCurrDelta;
+		public bool shift;
+		public bool alt;
 		public bool isPointerOver;
 
+		public Vector2 leftMouseDownPosition;
+		public Vector2 rightMouseDownPosition;
 		public float leftPressedTime;
 		public float leftReleasedTime;
-
 		public bool leftPressedThisFrame;
 		public bool leftIsPressed;
 		public bool leftIsReleased => !leftIsPressed;
 		public bool leftReleasedThisFrame;
-		public bool shift;
-		public bool alt;
-		public bool isDown;
-		public bool isDrag;
+		public bool leftIsDown;
+		public bool leftIsDrag;
 
+		public float rightPressedTime;
+		public float rightReleasedTime;
+		public bool rightPressedThisFrame;
+		public bool rightIsPressed;
+		public bool rightIsReleased => !rightIsPressed;
+		public bool rightReleasedThisFrame;
+		public bool rightIsDown;
+		public bool rightIsDrag;
 	}
 
 	private void Awake()
@@ -75,18 +93,18 @@ public partial class StrategyMouseSelecter : MonoBehaviour
 		mouse = Mouse.current;
 		keyboard = Keyboard.current;
 		eventSystem = EventSystem.current;
-		selecterState = SelecterState.None;
-		currentSelecter = null;
-		selectItemList = new HashSet<ISelectableByMouse>();
+		leftSelecterState = SelecterState.None;
+		leftCurrentSelecter = null;
+		selectItemList = new HashSet<ISelectable>();
 	}
 	private void OnDisable()
 	{
 		mouse = null;
 		keyboard = null;
-		if (currentSelecter != null)
+		if (leftCurrentSelecter != null)
 		{
-			currentSelecter.Dispose();
-			currentSelecter = null;
+			leftCurrentSelecter.Dispose();
+			leftCurrentSelecter = null;
 		}
 		if (selectItemList != null)
 		{
@@ -109,10 +127,18 @@ public partial class StrategyMouseSelecter : MonoBehaviour
 		Camera mainCamera = StrategyManager.MainCamera;
 		if (mainCamera == null || !mainCamera.isActiveAndEnabled) return;
 
-		var nextSelecterState = UpdateSelecterState();
-		if (nextSelecterState != selecterState)
+		CommonInputUpdate();
+		SelecterState leftNextSelecterState = LeftUpdateSelecterState();
+		SelecterState rightNextSelecterState = RightUpdateSelecterState();
+		LeftMouseUpdate(leftNextSelecterState);
+		RightMouseUpdate(rightNextSelecterState);
+	}
+
+	private void LeftMouseUpdate(SelecterState nextSelecterState)
+	{
+		if (nextSelecterState != leftSelecterState)
 		{
-			selecterState = nextSelecterState;
+			leftSelecterState = nextSelecterState;
 			Selecter_Released();
 			Selecter_Start();
 		}
@@ -120,87 +146,171 @@ public partial class StrategyMouseSelecter : MonoBehaviour
 
 		void Selecter_Start()
 		{
-			currentSelecter?.Dispose();
-			currentSelecter = CreateSelecter(selecterState);
-			currentSelecter?.Start();
+			leftCurrentSelecter?.Dispose();
+			leftCurrentSelecter = CreateSelecter(leftSelecterState);
+			leftCurrentSelecter?.Start();
 		}
 		void Selecter_Update()
 		{
-			if (currentSelecter == null) return;
+			if (leftCurrentSelecter == null) return;
 
-			if (currentSelecter.Valid())
+			if (leftCurrentSelecter.Valid())
 			{
-				currentSelecter.Pressed();
+				leftCurrentSelecter.Pressed();
 			}
 			else
 			{
-				selecterState = SelecterState.None;
-				currentSelecter.Dispose();
-				currentSelecter = null;
+				leftSelecterState = SelecterState.None;
+				leftCurrentSelecter.Dispose();
+				leftCurrentSelecter = null;
 			}
 		}
 		void Selecter_Released()
 		{
-			if (selecterState == SelecterState.Released)
+			if (leftSelecterState == SelecterState.Released)
 			{
-				currentSelecter?.Released();
-				selecterState = SelecterState.None;
+				leftCurrentSelecter?.Released();
+				leftSelecterState = SelecterState.None;
 			}
 		}
 	}
-	private SelecterState UpdateSelecterState()
+	private void RightMouseUpdate(SelecterState nextSelecterState)
+	{
+		if (nextSelecterState != rightSelecterState)
+		{
+			rightSelecterState = nextSelecterState;
+			Selecter_Released();
+			Selecter_Start();
+		}
+		Selecter_Update();
+
+		void Selecter_Start()
+		{
+			rightCurrentSelecter?.Dispose();
+			rightCurrentSelecter = CreateSelecter(rightSelecterState);
+			rightCurrentSelecter?.Start();
+		}
+		void Selecter_Update()
+		{
+			if (rightCurrentSelecter == null) return;
+
+			if (rightCurrentSelecter.Valid())
+			{
+				rightCurrentSelecter.Pressed();
+			}
+			else
+			{
+				rightSelecterState = SelecterState.None;
+				rightCurrentSelecter.Dispose();
+				rightCurrentSelecter = null;
+			}
+		}
+		void Selecter_Released()
+		{
+			if (rightSelecterState == SelecterState.Released)
+			{
+				rightCurrentSelecter?.Released();
+				rightSelecterState = SelecterState.None;
+			}
+		}
+	}
+	void CommonInputUpdate()
 	{
 		inputData.isPointerOver = eventSystem.IsPointerOverGameObject();
+		inputData.shift = keyboard.shiftKey.isPressed;
+		inputData.alt = keyboard.altKey.isPressed;
+		inputData.mouseCurrPosition = mouse.position.ReadValue();
+		inputData.mouseCurrDelta = mouse.delta.ReadValue();
+	}
+	SelecterState LeftUpdateSelecterState()
+	{
 		if (inputData.isPointerOver)
 		{
-			return selecterState;
+			return leftSelecterState;
 		}
-
 
 		inputData.leftPressedThisFrame = mouse.leftButton.wasPressedThisFrame;
 		inputData.leftIsPressed = mouse.leftButton.isPressed;
 		inputData.leftReleasedThisFrame = mouse.leftButton.wasReleasedThisFrame;
-		inputData.shift = keyboard.shiftKey.isPressed;
-		inputData.alt = keyboard.altKey.isPressed;
-		inputData.mouseCurrPosition = mouse.position.ReadValue();
 
-		if (inputData.leftReleasedThisFrame && inputData.isDown)
+		if (inputData.leftReleasedThisFrame && inputData.leftIsDown)
 		{
-			inputData.isDown = false;
+			inputData.leftIsDown = false;
 			inputData.leftReleasedTime = Time.unscaledTime;
 			return SelecterState.Released;
 		}
 		else if (inputData.leftIsReleased)
 		{
-			inputData.isDown = false;
+			inputData.leftIsDown = false;
 			return SelecterState.None;
 		}
 		if (inputData.leftPressedThisFrame)
 		{
 			inputData.leftPressedTime = Time.unscaledTime;
-			inputData.mouseDownPosition = inputData.mouseCurrPosition;
-			inputData.isDown = true;
-			inputData.isDrag = false;
+			inputData.leftMouseDownPosition = inputData.mouseCurrPosition;
+			inputData.leftIsDown = true;
+			inputData.leftIsDrag = false;
 			return SelecterState.Click;
 		}
-		if (inputData.leftIsPressed && !inputData.isDrag && inputData.isDown)
+		if (inputData.leftIsPressed && !inputData.leftIsDrag && inputData.leftIsDown)
 		{
-			float distance = Vector2.Distance(inputData.mouseDownPosition, inputData.mouseCurrPosition);
+			float distance = Vector2.Distance(inputData.leftMouseDownPosition, inputData.mouseCurrPosition);
 			float dragThreshold = eventSystem.pixelDragThreshold;
 
-			inputData.isDrag = distance > dragThreshold;
+			inputData.leftIsDrag = distance > dragThreshold;
 
-			return inputData.isDrag ? SelecterState.Drag : SelecterState.Click;
+			return inputData.leftIsDrag ? SelecterState.Drag : SelecterState.Click;
 		}
-		return selecterState;
+		return leftSelecterState;
 	}
-	public void OnSystemSelectObject(ISelectableByMouse target, bool beforeClearList = true)
+	SelecterState RightUpdateSelecterState()
+	{
+		if (inputData.isPointerOver)
+		{
+			return rightSelecterState;
+		}
+
+		inputData.rightPressedThisFrame = mouse.rightButton.wasPressedThisFrame;
+		inputData.rightIsPressed = mouse.rightButton.isPressed;
+		inputData.rightReleasedThisFrame = mouse.rightButton.wasReleasedThisFrame;
+
+		if (inputData.rightReleasedThisFrame && inputData.rightIsDown)
+		{
+			inputData.rightIsDown = false;
+			inputData.rightReleasedTime = Time.unscaledTime;
+			return SelecterState.Released;
+		}
+		else if (inputData.rightIsReleased)
+		{
+			inputData.rightIsDown = false;
+			return SelecterState.None;
+		}
+		if (inputData.rightPressedThisFrame)
+		{
+			inputData.rightPressedTime = Time.unscaledTime;
+			inputData.rightMouseDownPosition = inputData.mouseCurrPosition;
+			inputData.rightIsDown = true;
+			inputData.rightIsDrag = false;
+			return SelecterState.Click;
+		}
+		if (inputData.rightIsPressed && !inputData.rightIsDrag && inputData.rightIsDown)
+		{
+			float distance = Vector2.Distance(inputData.rightMouseDownPosition, inputData.mouseCurrPosition);
+			float dragThreshold = eventSystem.pixelDragThreshold;
+
+			inputData.rightIsDrag = distance > dragThreshold;
+
+			return inputData.rightIsDrag ? SelecterState.None : SelecterState.Click;
+		}
+		return rightSelecterState;
+	}
+	public void OnSystemSelectObject(ISelectable target, bool beforeClearList = true)
 	{
 		if (target == null) return;
 		if (beforeClearList) ClearInSelectItemList();
 		AddInSelectItemList(target);
 	}
-	public void OnSystemDeselectObject(ISelectableByMouse target)
+	public void OnSystemDeselectObject(ISelectable target)
 	{
 		if (target == null) return;
 		RemoveInSelectItemList(target);
@@ -209,6 +319,10 @@ public partial class StrategyMouseSelecter : MonoBehaviour
 	{
 		ClearInSelectItemList();
 	}
+	public void OnSystemPointingTarget(ISelectable target)
+	{
+		OnPointingTarget(target);
+	}
 
 	private BaseSelecter CreateSelecter(SelecterState state) => state switch
 	{
@@ -216,7 +330,7 @@ public partial class StrategyMouseSelecter : MonoBehaviour
 		SelecterState.Drag => new DragSelecter(this),
 		_ => null
 	};
-	public void AddListener_OnSelectedAndDeselected(Action<ISelectableByMouse> onSelected, Action<ISelectableByMouse> onDeselected)
+	public void AddListener_OnSelectedAndDeselected(Action<ISelectable> onSelected, Action<ISelectable> onDeselected)
 	{
 		if (onSelected != null)
 		{
@@ -229,7 +343,7 @@ public partial class StrategyMouseSelecter : MonoBehaviour
 			this.onDeselected += onDeselected;
 		}
 	}
-	public void RemoveListener_OnSelectedAndDeselected(Action<ISelectableByMouse> onSelected, Action<ISelectableByMouse> onDeselected)
+	public void RemoveListener_OnSelectedAndDeselected(Action<ISelectable> onSelected, Action<ISelectable> onDeselected)
 	{
 		if (onSelected != null)
 		{
@@ -240,7 +354,7 @@ public partial class StrategyMouseSelecter : MonoBehaviour
 			this.onDeselected -= onDeselected;
 		}
 	}
-	public void AddListener_OnSingleAndDeselected(Action<ISelectableByMouse> onSingleSelected, Action<ISelectableByMouse> onSingleDeselected)
+	public void AddListener_OnSingleAndDeselected(Action<ISelectable> onSingleSelected, Action<ISelectable> onSingleDeselected)
 	{
 		if (onSingleSelected != null)
 		{
@@ -253,7 +367,7 @@ public partial class StrategyMouseSelecter : MonoBehaviour
 			this.onSingleDeselected += onSingleDeselected;
 		}
 	}
-	public void AddListener_OnSingleSelectedAndDeselected(Action<ISelectableByMouse> onSelected, Action<ISelectableByMouse> onSingleDeselected)
+	public void AddListener_OnSingleSelectedAndDeselected(Action<ISelectable> onSelected, Action<ISelectable> onSingleDeselected)
 	{
 		if (onSelected != null)
 		{
@@ -264,7 +378,7 @@ public partial class StrategyMouseSelecter : MonoBehaviour
 			this.onSingleDeselected -= onSingleDeselected;
 		}
 	}
-	public void AddListener_OnFirstAndLast(Action<ISelectableByMouse> onFirstSelected, Action<ISelectableByMouse> onLastDeselected)
+	public void AddListener_OnFirstAndLast(Action<ISelectable> onFirstSelected, Action<ISelectable> onLastDeselected)
 	{
 		if (onFirstSelected != null)
 		{
@@ -277,7 +391,7 @@ public partial class StrategyMouseSelecter : MonoBehaviour
 			this.onLastDeselected += onLastDeselected;
 		}
 	}
-	public void RemoveListener_OnFirsAndLast(Action<ISelectableByMouse> onFirstSelected, Action<ISelectableByMouse> onLastDeselected)
+	public void RemoveListener_OnFirsAndLast(Action<ISelectable> onFirstSelected, Action<ISelectable> onLastDeselected)
 	{
 		if (onFirstSelected != null)
 		{
@@ -288,89 +402,89 @@ public partial class StrategyMouseSelecter : MonoBehaviour
 			this.onLastDeselected -= onLastDeselected;
 		}
 	}
-
-	private bool AddInSelectItemList(ISelectableByMouse target)
+	private bool AddInSelectItemList(ISelectable target)
 	{
-		if (target != null && selectItemList.Add(target))
+		if (!(target != null && selectItemList.Add(target))) return false;
+
+		if (target is ISelectableByMouse targetByMouse)
 		{
-			target.IsSelectMouse = true;
-			HashSet<ISelectableByMouse> passingList = new (){ target };
-			while (target.HasPass(out var pass))
-			{
-				if (pass == null || !passingList.Add(pass)) break;
-				target = pass;
-			}
-
-			if (target.OnSelect())
-			{
-				onSelected?.Invoke(target);
-				if (selectItemList.Count == 1)
-				{
-					singleSelectItem = target;
-					target.OnSingleSelect();
-					onSingleSelected?.Invoke(target);
-
-					target.OnFirstSelect();
-					onFirstSelected?.Invoke(target);
-				}
-				else if (singleSelectItem != null)
-				{
-					singleSelectItem.OnSingleDeselect();
-					onSingleDeselected?.Invoke(singleSelectItem);
-					singleSelectItem = null;
-				}
-				return true;
-			}
-			else
-			{
-				selectItemList.Remove(target);
-			}
+			targetByMouse.IsSelectMouse = true;
 		}
-		return false;
+
+		HashSet<ISelectable> passingList = new (){ target };
+		while (target.HasPass(out var pass))
+		{
+			if (pass == null || !passingList.Add(pass)) break;
+			target = pass;
+		}
+
+		if (!target.CanSelect())
+		{
+			selectItemList.Add(target);
+			return false;
+		}
+
+		target.OnSelect();
+		onSelected?.Invoke(target);
+
+		if (selectItemList.Count == 1)
+		{
+			singleSelectItem = target;
+			target.OnSingleSelect();
+			onSingleSelected?.Invoke(target);
+
+			target.OnFirstSelect();
+			onFirstSelected?.Invoke(target);
+		}
+		else if (singleSelectItem != null)
+		{
+			singleSelectItem.OnSingleDeselect();
+			onSingleDeselected?.Invoke(singleSelectItem);
+			singleSelectItem = null;
+		}
+		return true;
 	}
-	private bool RemoveInSelectItemList(ISelectableByMouse target)
+	private bool RemoveInSelectItemList(ISelectable target)
 	{
 		if (target != null && selectItemList.Remove(target))
 		{
-			target.IsSelectMouse = false;
-			if (target.OnDeselect())
+			if (target is ISelectableByMouse targetByMouse)
 			{
-				onDeselected?.Invoke(target);
+				targetByMouse.IsSelectMouse = false;
+			}
 
-				if (selectItemList.Count == 1)
-				{
-					singleSelectItem = target;
-					target.OnSingleSelect();
-					onSingleSelected?.Invoke(target);
-				}
-				else if (singleSelectItem != null)
-				{
-					singleSelectItem.OnSingleDeselect();
-					onSingleDeselected?.Invoke(singleSelectItem);
-					singleSelectItem = null;
-				}
-				if (selectItemList.Count == 0)
-				{
-					target.OnLastDeselect();
-					onLastDeselected?.Invoke(target);
-				}
-				return true;
-			}
-			else
+			target.OnDeselect();
+			onDeselected?.Invoke(target);
+
+			if (selectItemList.Count == 1)
 			{
-				selectItemList.Add(target);
+				singleSelectItem = target;
+				target.OnSingleSelect();
+				onSingleSelected?.Invoke(target);
 			}
+			else if (singleSelectItem != null)
+			{
+				singleSelectItem.OnSingleDeselect();
+				onSingleDeselected?.Invoke(singleSelectItem);
+				singleSelectItem = null;
+			}
+			if (selectItemList.Count == 0)
+			{
+				target.OnLastDeselect();
+				onLastDeselected?.Invoke(target);
+			}
+			return true;
 		}
 		return false;
 	}
-	private bool ContainsInSelectItemList(ISelectableByMouse target)
+	private bool ContainsInSelectItemList(ISelectable target)
 	{
 		return target != null && selectItemList.Contains(target);
 	}
 	private void ClearInSelectItemList()
 	{
-		ISelectableByMouse last = null;
-		foreach (ISelectableByMouse target in selectItemList)
+		ISelectable last = null;
+		foreach (ISelectable target in selectItemList)
 		{
 			if (target == null) continue;
 			target.OnDeselect();
@@ -393,7 +507,22 @@ public partial class StrategyMouseSelecter : MonoBehaviour
 		selectItemList.Clear();
 	}
 
-
+	public void AddListener_OnPointingTarget(Action<ISelectable> onPointingTarget)
+	{
+		if (onPointingTarget == null) return;
+		this.onPointingTarget -= onPointingTarget;
+		this.onPointingTarget += onPointingTarget;
+	}
+	public void RemoveListener_OnPointingTarget(Action<ISelectable> onPointingTarget)
+	{
+		if (onPointingTarget == null) return;
+		this.onPointingTarget -= onPointingTarget;
+	}
+	private void OnPointingTarget(ISelectable target)
+	{
+		if (target == null || onPointingTarget == null) return;
+		onPointingTarget.Invoke(target);
+	}
 }
 public partial class StrategyMouseSelecter
 {
@@ -437,23 +566,23 @@ public partial class StrategyMouseSelecter
 			}
 			return null;
 		}
-		protected void SelectNew(ISelectableByMouse target)
+		protected virtual void OnSelect(ISelectableByMouse target)
 		{
 			Selecter.AddInSelectItemList(target);
 		}
-		protected void Deselect(ISelectableByMouse target)
+		protected virtual void Deselect(ISelectableByMouse target)
 		{
 			Selecter.RemoveInSelectItemList(target);
 		}
-		protected void ClearSelect()
+		protected virtual void ClearSelect()
 		{
 			Selecter.ClearInSelectItemList();
 		}
-		protected void ToggleSelect(ISelectableByMouse target)
+		protected virtual void ToggleSelect(ISelectableByMouse target)
 		{
 			if (target == null) return;
 			if (Selecter.ContainsInSelectItemList(target)) Deselect(target);
-			else SelectNew(target);
+			else OnSelect(target);
 		}
 		public void Dispose()
 		{
@@ -471,11 +600,11 @@ public partial class StrategyMouseSelecter
 		}
 		public override void Start()
 		{
-			mouseDownTarget = GetTargetUnderMouse(InputData.mouseDownPosition);
+			mouseDownTarget = GetTargetUnderMouse(InputData.leftMouseDownPosition);
 		}
 		public override bool Valid()
 		{
-			return !InputData.isDrag;
+			return !InputData.leftIsDrag;
 		}
 		public override void Pressed()
 		{
@@ -496,7 +625,7 @@ public partial class StrategyMouseSelecter
 			}
 			else
 			{
-				SelectNew(mouseDownTarget);
+				OnSelect(mouseDownTarget);
 			}
 		}
 	}
@@ -512,7 +641,7 @@ public partial class StrategyMouseSelecter
 		}
 		public override bool Valid()
 		{
-			return InputData.isDrag;
+			return InputData.leftIsDrag;
 		}
 		public override void Pressed()
 		{
@@ -530,7 +659,7 @@ public partial class StrategyMouseSelecter
 		{
 			if (StrategyManager.MainCamera == null) return;
 
-			Vector2 start = InputData.mouseDownPosition;
+			Vector2 start = InputData.leftMouseDownPosition;
 			Vector2 end = InputData.mouseCurrPosition;
 
 			float xMin = Mathf.Min(start.x, end.x);
@@ -549,10 +678,42 @@ public partial class StrategyMouseSelecter
 					if (rect.Contains(screenPos))
 					{
 						if (InputData.alt) Deselect(target);
-						else SelectNew(target);
+						else OnSelect(target);
 					}
 				}
 			}
+		}
+	}
+
+
+	public class RIghtPointer : BaseSelecter
+	{
+		protected ISelectableByMouse mouseDownTarget;
+		public RIghtPointer(StrategyMouseSelecter selecter) : base(selecter)
+		{
+			mouseDownTarget = null;
+		}
+		public override void Start()
+		{
+			mouseDownTarget = GetTargetUnderMouse(InputData.rightMouseDownPosition);
+		}
+		public override bool Valid()
+		{
+			return !InputData.leftIsDrag;
+		}
+		public override void Pressed()
+		{
+
+		}
+		public override void Released()
+		{
+			if (mouseDownTarget != GetTargetUnderMouse(InputData.mouseCurrPosition)) return;
+
+			OnSelect(mouseDownTarget);
+		}
+		protected override void OnSelect(ISelectableByMouse target)
+		{
+			Selecter.OnPointingTarget(target);
 		}
 	}
 }

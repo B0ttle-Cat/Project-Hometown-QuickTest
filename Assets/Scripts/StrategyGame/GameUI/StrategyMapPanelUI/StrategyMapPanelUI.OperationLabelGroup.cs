@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 using Sirenix.OdinInspector;
 
@@ -160,6 +159,7 @@ public partial class StrategyMapPanelUI // OperationLabelGroup
 			public OperationObject Operation => operation;
 
 			private readonly TMP_Text nameText;
+			private readonly Button select;
 			private readonly Button showCloser;
 			private readonly Button delete;
 			private readonly Button goBack;
@@ -171,6 +171,7 @@ public partial class StrategyMapPanelUI // OperationLabelGroup
 			private readonly GameObject tooltipUI;
 			private readonly TMP_Text tooltipText;
 
+			private readonly EventTrigger tooltipSelect;
 			private readonly EventTrigger tooltipShowCloser;
 			private readonly EventTrigger tooltipDelete;
 			private readonly EventTrigger tooltipGoBack;
@@ -186,6 +187,7 @@ public partial class StrategyMapPanelUI // OperationLabelGroup
 
 				KeyPair
 					.FindPairChain<TMP_Text>("NameText", out nameText)
+					.FindPairChain<Button, EventTrigger>("Select", out select, out tooltipSelect)
 					.FindPairChain<Button, EventTrigger>("ShowCloser", out showCloser, out tooltipShowCloser)
 					.FindPairChain<Button, EventTrigger>("Delete", out delete, out tooltipDelete)
 					.FindPairChain<Button, EventTrigger>("Back", out goBack, out tooltipGoBack)
@@ -206,33 +208,40 @@ public partial class StrategyMapPanelUI // OperationLabelGroup
 			{
 				if (nameText != null) nameText.text = "";
 
-				if (showCloser != null) showCloser.onClick.RemoveListener(OnClick_ShowCloser);
-				if (delete != null) delete.onClick.RemoveListener(OnClick_Delete);
-				if (goBack != null) goBack.onClick.RemoveListener(OnClick_GoBack);
-				if (play != null) play.onClick.RemoveListener(OnClick_Play);
-				if (pause != null) pause.onClick.RemoveListener(OnClick_Pause);
-				if (edit != null) edit.onClick.RemoveListener(OnClick_Edit);
-				if (merge != null) merge.onClick.RemoveListener(OnClick_Merge);
-				if (divide != null) divide.onClick.RemoveListener(OnClick_Divide);
+				if (select != null) select.onClick.RemoveAllListeners();
+				if (showCloser != null) showCloser.onClick.RemoveAllListeners();
+				if (delete != null) delete.onClick.RemoveAllListeners();
+				if (goBack != null) goBack.onClick.RemoveAllListeners();
+				if (play != null) play.onClick.RemoveAllListeners();
+				if (pause != null) pause.onClick.RemoveAllListeners();
+				if (edit != null) edit.onClick.RemoveAllListeners();
+				if (merge != null) merge.onClick.RemoveAllListeners();
+				if (divide != null) divide.onClick.RemoveAllListeners();
 
-				if (tooltipShowCloser != null) tooltipShowCloser.RemoveAllListener();
-				if (tooltipDelete != null) tooltipDelete.RemoveAllListener();
-				if (tooltipGoBack != null) tooltipGoBack.RemoveAllListener();
-				if (tooltipPlay != null) tooltipPlay.RemoveAllListener();
-				if (tooltipPause != null) tooltipPause.RemoveAllListener();
-				if (tooltipEdit != null) tooltipEdit.RemoveAllListener();
-				if (tooltipMerge != null) tooltipMerge.RemoveAllListener();
-				if (tooltipDivide != null) tooltipDivide.RemoveAllListener();
+				if (tooltipSelect != null) tooltipSelect.RemoveAllListeners();
+				if (tooltipShowCloser != null) tooltipShowCloser.RemoveAllListeners();
+				if (tooltipDelete != null) tooltipDelete.RemoveAllListeners();
+				if (tooltipGoBack != null) tooltipGoBack.RemoveAllListeners();
+				if (tooltipPlay != null) tooltipPlay.RemoveAllListeners();
+				if (tooltipPause != null) tooltipPause.RemoveAllListeners();
+				if (tooltipEdit != null) tooltipEdit.RemoveAllListeners();
+				if (tooltipMerge != null) tooltipMerge.RemoveAllListeners();
+				if (tooltipDivide != null) tooltipDivide.RemoveAllListeners();
 
 				if (tooltipUI != null) tooltipUI.SetActive(false);
 
-				if (operation != null) operation.OnChangeUnitList -= Operation_OnChangeUnitList;
+				if (operation != null)
+				{
+					operation.OnChangeUnitList -= Operation_OnChangeUnitList;
+					operation.OnChangeMovementOrderState -= Operation_OnChangeMovementOrderState; 
+				}
 			}
 
 			protected override void Visible()
 			{
 				if (nameText != null) nameText.text = operation.TeamName;
 
+				if (select != null) select.onClick.AddListener(OnClick_Select);
 				if (showCloser != null) showCloser.onClick.AddListener(OnClick_ShowCloser);
 				if (delete != null) delete.onClick.AddListener(OnClick_Delete);
 				if (goBack != null) goBack.onClick.AddListener(OnClick_GoBack);
@@ -242,75 +251,74 @@ public partial class StrategyMapPanelUI // OperationLabelGroup
 				if (merge != null) merge.onClick.AddListener(OnClick_Merge);
 				if (divide != null) divide.onClick.AddListener(OnClick_Divide);
 
-				tooltipShowCloser.AddListener(
-					(EventTriggerType.PointerEnter, (data) => ShowTooltip("확대하기")),
-					(EventTriggerType.PointerExit, (data) => HideTooltip())
-				);
+				if(tooltipSelect != null) tooltipSelect.AddListener((EventTriggerType.PointerEnter, (data) => ShowTooltip("부대 선택")),
+					(EventTriggerType.PointerExit, (data) => HideTooltip()));
 
-				tooltipDelete.AddListener(
-					(EventTriggerType.PointerEnter, (data) => ShowTooltip("삭제")),
-					(EventTriggerType.PointerExit, (data) => HideTooltip())
-				);
+				if (tooltipShowCloser != null) tooltipShowCloser.AddListener((EventTriggerType.PointerEnter, (data) => ShowTooltip("확대하기")),
+					(EventTriggerType.PointerExit, (data) => HideTooltip()));
 
-				tooltipGoBack.AddListener(
-					(EventTriggerType.PointerEnter, (data) => ShowTooltip("뒤로가기")),
-					(EventTriggerType.PointerExit, (data) => HideTooltip())
-				);
+				if (tooltipDelete != null) tooltipDelete.AddListener((EventTriggerType.PointerEnter, (data) => ShowTooltip("삭제")),
+					(EventTriggerType.PointerExit, (data) => HideTooltip()));
 
-				tooltipPlay.AddListener(
-					(EventTriggerType.PointerEnter, (data) => ShowTooltip("재생")),
-					(EventTriggerType.PointerExit, (data) => HideTooltip())
-				);
+				if (tooltipGoBack != null) tooltipGoBack.AddListener((EventTriggerType.PointerEnter, (data) => ShowTooltip("뒤로가기")),
+					(EventTriggerType.PointerExit, (data) => HideTooltip()));
 
-				tooltipPause.AddListener(
-					(EventTriggerType.PointerEnter, (data) => ShowTooltip("일시정지")),
-					(EventTriggerType.PointerExit, (data) => HideTooltip())
-				);
+				if (tooltipPlay != null) tooltipPlay.AddListener((EventTriggerType.PointerEnter, (data) => ShowTooltip("재생")),
+					(EventTriggerType.PointerExit, (data) => HideTooltip()));
 
-				tooltipEdit.AddListener(
-					(EventTriggerType.PointerEnter, (data) => ShowTooltip("편집")),
-					(EventTriggerType.PointerExit, (data) => HideTooltip())
-				);
+				if (tooltipPause != null) tooltipPause.AddListener((EventTriggerType.PointerEnter, (data) => ShowTooltip("일시정지")),
+					(EventTriggerType.PointerExit, (data) => HideTooltip()));
 
-				tooltipMerge.AddListener(
-					(EventTriggerType.PointerEnter, (data) => ShowTooltip("병합")),
-					(EventTriggerType.PointerExit, (data) => HideTooltip())
-				);
+				if (tooltipEdit != null) tooltipEdit.AddListener((EventTriggerType.PointerEnter, (data) => ShowTooltip("편집")),
+					(EventTriggerType.PointerExit, (data) => HideTooltip()));
 
-				tooltipDivide.AddListener(
-					(EventTriggerType.PointerEnter, (data) => ShowTooltip("분할")),
-					(EventTriggerType.PointerExit, (data) => HideTooltip())
-				);
+				if (tooltipMerge != null) tooltipMerge.AddListener((EventTriggerType.PointerEnter, (data) => ShowTooltip("병합")),
+					(EventTriggerType.PointerExit, (data) => HideTooltip()));
 
-				if (operation != null) operation.OnChangeUnitList += Operation_OnChangeUnitList;
-				Operation_OnChangeUnitList(operation);
+				if (tooltipDivide != null) tooltipDivide.AddListener((EventTriggerType.PointerEnter, (data) => ShowTooltip("분할")),
+					(EventTriggerType.PointerExit, (data) => HideTooltip()));
+
+				if (operation != null)
+				{
+					operation.OnChangeUnitList += Operation_OnChangeUnitList;
+                    operation.OnChangeMovementOrderState += Operation_OnChangeMovementOrderState;
+					Operation_OnChangeUnitList(operation);
+					Operation_OnChangeMovementOrderState(operation);
+				}
 			}
-
+		
 			private void Operation_OnChangeUnitList(OperationObject operation)
 			{
 				if (operation == null) return;
 				if (FloatingPanelUI == null || FloatingPanelUI is not CenterFloatingPanelItemUI centerFloating) return;
 				
-				centerFloating.SetTargetInMap(operation.GetAllUnit.Select(i=>i.transform).ToArray());
+				centerFloating.SetTargetInMap(operation.GetAllUnitTr.ToArray());
 			}
+			private void Operation_OnChangeMovementOrderState(OperationObject operation)
+			{
+				operation.ThisController.OnMovementOrder_AvailableType(out bool play, out bool pause, out bool goBack);
 
+				if (this.goBack != null) this.goBack.gameObject.SetActive(goBack);
+				if (this.play != null) this.play.gameObject.SetActive(play);
+				if (this.pause != null) this.pause.gameObject.SetActive(pause);
+			}
 			private void OnClick_Delete()
 			{
 				// 팝업 메니저에서 먼저 띄워주고 정말 삭제할 건지 물어본다.
 				//그뒤 확인되면 호출한다.
-				Operation.Controller.DeleteThis();
+				Operation.ThisController.DeleteThis();
 			}
-			private void OnClick_GoBack() => Operation.Controller.OnOrder_Cancel();
-			private void OnClick_Play() => Operation.Controller.OnOrder_Execute();
-			private void OnClick_Pause() => Operation.Controller.OnOrder_Pause();
+			private void OnClick_GoBack() => Operation.ThisController.OnMovementOrder_Cancel();
+			private void OnClick_Play() => Operation.ThisController.OnMovementOrder_Execute();
+			private void OnClick_Pause() => Operation.ThisController.OnMovementOrder_Pause();
 			private void OnClick_Edit()
 			{
 				// 우선 SpawnTroopsInfo 를 설정 할수 있는 UI 를 띄운다.
 				// 그리고 그 결과를 SpawnTroopsInfo 로 받으면 
 				// SpawnTroopsInfo 만큼 편제를 변경.
 				SpawnTroopsInfo edit = default;
-				if (Operation.Controller.OnOrganization_CheckValid(in edit))
-					if (Operation.Controller.OnOrganization_Edit(in edit))
+				if (Operation.ThisController.OnOrganization_CheckValid(in edit))
+					if (Operation.ThisController.OnOrganization_Edit(in edit))
 					{
 						// 편집 성공
 					}
@@ -321,8 +329,8 @@ public partial class StrategyMapPanelUI // OperationLabelGroup
 				// UI 를 통해 합쳐질 편제를 계산한다.
 				// 선택된 부대를 제외한 다른 부재는 삭제한다.
 				SpawnTroopsInfo merge = default;
-				if (Operation.Controller.OnOrganization_CheckValid(in merge))
-					if (Operation.Controller.OnOrganization_Merge(in merge))
+				if (Operation.ThisController.OnOrganization_CheckValid(in merge))
+					if (Operation.ThisController.OnOrganization_Merge(in merge))
 					{
 						// 합치기 성공
 					}
@@ -333,14 +341,14 @@ public partial class StrategyMapPanelUI // OperationLabelGroup
 				// 그리고 그 결과를 SpawnTroopsInfo 로 받으면 
 				// SpawnTroopsInfo 만큼 분리된 새로운 부대를 생성.
 				SpawnTroopsInfo divide = default;
-				if (Operation.Controller.OnOrganization_CheckValid(in divide))
-					if (Operation.Controller.OnOrganization_Divide(in divide))
+				if (Operation.ThisController.OnOrganization_CheckValid(in divide))
+					if (Operation.ThisController.OnOrganization_Divide(in divide))
 					{
 						// 나누기 성공
 					}
 			}
-			private void OnClick_ShowCloser() => Operation.Controller.OnShowCloser();
-
+			private void OnClick_ShowCloser() => Operation.ThisController.OnShowCloser();
+			private void OnClick_Select() => Operation.ThisController.On_SelectLabel();
 			// 툴팁 이벤트
 			private void ShowTooltip(string text)
 			{

@@ -133,3 +133,7 @@ public partial class SectorObject : IStrategyElement
 	{
 	}
 }
+
+public partial class SectorObject // ThisRendering
+{
+}

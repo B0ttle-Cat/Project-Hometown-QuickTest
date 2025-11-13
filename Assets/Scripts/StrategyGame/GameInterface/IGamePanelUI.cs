@@ -12,11 +12,11 @@ public interface IGamePanelUI
 public interface IViewStack
 {
 	IViewStack ViewStack { get; }
-	Stack<IViewPanelUI> ViewPanelUIStack { get; set; }
-	void Push(IViewPanelUI push)
+	Stack<IPanelItemUI> ViewPanelUIStack { get; set; }
+	void Push(IPanelItemUI push)
 	{
 		if (ViewPanelUIStack == null)
-			ViewPanelUIStack = new Stack<IViewPanelUI>();
+			ViewPanelUIStack = new Stack<IPanelItemUI>();
 
 		if (push == null) return;
 
@@ -27,7 +27,7 @@ public interface IViewStack
 		ViewPanelUIStack.Push(push);
 		push.Show();
 	}
-	void Pop(IViewPanelUI pop = null)
+	void Pop(IPanelItemUI pop = null)
 	{
 		if (ViewPanelUIStack == null) return;
 
@@ -59,7 +59,7 @@ public interface IViewStack
 		ViewPanelUIStack.Clear();
 	}
 }
-public interface IViewPanelUI : IDisposable
+public interface IPanelItemUI : IDisposable
 {
 	void Show();
 	void Hide();
@@ -69,9 +69,15 @@ public interface IViewItemUI : IDisposable
 	void Visible();
 	void Invisible();
 }
+public interface IPanelTarget : IDisposable
+{
+	void AddTarget(IStrategyElement element);
+	void RemoveTarget(IStrategyElement element);
+	void ClearTarget();
+}
 public interface IPanelFloating
 {
-	FloatingPanelItemUI FloatingPanelUI { get; }
+	FloatingPanelItemUI FloatingPanelUI { get; set; }
 	void FloatingUpdate()
 	{
 		if (FloatingPanelUI == null) return;

@@ -115,7 +115,6 @@ public class CanvasGroupUI : MonoBehaviour
 			awaitCallback?.Invoke();
 		}
 	}
-
 	public void OnHide(Action awaitCallback = null)
 	{
 		Init();

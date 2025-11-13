@@ -17,7 +17,7 @@ public partial class StrategyControlPanelUI // SectorSelectPanel
 	[SerializeField, FoldoutGroup("SectorSelect"), InlineProperty, HideLabel]
 	private SectorSelectPanel sectorSelectPanel;
 
-	public IControlPanel ShowSectorSelectPanel()
+	public IPanelTarget ShowSectorSelectPanel()
 	{
 		sectorSelectPanel = new SectorSelectPanel(sectorSelectPrefab, sectorSelectRoot, this);
 		ViewStack.Push(sectorSelectPanel);
@@ -31,19 +31,23 @@ public partial class StrategyControlPanelUI // SectorSelectPanel
 	}
 
 	[Serializable]
-	public class SectorSelectPanel : ControlPanelUI, IControlPanel
+	public class SectorSelectPanel : ControlPanelItem, IPanelTarget, IPanelFloating
 	{
-		[SerializeField, FoldoutGroup("FloatingPanelUI"), InlineProperty, HideLabel]
+		public FloatingPanelItemUI FloatingPanelUI { get; set; }
+
+		[SerializeField, FoldoutGroup("ViewItem"), InlineProperty, HideLabel]
 		private SectorPanel sectorPanel;
 		public SectorSelectPanel(GameObject prefab, Transform root, StrategyControlPanelUI panelUI) : base(prefab, root, panelUI)
 		{
 			sectorPanel = null;
+			FloatingPanelUI = null;
 		}
 		protected override void OnDispose()
 		{
             sectorPanel?.Dispose();
             sectorPanel = null;
-        }
+			FloatingPanelUI = null;
+		}
 		protected override void OnShow()
 		{
 			sectorPanel?.Visible();
@@ -53,13 +57,29 @@ public partial class StrategyControlPanelUI // SectorSelectPanel
 			sectorPanel?.Invisible();
 		}
 
+		void IPanelTarget.AddTarget(IStrategyElement element)
+		{
+			if (this is not IPanelFloating floating) return;
+			floating.AddTarget(element);
+		}
+
+		void IPanelTarget.RemoveTarget(IStrategyElement element)
+		{
+			if (this is not IPanelFloating floating) return;
+			floating.RemoveTarget(element);
+		}
+        void IPanelTarget.ClearTarget()
+		{
+			if (this is not IPanelFloating floating) return;
+			floating.ClearTarget();
+		}
 		void IPanelFloating.AddTarget(IStrategyElement element)
 		{
 			if (!IsShow) return;
 			if (element != null && element is SectorObject sector && sector != null)
 			{
 				if (sectorPanel == null || !sectorPanel.IsViewValid)
-					sectorPanel = new SectorPanel(this, sector);
+					sectorPanel = new SectorPanel(sector, this);
 				else 
 					sectorPanel.ChangeValue(sector);
 
@@ -82,7 +102,9 @@ public partial class StrategyControlPanelUI // SectorSelectPanel
 			sectorPanel = null;
 		}
 
-		[Serializable]
+
+
+        [Serializable]
 		private class SectorPanel : ViewItem<SectorObject>
 		{
 			[SerializeField, ReadOnly]
@@ -92,7 +114,7 @@ public partial class StrategyControlPanelUI // SectorSelectPanel
 			public event UnityAction onConstructFacilities;
 			public event UnityAction onPlanningOperationMovements;
 			public event UnityAction onUseFacilitiesSkill;
-			public SectorPanel(ControlPanelUI panel, SectorObject sector) : base(panel, sector) {}
+			public SectorPanel(SectorObject sector, ControlPanelItem panel) : base(sector, panel) {}
 			protected override void OnInit()
 			{
 				iconList = new GameObject[32];

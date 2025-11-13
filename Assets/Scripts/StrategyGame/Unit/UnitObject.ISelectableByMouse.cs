@@ -12,27 +12,25 @@ public partial class UnitObject : ISelectableByMouse
 	void ISelectableByMouse.OnPointExit()
 	{
 	}
-	bool ISelectableByMouse.OnSelect()
+	void ISelectable.OnSelect()
 	{
-		return true;
 	}
-	bool ISelectableByMouse.OnDeselect()
+	void ISelectable.OnDeselect()
 	{
-		return true;
 	}
-	void ISelectableByMouse.OnSingleSelect()
+	void ISelectable.OnSingleSelect()
 	{
 	}
 
-	void ISelectableByMouse.OnSingleDeselect()
+	void ISelectable.OnSingleDeselect()
 	{
 	}
 
-	void ISelectableByMouse.OnFirstSelect()
+	void ISelectable.OnFirstSelect()
 	{
 	}
 
-	void ISelectableByMouse.OnLastDeselect()
+	void ISelectable.OnLastDeselect()
 	{
 	}
 }

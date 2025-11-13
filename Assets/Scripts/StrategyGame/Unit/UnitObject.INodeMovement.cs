@@ -19,7 +19,7 @@ public partial class UnitObject : INodeMovement
 	float INodeMovement.MaxSpeed => StrategyManager.IsNotReady ? default
 		: GetStateValue(StrategyGamePlayData.StatsType.유닛_이동속도);
 	[HideInEditorMode, FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
-	int INodeMovement.RecentVisitedNode => StrategyManager.IsNotReady ? default
+	int INodeMovement.RecentlyVisitedNode => StrategyManager.IsNotReady ? -1
 		: StrategyManager.SectorNetwork.NameToIndex(SectorData.ConnectSectorName);
 	LinkedList<INodeMovement.MovementPlan> INodeMovement.MovementPlanList { get; set; }
 	

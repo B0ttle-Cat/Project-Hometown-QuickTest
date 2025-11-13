@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using Sirenix.OdinInspector;
-
 using UnityEngine;
 
 using static StrategyGamePlayData;
 
-public partial class OperationObject // Main
+public partial class OperationObject :IDisposable  // Main
 {
 	[SerializeField]
 	private int operationID;
@@ -35,157 +33,28 @@ public partial class OperationObject // Main
 			teamName = value;
 		}
 	}
-	public OperationObject(int factionID, List<int> unitList)
+	public OperationObject(int factionID)
+	{
+		this.operationID = -1;
+		this.teamName = "";
+		this.factionID = factionID;
+	}
+	public void Init(in List<int> unitList)
+	{
+		InitOrganization(unitList);
+	}
+	public void DeInit()
+	{
+		DeInitOrganization();
+	}
+	public void Dispose()
 	{
 		operationID = -1;
 		teamName = "";
-		this.factionID = factionID;
-		unitOrganization = new Dictionary<UnitKey, OrganizationInfo>();
-
-		int length = unitList.Count;
-		for (int i = 0 ; i < length ; i++)
-		{
-			int unitID = unitList[i];
-			if (!StrategyManager.Collector.TryFindUnit(unitID, out var unitObj)) continue;
-
-			AddUnitObject(unitObj);
-		}
+		factionID = -1;
 	}
-
-}
-
-public partial class OperationObject // Organization
-{
-	[ShowInInspector]
-	private Dictionary<UnitKey, OrganizationInfo> unitOrganization;
-	public event Action<OperationObject> OnChangeUnitList;
-	private IEnumerable<UnitObject> allUnit;
-	private int[] allUnitID;
-	private UnitObject[] allUnitObj;
-
-	public IEnumerable<UnitObject> GetAllUnit => allUnit;
-	public int[] GetAllUnitID => allUnitID;
-	public UnitObject[] GetAllUnitObj => allUnitObj;
-	[Serializable]
-	public class OrganizationInfo
-	{
-		[ShowInInspector]
-		private HashSet<int> unitIDs;
-		public HashSet<int> UnitIDList => unitIDs;
-
-		public OrganizationInfo()
-		{
-			unitIDs = new HashSet<int>();
-		}
-		public bool Add(UnitObject unitObject)
-		{
-			if (unitObject == null) return false;
-
-			int unitID = unitObject.ProfileData.unitID;
-			if (unitID < 0) return false;
-
-			if (unitIDs.Contains(unitID)) return false;
-
-			return unitIDs.Add(unitID);
-		}
-		public bool Remove(UnitObject unitObject)
-		{
-			if (unitObject == null) return false;
-
-			int unitID = unitObject.ProfileData.unitID;
-			if (unitID < 0) return false;
-
-			return unitIDs.Remove(unitID);
-		}
-	}
-
-	public bool HasUnitType(in UnitKey unitKey)
-	{
-		return unitOrganization.ContainsKey(unitKey);
-	}
-	public void AddUnitObject(UnitObject unitObject)
-	{
-		if (unitObject == null) return;
-		if (factionID != unitObject.ProfileData.factionID) return;
-
-		UnitKey unitKey = unitObject.ProfileData.unitKey;
-
-		bool onChange = false;
-		if (unitOrganization.TryGetValue(unitKey, out var unitList))
-		{
-			if (unitList.Add(unitObject))
-			{
-				unitObject.SetOperationBelong(this);
-				onChange = true;
-			}
-		}
-		else
-		{
-			unitList = new OrganizationInfo();
-			if (unitList.Add(unitObject))
-			{
-				unitOrganization.Add(unitKey, unitList);
-				unitObject.SetOperationBelong(this);
-				onChange = true;
-			}
-		}
-
-		if (onChange)
-		{
-			ChangeUnitListUpdate();
-
-		}
-	}
-	public void RemoveUnitObject(UnitObject unitObject)
-	{
-		if (unitObject == null) return;
-
-		UnitKey unitKey = unitObject.ProfileData.unitKey;
-
-		bool onChange = false;
-		if (unitOrganization.TryGetValue(unitKey, out var unitList))
-		{
-			if (unitList.Remove(unitObject))
-			{
-				onChange = true;
-				unitObject.RelaseOperationBelong();
-			}
-		}
-
-		if (onChange)
-		{
-			ChangeUnitListUpdate();
-		}
-	}
-	private void ChangeUnitListUpdate()
-	{
-		if (unitOrganization == null) return;
-		HashSet<UnitObject> unitList = new HashSet<UnitObject>();
-
-		foreach (var item in unitOrganization)
-		{
-			var value = item.Value;
-			if (value == null || value.UnitIDList == null) continue;
-			var list = value.UnitIDList;
-			foreach (int id in list)
-			{
-				if (StrategyManager.Collector.TryFindUnit(id, out var unitObject))
-				{
-					unitList.Add(unitObject);
-				}
-			}
-		}
-
-		allUnit = unitList;
-		allUnitObj = allUnit.ToArray();
-		allUnitID = allUnit.Select(i => i.UnitID).ToArray();
-
-
-		if (OnChangeUnitList != null)
-		{
-			OnChangeUnitList.Invoke(this);
-		}
-	}
+	partial void InitOrganization(in List<int> unitList);
+	partial void DeInitOrganization();
 }
 
 public partial class OperationObject // Stats
@@ -226,17 +95,17 @@ public partial class OperationObject : IVisibilityEvent<OperationObject>
 	bool IVisibilityEvent<OperationObject>.IsVisible => (visibleUnitList == null ? 0 : visibleUnitList.Count) > 0;
 	private Action<OperationObject> onChangeVisible;
 	private Action<OperationObject> onChangeInvisible;
-	event Action<OperationObject> IVisibilityEvent<OperationObject>.OnChangeInvisible
+	event Action<OperationObject> IVisibilityEvent<OperationObject>.OnChangeVisible
 	{
 		add => onChangeVisible += value;
 		remove => onChangeVisible -= value;
 	}
-
-	event Action<OperationObject> IVisibilityEvent<OperationObject>.OnChangeVisible
+	event Action<OperationObject> IVisibilityEvent<OperationObject>.OnChangeInvisible
 	{
 		add => onChangeInvisible += value;
 		remove => onChangeInvisible -= value;
 	}
+
 	private HashSet<UnitObject> visibleUnitList;
 	public void ChangeVisibleUnit(UnitObject unitObject)
 	{
@@ -278,6 +147,33 @@ public partial class OperationObject : IStrategyElement
 	{
 	}
 	void IStrategyStartGame.OnStopGame()
+	{
+	}
+}
+public partial class OperationObject : ISelectable
+{
+	void ISelectable.OnSelect()
+	{
+		if(StrategyManager.ViewAndControl.CurrentMode == ViewAndControlModeType.OperationsMode)
+		{
+			StrategyManager.GameUI.ControlPanelUI.OpenUI();
+			var setTarget = StrategyManager.GameUI.ControlPanelUI.ShowOperationPlannerPanel();
+			setTarget.AddTarget(this);
+		}
+	}
+	void ISelectable.OnDeselect()
+    {
+	}
+    void ISelectable.OnFirstSelect()
+    {
+    }
+    void ISelectable.OnLastDeselect()
+    {
+    }
+    void ISelectable.OnSingleSelect()
+    {
+	}
+	void ISelectable.OnSingleDeselect()
 	{
 	}
 }

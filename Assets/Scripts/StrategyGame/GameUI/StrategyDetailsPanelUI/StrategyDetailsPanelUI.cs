@@ -65,7 +65,7 @@ public partial class StrategyDetailsPanelUI : MonoBehaviour, IGamePanelUI, IStra
 		(this as IGamePanelUI).CloseUI();
 	}
 
-	public abstract class DetailsContentPanel : IDisposable, IViewPanelUI
+	public abstract class DetailsContentPanel : IDisposable, IPanelItemUI
 	{
 		private bool isShow;
 		private bool isDispose;

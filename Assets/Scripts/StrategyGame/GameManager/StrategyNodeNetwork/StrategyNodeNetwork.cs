@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 using Sirenix.OdinInspector;
 using Sirenix.Utilities;
@@ -18,22 +19,51 @@ using static WaypointUtility;
 
 public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 {
+	[Serializable]
+	public readonly struct PointInfo
+	{
+		public readonly Vector3 point;
+		public readonly int inLineID;
+		public readonly int closetNodeID;
+
+		public PointInfo(Vector3 point, int inLineID, int closetNodeID)
+		{
+			this.point = point;
+			this.inLineID = inLineID;
+			this.closetNodeID = closetNodeID;
+		}
+	}
+
 	[SerializeField,ReadOnly] private NetworkNode[] networkNodes = Array.Empty<NetworkNode>();
 	[SerializeField,ReadOnly] private NetworkLink[] networkLinks = Array.Empty<NetworkLink>();
+	[SerializeField,ReadOnly] private WaypointLine[] networkLines = Array.Empty<WaypointLine>();
+	[SerializeField,ReadOnly] private PointInfo[] allPointInfos = Array.Empty<PointInfo>();
 
-	[ShowInInspector,ReadOnly] private Dictionary<NetworkNode, NetworkLink[]> nodeLinks = new();
-	[ShowInInspector,ReadOnly] private Dictionary<NetworkLink, WaypointLine> waypointLines = new();
+	[ShowInInspector,ReadOnly] private Dictionary<SectorObject, NetworkNode> sectorToNode = new();
+	[ShowInInspector,ReadOnly] private Dictionary<NetworkNode, SectorObject> nodeToSector = new();
+	[ShowInInspector,ReadOnly] private Dictionary<NetworkNode, NetworkLink[]> nodeToLink = new();
+	[ShowInInspector,ReadOnly] private Dictionary<NetworkLink, WaypointLine> linkToNode = new();
 
-	public async Awaitable Init(NetworkNode[] nodeList, StrategyStartSetterData.SectorLinkData[] sectorLinkData)
+	public async Awaitable Init(NetworkNode[] nodeList, SectorObject[] sectorList, StrategyStartSetterData.SectorLinkData[] sectorLinkData)
 	{
 		Transform parent = transform;
 
 		networkNodes = nodeList;
-		nodeLinks = new Dictionary<NetworkNode, NetworkLink[]>(networkNodes.Length);
+		sectorToNode = new Dictionary<SectorObject, NetworkNode>();
+		nodeToSector = new Dictionary<NetworkNode, SectorObject>();
+		int length = networkNodes.Length;
+		for (int i = 0 ; i < length ; i++)
+		{
+			sectorToNode.Add(sectorList[i], networkNodes[i]);
+			nodeToSector.Add(networkNodes[i], sectorList[i]);
+		}
 
-		int length = sectorLinkData.Length;
+		nodeToLink = new Dictionary<NetworkNode, NetworkLink[]>(networkNodes.Length);
+
+		length = sectorLinkData.Length;
 		networkLinks = new NetworkLink[length];
-		waypointLines = new Dictionary<NetworkLink, WaypointLine>(length);
+		networkLines = new WaypointLine[length];
+		linkToNode = new Dictionary<NetworkLink, WaypointLine>(length);
 		for (int i = 0 ; i < length ; i++)
 		{
 			var data = sectorLinkData[i];
@@ -43,27 +73,54 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 			if (data.connectDir == NetworkLink.ConnectDirType.Backward)
 				data = data.ReverseDir;
 
-			var line = new NetworkLink(data);
+			if (!StrategyManager.Collector.TryFindSector(data.sectorA, out var sectorA)) continue;
+			if (!StrategyManager.Collector.TryFindSector(data.sectorB, out var sectorB)) continue;
+			var startNode = SectorToNode(sectorA);
+			var lastNode = SectorToNode(sectorB);
 
-			var nodeA = networkNodes.FirstOrDefault(n => n.NodeName == line.NodeNameA);
-			var nodeB = networkNodes.FirstOrDefault(n => n.NodeName == line.NodeNameB);
+			var line = new NetworkLink(i,startNode, lastNode, data.connectDir);
+			var waypointLine = new WaypointLine(i, startNode, lastNode,data.waypoint);
 
-			Vector3 start = nodeA.Position;
-			Vector3 end = nodeB.Position;
-
-			var waypointLine = new WaypointLine(start, end, data.waypoint);
 			networkLinks[i] = line;
-			waypointLines[line] = waypointLine;
+			networkLines[i] = waypointLine;
+			linkToNode[line] = waypointLine;
 		}
 
 		length = networkNodes.Length;
 		for (int i = 0 ; i < length ; i++)
 		{
 			NetworkNode node = networkNodes[i];
-			var nodeName = node.NodeName;
-			var links = networkLinks.Where(line => line.NodeNameA == nodeName || line.NodeNameB == nodeName).ToArray();
-			nodeLinks.Add(node, links);
+			var networkID = node.NetworkID;
+			var links = networkLinks.Where(line => line.StartNodeID == networkID || line.LastNodeID == networkID).ToArray();
+			nodeToLink.Add(node, links);
 		}
+
+		List<PointInfo> pointInfos = new List<PointInfo>();
+		length = networkLines.Length;
+		for (int i = 0 ; i < length ; i++)
+		{
+			var line = networkLines[i];
+			var points = line.Points;
+			int pointCount = points.Length;
+			for (int ii = 0 ; ii < pointCount ; ii++)
+			{
+				Vector3 point = points[ii];
+
+				int closetype = 0;
+				if (ii < pointCount / 2) closetype = -1;
+				else if (pointCount % 2 == 1 && ii == pointCount / 2) closetype = 0;
+				else closetype = 1;
+
+				pointInfos.Add(new PointInfo(point, line.NetworkID, closetype switch
+				{
+					-1 => line.Tips.start,
+					1 => line.Tips.last,
+					0 => FindClosestNodeWithoutLine(point, out var closestNode) ? closestNode.NetworkID : line.Tips.start,
+					_ => line.Tips.start,
+				}));
+			}
+		}
+		allPointInfos = pointInfos.ToArray();
 
 		buildConnectGroups = new Dictionary<ConnectConditions, ConnectGroup[]>();
 		BuildConnectGroups(ConnectConditions.Forward);
@@ -78,28 +135,44 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 		{
 			networkNodes = null;
 		}
-
 		if (networkLinks != null)
 		{
 			networkLinks = null;
+		}
+		if (networkLines != null)
+		{
+			networkLines = null;
+		}
+		if (allPointInfos != null)
+		{
+			allPointInfos = null;
+		}
+
+		if (sectorToNode != null)
+		{
+			sectorToNode.Clear();
+			sectorToNode = null;
+		}
+		if (nodeToSector != null)
+		{
+			nodeToSector.Clear();
+			nodeToSector = null;
+		}
+		if (nodeToLink != null)
+		{
+			nodeToLink.Clear();
+			nodeToLink = null;
+		}
+		if (linkToNode != null)
+		{
+			linkToNode.Clear();
+			linkToNode = null;
 		}
 
 		if (buildConnectGroups != null)
 		{
 			buildConnectGroups.Clear();
 			buildConnectGroups = null;
-		}
-
-		if (nodeLinks != null)
-		{
-			nodeLinks.Clear();
-			nodeLinks = null;
-		}
-
-		if (waypointLines != null)
-		{
-			waypointLines.Clear();
-			waypointLines = null;
 		}
 	}
 #if UNITY_EDITOR
@@ -112,24 +185,32 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 	public int SectorToNodeIndex(SectorObject sector)
 	{
 		if (sector == null) return -1;
-		return NameToIndex(sector.SectorName);
+		NetworkNode node = SectorToNode(sector);
+		if (node == null) return -1;
+		return node.NetworkID;
 	}
 	public NetworkNode SectorToNode(SectorObject sector)
 	{
-		if (sector == null) return default;
-		return NameToNode(sector.SectorName);
+		if (sector == null) return null;
+		if (!sectorToNode.TryGetValue(sector, out var node)) return null;
+		return node;
 	}
 	public SectorObject NodeIndexToSector(int nodeIndex)
 	{
-		return StrategyManager.Collector.FindSector(IndexToName(nodeIndex));
+		if (nodeIndex < 0 || nodeIndex >= networkNodes.Length) return null;
+		var node = networkNodes[nodeIndex];
+		return NodeToSector(node);
 	}
 	public SectorObject NodeToSector(NetworkNode node)
 	{
-		return StrategyManager.Collector.FindSector(node.NodeName);
+		if (node == null) return null;
+		if (!nodeToSector.TryGetValue(node, out var sector)) return null;
+		return sector;
 	}
-
 	public int NameToIndex(string nodeName)
 	{
+		if(string.IsNullOrWhiteSpace(nodeName)) return -1;
+
 		int length = networkNodes.Length;
 		for (int i = 0 ; i < length ; i++)
 		{
@@ -151,12 +232,16 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 		if (index < 0 || index >= networkNodes.Length) return default;
 		return networkNodes[index];
 	}
+	public SectorObject IndexToSector(int index)
+	{
+		return NodeToSector(IndexToNode(index));
+	}
 	public int NodeToIndex(NetworkNode node)
 	{
 		int length = networkNodes.Length;
 		for (int i = 0 ; i < length ; i++)
 		{
-			if (node.Equals(node))
+			if (networkNodes[i].Equals(node))
 			{
 				return i;
 			}
@@ -165,6 +250,8 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 	}
 	public NetworkNode NameToNode(string nodeName)
 	{
+		if (string.IsNullOrWhiteSpace(nodeName)) return null;
+
 		int length = networkNodes.Length;
 		for (int i = 0 ; i < length ; i++)
 		{
@@ -181,12 +268,12 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 	public bool TryGetLink(in NetworkNode start, in NetworkNode end, out NetworkLink link)
 	{
 		link = default;
-		if (!nodeLinks.TryGetValue(start, out var links)) return false;
+		if (!nodeToLink.TryGetValue(start, out var links)) return false;
 
 		int length = links.Length;
 		for (int i = 0 ; i < length ; i++)
-        {
-			if(links[i].NodeNameB.Equals(end.NodeName))
+		{
+			if (links[i].LastNodeID.Equals(end.NodeName))
 			{
 				link = links[i];
 				return true;
@@ -196,15 +283,101 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 	}
 	public bool TryGetLine(in NetworkLink link, out WaypointLine line)
 	{
-		return waypointLines.TryGetValue(link, out line);
+		return linkToNode.TryGetValue(link, out line);
 	}
+
+	public bool FindClosestNodeWithoutLine(Vector3 position, out NetworkNode closestNode)
+	{
+		int minIndex = -1;
+		float minDistance = float.MaxValue;
+		object lockObj = new object();
+
+		Parallel.For(0, networkNodes.Length,
+			() => (Index: -1, Distance: float.MaxValue),
+			(index, state, local) =>
+			{
+				var node = networkNodes[index];
+				float sqrMagnitude = Vector3.SqrMagnitude(position - node.Position);
+
+				if (sqrMagnitude < local.Distance)
+				{
+					local = (index, sqrMagnitude);
+				}
+				return local;
+			},
+			local =>
+			{
+				lock (lockObj)
+				{
+					if (local.Distance < minDistance)
+					{
+						minDistance = local.Distance;
+						minIndex = local.Index;
+					}
+				}
+			}
+		);
+
+		if (minIndex < 0)
+		{
+			closestNode = null;
+			return false;
+		}
+
+		closestNode = networkNodes[minIndex];
+		return true;
+	}
+
+	internal bool FindClosestNode(Vector3 position, out NetworkNode closestNode)
+	{
+		int minIndex = -1;
+		float minDistance = float.MaxValue;
+		object lockObj = new object();
+
+		Parallel.For(0, allPointInfos.Length,
+			() => (Index: -1, Distance: float.MaxValue),
+			(index, state, local) =>
+			{
+				var node = allPointInfos[index];
+				float sqrMagnitude = Vector3.SqrMagnitude(position - node.point);
+
+				if (sqrMagnitude < local.Distance)
+				{
+					local = (index, sqrMagnitude);
+				}
+				return local;
+			},
+			local =>
+			{
+				lock (lockObj)
+				{
+					if (local.Distance < minDistance)
+					{
+						minDistance = local.Distance;
+						minIndex = local.Index;
+					}
+				}
+			}
+		);
+
+		if (minIndex < 0)
+		{
+			closestNode = null;
+			return false;
+		}
+
+		var pointInfo = allPointInfos[minIndex];
+		closestNode = networkNodes[pointInfo.closetNodeID];
+		return true;
+	}
+
 }
 public partial class StrategyNodeNetwork // BuildConnectGroups
 {
 	[Serializable]
 	private struct ConnectGroup
 	{
-		public string[] nodeNames;
+		public int[] nodeNetworkID;
 	}
 
 	[ShowInInspector,ReadOnly]
@@ -218,19 +391,19 @@ public partial class StrategyNodeNetwork // BuildConnectGroups
 		// Dictionary 초기화 (해당 condition 만 갱신)
 		buildConnectGroups ??= new Dictionary<ConnectConditions, ConnectGroup[]>();
 
-		var nodeDict = networkNodes.ToDictionary(n => n.NodeName, n => n);
+		var nodeDict = networkNodes.ToDictionary(n => n.NetworkID, n => n);
 
 		// Union-Find 초기화
-		var parent = networkNodes.ToDictionary(n => n.NodeName, n => n.NodeName);
+		var parent = networkNodes.ToDictionary(n => n.NetworkID, n => n.NetworkID);
 
-		string Find(string name)
+		int Find(int id)
 		{
-			if (parent[name] != name)
-				parent[name] = Find(parent[name]);
-			return parent[name];
+			if (parent[id] != id)
+				parent[id] = Find(parent[id]);
+			return parent[id];
 		}
 
-		void Union(string a, string b)
+		void Union(int a, int b)
 		{
 			var pa = Find(a);
 			var pb = Find(b);
@@ -243,28 +416,28 @@ public partial class StrategyNodeNetwork // BuildConnectGroups
 		{
 			if (!LineMatchesCondition(line, targetCondition)) continue;
 
-			if (nodeDict.ContainsKey(line.NodeNameA) && nodeDict.ContainsKey(line.NodeNameB))
-				Union(line.NodeNameA, line.NodeNameB);
+			if (nodeDict.ContainsKey(line.StartNodeID) && nodeDict.ContainsKey(line.LastNodeID))
+				Union(line.StartNodeID, line.LastNodeID);
 		}
 
 		// 루트별 그룹화
-		var groupMap = new Dictionary<string, List<string>>();
+		var groupMap = new Dictionary<int, List<int>>();
 		foreach (var node in networkNodes)
 		{
-			string root = Find(node.NodeName);
+			int root = Find(node.NetworkID);
 			if (!groupMap.TryGetValue(root, out var list))
 			{
-				list = new List<string>();
+				list = new List<int>();
 				groupMap[root] = list;
 			}
-			list.Add(node.NodeName);
+			list.Add(node.NetworkID);
 		}
 
 		// ConnectGroup 배열 생성
 		var groups = groupMap.Values
 		.Select(nodes => new ConnectGroup
 		{
-			nodeNames = nodes.ToArray()
+			nodeNetworkID = nodes.ToArray()
 		})
 		.ToArray();
 
@@ -286,6 +459,45 @@ public partial class StrategyNodeNetwork // BuildConnectGroups
 			_ => false,
 		};
 	}
+
+
+	public bool IsConnectedNode(ConnectConditions connectConditions, int startID, int endedID)
+	{
+		// 🔹 1. 해당 조건의 그룹이 미리 계산되어 있는지 확인
+		if (!buildConnectGroups.TryGetValue(connectConditions, out var groupArray) || groupArray == null)
+		{
+			BuildConnectGroups(connectConditions);
+			if (!buildConnectGroups.TryGetValue(connectConditions, out groupArray) || groupArray == null)
+			{
+				Debug.LogWarning($"[FindShortestPathInternal] No ConnectGroup found for condition {connectConditions}");
+				return false;
+			}
+		}
+
+		// 🔹 2. startPoint 노드가 속한 그룹 찾기
+		ConnectGroup? startGroup = null;
+
+		foreach (var group in groupArray)
+		{
+			if (group.nodeNetworkID.Contains(startID))
+			{
+				startGroup = group;
+				break;
+			}
+		}
+
+		if (startGroup is null)
+		{
+			Debug.LogWarning($"[FindShortestPathInternal] Start node {networkNodes[startID].NodeName} not found in any ConnectGroup for {connectConditions}");
+			return false;
+		}
+
+		// 🔹 3. 타겟 노드가 같은 그룹에 없으면 탐색 불필요
+		if (!startGroup.Value.nodeNetworkID.Contains(endedID))
+			return false;
+
+		return true;
+	}
 }
 
 public partial class StrategyNodeNetwork // FindShortestPath
@@ -301,11 +513,13 @@ public partial class StrategyNodeNetwork // FindShortestPath
 			return false;
 
 		// 동일 노드면 바로 반환
-		if (start.NodeName == target.NodeName)
+		if (start.NetworkID == target.NetworkID)
 		{
 			path.Add(start);
 			return true;
 		}
+
+		IsConnectedNode(connectConditions, start.NetworkID, target.NetworkID);
 
 		// 🔹 1. 해당 조건의 그룹이 미리 계산되어 있는지 확인
 		if (!buildConnectGroups.TryGetValue(connectConditions, out var groupArray) || groupArray == null)
@@ -318,12 +532,12 @@ public partial class StrategyNodeNetwork // FindShortestPath
 			}
 		}
 
-		// 🔹 2. start 노드가 속한 그룹 찾기
+		// 🔹 2. startPoint 노드가 속한 그룹 찾기
 		ConnectGroup? startGroup = null;
 
 		foreach (var group in groupArray)
 		{
-			if (group.nodeNames.Contains(start.NodeName))
+			if (group.nodeNetworkID.Contains(start.NetworkID))
 			{
 				startGroup = group;
 				break;
@@ -337,13 +551,13 @@ public partial class StrategyNodeNetwork // FindShortestPath
 		}
 
 		// 🔹 3. 타겟 노드가 같은 그룹에 없으면 탐색 불필요
-		if (!startGroup.Value.nodeNames.Contains(target.NodeName))
+		if (!startGroup.Value.nodeNetworkID.Contains(target.NetworkID))
 			return false;
 
 		// 🔹 4. 그룹 내 노드만 딕셔너리로 구성
 		var nodeDict = networkNodes
-		.Where(n => startGroup.Value.nodeNames.Contains(n.NodeName))
-		.ToDictionary(n => n.NodeName);
+		.Where(n => startGroup.Value.nodeNetworkID.Contains(n.NetworkID))
+		.ToDictionary(n => n.NetworkID);
 
 		bool pathFuncIsNull = pathFunction == null;
 
@@ -370,14 +584,14 @@ public partial class StrategyNodeNetwork // FindShortestPath
 
 			if (current.NodeName == target.NodeName) break;
 
-			if (!nodeLinks.TryGetValue(current, out var linkLins)) continue;
+			if (!nodeToLink.TryGetValue(current, out var linkLins)) continue;
 
 			foreach (var line in linkLins)
 			{
 				if (!LineMatchesCondition(line, connectConditions)) continue;
 
-				string neighborName = line.NodeNameA == current.NodeName ? line.NodeNameB : line.NodeNameA;
-				if (!nodeDict.TryGetValue(neighborName, out var neighbor)) continue;
+				int neighborID = line.StartNodeID == current.NetworkID ? line.LastNodeID : line.StartNodeID;
+				if (!nodeDict.TryGetValue(neighborID, out var neighbor)) continue;
 				if (visited.Contains(neighbor)) continue;
 
 				PathResult result = PathResult.Default;
@@ -496,7 +710,7 @@ public partial class StrategyNodeNetwork // FindShortestPath
 	public void NodePathToVectorPath(in List<NetworkNode> nodePath, out List<Vector3> path)
 	{
 		int length = nodePath == null ? 0 : nodePath.Count;
-		if(length < 2)
+		if (length < 2)
 		{
 			path = new List<Vector3>();
 			return;
@@ -505,14 +719,14 @@ public partial class StrategyNodeNetwork // FindShortestPath
 		NetworkNode prevNode = nodePath[0];
 		NetworkNode nextNode = default;
 		for (int i = 1 ; i < length ; i++)
-        {
-			nextNode = nodePath[1];
+		{
+			nextNode = nodePath[i];
 			if (!TryGetLink(in prevNode, in nextNode, out var link)) continue;
 			if (!TryGetLine(in link, out var pointLine)) continue;
 
 			path.AddRange(pointLine.Points);
 		}
-    }
+	}
 	// ----------------- NodeDistance Comparer -----------------
 	private class NodeDistanceComparer : IComparer<(float dist, NetworkNode node)>
 	{
@@ -535,11 +749,11 @@ public partial class StrategyNodeNetwork // OnDrawGizmos
 
 		foreach (var line in networkLinks)
 		{
-			if (line.IsEmpty) continue;
+			if (line == null) continue;
 
 			// 실제 노드 찾기
-			var nodeA = networkNodes.FirstOrDefault(n => n.NodeName == line.NodeNameA);
-			var nodeB = networkNodes.FirstOrDefault(n => n.NodeName == line.NodeNameB);
+			var nodeA = networkNodes.FirstOrDefault(n => n.NetworkID == line.StartNodeID);
+			var nodeB = networkNodes.FirstOrDefault(n => n.NetworkID == line.LastNodeID);
 			if (nodeA.IsEmpty || nodeB.IsEmpty) continue;
 
 			Vector3 posA = nodeA.Position;
@@ -561,7 +775,7 @@ public partial class StrategyNodeNetwork // OnDrawGizmos
 			DrawArrow(posA, posB, line.ConnectDir);
 
 			// 웨이포인트가 있으면 노란색 경로 표시
-			if (waypointLines != null && waypointLines.TryGetValue(line, out var wline))
+			if (linkToNode != null && linkToNode.TryGetValue(line, out var wline))
 			{
 				var points = wline.Points;
 				if (points != null && points.Length > 1)
@@ -580,7 +794,7 @@ public partial class StrategyNodeNetwork // OnDrawGizmos
 				_ => "|"
 			};
 			Vector3 mid = (posA + posB) * 0.5f;
-			DrawLabel(mid, Vector3.zero, $"{line.NodeNameA} {arrowText} {line.NodeNameB}", color);
+			DrawLabel(mid, Vector3.zero, $"{line.StartNodeID} {arrowText} {line.LastNodeID}", color);
 		}
 
 		// 노드 표시
@@ -762,13 +976,13 @@ public partial class StrategyNodeNetwork // NetworkPathFunctions
 	{
 		return context =>
 		{
-			if (context.Line.IsEmpty)
+			if (context.Line == null)
 			{
 				// Line이 없는 경우 이동 불가
 				return new PathResult(false, 0f);
 			}
 
-			StrategyManager.SectorNetwork.waypointLines.TryGetValue(context.Line, out var line);
+			StrategyManager.SectorNetwork.linkToNode.TryGetValue(context.Line, out var line);
 
 			float cost = line.Distance;
 			if (float.IsPositiveInfinity(threshold) || context.AccumulatedCost + cost < threshold)

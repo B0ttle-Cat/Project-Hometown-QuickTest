@@ -91,9 +91,9 @@ public static class EventTriggerHelper
 	{
 		if (obj == null) return;
 		if (!obj.TryGetComponent<EventTrigger>(out var trigger)) return;
-		trigger.RemoveAllListener(type);
+		trigger.RemoveAllListeners(type);
 	}
-	public static void RemoveAllListener(this EventTrigger trigger, EventTriggerType? type = null)
+	public static void RemoveAllListeners(this EventTrigger trigger, EventTriggerType? type = null)
 	{
 		if (trigger == null) return;
 		if (type.HasValue)

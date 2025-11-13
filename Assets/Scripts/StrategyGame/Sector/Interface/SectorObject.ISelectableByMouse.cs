@@ -15,29 +15,28 @@ public partial class SectorObject : ISelectableByMouse
 	{
 
 	}
-	bool ISelectableByMouse.OnSelect()
+	void ISelectable.OnSelect()
 	{
-		return true;
+
 	}
-	bool ISelectableByMouse.OnDeselect()
+	void ISelectable.OnDeselect()
 	{
-		return true;
 	}
-	void ISelectableByMouse.OnSingleSelect()
+	void ISelectable.OnSingleSelect()
 	{
 		Controller.OnShowUI_SelectUI();
 	}
 
-	void ISelectableByMouse.OnSingleDeselect()
+	void ISelectable.OnSingleDeselect()
 	{
 		Controller.OnHideUI_SelectUI();
 	}
 
-	void ISelectableByMouse.OnFirstSelect()
+	void ISelectable.OnFirstSelect()
 	{
 	}
 
-	void ISelectableByMouse.OnLastDeselect()
+	void ISelectable.OnLastDeselect()
 	{
 	}
 }

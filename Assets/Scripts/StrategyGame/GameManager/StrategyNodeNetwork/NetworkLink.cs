@@ -4,25 +4,25 @@ using Sirenix.OdinInspector;
 
 using UnityEngine;
 
-using static StrategyStartSetterData;
-
 [Serializable]
-public struct NetworkLink: IEquatable<NetworkLink>
+public record NetworkLink : IEquatable<NetworkLink>
 {
 	[SerializeField, ReadOnly]
-	private Vector3 position;
+	private readonly int networkID;
 	[SerializeField, ReadOnly]
-	private string nodeNameA;
+	private readonly Vector3 position;
 	[SerializeField, ReadOnly]
-	private string nodeNameB;
+	private readonly int startNodeID;
+	[SerializeField, ReadOnly]
+	private readonly int lastNodeID;
 
 	[SerializeField, ReadOnly]
-	private Vector3 start;
+	private readonly Vector3 start;
 	[SerializeField, ReadOnly]
-	private Vector3 ended;
+	private readonly Vector3 ended;
 
 	[SerializeField]
-	private ConnectDirType connectDir;
+	private readonly ConnectDirType connectDir;
 
 	public enum ConnectDirType
 	{
@@ -35,58 +35,29 @@ public struct NetworkLink: IEquatable<NetworkLink>
 		[InspectorName("A | B")]
 		Disconnected
 	}
-
+	public int NetworkID => networkID;
 	public Vector3 Position { get => position; }
-	public string NodeNameA { get => nodeNameA; }
-	public string NodeNameB { get => nodeNameB; }
+	public int StartNodeID { get => startNodeID; }
+	public int LastNodeID { get => lastNodeID; }
 	public ConnectDirType ConnectDir { get => connectDir; }
 
-	public NetworkLink(SectorLinkData data)
+	public NetworkLink(int id, NetworkNode startNode, NetworkNode lastNode, ConnectDirType connectDir)
 	{
-		if (data.connectDir == ConnectDirType.Backward)
-			data = data.ReverseDir;
+		networkID = id;
 
-		nodeNameA = "";
-		nodeNameB = "";
+		startNodeID = startNode.NetworkID;
+		lastNodeID = lastNode.NetworkID;
 
-		start = Vector3.zero;
-		ended = Vector3.zero;
+		start = startNode.Position;
+		ended = lastNode.Position;
+		position = (start + ended) * 0.5f;
 		position = Vector3.zero;
 
-		connectDir = data.connectDir;
-		
-		if (StrategyManager.Collector.TryFindSector(data.sectorA, out var sectorA))
-		{
-			if (StrategyManager.Collector.TryFindSector(data.sectorB, out var sectorB))
-			{
-				nodeNameA = sectorA.SectorName;
-				nodeNameB = sectorB.SectorName;
-
-				start = sectorA.transform.position;
-				ended = sectorB.transform.position;
-	
-				connectDir = data.connectDir;
-				position = (start + ended) * 0.5f;
-			}
-		}
+		this.connectDir = connectDir;
 	}
-
-    public override bool Equals(object obj)
-    {
-        return obj is NetworkLink line && Equals(line);
-    }
-
-    public bool Equals(NetworkLink other)
-    {
-        return nodeNameA == other.nodeNameA &&
-               nodeNameB == other.nodeNameB &&
-               connectDir == other.connectDir;
-    }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(nodeNameA, nodeNameB, connectDir);
+        return HashCode.Combine(networkID);
     }
-
-    public bool IsEmpty => string.IsNullOrWhiteSpace(nodeNameA) || string.IsNullOrWhiteSpace(nodeNameB);
 }

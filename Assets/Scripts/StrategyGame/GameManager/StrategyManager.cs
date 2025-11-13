@@ -12,6 +12,7 @@ public class StrategyManager : MonoBehaviour
 	public static bool IsNotReady => !IsReady;
 	public static Camera MainCamera => Manager == null ? null : Manager.mainCamera;
 	public static StrategyGameUI GameUI => Manager == null ? null : Manager.gameUI;
+	public static StrategyPopupPanelUI PopupUI => GameUI.PopupPanelUI;
 	public static KeyValueData GamePlayTempData => Manager == null ? null : Manager.gamePlayTempData;
 	public static StrategyElementCollector Collector => Manager == null ? null : Manager.collector;
 	public static StrategyMissionTree Mission => Manager == null ? null : Manager.mission;

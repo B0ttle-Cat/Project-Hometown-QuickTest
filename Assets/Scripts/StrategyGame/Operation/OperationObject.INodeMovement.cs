@@ -17,7 +17,7 @@ public partial class OperationObject : INodeMovement
 	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
 	float INodeMovement.MaxSpeed => moveSpeed;
 	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
-	int INodeMovement.RecentVisitedNode => 0;
+	int INodeMovement.RecentlyVisitedNode => 0;
 	LinkedList<INodeMovement.MovementPlan> INodeMovement.MovementPlanList { get; set; }
 
 	void INodeMovement.OnMoveStart()

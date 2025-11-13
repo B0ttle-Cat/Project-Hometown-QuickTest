@@ -9,7 +9,7 @@ public partial class StrategyControlPanelUI : MonoBehaviour, IGamePanelUI, IView
 {
 	private Canvas thisCanvas;
 
-	public Stack<IViewPanelUI> ViewPanelUIStack { get; set; }
+	public Stack<IPanelItemUI> ViewPanelUIStack { get; set; }
 	public IViewStack ViewStack => this;
 	public void OpenUI()
 	{
@@ -38,11 +38,7 @@ public partial class StrategyControlPanelUI : MonoBehaviour, IGamePanelUI, IView
 
 public partial class StrategyControlPanelUI
 {
-	public interface IControlPanel : IPanelFloating, IViewPanelUI
-	{
-	}
-
-	public abstract class ControlPanelUI : IViewPanelUI
+	public abstract class ControlPanelItem : IPanelItemUI
 	{
 		protected StrategyControlPanelUI panelUI;
 
@@ -50,18 +46,16 @@ public partial class StrategyControlPanelUI
 		private Transform panelRoot;
 
 		private GameObject panelObject;
-		public FloatingPanelItemUI FloatingPanelUI { get; private set; }
 
 		public bool IsShow => panelObject != null && panelObject.activeSelf;
 		private bool IsDispose => panelObject != null;
-		public ControlPanelUI(GameObject prefab, Transform root, StrategyControlPanelUI panelUI)
+		public ControlPanelItem(GameObject prefab, Transform root, StrategyControlPanelUI panelUI)
 		{
 			this.panelUI = panelUI;
 			this.panelPrefab = prefab;
 			this.panelRoot = root;
 
 			panelObject = null;
-			FloatingPanelUI = null;
 		}
 		public void Dispose()
 		{
@@ -74,7 +68,6 @@ public partial class StrategyControlPanelUI
 				Destroy(panelObject);
 				panelObject = null;
 			}
-			FloatingPanelUI = null;
 			panelPrefab = null;
 			panelRoot = null;
 			panelUI = null;
@@ -87,53 +80,79 @@ public partial class StrategyControlPanelUI
 			if (panelObject == null)
 			{
 				panelObject = GameObject.Instantiate(panelPrefab, panelRoot);
-				FloatingPanelUI = panelObject.GetComponentInChildren<FloatingPanelItemUI>();
-				if (FloatingPanelUI == null)
-				{
-					OffsetFloatingPanelItemUI offsetFloatingPanel = panelObject.AddComponent<OffsetFloatingPanelItemUI>();
-					offsetFloatingPanel.Pivot = Vector2.one;
-					offsetFloatingPanel.Offset = new Vector2(50f, 150f);
-					FloatingPanelUI = offsetFloatingPanel;
-				}
+				InstantiateFloatingPanelUI();
 			}
-			FloatingPanelUI.Show();
+			ShowFloatingPanelUI();
 			OnShow();
 		}
 		public void Hide()
 		{
 			if (!IsShow) return;
 
-			FloatingPanelUI.Hide(() =>
+			if (ThgIsFloating)
+			{
+				HideFloatingPanelUI(_Hide);
+			}
+			else
+			{
+				_Hide();
+			}
+			void _Hide()
 			{
 				OnHide();
-				if (this is IControlPanel iPanel)
+				if (this is IPanelFloating iPanel)
 				{
 					iPanel.ClearTarget();
 				}
-			});
+			}
+		}
+		private bool ThgIsFloating => this is IPanelFloating;
+		private void InstantiateFloatingPanelUI()
+		{
+			if (this is not IPanelFloating panelFloating) return;
+
+			panelFloating.FloatingPanelUI = panelObject.GetComponentInChildren<FloatingPanelItemUI>();
+			if (panelFloating.FloatingPanelUI == null)
+			{
+				OffsetFloatingPanelItemUI offsetFloatingPanel = panelObject.AddComponent<OffsetFloatingPanelItemUI>();
+				offsetFloatingPanel.Pivot = Vector2.one;
+				offsetFloatingPanel.Offset = new Vector2(50f, 150f);
+				panelFloating.FloatingPanelUI = offsetFloatingPanel;
+			}
+		}
+		private void ShowFloatingPanelUI()
+		{
+			if (this is not IPanelFloating panelFloating) return;
+			panelFloating.FloatingPanelUI.Show();
+		}
+		private bool HideFloatingPanelUI(Action hide)
+		{
+			if (this is not IPanelFloating panelFloating) return false;
+			panelFloating.FloatingPanelUI.Hide(hide);
+			return true;
 		}
 		protected abstract void OnShow();
 		protected abstract void OnHide();
 		protected abstract void OnDispose();
 
 		[Serializable]
-		protected abstract class ViewItem<TValue> : IViewItemUI, IDisposable where TValue : class
+		protected abstract class ViewItem<TValue> : IViewItemUI, IDisposable
 		{
 			[SerializeField, ReadOnly]
 			private TValue value;
 			[SerializeField, ReadOnly]
-			private ControlPanelUI panelUI;
+			private ControlPanelItem panelUI;
 			private IKeyPairChain keyPair;
 			private bool isShow;
 			private bool isDispose;
 			public TValue Value => value;
-			public IViewPanelUI ViewPanelUI => panelUI;
+			public IPanelItemUI ViewPanelUI => panelUI;
 			public IKeyPairChain KeyPair => keyPair;
 			public bool IsShow => isShow;
 			public bool IsViewValid => keyPair != null;
-			public ViewItem(ControlPanelUI panel, TValue sector)
+			public ViewItem(TValue item, ControlPanelItem panel)
 			{
-				value = sector;
+				value = item;
 				panelUI = panel;
 				keyPair = panel.panelObject.GetKeyPairChain();
 				isShow = false;
@@ -148,7 +167,7 @@ public partial class StrategyControlPanelUI
 
 				Invisible();
 				OnDispose();
-				value = null;
+				value = default;
 				panelUI = null;
 				keyPair = null;
 			}

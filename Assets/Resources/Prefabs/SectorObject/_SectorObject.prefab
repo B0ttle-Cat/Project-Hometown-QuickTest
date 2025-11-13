@@ -47,12 +47,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d82bbf2c5d767348a29fc6784ffc047, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ControlPoint
-  facilitiesStatsGroup:
-    values: []
-  supportStatsGroup:
-    values: []
-  effectStatsGroup:
-    values: []
 --- !u!114 &3338242986635090369
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -212,7 +206,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 694afae8276ef3441b4d7245e8cf6d96, type: 2}
+  - {fileID: 2100000, guid: 95ea07d378b49b04ba212ab28aa22194, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

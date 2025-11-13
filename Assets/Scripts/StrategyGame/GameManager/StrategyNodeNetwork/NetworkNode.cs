@@ -5,18 +5,22 @@ using Unity.Collections;
 using UnityEngine;
 
 [Serializable]
-public struct NetworkNode : IEquatable<NetworkNode>
+public record NetworkNode : IEquatable<NetworkNode>
 {
 	[SerializeField, ReadOnly]
-	private Vector3 position;
+	private readonly int networkID;
 	[SerializeField, ReadOnly]
-	private string nodeName;
+	private readonly Vector3 position;
+	[SerializeField, ReadOnly]
+	private readonly string nodeName;
 
+    public int NetworkID { get => networkID; }
 	public Vector3 Position { get => position; }
 	public string NodeName { get => nodeName; }
 
-	public NetworkNode(SectorObject sector)
+	public NetworkNode(int id, SectorObject sector)
 	{
+		networkID = id;
 		if (sector != null)
 		{
 			nodeName = sector.SectorName;
@@ -29,17 +33,10 @@ public struct NetworkNode : IEquatable<NetworkNode>
 		}
 	}
    
-	public override bool Equals(object obj)
-    {
-        return obj is NetworkNode node && Equals(node);
-    }
-    public bool Equals(NetworkNode other)
-    {
-        return nodeName == other.nodeName;
-    }
     public override int GetHashCode()
     {
         return HashCode.Combine(nodeName);
     }
     public bool IsEmpty => string.IsNullOrWhiteSpace(nodeName);
+
 }
