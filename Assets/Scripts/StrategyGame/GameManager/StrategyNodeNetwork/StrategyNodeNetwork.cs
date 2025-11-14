@@ -695,11 +695,11 @@ public partial class StrategyNodeNetwork // FindShortestPath
 
 			if(i == 1)
 			{
-				path.AddRange(isRevers ? pointLine.Points : pointLine.ReversPoint);
+				path.AddRange(isRevers ? pointLine.ReversPoint : pointLine.Points);
 			}
 			else
 			{
-				path.AddRange((isRevers ? pointLine.Points : pointLine.ReversPoint)[1..^0]);
+				path.AddRange((isRevers ? pointLine.ReversPoint : pointLine.Points)[1..^0]);
 			}
 		}
 	}
