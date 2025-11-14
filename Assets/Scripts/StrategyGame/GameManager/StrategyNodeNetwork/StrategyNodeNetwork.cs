@@ -7,6 +7,7 @@ using Sirenix.OdinInspector;
 
 
 
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -265,17 +266,27 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 	}
 	public string NodeToName(NetworkNode node) => node.NodeName;
 
-	public bool TryGetLink(in NetworkNode start, in NetworkNode end, out NetworkLink link)
+	public bool TryGetLink(in NetworkNode start, in NetworkNode end, out NetworkLink link, out bool isRevers)
 	{
 		link = default;
+		isRevers = false;
 		if (!nodeToLink.TryGetValue(start, out var links)) return false;
 
 		int length = links.Length;
 		for (int i = 0 ; i < length ; i++)
 		{
-			if (links[i].StartNodeID.Equals(end.NetworkID) || links[i].LastNodeID.Equals(end.NetworkID))
+			var _link = links[i];
+
+			if (_link.StartNodeID.Equals(end.NetworkID))
 			{
-				link = links[i];
+				link = _link;
+				isRevers = true;
+				return true;
+			}
+			else if (_link.LastNodeID.Equals(end.NetworkID))
+			{
+				link = _link;
+				isRevers = false;
 				return true;
 			}
 		}
@@ -678,17 +689,17 @@ public partial class StrategyNodeNetwork // FindShortestPath
 		for (int i = 1 ; i < length ; i++)
 		{
 			nextNode = nodePath[i];
-			if (!TryGetLink(in prevNode, in nextNode, out var link)) continue;
+			if (!TryGetLink(in prevNode, in nextNode, out var link, out bool isRevers)) continue;
 			if (!TryGetLine(in link, out var pointLine)) continue;
 			prevNode = nextNode;
 
 			if(i == 1)
 			{
-				path.AddRange(pointLine.Points);
+				path.AddRange(isRevers ? pointLine.Points : pointLine.ReversPoint);
 			}
 			else
 			{
-				path.AddRange(pointLine.PointsWithoutStart);
+				path.AddRange((isRevers ? pointLine.Points : pointLine.ReversPoint)[1..^0]);
 			}
 		}
 	}

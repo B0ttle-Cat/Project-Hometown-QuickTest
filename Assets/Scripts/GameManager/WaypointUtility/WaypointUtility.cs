@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Sirenix.OdinInspector;
 
@@ -24,22 +25,22 @@ public static class WaypointUtility
 		private readonly int startNodeID;
 		private readonly int lastNodeID;
 		private readonly Vector3[] points;
+		private readonly Vector3[] reversPoint;
 		[ShowInInspector,ReadOnly]
 		private readonly float distance;
 		public int NetworkID => networkID;
 		public (int start, int last) Tips => (startNodeID, lastNodeID); 
 		public Vector3[] Points => points;
+		public Vector3[] ReversPoint => reversPoint;
 		public float Distance => distance;
 
-		public Vector3[] PointsWithoutTips => points[1..^1];
-		public Vector3[] PointsWithoutStart => points[1..^0];
-		public Vector3[] PointsWithoutLast => points[0..^1];
 		public WaypointLine(int id, NetworkNode startNode, NetworkNode lastNode, Waypoint[] waypoints, int samplesPerSegment = 10)
 		{
 			networkID = id;
 			startNodeID = startNode.NetworkID;
 			lastNodeID = lastNode.NetworkID; 
 			points = GetLineWithWaypoints(startNode.Position, lastNode.Position, waypoints, samplesPerSegment);
+			reversPoint = points.Reverse().ToArray();
 			distance = _Distance();
 		}
 
