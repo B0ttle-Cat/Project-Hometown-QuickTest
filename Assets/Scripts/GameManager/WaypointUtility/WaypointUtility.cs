@@ -31,6 +31,9 @@ public static class WaypointUtility
 		public Vector3[] Points => points;
 		public float Distance => distance;
 
+		public Vector3[] PointsWithoutTips => points[1..^1];
+		public Vector3[] PointsWithoutStart => points[1..^0];
+		public Vector3[] PointsWithoutLast => points[0..^1];
 		public WaypointLine(int id, NetworkNode startNode, NetworkNode lastNode, Waypoint[] waypoints, int samplesPerSegment = 10)
 		{
 			networkID = id;

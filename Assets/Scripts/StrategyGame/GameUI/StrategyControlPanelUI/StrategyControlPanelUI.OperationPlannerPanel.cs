@@ -74,7 +74,6 @@ shift를 누르고 선택하면 경로를 지정할 수 있습니다.";
 		{
 			if (selectable == null || selectable is not SectorObject sector) return;
 
-
 			int recentlyNodeID = selectOperation.ThisMovement.SafeRecentlyVisitedNode();
 			int targetNodeID = StrategyManager.SectorNetwork.SectorToNodeIndex(sector);
 			if (StrategyManager.SectorNetwork.IsConnectedNode(recentlyNodeID, targetNodeID))

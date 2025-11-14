@@ -32,16 +32,22 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 			this.closetNodeID = closetNodeID;
 		}
 	}
+	private bool isInit;
 
-	[SerializeField,ReadOnly] private NetworkNode[] networkNodes = Array.Empty<NetworkNode>();
-	[SerializeField,ReadOnly] private NetworkLink[] networkLinks = Array.Empty<NetworkLink>();
-	[SerializeField,ReadOnly] private WaypointLine[] networkLines = Array.Empty<WaypointLine>();
-	[SerializeField,ReadOnly] private PointInfo[] allPointInfos = Array.Empty<PointInfo>();
+	private void Awake()
+	{
 
-	[ShowInInspector,ReadOnly] private Dictionary<SectorObject, NetworkNode> sectorToNode = new();
-	[ShowInInspector,ReadOnly] private Dictionary<NetworkNode, SectorObject> nodeToSector = new();
-	[ShowInInspector,ReadOnly] private Dictionary<NetworkNode, NetworkLink[]> nodeToLink = new();
-	[ShowInInspector,ReadOnly] private Dictionary<NetworkLink, WaypointLine> linkToLine = new();
+	}
+
+	[SerializeField,ReadOnly,FoldoutGroup("NetworkInfo")] private NetworkNode[] networkNodes = Array.Empty<NetworkNode>();
+	[SerializeField,ReadOnly,FoldoutGroup("NetworkInfo")] private NetworkLink[] networkLinks = Array.Empty<NetworkLink>();
+	[SerializeField,ReadOnly,FoldoutGroup("NetworkInfo")] private WaypointLine[] networkLines = Array.Empty<WaypointLine>();
+	[SerializeField,ReadOnly,FoldoutGroup("NetworkInfo")] private PointInfo[] allPointInfos = Array.Empty<PointInfo>();
+
+	[ShowInInspector,ReadOnly,FoldoutGroup("NetworkInfo")] private Dictionary<SectorObject, NetworkNode> sectorToNode = new();
+	[ShowInInspector,ReadOnly,FoldoutGroup("NetworkInfo")] private Dictionary<NetworkNode, SectorObject> nodeToSector = new();
+	[ShowInInspector,ReadOnly,FoldoutGroup("NetworkInfo")] private Dictionary<NetworkNode, NetworkLink[]> nodeToLink = new();
+	[ShowInInspector,ReadOnly,FoldoutGroup("NetworkInfo")] private Dictionary<NetworkLink, WaypointLine> linkToLine = new();
 
 	public async Awaitable Init(NetworkNode[] nodeList, SectorObject[] sectorList, StrategyStartSetterData.SectorLinkData[] sectorLinkData)
 	{
@@ -120,6 +126,10 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 			}
 		}
 		allPointInfos = pointInfos.ToArray();
+
+		pathResultCaches = new List<PathResultCache>();
+
+		isInit = true;
 	}
 	void IStrategyStartGame.OnStartGame()
 	{
@@ -263,7 +273,7 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 		int length = links.Length;
 		for (int i = 0 ; i < length ; i++)
 		{
-			if (links[i].LastNodeID.Equals(end.NodeName))
+			if (links[i].StartNodeID.Equals(end.NetworkID) || links[i].LastNodeID.Equals(end.NetworkID))
 			{
 				link = links[i];
 				return true;
@@ -373,13 +383,20 @@ public partial class StrategyNodeNetwork // ConnectDirType & ConnectConditions
 		return condition switch
 		{
 			ConnectConditions.None => true,
-			ConnectConditions.Disconnected => connectDir is NetworkLink.ConnectDirType.Disconnected,
-			ConnectConditions.Forward => connectDir is NetworkLink.ConnectDirType.Forward,
-			ConnectConditions.Backward => connectDir is NetworkLink.ConnectDirType.Backward,
-			ConnectConditions.ConnectedAny => connectDir is NetworkLink.ConnectDirType.Forward
-										  or NetworkLink.ConnectDirType.Backward
-										  or NetworkLink.ConnectDirType.Both,
-			ConnectConditions.ConnectedBoth => connectDir is NetworkLink.ConnectDirType.Both,
+			ConnectConditions.Disconnected => connectDir
+				is NetworkLink.ConnectDirType.Disconnected,
+			ConnectConditions.Forward => connectDir
+				is NetworkLink.ConnectDirType.Forward
+				or NetworkLink.ConnectDirType.Both,
+			ConnectConditions.Backward => connectDir
+				is NetworkLink.ConnectDirType.Backward
+				or NetworkLink.ConnectDirType.Both,
+			ConnectConditions.ConnectedAny => connectDir
+				is NetworkLink.ConnectDirType.Forward
+				or NetworkLink.ConnectDirType.Backward
+				or NetworkLink.ConnectDirType.Both,
+			ConnectConditions.ConnectedBoth => connectDir
+				is NetworkLink.ConnectDirType.Both,
 			_ => false,
 		};
 	}
@@ -401,12 +418,13 @@ public partial class StrategyNodeNetwork // FindShortestPath
 		public int parentID;
 		public int nodeID;
 		public float cost;
-
-		public SerchBuffer(int parentID, int nodeID, float cost)
+		public int deep;
+		public SerchBuffer(int parentID, int nodeID, float cost, int deep)
 		{
 			this.parentID = parentID;
 			this.nodeID = nodeID;
 			this.cost = cost;
+			this.deep = deep;
 		}
 	}
 	public class SerchBufferComparer : IComparer<SerchBuffer>
@@ -422,18 +440,28 @@ public partial class StrategyNodeNetwork // FindShortestPath
 		}
 	}
 
-	public class PathResultCache
+	public readonly struct PathResultCache
 	{
-		public int startID;
-		public int targetID;
-		public NetworkNode[] pathResult;
-		public bool FindIt(int startID, int targetID)
+		private readonly int startID;
+		private readonly int targetID;
+		private readonly ConnectConditions conditions;
+		private readonly NetworkNode[] pathResult;
+		public readonly NetworkNode[] Path => pathResult;
+		public PathResultCache(int startID, int targetID, ConnectConditions conditions, NetworkNode[] pathResult)
 		{
-			return this.startID == startID && this.targetID == targetID;
+			this.startID = startID;
+			this.targetID = targetID;
+			this.conditions = conditions;
+			this.pathResult = pathResult;
+		}
+
+		public bool FindIt(int startID, int targetID, ConnectConditions conditions)
+		{
+			return this.startID == startID && this.targetID == targetID && this.conditions == conditions;
 		}
 	}
 
-	public List<PathResultCache> pathResultCaches;
+	private List<PathResultCache> pathResultCaches;
 	// 내부 핵심 Dijkstra 함수
 	private bool FindShortestPathInternal(
 		in NetworkNode startNode, in NetworkNode targetNode, out List<NetworkNode> pathResult,
@@ -455,10 +483,10 @@ public partial class StrategyNodeNetwork // FindShortestPath
 			return true;
 		}
 
-		int findIndex = pathResultCaches.FindIndex(i => i.FindIt(startID, targetID));
+		int findIndex = pathResultCaches.FindIndex(i => i.FindIt(startID, targetID, connectConditions));
 		if (findIndex >= 0)
 		{
-			var findPathResult = pathResultCaches[findIndex].pathResult;
+			var findPathResult = pathResultCaches[findIndex].Path;
 			if (findPathResult == null || findPathResult.Length == 0) return false;
 
 			pathResult.AddRange(findPathResult);
@@ -471,12 +499,12 @@ public partial class StrategyNodeNetwork // FindShortestPath
 		HashSet<int> visited = new HashSet<int>();
 		SortedSet<SerchBuffer> nextSearchList = new SortedSet<SerchBuffer>(new SerchBufferComparer());
 		Dictionary<int, int> childToParent = new Dictionary<int, int>();
-		//Dictionary<int, float> pathToCost = new Dictionary<int, float>();
 
 		NetworkNode thisNode =  startNode;
 		NetworkLink[] thisLinks = nodeToLink[thisNode];
 
-		SerchingChild(thisNode, thisLinks, 0);
+		visited.Add(startID);
+		SerchingChild(thisNode, thisLinks, 0, 0);
 		while (nextSearchList.Count > 0)
 		{
 			SerchBuffer min = nextSearchList.Min;
@@ -488,12 +516,11 @@ public partial class StrategyNodeNetwork // FindShortestPath
 				break;
 			}
 			nextSearchList.Remove(min);
-			visited.Add(thisID);
 			thisNode = networkNodes[thisID];
 			thisLinks = nodeToLink[thisNode];
-			SerchingChild(thisNode, thisLinks, min.cost);
+			SerchingChild(thisNode, thisLinks, min.cost, min.deep);
 		}
-		void SerchingChild(NetworkNode parent, NetworkLink[] links, float cost)
+		void SerchingChild(NetworkNode parent, NetworkLink[] links, float cost, int deep)
 		{
 			int parentID = parent.NetworkID;
 
@@ -528,17 +555,13 @@ public partial class StrategyNodeNetwork // FindShortestPath
 				// 이동 불가능 조건
 				if (!result.Result) continue;
 
-				nextSearchList.Add(new SerchBuffer(parentID, childID, result.cost));
+				visited.Add(childID);
+				nextSearchList.Add(new SerchBuffer(parentID, childID, result.cost, deep + 1));
 			}
 		}
 		if (childToParent.Count == 0)
 		{
-			pathResultCaches.Add(new PathResultCache()
-			{
-				startID = startNode.NetworkID,
-				targetID = targetNode.NetworkID,
-				pathResult = null,
-			});
+			pathResultCaches.Add(new PathResultCache(startID, targetID, connectConditions, null));
 			return false;
 		}
 
@@ -554,12 +577,7 @@ public partial class StrategyNodeNetwork // FindShortestPath
 		{
 			pathResult.Add(networkNodes[pathID]);
 		}
-		pathResultCaches.Add(new PathResultCache()
-		{
-			startID = startNode.NetworkID,
-			targetID = targetNode.NetworkID,
-			pathResult = pathResult.ToArray(),
-		});
+		pathResultCaches.Add(new PathResultCache(startID, targetID, connectConditions, pathResult.ToArray()));
 
 		return true;
 	}
@@ -638,7 +656,7 @@ public partial class StrategyNodeNetwork // FindShortestPath
 	}
 	public bool IsConnectedNode(NetworkNode start, NetworkNode target, ConnectConditions connectConditions = ConnectConditions.Forward)
 	{
-		 return FindShortestPath(start, target, new List<NetworkNode>(), null, connectConditions);
+		return FindShortestPath(start, target, new List<NetworkNode>(), null, connectConditions);
 	}
 
 
@@ -662,8 +680,16 @@ public partial class StrategyNodeNetwork // FindShortestPath
 			nextNode = nodePath[i];
 			if (!TryGetLink(in prevNode, in nextNode, out var link)) continue;
 			if (!TryGetLine(in link, out var pointLine)) continue;
+			prevNode = nextNode;
 
-			path.AddRange(pointLine.Points);
+			if(i == 1)
+			{
+				path.AddRange(pointLine.Points);
+			}
+			else
+			{
+				path.AddRange(pointLine.PointsWithoutStart);
+			}
 		}
 	}
 	// ----------------- NodeDistance Comparer -----------------
@@ -672,7 +698,7 @@ public partial class StrategyNodeNetwork // FindShortestPath
 		public int Compare((float dist, NetworkNode node) a, (float dist, NetworkNode node) b)
 		{
 			int cmp = a.dist.CompareTo(b.dist);
-			return cmp != 0 ? cmp : a.node.NodeName.CompareTo(b.node.NodeName);
+			return cmp != 0 ? cmp : a.node.NetworkID.CompareTo(b.node.NetworkID);
 		}
 	}
 }
@@ -680,6 +706,40 @@ public partial class StrategyNodeNetwork // FindShortestPath
 public partial class StrategyNodeNetwork // OnDrawGizmos
 {
 #if UNITY_EDITOR
+	private List<NetworkNode> testPathfinding;
+	private List<Vector3> testPositions;
+	[Button]
+	private void TestPathfinding(
+		[ValueDropdown("FindSectorObjectInScene")] SectorObject start,
+		[ValueDropdown("FindSectorObjectInScene")] SectorObject last,
+		ConnectConditions connectConditions)
+	{
+		if (pathResultCaches != null) pathResultCaches.Clear();
+		testPathfinding = new List<NetworkNode>();
+		testPositions = new List<Vector3>();
+		if (FindShortestPath(SectorToNode(start), SectorToNode(last), testPathfinding, null, connectConditions))
+		{
+
+			NodePathToVectorPath(testPathfinding, out testPositions);
+		}
+
+	}
+	private ValueDropdownList<SectorObject> FindSectorObjectInScene()
+	{
+		ValueDropdownList<SectorObject> list = new ValueDropdownList<SectorObject>();
+		if (isInit)
+		{
+			var items = FindObjectsByType<SectorObject>(FindObjectsInactive.Exclude, FindObjectsSortMode.InstanceID);
+			foreach (var item in items)
+			{
+				string name = $"{item.name} + ({SectorToNodeIndex(item)})";
+
+				list.Add(item.name, item);
+			}
+		}
+		return list;
+	}
+
 	private void _OnDrawGizmos()
 	{
 		if (!Selection.Contains(gameObject)) return;
@@ -737,13 +797,41 @@ public partial class StrategyNodeNetwork // OnDrawGizmos
 		}
 
 		// 노드 표시
+		Gizmos.color = Color.white;
 		foreach (var node in networkNodes)
 		{
 			if (node == null) continue;
 
-			Gizmos.color = Color.white;
 			Gizmos.DrawSphere(node.Position, 0.3f);
 			DrawLabel(node.Position, Vector3.up * 0.5f, node.NodeName, Color.white);
+		}
+
+
+		if (testPathfinding == null) return;
+		NetworkNode prev = null;
+		Gizmos.color = Color.blue;
+		foreach (NetworkNode node in testPathfinding)
+		{
+			if (node == null) continue;
+
+			if (prev == null)
+			{
+				prev = node;
+				Gizmos.DrawSphere(node.Position, 1);
+			}
+			else
+			{
+				Gizmos.DrawSphere(node.Position, 1f);
+				Gizmos.DrawLine(prev.Position + Vector3.up, node.Position + Vector3.up);
+
+				prev = node;
+			}
+		}
+		if (testPositions == null) return;
+		Gizmos.color = Color.yellow;
+		foreach (Vector3 point in testPositions)
+		{
+			Gizmos.DrawSphere(point + Vector3.up, .5f);
 		}
 	}
 
