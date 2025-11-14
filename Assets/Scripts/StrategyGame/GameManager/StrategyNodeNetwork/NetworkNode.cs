@@ -1,17 +1,17 @@
 ﻿using System;
 
-using Unity.Collections;
+using Sirenix.OdinInspector;
 
 using UnityEngine;
 
 [Serializable]
 public record NetworkNode : IEquatable<NetworkNode>
 {
-	[SerializeField, ReadOnly]
+	[ShowInInspector, ReadOnly]
 	private readonly int networkID;
-	[SerializeField, ReadOnly]
+	[ShowInInspector, ReadOnly]
 	private readonly Vector3 position;
-	[SerializeField, ReadOnly]
+	[ShowInInspector, ReadOnly]
 	private readonly string nodeName;
 
     public int NetworkID { get => networkID; }
@@ -37,6 +37,4 @@ public record NetworkNode : IEquatable<NetworkNode>
     {
         return HashCode.Combine(nodeName);
     }
-    public bool IsEmpty => string.IsNullOrWhiteSpace(nodeName);
-
 }

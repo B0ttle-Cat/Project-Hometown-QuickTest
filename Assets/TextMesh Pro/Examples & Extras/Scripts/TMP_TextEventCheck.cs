@@ -56,7 +56,7 @@ namespace TMPro.Examples
 
         void OnLineSelection(string lineText, int firstCharacterIndex, int length)
         {
-            Debug.Log("Line [" + lineText + "] with first character index of " + firstCharacterIndex + " and length of " + length + " has been selected.");
+            Debug.Log("Link [" + lineText + "] with first character index of " + firstCharacterIndex + " and length of " + length + " has been selected.");
         }
 
         void OnLinkSelection(string linkID, string linkText, int linkIndex)

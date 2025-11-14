@@ -7,21 +7,18 @@ using UnityEngine;
 [Serializable]
 public record NetworkLink : IEquatable<NetworkLink>
 {
-	[SerializeField, ReadOnly]
+	[ShowInInspector, ReadOnly]
 	private readonly int networkID;
-	[SerializeField, ReadOnly]
 	private readonly Vector3 position;
-	[SerializeField, ReadOnly]
+	[ShowInInspector, ReadOnly, HorizontalGroup, LabelText("A"), LabelWidth(20)]
 	private readonly int startNodeID;
-	[SerializeField, ReadOnly]
+	[ShowInInspector, ReadOnly, HorizontalGroup, LabelText("B"), LabelWidth(20)]
 	private readonly int lastNodeID;
 
-	[SerializeField, ReadOnly]
 	private readonly Vector3 start;
-	[SerializeField, ReadOnly]
 	private readonly Vector3 ended;
 
-	[SerializeField]
+	[ShowInInspector, ReadOnly, HorizontalGroup, HideLabel]
 	private readonly ConnectDirType connectDir;
 
 	public enum ConnectDirType

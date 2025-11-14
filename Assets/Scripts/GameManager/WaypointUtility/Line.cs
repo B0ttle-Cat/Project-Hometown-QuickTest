@@ -2,7 +2,7 @@
 
 //public static partial class WaypointUtility
 //{
-//    public struct Line
+//    public struct Link
 //	{
 //		public Waypoint[] waypoints;
 //		public int samplesPerSegment;

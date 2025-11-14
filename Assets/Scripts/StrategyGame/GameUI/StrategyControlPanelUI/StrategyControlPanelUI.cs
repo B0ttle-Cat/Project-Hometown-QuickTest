@@ -47,8 +47,8 @@ public partial class StrategyControlPanelUI
 
 		private GameObject panelObject;
 
-		public bool IsShow => panelObject != null && panelObject.activeSelf;
-		private bool IsDispose => panelObject != null;
+		public bool IsShow { get; private set; }
+		public bool IsDispose { get; private set; }
 		public ControlPanelItem(GameObject prefab, Transform root, StrategyControlPanelUI panelUI)
 		{
 			this.panelUI = panelUI;
@@ -56,10 +56,13 @@ public partial class StrategyControlPanelUI
 			this.panelRoot = root;
 
 			panelObject = null;
+			IsShow = false;
+			IsDispose = false;
 		}
 		public void Dispose()
 		{
-			if (!IsDispose) return;
+			if (IsDispose) return;
+			IsDispose = true;
 
 			Hide();
 			OnDispose();
@@ -75,9 +78,9 @@ public partial class StrategyControlPanelUI
 		public void Show()
 		{
 			if (IsShow) return;
-			if (panelPrefab == null) return;
+			IsShow = true;
 
-			if (panelObject == null)
+			if (panelObject == null && panelPrefab != null)
 			{
 				panelObject = GameObject.Instantiate(panelPrefab, panelRoot);
 				InstantiateFloatingPanelUI();
@@ -88,6 +91,7 @@ public partial class StrategyControlPanelUI
 		public void Hide()
 		{
 			if (!IsShow) return;
+			IsShow = false;
 
 			if (ThgIsFloating)
 			{

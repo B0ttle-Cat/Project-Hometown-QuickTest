@@ -1714,8 +1714,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StrategyControlPanelUI
   operationPlannerPrefab: {fileID: 0}
-  operationPlannerToot: {fileID: 0}
-  pathRenderPrefab: {fileID: 0}
+  operationPlannerToot: {fileID: 984942362}
+  pathRenderPrefab: {fileID: 3365389743959854835, guid: eb406fed59b70624394253822a282ae4, type: 3}
   sectorSelectPrefab: {fileID: 7158623961847931186, guid: 8a7be6189a3b0034095282e48252a8f0, type: 3}
   sectorSelectRoot: {fileID: 770881354}
   sectorSelectPanel:
@@ -5190,10 +5190,10 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 58857479}
-  - {fileID: 1234401990}
-  - {fileID: 4796101}
   - {fileID: 1555327484}
+  - {fileID: 4796101}
+  - {fileID: 1234401990}
+  - {fileID: 58857479}
   m_Father: {fileID: 449196672}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -13132,24 +13132,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f6e5ab8e5ef1a445b6c2df963c25eb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StrategyClickManager
+  eventSystem: {fileID: 0}
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 7340096
   inputData:
-    mouseDownPosition: {x: 0, y: 0}
     mouseCurrPosition: {x: 0, y: 0}
+    mouseCurrDelta: {x: 0, y: 0}
+    shift: 0
+    alt: 0
     isPointerOver: 0
+    leftMouseDownPosition: {x: 0, y: 0}
+    rightMouseDownPosition: {x: 0, y: 0}
     leftPressedTime: 0
     leftReleasedTime: 0
     leftPressedThisFrame: 0
     leftIsPressed: 0
     leftReleasedThisFrame: 0
-    shift: 0
-    alt: 0
-    isDown: 0
-    isDrag: 0
-  eventSystem: {fileID: 0}
-  layerMask:
-    serializedVersion: 2
-    m_Bits: 7340096
-  selecterState: 0
+    leftIsDown: 0
+    leftIsDrag: 0
+    rightPressedTime: 0
+    rightReleasedTime: 0
+    rightPressedThisFrame: 0
+    rightIsPressed: 0
+    rightReleasedThisFrame: 0
+    rightIsDown: 0
+    rightIsDrag: 0
+  leftSelecterState: 0
+  rightSelecterState: 0
 --- !u!114 &1572051160
 MonoBehaviour:
   m_ObjectHideFlags: 0

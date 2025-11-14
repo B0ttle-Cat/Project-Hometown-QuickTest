@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using Sirenix.OdinInspector;
 
@@ -15,17 +16,15 @@ public static class WaypointUtility
 		public float width;
 	}
 
+	[Serializable]
 	public record WaypointLine
 	{
-		[SerializeField,ReadOnly]
+		[ShowInInspector,ReadOnly]
 		private readonly int networkID;
-		[SerializeField,ReadOnly]
 		private readonly int startNodeID;
-		[SerializeField,ReadOnly]
 		private readonly int lastNodeID;
-		[SerializeField,ReadOnly]
 		private readonly Vector3[] points;
-		[SerializeField,ReadOnly]
+		[ShowInInspector,ReadOnly]
 		private readonly float distance;
 		public int NetworkID => networkID;
 		public (int start, int last) Tips => (startNodeID, lastNodeID); 

@@ -147,7 +147,7 @@ public partial class StrategyMouseSelecter : MonoBehaviour
 		void Selecter_Start()
 		{
 			leftCurrentSelecter?.Dispose();
-			leftCurrentSelecter = CreateSelecter(leftSelecterState);
+			leftCurrentSelecter = CreateSelecter(leftSelecterState, true);
 			leftCurrentSelecter?.Start();
 		}
 		void Selecter_Update()
@@ -187,7 +187,7 @@ public partial class StrategyMouseSelecter : MonoBehaviour
 		void Selecter_Start()
 		{
 			rightCurrentSelecter?.Dispose();
-			rightCurrentSelecter = CreateSelecter(rightSelecterState);
+			rightCurrentSelecter = CreateSelecter(rightSelecterState, false);
 			rightCurrentSelecter?.Start();
 		}
 		void Selecter_Update()
@@ -324,10 +324,11 @@ public partial class StrategyMouseSelecter : MonoBehaviour
 		OnPointingTarget(target);
 	}
 
-	private BaseSelecter CreateSelecter(SelecterState state) => state switch
+	private BaseSelecter CreateSelecter(SelecterState state, bool isLeft) => (state, isLeft) switch
 	{
-		SelecterState.Click => new ClickSelecter(this),
-		SelecterState.Drag => new DragSelecter(this),
+		(SelecterState.Click, true) => new ClickSelecter(this),
+		(SelecterState.Click, false) => new RightPointer(this),
+		(SelecterState.Drag, true) => new DragSelecter(this),
 		_ => null
 	};
 	public void AddListener_OnSelectedAndDeselected(Action<ISelectable> onSelected, Action<ISelectable> onDeselected)
@@ -686,10 +687,10 @@ public partial class StrategyMouseSelecter
 	}
 
 
-	public class RIghtPointer : BaseSelecter
+	public class RightPointer : BaseSelecter
 	{
 		protected ISelectableByMouse mouseDownTarget;
-		public RIghtPointer(StrategyMouseSelecter selecter) : base(selecter)
+		public RightPointer(StrategyMouseSelecter selecter) : base(selecter)
 		{
 			mouseDownTarget = null;
 		}

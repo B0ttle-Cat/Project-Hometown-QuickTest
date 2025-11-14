@@ -4,9 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Sirenix.OdinInspector;
-using Sirenix.Utilities;
 
-using Unity.VisualScripting;
 
 
 #if UNITY_EDITOR
@@ -15,6 +13,7 @@ using UnityEditor;
 
 using UnityEngine;
 
+using static NetworkLink;
 using static WaypointUtility;
 
 public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
@@ -42,7 +41,7 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 	[ShowInInspector,ReadOnly] private Dictionary<SectorObject, NetworkNode> sectorToNode = new();
 	[ShowInInspector,ReadOnly] private Dictionary<NetworkNode, SectorObject> nodeToSector = new();
 	[ShowInInspector,ReadOnly] private Dictionary<NetworkNode, NetworkLink[]> nodeToLink = new();
-	[ShowInInspector,ReadOnly] private Dictionary<NetworkLink, WaypointLine> linkToNode = new();
+	[ShowInInspector,ReadOnly] private Dictionary<NetworkLink, WaypointLine> linkToLine = new();
 
 	public async Awaitable Init(NetworkNode[] nodeList, SectorObject[] sectorList, StrategyStartSetterData.SectorLinkData[] sectorLinkData)
 	{
@@ -63,7 +62,7 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 		length = sectorLinkData.Length;
 		networkLinks = new NetworkLink[length];
 		networkLines = new WaypointLine[length];
-		linkToNode = new Dictionary<NetworkLink, WaypointLine>(length);
+		linkToLine = new Dictionary<NetworkLink, WaypointLine>(length);
 		for (int i = 0 ; i < length ; i++)
 		{
 			var data = sectorLinkData[i];
@@ -83,7 +82,7 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 
 			networkLinks[i] = line;
 			networkLines[i] = waypointLine;
-			linkToNode[line] = waypointLine;
+			linkToLine[line] = waypointLine;
 		}
 
 		length = networkNodes.Length;
@@ -121,9 +120,6 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 			}
 		}
 		allPointInfos = pointInfos.ToArray();
-
-		buildConnectGroups = new Dictionary<ConnectConditions, ConnectGroup[]>();
-		BuildConnectGroups(ConnectConditions.Forward);
 	}
 	void IStrategyStartGame.OnStartGame()
 	{
@@ -163,16 +159,10 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 			nodeToLink.Clear();
 			nodeToLink = null;
 		}
-		if (linkToNode != null)
+		if (linkToLine != null)
 		{
-			linkToNode.Clear();
-			linkToNode = null;
-		}
-
-		if (buildConnectGroups != null)
-		{
-			buildConnectGroups.Clear();
-			buildConnectGroups = null;
+			linkToLine.Clear();
+			linkToLine = null;
 		}
 	}
 #if UNITY_EDITOR
@@ -209,7 +199,7 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 	}
 	public int NameToIndex(string nodeName)
 	{
-		if(string.IsNullOrWhiteSpace(nodeName)) return -1;
+		if (string.IsNullOrWhiteSpace(nodeName)) return -1;
 
 		int length = networkNodes.Length;
 		for (int i = 0 ; i < length ; i++)
@@ -283,7 +273,7 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 	}
 	public bool TryGetLine(in NetworkLink link, out WaypointLine line)
 	{
-		return linkToNode.TryGetValue(link, out line);
+		return linkToLine.TryGetValue(link, out line);
 	}
 
 	public bool FindClosestNodeWithoutLine(Vector3 position, out NetworkNode closestNode)
@@ -372,265 +362,204 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 	}
 
 }
-public partial class StrategyNodeNetwork // BuildConnectGroups
+public partial class StrategyNodeNetwork // ConnectDirType & ConnectConditions
 {
-	[Serializable]
-	private struct ConnectGroup
+	private bool IsAvailableLink(NetworkNode start, NetworkLink line, ConnectConditions condition)
 	{
-		public int[] nodeNetworkID;
+		return IsAvailableLink(GetConnectDirType(start, line), condition);
 	}
-
-	[ShowInInspector,ReadOnly]
-	private Dictionary<ConnectConditions, ConnectGroup[]> buildConnectGroups = new();
-
-	private void BuildConnectGroups(ConnectConditions targetCondition)
-	{
-		if (networkNodes == null || networkLinks == null)
-			return;
-
-		// Dictionary 초기화 (해당 condition 만 갱신)
-		buildConnectGroups ??= new Dictionary<ConnectConditions, ConnectGroup[]>();
-
-		var nodeDict = networkNodes.ToDictionary(n => n.NetworkID, n => n);
-
-		// Union-Find 초기화
-		var parent = networkNodes.ToDictionary(n => n.NetworkID, n => n.NetworkID);
-
-		int Find(int id)
-		{
-			if (parent[id] != id)
-				parent[id] = Find(parent[id]);
-			return parent[id];
-		}
-
-		void Union(int a, int b)
-		{
-			var pa = Find(a);
-			var pb = Find(b);
-			if (pa != pb)
-				parent[pa] = pb;
-		}
-
-		// 조건에 맞는 라인 연결
-		foreach (var line in networkLinks)
-		{
-			if (!LineMatchesCondition(line, targetCondition)) continue;
-
-			if (nodeDict.ContainsKey(line.StartNodeID) && nodeDict.ContainsKey(line.LastNodeID))
-				Union(line.StartNodeID, line.LastNodeID);
-		}
-
-		// 루트별 그룹화
-		var groupMap = new Dictionary<int, List<int>>();
-		foreach (var node in networkNodes)
-		{
-			int root = Find(node.NetworkID);
-			if (!groupMap.TryGetValue(root, out var list))
-			{
-				list = new List<int>();
-				groupMap[root] = list;
-			}
-			list.Add(node.NetworkID);
-		}
-
-		// ConnectGroup 배열 생성
-		var groups = groupMap.Values
-		.Select(nodes => new ConnectGroup
-		{
-			nodeNetworkID = nodes.ToArray()
-		})
-		.ToArray();
-
-		// 기존 값 덮어쓰기 (해당 condition만)
-		buildConnectGroups[targetCondition] = groups;
-	}
-	private bool LineMatchesCondition(NetworkLink line, ConnectConditions condition)
+	private bool IsAvailableLink(NetworkLink.ConnectDirType connectDir, ConnectConditions condition)
 	{
 		return condition switch
 		{
 			ConnectConditions.None => true,
-			ConnectConditions.Disconnected => line.ConnectDir is NetworkLink.ConnectDirType.Disconnected,
-			ConnectConditions.Forward => line.ConnectDir is NetworkLink.ConnectDirType.Forward,
-			ConnectConditions.Backward => line.ConnectDir is NetworkLink.ConnectDirType.Backward,
-			ConnectConditions.ConnectedAny => line.ConnectDir is NetworkLink.ConnectDirType.Forward
+			ConnectConditions.Disconnected => connectDir is NetworkLink.ConnectDirType.Disconnected,
+			ConnectConditions.Forward => connectDir is NetworkLink.ConnectDirType.Forward,
+			ConnectConditions.Backward => connectDir is NetworkLink.ConnectDirType.Backward,
+			ConnectConditions.ConnectedAny => connectDir is NetworkLink.ConnectDirType.Forward
 										  or NetworkLink.ConnectDirType.Backward
 										  or NetworkLink.ConnectDirType.Both,
-			ConnectConditions.ConnectedBoth => line.ConnectDir is NetworkLink.ConnectDirType.Both,
+			ConnectConditions.ConnectedBoth => connectDir is NetworkLink.ConnectDirType.Both,
 			_ => false,
 		};
 	}
-
-
-	public bool IsConnectedNode(ConnectConditions connectConditions, int startID, int endedID)
+	private ConnectDirType GetConnectDirType(NetworkNode start, NetworkLink line)
 	{
-		// 🔹 1. 해당 조건의 그룹이 미리 계산되어 있는지 확인
-		if (!buildConnectGroups.TryGetValue(connectConditions, out var groupArray) || groupArray == null)
+		return line.ConnectDir switch
 		{
-			BuildConnectGroups(connectConditions);
-			if (!buildConnectGroups.TryGetValue(connectConditions, out groupArray) || groupArray == null)
-			{
-				Debug.LogWarning($"[FindShortestPathInternal] No ConnectGroup found for condition {connectConditions}");
-				return false;
-			}
-		}
-
-		// 🔹 2. startPoint 노드가 속한 그룹 찾기
-		ConnectGroup? startGroup = null;
-
-		foreach (var group in groupArray)
-		{
-			if (group.nodeNetworkID.Contains(startID))
-			{
-				startGroup = group;
-				break;
-			}
-		}
-
-		if (startGroup is null)
-		{
-			Debug.LogWarning($"[FindShortestPathInternal] Start node {networkNodes[startID].NodeName} not found in any ConnectGroup for {connectConditions}");
-			return false;
-		}
-
-		// 🔹 3. 타겟 노드가 같은 그룹에 없으면 탐색 불필요
-		if (!startGroup.Value.nodeNetworkID.Contains(endedID))
-			return false;
-
-		return true;
+			ConnectDirType.Forward => start.NetworkID == line.StartNodeID ? ConnectDirType.Forward : ConnectDirType.Backward,
+			ConnectDirType.Backward => start.NetworkID == line.LastNodeID ? ConnectDirType.Backward : ConnectDirType.Forward,
+			_ => line.ConnectDir,
+		};
 	}
 }
 
 public partial class StrategyNodeNetwork // FindShortestPath
 {
+	public struct SerchBuffer
+	{
+		public int parentID;
+		public int nodeID;
+		public float cost;
+
+		public SerchBuffer(int parentID, int nodeID, float cost)
+		{
+			this.parentID = parentID;
+			this.nodeID = nodeID;
+			this.cost = cost;
+		}
+	}
+	public class SerchBufferComparer : IComparer<SerchBuffer>
+	{
+		public int Compare(SerchBuffer x, SerchBuffer y)
+		{
+			int c = x.cost.CompareTo(y.cost);
+			if (c != 0) return c;
+
+			// cost가 같을 때 중복 방지용
+			// nodeID 로 구분
+			return x.nodeID.CompareTo(y.nodeID);
+		}
+	}
+
+	public class PathResultCache
+	{
+		public int startID;
+		public int targetID;
+		public NetworkNode[] pathResult;
+		public bool FindIt(int startID, int targetID)
+		{
+			return this.startID == startID && this.targetID == targetID;
+		}
+	}
+
+	public List<PathResultCache> pathResultCaches;
 	// 내부 핵심 Dijkstra 함수
 	private bool FindShortestPathInternal(
-		in NetworkNode start, in NetworkNode target, out List<NetworkNode> path,
+		in NetworkNode startNode, in NetworkNode targetNode, out List<NetworkNode> pathResult,
 		Func<PathContext, PathResult> pathFunction,
 		ConnectConditions connectConditions)
 	{
-		path = new List<NetworkNode>();
-		if (start.IsEmpty || target.IsEmpty)
+		pathResult = new List<NetworkNode>();
+		if (startNode == null || targetNode == null)
 			return false;
 
+		int startID = startNode.NetworkID;
+		int targetID = targetNode.NetworkID;
+
+
 		// 동일 노드면 바로 반환
-		if (start.NetworkID == target.NetworkID)
+		if (startID == targetID)
 		{
-			path.Add(start);
+			pathResult.Add(startNode);
 			return true;
 		}
 
-		IsConnectedNode(connectConditions, start.NetworkID, target.NetworkID);
-
-		// 🔹 1. 해당 조건의 그룹이 미리 계산되어 있는지 확인
-		if (!buildConnectGroups.TryGetValue(connectConditions, out var groupArray) || groupArray == null)
+		int findIndex = pathResultCaches.FindIndex(i => i.FindIt(startID, targetID));
+		if (findIndex >= 0)
 		{
-			BuildConnectGroups(connectConditions);
-			if (!buildConnectGroups.TryGetValue(connectConditions, out groupArray) || groupArray == null)
-			{
-				Debug.LogWarning($"[FindShortestPathInternal] No ConnectGroup found for condition {connectConditions}");
-				return false;
-			}
+			var findPathResult = pathResultCaches[findIndex].pathResult;
+			if (findPathResult == null || findPathResult.Length == 0) return false;
+
+			pathResult.AddRange(findPathResult);
+			return true;
 		}
-
-		// 🔹 2. startPoint 노드가 속한 그룹 찾기
-		ConnectGroup? startGroup = null;
-
-		foreach (var group in groupArray)
-		{
-			if (group.nodeNetworkID.Contains(start.NetworkID))
-			{
-				startGroup = group;
-				break;
-			}
-		}
-
-		if (startGroup is null)
-		{
-			Debug.LogWarning($"[FindShortestPathInternal] Start node {start.NodeName} not found in any ConnectGroup for {connectConditions}");
-			return false;
-		}
-
-		// 🔹 3. 타겟 노드가 같은 그룹에 없으면 탐색 불필요
-		if (!startGroup.Value.nodeNetworkID.Contains(target.NetworkID))
-			return false;
-
-		// 🔹 4. 그룹 내 노드만 딕셔너리로 구성
-		var nodeDict = networkNodes
-		.Where(n => startGroup.Value.nodeNetworkID.Contains(n.NetworkID))
-		.ToDictionary(n => n.NetworkID);
 
 		bool pathFuncIsNull = pathFunction == null;
 
-		var distances = new Dictionary<NetworkNode, float>();
-		var previous = new Dictionary<NetworkNode, NetworkNode>();
-		var visited = new HashSet<NetworkNode>();
-		var pq = new SortedSet<(float dist, NetworkNode node)>(new NodeDistanceComparer());
+		// current cost 
+		HashSet<int> visited = new HashSet<int>();
+		SortedSet<SerchBuffer> nextSearchList = new SortedSet<SerchBuffer>(new SerchBufferComparer());
+		Dictionary<int, int> childToParent = new Dictionary<int, int>();
+		//Dictionary<int, float> pathToCost = new Dictionary<int, float>();
 
-		foreach (var node in nodeDict.Values)
-			distances[node] = float.MaxValue;
+		NetworkNode thisNode =  startNode;
+		NetworkLink[] thisLinks = nodeToLink[thisNode];
 
-		distances[start] = 0f;
-		pq.Add((0f, start));
-
-		// 🔹 5. Dijkstra
-		while (pq.Count > 0)
+		SerchingChild(thisNode, thisLinks, 0);
+		while (nextSearchList.Count > 0)
 		{
-			var currentPair = pq.Min;
-			pq.Remove(currentPair);
-
-			var current = currentPair.node;
-			if (visited.Contains(current)) continue;
-			visited.Add(current);
-
-			if (current.NodeName == target.NodeName) break;
-
-			if (!nodeToLink.TryGetValue(current, out var linkLins)) continue;
-
-			foreach (var line in linkLins)
+			SerchBuffer min = nextSearchList.Min;
+			int thisID = min.nodeID;
+			int parentID = min.parentID;
+			childToParent.Add(thisID, parentID);
+			if (thisID == targetID)
 			{
-				if (!LineMatchesCondition(line, connectConditions)) continue;
+				break;
+			}
+			nextSearchList.Remove(min);
+			visited.Add(thisID);
+			thisNode = networkNodes[thisID];
+			thisLinks = nodeToLink[thisNode];
+			SerchingChild(thisNode, thisLinks, min.cost);
+		}
+		void SerchingChild(NetworkNode parent, NetworkLink[] links, float cost)
+		{
+			int parentID = parent.NetworkID;
 
-				int neighborID = line.StartNodeID == current.NetworkID ? line.LastNodeID : line.StartNodeID;
-				if (!nodeDict.TryGetValue(neighborID, out var neighbor)) continue;
-				if (visited.Contains(neighbor)) continue;
+			foreach (var link in links)
+			{
+				int childID = link.StartNodeID != parentID ? link.StartNodeID : link.LastNodeID;
+				if (visited.Contains(childID))
+				{
+					// 이미 방문한 노드
+					continue;
+				}
+				if (!IsAvailableLink(parent, link, connectConditions))
+				{
+					// 이동 불가능 방향
+					continue;
+				}
 
+				NetworkNode child = networkNodes[childID];
 				PathResult result = PathResult.Default;
 				if (!pathFuncIsNull)
 				{
 					try
 					{
-						result = pathFunction(new PathContext(current, neighbor, line, distances[current]));
+						result = pathFunction(new PathContext(parent, child, link, cost));
 					}
 					catch (Exception ex)
 					{
 						Debug.LogException(ex);
-						return false;
 					}
 				}
 
+				// 이동 불가능 조건
 				if (!result.Result) continue;
 
-				float newDist = distances[current] + result.cost;
-				if (newDist < distances[neighbor])
-				{
-					distances[neighbor] = newDist;
-					previous[neighbor] = current;
-					pq.Add((newDist, neighbor));
-				}
+				nextSearchList.Add(new SerchBuffer(parentID, childID, result.cost));
 			}
 		}
-
-		// 🔹 6. 경로 복원
-		if (!previous.ContainsKey(target))
-			return false;
-
-		var nodeTrace = target;
-		while (!nodeTrace.IsEmpty)
+		if (childToParent.Count == 0)
 		{
-			path.Add(nodeTrace);
-			previous.TryGetValue(nodeTrace, out nodeTrace);
+			pathResultCaches.Add(new PathResultCache()
+			{
+				startID = startNode.NetworkID,
+				targetID = targetNode.NetworkID,
+				pathResult = null,
+			});
+			return false;
 		}
-		path.Reverse();
+
+		int chlidID = nextSearchList.Min.nodeID;
+		Stack<int> path = new Stack<int>();
+		path.Push(chlidID);
+		while (childToParent.TryGetValue(chlidID, out chlidID))
+		{
+			path.Push(chlidID);
+		}
+
+		while (path.TryPop(out int pathID))
+		{
+			pathResult.Add(networkNodes[pathID]);
+		}
+		pathResultCaches.Add(new PathResultCache()
+		{
+			startID = startNode.NetworkID,
+			targetID = targetNode.NetworkID,
+			pathResult = pathResult.ToArray(),
+		});
 
 		return true;
 	}
@@ -703,6 +632,16 @@ public partial class StrategyNodeNetwork // FindShortestPath
 		return result;
 	}
 
+	public bool IsConnectedNode(int start, int target, ConnectConditions connectConditions = ConnectConditions.Forward)
+	{
+		return FindShortestPath(start, target, new List<int>(), null, connectConditions);
+	}
+	public bool IsConnectedNode(NetworkNode start, NetworkNode target, ConnectConditions connectConditions = ConnectConditions.Forward)
+	{
+		 return FindShortestPath(start, target, new List<NetworkNode>(), null, connectConditions);
+	}
+
+
 	public void NodePathToVectorPath(in List<int> nodePath, out List<Vector3> path)
 	{
 		NodePathToVectorPath(nodePath.Select(n => IndexToNode(n)).ToList(), out path);
@@ -754,7 +693,7 @@ public partial class StrategyNodeNetwork // OnDrawGizmos
 			// 실제 노드 찾기
 			var nodeA = networkNodes.FirstOrDefault(n => n.NetworkID == line.StartNodeID);
 			var nodeB = networkNodes.FirstOrDefault(n => n.NetworkID == line.LastNodeID);
-			if (nodeA.IsEmpty || nodeB.IsEmpty) continue;
+			if (nodeA == null || nodeB == null) continue;
 
 			Vector3 posA = nodeA.Position;
 			Vector3 posB = nodeB.Position;
@@ -775,7 +714,7 @@ public partial class StrategyNodeNetwork // OnDrawGizmos
 			DrawArrow(posA, posB, line.ConnectDir);
 
 			// 웨이포인트가 있으면 노란색 경로 표시
-			if (linkToNode != null && linkToNode.TryGetValue(line, out var wline))
+			if (linkToLine != null && linkToLine.TryGetValue(line, out var wline))
 			{
 				var points = wline.Points;
 				if (points != null && points.Length > 1)
@@ -800,7 +739,7 @@ public partial class StrategyNodeNetwork // OnDrawGizmos
 		// 노드 표시
 		foreach (var node in networkNodes)
 		{
-			if (node.IsEmpty) continue;
+			if (node == null) continue;
 
 			Gizmos.color = Color.white;
 			Gizmos.DrawSphere(node.Position, 0.3f);
@@ -874,7 +813,7 @@ public partial class StrategyNodeNetwork // NetworkPathFunctions
 	public enum ConnectConditions : byte
 	{
 		None = 0,           // 조건 없음
-		Disconnected = 1,   // 연결되지 않은 Line
+		Disconnected = 1,   // 연결되지 않은 Link
 		Forward = 2,        // 정방향 연결
 		Backward = 3,       // 역방향 연결
 		ConnectedAny = 4,   // 방향 상관없이 연결
@@ -884,13 +823,13 @@ public partial class StrategyNodeNetwork // NetworkPathFunctions
 	{
 		public NetworkNode From;         // 현재 노드
 		public NetworkNode To;           // 다음 노드
-		public NetworkLink Line;         // 현재-다음 노드 연결 라인
+		public NetworkLink Link;         // 현재-다음 노드 연결 라인
 		public float AccumulatedCost;    // 현재까지 경로의 총 비용
-		public PathContext(NetworkNode from, NetworkNode to, NetworkLink line, float accumulatedCost)
+		public PathContext(NetworkNode from, NetworkNode to, NetworkLink link, float accumulatedCost)
 		{
 			From = from;
 			To = to;
-			Line = line;
+			Link = link;
 			AccumulatedCost = accumulatedCost;
 		}
 	}
@@ -976,13 +915,13 @@ public partial class StrategyNodeNetwork // NetworkPathFunctions
 	{
 		return context =>
 		{
-			if (context.Line == null)
+			if (context.Link == null)
 			{
 				// Line이 없는 경우 이동 불가
 				return new PathResult(false, 0f);
 			}
 
-			StrategyManager.SectorNetwork.linkToNode.TryGetValue(context.Line, out var line);
+			StrategyManager.SectorNetwork.linkToLine.TryGetValue(context.Link, out var line);
 
 			float cost = line.Distance;
 			if (float.IsPositiveInfinity(threshold) || context.AccumulatedCost + cost < threshold)
