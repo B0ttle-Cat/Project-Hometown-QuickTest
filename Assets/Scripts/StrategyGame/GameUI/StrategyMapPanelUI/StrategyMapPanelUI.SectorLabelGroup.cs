@@ -97,22 +97,19 @@ public partial class StrategyMapPanelUI // SectorLabelGroup
 			void OnChangeList_Add()
 			{
 				var visibility = sector.GetComponentInChildren<CameraVisibilityGroup>(true);
-				if (visibility != null && aliveVisibility.Add(visibility))
-				{
-					visibility.OnChangeVisible += Visibility_OnChangeVisible;
-					visibility.OnChangeInvisible += Visibility_OnChangeInvisible;
-				}
+				if (visibility == null || !aliveVisibility.Add(visibility)) return;
+				visibility.OnChangeVisible += Visibility_OnChangeVisible;
+				visibility.OnChangeInvisible += Visibility_OnChangeInvisible;
 				if (visibility.IsVisible) Visibility_OnVisibleEnter(sector);
 				else Visibility_OnVisibleExit(sector);
 			}
 			void OnChangeList_Remove()
 			{
 				var visibility = sector.GetComponentInChildren<CameraVisibilityGroup>(true);
-				if (visibility != null && aliveVisibility.Remove(visibility))
-				{
-					visibility.OnChangeVisible -= Visibility_OnChangeVisible;
-					visibility.OnChangeInvisible -= Visibility_OnChangeInvisible;
-				}
+				if (visibility == null && !aliveVisibility.Remove(visibility)) return;
+				visibility.OnChangeVisible -= Visibility_OnChangeVisible;
+				visibility.OnChangeInvisible -= Visibility_OnChangeInvisible;
+				Visibility_OnVisibleExit(sector);
 			}
 		}
 		private void Visibility_OnChangeVisible(Component target)

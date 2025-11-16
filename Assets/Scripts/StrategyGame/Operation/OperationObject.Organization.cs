@@ -15,9 +15,9 @@ public partial class OperationObject // Organization
 	private List<int> allUnitID;
 	private List<UnitObject> allUnitObj;
 	private List<Transform> allUnitTr;
-	public List<int> GetAllUnitID => allUnitID;
-	public List<UnitObject> GetAllUnitObj => allUnitObj;
-	public List<Transform> GetAllUnitTr => allUnitTr;
+	public List<int> GetAllUnitID => allUnitID ??= new List<int>();
+	public List<UnitObject> GetAllUnitObj => allUnitObj ??= new List<UnitObject>();
+	public List<Transform> GetAllUnitTr => allUnitTr ??= new List<Transform>();
 	[Serializable]
 	public class OrganizationInfo
 	{
@@ -107,7 +107,9 @@ public partial class OperationObject // Organization
 			allUnitID.Add(unitObject.UnitID);
 			allUnitObj.Add(unitObject);
 			allUnitTr.Add(unitObject.transform);
-			unitObject.SetOperationBelong(this);
+			if(unitObject is IOperationBelonger belonger){
+				belonger.SetOperationBelong(this);
+			}
 			onChange = true;
 		}
 
@@ -132,7 +134,10 @@ public partial class OperationObject // Organization
 				allUnitID.Remove(unitObject.UnitID);
 				allUnitObj.Remove(unitObject);
 				allUnitTr.Remove(unitObject.transform);
-				unitObject.RelaseOperationBelong();
+				if (unitObject is IOperationBelonger belonger)
+				{
+					belonger.RelaseOperationBelong();
+				}
 				onChange = true;
 			}
 		}
@@ -153,7 +158,10 @@ public partial class OperationObject // Organization
 			for (int i = 0 ; i < length ; i++)
 			{
 				var unit = tempList[i];
-				unit.RelaseOperationBelong();
+				if (unit is IOperationBelonger belonger)
+				{
+					belonger.RelaseOperationBelong();
+				}
 				if (withDestroy)
 				{
 					StrategyElementUtility.Destroy(unit);

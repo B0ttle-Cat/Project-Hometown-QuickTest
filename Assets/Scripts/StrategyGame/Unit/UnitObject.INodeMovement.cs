@@ -16,8 +16,11 @@ public partial class UnitObject : INodeMovement
 	private Vector3 moveVelocity = Vector3.zero;
 	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
 	private float smoothTime = 0f;
+	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
 	private float totalLength = 0f;
+	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
 	private float sectionLength = 0f;
+	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
 	private float tempLength = 0f;
 
 	private Seeker seeker;
@@ -84,7 +87,7 @@ public partial class UnitObject : INodeMovement
 	}
 	void INodeMovement.SetPositionAndVelocity(in Vector3 position, in Vector3 delteMove, in Vector3 velocity, in float deltaTime)
 	{
-		if (HasOperationBelong)
+		if (HasOperation)
 		{
 			OperationSetPositionAndVelocity(in position, in deltaTime);
 			return;
@@ -105,7 +108,7 @@ public partial class UnitObject : INodeMovement
 	}
 	void OperationSetPositionAndVelocity(in Vector3 position, in float deltaTime)
 	{
-		if (!HasOperationBelong) return;
+		if (!HasOperation) return;
 		Vector3 nextPosition = position;
 		Vector3 currPosition = ThisMovement.CurrentPosition;
 		Vector3 currVelocity = ThisMovement.CurrentVelocity;

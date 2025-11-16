@@ -9,10 +9,7 @@
 		StrategyElementUtility.Destroy(this);
 	}
 
-	void IOperationController.OnMovementOrder_AvailableType(
-		out bool execute,
-		out bool pause,
-		out bool cancel)
+	void IOperationController.OnMovementOrder_AvailableType(out bool execute, out bool pause, out bool cancel)
 	{
 		if(MovementTarget == null)
 		{

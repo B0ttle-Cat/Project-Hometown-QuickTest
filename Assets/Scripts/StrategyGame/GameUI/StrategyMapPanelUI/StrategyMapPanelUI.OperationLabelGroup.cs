@@ -104,6 +104,7 @@ public partial class StrategyMapPanelUI // OperationLabelGroup
 				if (!aliveOperation.Remove(operation)) return;
 				visibility.OnChangeVisible -= Operation_OnChangeVisible;
 				visibility.OnChangeInvisible -= Operation_OnChangeInvisible;
+				Operation_OnChangeInvisible(operation);
 			}
 		}
 

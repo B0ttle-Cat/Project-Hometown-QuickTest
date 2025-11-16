@@ -263,7 +263,7 @@ MonoBehaviour:
     unitDatas:
     - unitKey: 2100
       factionName: Faction_00
-      belongedOperation: Op_007
+      belongedOperation: OP-007
       visiteSectorName: Sector_00
       unitProfile: {fileID: 11400000, guid: ef441d73e230ad44d8ad139f1663ba71, type: 2}
       position: {x: 10, y: 0, z: 0}

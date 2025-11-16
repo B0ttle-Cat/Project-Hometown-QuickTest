@@ -621,6 +621,14 @@ public partial class StrategyElementCollector // Finder
 	{
 		return FindElement<OperationObject>(f => f.ThisElement.ID == operationID);
 	}
+	public bool TryFindOperation(int factionID, string teamName, out OperationObject find)
+	{
+		return TryFindElement<OperationObject>(f => f.FactionID == factionID && f.TeamName.Equals(teamName), out find);
+	}
+	public OperationObject FindOperation(int factionID, string teamName)
+	{
+		return FindElement<OperationObject>(f => f.FactionID == factionID && f.TeamName.Equals(teamName));
+	}
 	#endregion
 
 	#region Skill

@@ -59,7 +59,7 @@ public partial class StrategyUpdate
 			else
 			{
 				int findIndex = UpdateList.FindIndex(l => l.thisMovement == element);
-				if (findIndex >= 0) return;
+				if (findIndex < 0) return;
 				UpdateList.RemoveAt(findIndex);
 			}
 		}

@@ -106,31 +106,10 @@ public partial class StrategyStartSetter : MonoBehaviour
 		{
 			var unitData = unitDatas[i];
 			string unitName = unitData.DisplayName();
-			if (TryFindUnitAlready(unitName, out UnitObject unitObject))
-			{
-				ResetWithData(unitObject, in unitData);
-			}
-			else
-			{
-				unitObject = StrategyElementUtility.Instantiate(in unitData);
-			}
+			UnitObject unitObject = StrategyElementUtility.Instantiate(in unitData);
+			if (unitObject == null) continue;
 			collector.AddElement(unitObject);
-		}
-
-		bool TryFindUnitAlready(string unitName, out UnitObject unitObject)
-		{
-			unitObject = null;
-			int length = includeSceneUnits.Count;
-			for (int i = 0 ; i < length ; i++)
-			{
-				if (includeSceneUnits[i].ProfileData.displayName == unitName)
-				{
-					unitObject = includeSceneUnits[i];
-					includeSceneUnits.RemoveAt(i);
-					break;
-				}
-			}
-			return unitObject != null;
+			SetOperationBelong(unitObject, in unitData);
 		}
 
 		int includeLength = includeSceneUnits.Count;
@@ -140,8 +119,19 @@ public partial class StrategyStartSetter : MonoBehaviour
 			if (collector.FindUnit(unit.UnitID) == null)
 			{
 				collector.AddElement(unit);
-				unit.Init(name, dataLength + i);
+				unit.Init(name);
 			}
+		}
+		void SetOperationBelong(UnitObject unitObject, in UnitData unitData)
+		{
+			string operationName = unitData.belongedOperation;
+			if (string.IsNullOrWhiteSpace(operationName)) return;
+			int factionID = collector.FactionNameToID(unitData.factionName);
+			if (factionID < 0) return;
+			var operation = collector.FindOperation(factionID, operationName);
+			if (operation == null) return;
+
+			operation.AddUnitObject(unitObject);
 		}
 	}
 	internal void OnStartSetter_Capture()
@@ -175,7 +165,7 @@ public partial class StrategyStartSetter : MonoBehaviour
     {
 		var data = strategyStartSetterData.GetData();
 		var networkDatas = data.sectorLinkDatas;
-		var sectors = StrategyManager.Collector.SectorList;
+		var sectors = collector.SectorList;
         await network.Init(sectors,networkDatas);
 	}
     internal void OnStartSetter_Mission(StrategyMissionTree mission)
@@ -187,8 +177,30 @@ public partial class StrategyStartSetter : MonoBehaviour
 		mission.InitSubMission();
 	}
     internal async Awaitable OnStartSetter_Operation()
-    {
-    }
+	{
+		List<OperationObject> includeSceneOperations = new ();
+		includeSceneOperations.AddRange(GameObject.FindObjectsByType<OperationObject>(FindObjectsInactive.Include, FindObjectsSortMode.InstanceID));
+
+		var data = strategyStartSetterData.GetData();
+		var opDatas = data.operationDatas;
+		int length = opDatas.Length;
+        for (int i = 0 ; i < length ; i++)
+        {
+			var opData = opDatas[i];
+			OperationObject newOp = StrategyElementUtility.Instantiate(opData);
+			collector.AddElement(newOp);
+		}
+
+		int includeLength = includeSceneOperations.Count;
+		for (int i = 0 ; i < includeLength ; i++)
+		{
+			var op = includeSceneOperations[i];
+			if (collector.FindUnit(op.OperationID) == null)
+			{
+				collector.AddElement(op);
+			}
+		}
+	}
 }
 public partial class StrategyStartSetter // Instantiate
 {

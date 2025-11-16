@@ -49,24 +49,39 @@ public static class StrategyElementUtility
 
 		unitObject.Deinit();
 		StrategyManager.Collector.RemoveElement<UnitObject>(unitObject);
-		GameObject.Destroy(unitObject);
+		GameObject.Destroy(unitObject.gameObject);
 	}
 	#endregion
 	#region OperationObject 
-	public static OperationObject Instantiate(SectorObject sector, in SpawnTroopsInfo spawnTroopsInfo)
+	public static OperationObject Instantiate(in StrategyStartSetterData.OperationData setterOperationData)
+	{
+		int factionID = StrategyManager.Collector.FactionNameToID(setterOperationData.factionName);
+		string teamName = setterOperationData.teamName;
+		string visiteSectorName = setterOperationData.visiteSectorName;
+
+		var sector = StrategyManager.Collector.FindSector(visiteSectorName);
+		if (sector == null) return null;
+		return Instantiate(sector, new SpawnTroopsInfo(factionID, null), teamName);
+	}
+	public static OperationObject Instantiate(SectorObject sector, in SpawnTroopsInfo spawnTroopsInfo, string teamName = "")
 	{
 		int factionID = spawnTroopsInfo.factionID;
 		var organizations = spawnTroopsInfo.organizations;
-		int length = organizations.Length;
-		if(length == 0) return null;
+		int length = organizations == null ? 0 : organizations.Length;
 		Vector3 randomPosCenter = sector.transform.position;
 
 		var newObject = new GameObject();
-		var operationObject = newObject.AddComponent<OperationObject>();
-		operationObject.Init(spawnTroopsInfo.factionID);
+		var newOperation = newObject.AddComponent<OperationObject>();
+		
 
-		StrategyManager.Collector.AddElement<OperationObject>(operationObject);
-		newObject.gameObject.name = $"OperationObject_{operationObject.OperationID}";
+		StrategyManager.Collector.AddElement<OperationObject>(newOperation);
+		newObject.gameObject.name = $"OperationObject_{newOperation.OperationID}";
+		if (string.IsNullOrWhiteSpace(teamName))
+		{
+			teamName = $"{newOperation.OperationID}";
+		}
+		newOperation.Init(spawnTroopsInfo.factionID, teamName);
+		
 
 		List<int> spawnUnitIds = new List<int>(length);
 		for (int i = 0 ; i < length ; i++)
@@ -78,8 +93,8 @@ public static class StrategyElementUtility
 			spawnUnitIds.Add(unit.UnitID);
 		}
 
-		operationObject.Init(in spawnUnitIds);
-		return operationObject;
+		newOperation.Init(in spawnUnitIds);
+		return newOperation;
 	}
 	public static void Destroy(OperationObject operation)
 	{
@@ -87,7 +102,7 @@ public static class StrategyElementUtility
 
 		operation.DeInit();
 		StrategyManager.Collector.RemoveElement<OperationObject>(operation);
-		operation.Dispose();
+		GameObject.Destroy(operation.gameObject);
 	}
-	#endregion 
+	#endregion
 }

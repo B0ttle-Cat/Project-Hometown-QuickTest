@@ -13,6 +13,17 @@ using static StrategyMissionTree;
 [CreateAssetMenu(fileName = "StrategyStartSetterData", menuName = "Scriptable Objects/StrategyGame/StrategyStartSetterData")]
 public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.Data>
 {
+#if UNITY_EDITOR
+	[ShowInInspector, ToggleGroup("onShowGizmo","GizmoOption", Order = -99)]
+	public bool onShowGizmo { get; set; } = false;
+	[ShowInInspector, ToggleGroup("onShowGizmo")]
+	public bool onShowSectorLink { get; set; } = true;
+	[ShowInInspector, ToggleGroup("onShowGizmo")]
+	public bool onShowUnitPreview { get; set; } = true;
+#endif
+	[Space, SerializeField, InlineProperty, HideLabel]
+	private Data data;
+	protected override Data _data { get => data; set => data = value; }
 	[Serializable]
 	public struct Data
 	{
@@ -505,16 +516,4 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 			};
 		}
 	}
-
-#if UNITY_EDITOR
-	[ShowInInspector, FoldoutGroup("GizmoOption", order: -99)]
-	public bool onShowGizmo { get; set; } = false;
-	[ShowInInspector, FoldoutGroup("GizmoOption"), ShowIf("onShowGizmo")]
-	public bool onShowSectorLink { get; set; } = true;
-	[ShowInInspector, FoldoutGroup("GizmoOption"), ShowIf("onShowGizmo")]
-	public bool onShowUnitPreview { get; set; } = true;
-#endif
-	[Space, SerializeField, InlineProperty, HideLabel]
-	private Data data;
-	protected override Data _data { get => data; set => data = value; }
 }

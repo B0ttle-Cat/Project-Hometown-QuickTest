@@ -15,15 +15,15 @@ public partial class UnitObject : MonoBehaviour
 	private UnitData.ConnectSector sector;
 	private CaptureTag captureTag;
 
-	[ShowInInspector, ReadOnly]
+	[ShowInInspector, FoldoutGroup("UnitData"), ReadOnly]
 	public UnitData.Profile Profile { get => profile; set => profile = value; }
-	[ShowInInspector, ReadOnly]
+	[ShowInInspector, FoldoutGroup("UnitData"), ReadOnly]
 	public UnitData.Stats Stats { get => stats; set => stats = value; }
-	[ShowInInspector, ReadOnly]
+	[ShowInInspector, FoldoutGroup("UnitData"), ReadOnly]
 	public UnitData.Skill Skill { get => skill; set => skill = value; }
-	[ShowInInspector, ReadOnly]
+	[ShowInInspector, FoldoutGroup("UnitData"), ReadOnly]
 	public UnitData.ConnectSector Sector { get => sector; set => sector = value; }
-	[ShowInInspector, ReadOnly]
+	[ShowInInspector, FoldoutGroup("UnitData"), ReadOnly]
 	public CaptureTag CaptureTag { get => captureTag; set => captureTag = value; }
 	public ref readonly UnitData.Profile.Data ProfileData => ref Profile.ReadonlyData();
 	public ref readonly UnitData.Stats.Data StatsData => ref Stats.ReadonlyData();
@@ -32,9 +32,10 @@ public partial class UnitObject : MonoBehaviour
 	public string UnitName => ProfileData.displayName;
 	public int UnitID => ProfileData.unitID;
 	public int FactionID => ProfileData.factionID;
+	[ShowInInspector, FoldoutGroup("UnitData"), ReadOnly]
 	public Faction Faction
 	{
-		get => StrategyManager.Collector.FindFaction(FactionID);
+		get => StrategyManager.IsNotReady ? null : StrategyManager.Collector.FindFaction(FactionID);
 	}
 
     public void Init(string displayName = "", int factionID = -1)
@@ -145,18 +146,18 @@ public partial class UnitObject // StateValue
 	}
 }
 
-public partial class UnitObject // OperationBelong
+public partial class UnitObject: IOperationBelonger
 {
-	[HideInEditorMode, FoldoutGroup("OperationBelong", VisibleIf = "HasOperationBelong"), InlineProperty, HideLabel]
+	[HideInEditorMode, FoldoutGroup("Operation", VisibleIf = "HasOperation"), InlineProperty, HideLabel]
 	public OperationObject operationObject;
 	public int OperationID => operationObject == null ? -1 : operationObject.OperationID;
-	public bool HasOperationBelong => OperationID >= 0;
+	public bool HasOperation => OperationID >= 0;
 
 	partial void InitOperationObject()
 	{
 		operationObject = null;
 	}
-	public void SetOperationBelong(OperationObject operationObject)
+	void IOperationBelonger.SetOperationBelong(OperationObject operationObject)
 	{
 		this.operationObject = operationObject;
 		if (operationObject == null) return;
@@ -175,7 +176,11 @@ public partial class UnitObject // OperationBelong
 			operationObject.ChangeInvisibleUnit(this);
 		}
 	}
-	public void RelaseOperationBelong()
+	OperationObject IOperationBelonger.GetBelongedOperation()
+	{
+		return operationObject;
+	}
+	void IOperationBelonger.RelaseOperationBelong()
 	{
 		if (operationObject != null)
 		{

@@ -6,7 +6,7 @@ using UnityEngine;
 
 using static StrategyGamePlayData;
 
-public partial class OperationObject : MonoBehaviour, IDisposable  // Main
+public partial class OperationObject : MonoBehaviour  // Main
 {
 	[SerializeField]
 	private int operationID;
@@ -15,28 +15,25 @@ public partial class OperationObject : MonoBehaviour, IDisposable  // Main
 	[SerializeField]
 	private int factionID;
 	public OperationObject This => this;
-	public int OperationID { get => operationID; private set => operationID = value; }
-	public string TeamName
-	{
-		get
-		{
-			if (string.IsNullOrWhiteSpace(teamName))
-			{
-				if (operationID < 0) return "임시 편성 부대";
-				return $"제{operationID:00}부대";
-			}
-			return teamName;
-		}
-		set
-		{
-			teamName = value;
-		}
-	}
-	internal void Init(int factionID)
+	public int OperationID => operationID;
+	public string TeamName => teamName;
+	public int FactionID => factionID;
+	internal void Awake()
 	{
 		this.operationID = -1;
+		this.factionID = -1;
 		this.teamName = "";
+	}
+	private void OnDestroy()
+	{
+		operationID = -1;
+		teamName = "";
+		factionID = -1;
+	}
+	internal void Init(int factionID, string teamName)
+	{
 		this.factionID = factionID;
+		this.teamName = teamName;
 	}
 	public void Init(in List<int> unitList)
 	{
@@ -46,12 +43,6 @@ public partial class OperationObject : MonoBehaviour, IDisposable  // Main
 	public void DeInit()
 	{
 		DeInitOrganization();
-	}
-	public void Dispose()
-	{
-		operationID = -1;
-		teamName = "";
-		factionID = -1;
 	}
 	partial void InitOrganization(in List<int> unitList);
 	partial void InitMovement();
@@ -76,7 +67,7 @@ public partial class OperationObject // Stats
 
 	private int GetMoveSpeed()
 	{
-		float average = (float)GetAllUnitObj.Select(i => i.GetStateValue(StatsType.유닛_이동속도)).Average();
+		float average = GetAllUnitObj.Count == 0 ? 0 : (float)GetAllUnitObj.Select(i => i.GetStateValue(StatsType.유닛_이동속도)).Average();
 		return Mathf.RoundToInt(average);
 	}
 }
@@ -127,7 +118,7 @@ public partial class OperationObject : IStrategyElement
 {
 	public IStrategyElement ThisElement => this;
 	bool IStrategyElement.IsInCollector { get; set; }
-	int IStrategyElement.ID { get => OperationID; set => OperationID = value; }
+	int IStrategyElement.ID { get => operationID; set => operationID = value; }
 	void IStrategyElement.InStrategyCollector()
 	{
 	}

@@ -197,11 +197,11 @@ public class StrategyManager : MonoBehaviour
 		// Sector Network 세팅
 		await setter.OnStartSetter_SectorNetwork(sectorNetwork);
 
-		// Unit 세팅
-		await setter.OnStartSetter_Unit();
-
 		// Operation 세팅
 		await setter.OnStartSetter_Operation();
+
+		// Unit 세팅
+		await setter.OnStartSetter_Unit();
 
 		// 점령 지역 세팅
 		setter.OnStartSetter_Capture();
