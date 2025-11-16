@@ -101,7 +101,7 @@ public partial class StrategyUpdate
 
 			private SectorObject GetEnterSector()
 			{
-				string connectSectorName = unit.SectorData.ConnectSectorName;
+				string connectSectorName = unit.SectorData.VisiteSectorName;
 				if (!StrategyManager.Collector.TryFindSector(connectSectorName, out var sector)) return null;
 				if (sector.CaptureData.captureFactionID != unit.FactionID) return null;
 				return sector;

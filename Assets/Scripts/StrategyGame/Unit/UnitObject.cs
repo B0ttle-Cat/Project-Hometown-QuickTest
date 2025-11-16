@@ -84,7 +84,7 @@ public partial class UnitObject : MonoBehaviour
 			weaponType = profileObj.weaponType,
 			protectType = profileObj.protectType,
 		});
-		sector = new UnitData.ConnectSector(new(data.connectSectorName));
+		sector = new UnitData.ConnectSector(new(data.visiteSectorName));
 		InitOther(profileObj);
 	}
 	private void InitOther(UnitProfileObject profileObj)
@@ -147,10 +147,10 @@ public partial class UnitObject // StateValue
 
 public partial class UnitObject // OperationBelong
 {
-	[HideInEditorMode, FoldoutGroup("OperationBelong", VisibleIf = "IsOperationBelong"), InlineProperty, HideLabel]
+	[HideInEditorMode, FoldoutGroup("OperationBelong", VisibleIf = "HasOperationBelong"), InlineProperty, HideLabel]
 	public OperationObject operationObject;
 	public int OperationID => operationObject == null ? -1 : operationObject.OperationID;
-	public bool IsOperationBelong => OperationID >= 0;
+	public bool HasOperationBelong => OperationID >= 0;
 
 	partial void InitOperationObject()
 	{

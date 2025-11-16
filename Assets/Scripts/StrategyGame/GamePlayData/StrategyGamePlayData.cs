@@ -594,39 +594,39 @@ public partial class StrategyGamePlayData
 			public struct Data : IDataCopy<Data>
 			{
 				[SerializeField]
-				private string lastEnterSectorName;
+				private string lastVisiteSectorName;
 				[SerializeField]
-				private string currEnterSectorName;
+				private string currVisiteSectorName;
 
 				public Data(string connectSectorName = "") : this()
 				{
-					lastEnterSectorName = currEnterSectorName = connectSectorName;
+					lastVisiteSectorName = currVisiteSectorName = connectSectorName;
 				}
 
-				public string ConnectSectorName
+				public string VisiteSectorName
 				{
 					get
 					{
-						if (string.IsNullOrWhiteSpace(currEnterSectorName))
+						if (string.IsNullOrWhiteSpace(currVisiteSectorName))
 						{
-							if (string.IsNullOrWhiteSpace(lastEnterSectorName))
+							if (string.IsNullOrWhiteSpace(lastVisiteSectorName))
 							{
 								return null;
 							}
-							return lastEnterSectorName;
+							return lastVisiteSectorName;
 						}
-						return currEnterSectorName;
+						return currVisiteSectorName;
 					}
 					set
 					{
-						if (string.IsNullOrWhiteSpace(currEnterSectorName))
+						if (string.IsNullOrWhiteSpace(currVisiteSectorName))
 						{
-							lastEnterSectorName = currEnterSectorName = value;
+							lastVisiteSectorName = currVisiteSectorName = value;
 						}
 						else
 						{
-							lastEnterSectorName = currEnterSectorName;
-							currEnterSectorName = value;
+							lastVisiteSectorName = currVisiteSectorName;
+							currVisiteSectorName = value;
 						}
 					}
 				}

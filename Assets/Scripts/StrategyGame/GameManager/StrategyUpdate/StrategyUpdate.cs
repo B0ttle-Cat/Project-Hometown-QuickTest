@@ -294,7 +294,6 @@ public abstract class StrategyUpdateSubClass<T> : IStrategyUpdater where T : Str
 		protected abstract void OnDispose();
 	}
 }
-
 public class StrategyUpdate_OperationUpdate : StrategyUpdateSubClass<StrategyUpdate_OperationUpdate.OperationUpdate>
 {
 	public StrategyUpdate_OperationUpdate(StrategyUpdate updater) : base(updater)

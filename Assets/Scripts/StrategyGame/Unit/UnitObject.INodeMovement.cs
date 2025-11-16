@@ -84,9 +84,9 @@ public partial class UnitObject : INodeMovement
 	}
 	void INodeMovement.SetPositionAndVelocity(in Vector3 position, in Vector3 delteMove, in Vector3 velocity, in float deltaTime)
 	{
-		if (IsOperationBelong)
+		if (HasOperationBelong)
 		{
-			OperationSetPositionAndVelocity(in position, in velocity, in deltaTime);
+			OperationSetPositionAndVelocity(in position, in deltaTime);
 			return;
 		}
 		movePosition = position;
@@ -103,8 +103,9 @@ public partial class UnitObject : INodeMovement
 		}
 		UpdateMovementTransform();
 	}
-	void OperationSetPositionAndVelocity(in Vector3 position, in Vector3 velocity, in float deltaTime)
+	void OperationSetPositionAndVelocity(in Vector3 position, in float deltaTime)
 	{
+		if (!HasOperationBelong) return;
 		Vector3 nextPosition = position;
 		Vector3 currPosition = ThisMovement.CurrentPosition;
 		Vector3 currVelocity = ThisMovement.CurrentVelocity;
@@ -137,7 +138,6 @@ public partial class UnitObject : INodeMovement
 	}
 	public void OnStayUpdate(in float deltaTime)
 	{
-		Vector3 currVelocity = ThisMovement.CurrentVelocity;
-		OperationSetPositionAndVelocity(in operationMoveTarget, in currVelocity, in deltaTime);
+		OperationSetPositionAndVelocity(in operationMoveTarget, in deltaTime);
 	}
 }

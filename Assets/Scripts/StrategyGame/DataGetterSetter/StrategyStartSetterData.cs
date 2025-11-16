@@ -21,7 +21,7 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 
 		public double unscaleGamePlayTime;
 		public double gamePlayTime;
-		
+
 		[Space]
 		[FoldoutGroup("Overview")]
 		public Overview overview;
@@ -32,6 +32,7 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		public FactionData[] factionDatas;
 		public SectorData[] sectorDatas;
 		public UnitData[] unitDatas;
+		public OperationData[] operationDatas;
 		[Space]
 		[TableList]
 		public CaptureData[] captureDatas;
@@ -146,7 +147,7 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 			Target.Stats.SetData(mainStatsData.Copy(), true);
 			Target.Facilities.SetData(facilitiesStatsData.Copy(), true);
 			Target.Support.SetData(supportStatsData.Copy(), true);
-			Target.SpawnOperation.SetData(spawnOperationData.Copy(),true);
+			Target.SpawnOperation.SetData(spawnOperationData.Copy(), true);
 
 			var captureData =  Target.CaptureData;
 			captureData.captureTime = captureTime;
@@ -176,33 +177,45 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 	[Serializable]
 	public struct UnitData
 	{
-		[FoldoutGroup("@UnitKey")]
+		[FoldoutGroup("@unitKey")]
 		public UnitKey unitKey;
-		[FoldoutGroup("@UnitKey")]
+		[FoldoutGroup("@unitKey")]
 		[ValueDropdown("@GetFactionNames($property)")]
 		[InlineButton("Clear_factionName","Clear")]
 		public string factionName;
-		[FoldoutGroup("@UnitKey")]
-		public UnitProfileObject unitProfile;
-
-		[FoldoutGroup("@UnitKey")]
-		public Vector3 position;
-		[FoldoutGroup("@UnitKey")]
-		public Vector3 rotation;
-
-		[FoldoutGroup("@UnitKey")]
+		[FoldoutGroup("@unitKey")]
+		[ValueDropdown("@GetOperationNames($property)")]
+		[InlineButton("Clear_belongedOperation","Clear")]
+		public string belongedOperation;
+		[FoldoutGroup("@unitKey")]
 		[ValueDropdown("@GetSectorNames($property)")]
 		[LabelText("SectorName")]
-		[InlineButton("Clear_connectSectorName","Clear")]
-		public string connectSectorName;
+		[InlineButton("Clear_visiteSectorName","Clear")]
+		public string visiteSectorName;
+		[FoldoutGroup("@unitKey")]
+		public UnitProfileObject unitProfile;
+
+#if UNITY_EDITOR
+		[FoldoutGroup("@unitKey/Transform")]
+		public bool showEdit;
+#endif
+		[FoldoutGroup("@unitKey/Transform/Position")]
+		public Vector3 position;
+		[FoldoutGroup("@unitKey/Transform/Rotation")]
+		public Vector3 rotation;
+
 #if UNITY_EDITOR
 		private void Clear_factionName()
 		{
 			factionName = "";
 		}
-		private void Clear_connectSectorName()
+		private void Clear_visiteSectorName()
 		{
-			connectSectorName = "";
+			visiteSectorName = "";
+		}
+		private void Clear_belongedOperation()
+		{
+			belongedOperation = "";
 		}
 		private static IEnumerable<string> GetFactionNames(InspectorProperty property)
 		{
@@ -230,13 +243,112 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 
 			return bases.Select(x => x.profileData.sectorName).Prepend("");
 		}
+		private static ValueDropdownList<string> GetOperationNames(InspectorProperty property)
+		{
+			string factionName="";
+			ValueDropdownList<string> list = new ValueDropdownList<string>();
 
-        public readonly string DisplayName()
-        {
-			return unitProfile != null ? unitProfile.displayName : StrategyManager.Key2UnitInfo.GetAsset(unitKey).DisplayName;
-        }
+			if (property.Parent != null && property.ParentValueProperty.ValueEntry != null)
+			{
+				var parent = property.ParentValueProperty.ValueEntry.WeakSmartValue;
+				if (parent != null && parent is UnitData unitData)
+				{
+					if (string.IsNullOrWhiteSpace(unitData.factionName))
+					{
+						list.Add("FactionName Is Empty", "");
+						return list;
+					}
+					else
+					{
+						factionName = unitData.factionName;
+					}
+				}
+			}
+
+			// 루트까지 올라감
+			var root = property.Tree.WeakTargets.FirstOrDefault() as StrategyStartSetterData;
+			if (root == null)
+			{
+				list.Add("No Parent Data", "");
+				return list;
+			}
+			var bases = root.data.operationDatas;
+			if (bases == null || bases.Length == 0)
+			{
+				list.Add("No Data", "");
+				return list;
+			}
+
+			bases.Where(x => x.factionName.Equals(factionName)).Select(x => x.teamName).Prepend("");
+			int length = bases.Length;
+            for (int i = 0 ; i < length ; i++)
+            {
+				if (!bases[i].factionName.Equals(factionName)) continue;
+				if (string.IsNullOrWhiteSpace(bases[i].teamName)) continue;
+				list.Add(bases[i].teamName);
+			}
+			return list;
+		}
 #endif
-    }
+
+		public readonly string DisplayName()
+		{
+			return unitProfile != null ? unitProfile.displayName : StrategyManager.Key2UnitInfo.GetAsset(unitKey).DisplayName;
+		}
+	}
+	[Serializable]
+	public struct OperationData
+	{
+		[FoldoutGroup("@teamName")]
+		public string teamName;
+		[FoldoutGroup("@teamName")]
+		[ValueDropdown("@GetFactionNames($property)")]
+		[InlineButton("Clear_factionName","Clear")]
+		public string factionName;
+
+		[FoldoutGroup("@teamName")]
+		[ValueDropdown("@GetSectorNames($property)")]
+		[LabelText("SectorName")]
+		[InlineButton("Clear_visiteSectorName","Clear")]
+		public string visiteSectorName;
+#if UNITY_EDITOR
+		private void Clear_factionName()
+		{
+			factionName = "";
+		}
+		private void Clear_visiteSectorName()
+		{
+			visiteSectorName = "";
+		}
+		private static IEnumerable<string> GetFactionNames(InspectorProperty property)
+		{
+			// 루트까지 올라감
+			var root = property.Tree.WeakTargets.FirstOrDefault() as StrategyStartSetterData;
+			if (root == null)
+				return new[] { "(No Parent Data)" };
+
+			var bases = root.data.factionDatas;
+			if (bases == null || bases.Length == 0)
+				return new[] { "(No Data)" };
+
+			return bases.Select(x => x.factionName).Prepend("");
+		}
+		private static IEnumerable<string> GetSectorNames(InspectorProperty property)
+		{
+			// 루트까지 올라감
+			var root = property.Tree.WeakTargets.FirstOrDefault() as StrategyStartSetterData;
+			if (root == null)
+				return new[] { "(No Parent Data)" };
+
+			var bases = root.data.sectorDatas;
+			if (bases == null || bases.Length == 0)
+				return new[] { "(No Data)" };
+
+			return bases.Select(x => x.profileData.sectorName).Prepend("");
+		}
+#endif
+
+	}
 	[Serializable]
 	public struct CaptureData
 	{
@@ -291,11 +403,11 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		[HorizontalGroup, ValueDropdown("@GetSectorNames($property)"), HideLabel, SuffixLabel("Sector B  ",overlay: true)]
 		public string sectorB;
 		[TableList]
-		public WaypointUtility.Waypoint[] waypoint;		
+		public WaypointUtility.Waypoint[] waypoint;
 
 #if UNITY_EDITOR
 		[ShowInInspector]
-		public bool onShowEditPoint { get; set;}
+		public bool onShowEditPoint { get; set; }
 		private static IEnumerable<string> GetSectorNames(InspectorProperty property)
 		{
 			// 루트까지 올라감
@@ -399,8 +511,10 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 #if UNITY_EDITOR
 	[ShowInInspector, FoldoutGroup("GizmoOption", order: -99)]
 	public bool onShowGizmo { get; set; } = false;
-	[ShowInInspector, FoldoutGroup("GizmoOption")]
-	public bool onShowWayPointsGizmo { get; set; } = true;
+	[ShowInInspector, FoldoutGroup("GizmoOption"), ShowIf("onShowGizmo")]
+	public bool onShowSectorLink { get; set; } = true;
+	[ShowInInspector, FoldoutGroup("GizmoOption"), ShowIf("onShowGizmo")]
+	public bool onShowUnitPreview { get; set; } = true;
 #endif
 	[Space, SerializeField, InlineProperty, HideLabel]
 	private Data data;

@@ -71,7 +71,7 @@ public partial class OperationObject // Stats
 		int thisFrame = Time.frameCount;
 		if (computeFrame == thisFrame) return;
 		computeFrame = thisFrame;
-		//moveSpeed = GetMoveSpeed();
+		moveSpeed = GetMoveSpeed();
 	}
 
 	private int GetMoveSpeed()

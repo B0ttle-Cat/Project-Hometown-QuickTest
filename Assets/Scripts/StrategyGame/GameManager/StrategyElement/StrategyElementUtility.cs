@@ -58,6 +58,7 @@ public static class StrategyElementUtility
 		int factionID = spawnTroopsInfo.factionID;
 		var organizations = spawnTroopsInfo.organizations;
 		int length = organizations.Length;
+		if(length == 0) return null;
 		Vector3 randomPosCenter = sector.transform.position;
 
 		var newObject = new GameObject();

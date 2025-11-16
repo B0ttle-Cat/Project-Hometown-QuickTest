@@ -141,7 +141,7 @@ public partial class StrategyControlPanelUI // SpawnTroops
 			private void OnClick_Confirm()
 			{
 				if (selectSector == null) return;
-				if (세력_병력_신규편재 > 세력_병력_최대허용량) return;
+				if (세력_병력_신규편재 == 0 || 세력_병력_신규편재 > 세력_병력_최대허용량) return;
 
 				var infoList = numericSliders
 					.Select(i=>(i.Item1,Mathf.RoundToInt(i.Item2.Value)))

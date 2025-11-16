@@ -31,6 +31,11 @@ public class StrategyStartSetterDataEditor : OdinEditor
 
 		var data = _target.GetData();
 		var sectorDatas = data.sectorDatas;
+		var captureDatas = data.captureDatas;
+		var factionDatas = data.factionDatas;
+		var networkDatas = data.sectorLinkDatas;
+		var unitDatas = data.unitDatas;
+		var operationDatas = data.operationDatas;
 
 		if (sectorDatas != null)
 		{
@@ -39,8 +44,6 @@ public class StrategyStartSetterDataEditor : OdinEditor
 				DrawSectorLabel(sector);
 			}
 		}
-		var captureDatas = data.captureDatas;
-		var factionDatas = data.factionDatas;
 		if (captureDatas != null)
 		{
 			foreach (var capture in captureDatas)
@@ -48,13 +51,21 @@ public class StrategyStartSetterDataEditor : OdinEditor
 				DrawCapture(capture, factionDatas);
 			}
 		}
-
-		var networkDatas = data.sectorLinkDatas;
 		if (networkDatas != null)
 		{
 			foreach (var net in networkDatas)
 			{
 				DrawNetworkLink(_target, net, data);
+			}
+		}
+		if (unitDatas != null)
+		{
+            for (int i = 0 ; i < unitDatas.Length ; i++)
+			{
+                StrategyStartSetterData.UnitData unit = unitDatas[i];
+                DrawUnitHandle(_target, ref unit);
+				DrawUnitPreview(i, _target, in unit, factionDatas, operationDatas);
+				unitDatas[i] = unit;
 			}
 		}
 	}
@@ -78,9 +89,10 @@ public class StrategyStartSetterDataEditor : OdinEditor
 
 		DrawLabel(obj.transform.position, Vector3.down, $"Capture: {captureData.captureFaction} {(int)(captureData.captureProgress * 100)}%", color);
 	}
-
 	private void DrawNetworkLink(StrategyStartSetterData target, StrategyStartSetterData.SectorLinkData net, StrategyStartSetterData.Data data)
 	{
+		if (!target.onShowSectorLink) return;
+
 		// A와 B 섹터 위치 추출
 		var sectorA = data.sectorDatas.FirstOrDefault(s => s.profileData.sectorName == net.sectorA);
 		var sectorB = data.sectorDatas.FirstOrDefault(s => s.profileData.sectorName == net.sectorB);
@@ -111,7 +123,7 @@ public class StrategyStartSetterDataEditor : OdinEditor
 		DrawArrow(posA, posB, net.connectDir);
 
 		// WayPoints 존재 시
-		if (target.onShowWayPointsGizmo && net.waypoint != null && net.waypoint.Length > 0)
+		if (net.waypoint != null && net.waypoint.Length > 0)
 		{
 			Handles.color = Color.yellow;
 			var linePoints = WaypointUtility.GetLineWithWaypoints(posA, posB, net.waypoint);
@@ -149,7 +161,6 @@ public class StrategyStartSetterDataEditor : OdinEditor
 		// 이름 시각화
 		DrawLabel((posA + posB) * 0.5f, $"{net.sectorA} {arrowText} {net.sectorB}", color);
 	}
-
 	private void DrawArrow(Vector3 from, Vector3 to, NetworkLink.ConnectDirType type)
 	{
 		Vector3 dir = (to - from).normalized;
@@ -211,5 +222,67 @@ public class StrategyStartSetterDataEditor : OdinEditor
 		DrawLabel(worldPos, Vector3.up, text, color, style);
 	}
 
+	public void DrawUnitHandle(StrategyStartSetterData target, ref StrategyStartSetterData.UnitData unit)
+	{
+		if (!unit.showEdit || unit.unitProfile == null) return;
+
+		// 현재 위치 & 회전
+		Vector3 pos = unit.position;
+		Quaternion rot = Quaternion.Euler(unit.rotation);
+
+		EditorGUI.BeginChangeCheck();
+
+		// 위치 핸들
+		pos = Handles.PositionHandle(pos, rot);
+		// 회전 핸들
+		rot = Handles.RotationHandle(rot, pos);
+
+		if (EditorGUI.EndChangeCheck())
+		{
+			Undo.RecordObject(target, "Move UnitData");
+			unit.position = pos;
+			unit.rotation = rot.eulerAngles;
+			EditorUtility.SetDirty(target);
+		}
+	}
+	public void DrawUnitPreview(int index, StrategyStartSetterData target, in StrategyStartSetterData.UnitData unit, 
+		StrategyStartSetterData.FactionData[] factions,
+		StrategyStartSetterData.OperationData[] operations)
+	{
+		if (target.onShowUnitPreview && unit.unitProfile != null && unit.unitProfile.unitPrefab != null)
+		{
+			GameObject prefab = unit.unitProfile.unitPrefab;
+			MeshFilter mf = prefab.GetComponentInChildren<MeshFilter>();
+			MeshRenderer mr = prefab.GetComponentInChildren<MeshRenderer>();
+
+			if (mf != null && mr != null)
+			{
+				Mesh mesh = mf.sharedMesh;
+				Material mat = mr.sharedMaterial;
+
+				if (mesh != null && mat != null)
+				{
+					Matrix4x4 matrix = Matrix4x4.TRS(unit.position, Quaternion.Euler(unit.rotation), prefab.transform.localScale);
+					Graphics.DrawMesh(mesh, matrix, mat, 0);
+				}
+			}
+
+			string label = $"{index:00} :: {unit.unitKey}";
+			Color factionColor = Color.black;
+			if (!string.IsNullOrWhiteSpace(unit.factionName))
+			{
+				string unitFactionName = unit.factionName;
+				var faction = factions.Where(f => f.factionName.Equals(unitFactionName)).FirstOrDefault();
+				factionColor = faction.factionColor;
+			}
+			if (!string.IsNullOrWhiteSpace(unit.belongedOperation))
+			{
+				string operationName = unit.belongedOperation;
+				var operation = operations.Where(f => f.teamName.Equals(operationName)).FirstOrDefault();
+				label = $"{index:00}: {unit.unitKey}\n{operationName}";
+			}
+			DrawLabel(unit.position + Vector3.down, label, factionColor);
+		}
+	}
 }
 #endif
