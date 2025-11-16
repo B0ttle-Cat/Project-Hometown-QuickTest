@@ -195,16 +195,14 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		[FoldoutGroup("@unitKey")]
 		public UnitProfileObject unitProfile;
 
-#if UNITY_EDITOR
-		[FoldoutGroup("@unitKey/Transform")]
-		public bool showEdit;
-#endif
-		[FoldoutGroup("@unitKey/Transform/Position")]
+		[ToggleGroup("showEdit")]
 		public Vector3 position;
-		[FoldoutGroup("@unitKey/Transform/Rotation")]
+		[ToggleGroup("showEdit")]
 		public Vector3 rotation;
 
 #if UNITY_EDITOR
+		[ToggleGroup("showEdit","Transform")]
+		public bool showEdit;
 		private void Clear_factionName()
 		{
 			factionName = "";
