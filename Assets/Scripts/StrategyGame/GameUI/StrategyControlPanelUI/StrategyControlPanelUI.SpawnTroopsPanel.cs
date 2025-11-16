@@ -7,6 +7,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
+using static KeyPairUnitInfo;
 using static StrategyGamePlayData;
 public partial class StrategyControlPanelUI // SpawnTroops
 {
@@ -103,16 +104,16 @@ public partial class StrategyControlPanelUI // SpawnTroops
 			private SectorObject selectSector;
 			private IViewStack viewStack;
 
-			private List<(StrategyGamePlayData.UnitKey, NumericSliderUI)> numericSliders;
+			private List<(StrategyGamePlayData.UnitKey, KeyPairUnitInfo.UnitInfo, NumericSliderUI)> numericSliders;
 
-			float 세력_병력_최대허용량;
-			float 세력_병력_편제요구량;
-			float 세력_병력_신규편재;
+			int 세력_병력_최대허용량;
+			int 세력_병력_현재보유량;
+			int 세력_병력_신규편제수;
 			public SpawnPanel(SectorObject sector, ControlPanelItem panel, IViewStack viewStack) : base(sector.CaptureFaction, panel)
 			{
 				selectSector = sector;
 				this.viewStack = viewStack;
-				numericSliders = new List<(StrategyGamePlayData.UnitKey, NumericSliderUI)>();
+				numericSliders = new List<(StrategyGamePlayData.UnitKey, KeyPairUnitInfo.UnitInfo, NumericSliderUI)>();
 				ChangeValue(Value);
 			}
 
@@ -141,13 +142,22 @@ public partial class StrategyControlPanelUI // SpawnTroops
 			private void OnClick_Confirm()
 			{
 				if (selectSector == null) return;
-				if (세력_병력_신규편재 == 0 || 세력_병력_신규편재 > 세력_병력_최대허용량) return;
+				if (세력_병력_신규편제수 == 0 || 세력_병력_신규편제수 > 세력_병력_최대허용량)
+				{
+					// 편제 허용량 초과
+					return;
+				}
+				if (!StrategyManager.Collector.TryFindFaction(Value.FactionID, out Faction faction))
+				{
+					// 유효하지 않은 세력
+					return;
+				}
 
-				var infoList = numericSliders
-					.Select(i=>(i.Item1,Mathf.RoundToInt(i.Item2.Value)))
-					.Where(i=>i.Item1 != UnitKey.None && i.Item2 > 0);
+				(UnitKey, int)[] spawnInfo = numericSliders
+					.Select(i=>(i.Item1,Mathf.RoundToInt(i.Item3.Value)))
+					.Where(i=>i.Item1 != UnitKey.None && i.Item2 > 0).ToArray();
 
-				if(selectSector.Controller.OnConfirmButton_SpawnTroops(new SpawnTroopsInfo(Value.FactionID, infoList.ToArray())))
+				if (selectSector.Controller.OnConfirmButton_SpawnTroops(new SpawnTroopsInfo(Value.FactionID, spawnInfo)))
 				{
 					viewStack.ClearViewStack();
 				}
@@ -173,7 +183,7 @@ public partial class StrategyControlPanelUI // SpawnTroops
 					int length = numericSliders.Count;
 					for (int i = 0 ; i < length ; i++)
 					{
-						(_, NumericSliderUI ui) = numericSliders[i];
+						(_, _,NumericSliderUI ui) = numericSliders[i];
 						if (ui == null) continue;
 						ui.RemoveOnValueChange(OnChangeSliderValue);
 						GameObject.Destroy(ui.gameObject);
@@ -197,9 +207,10 @@ public partial class StrategyControlPanelUI // SpawnTroops
 						var unitKey = unitKeyList[i];
 						int findIndex = numericSliders.FindIndex((item) => item.Item1==unitKey);
 						if (findIndex >= 0) continue;
+						var info = StrategyManager.Key2UnitInfo.GetAsset(unitKey);
 						KeyPair.FindPairChainAndCopy<NumericSliderUI>("SliderSample", parent, out NumericSliderUI sliderUI);
 						sliderUI.gameObject.SetActive(true);
-						numericSliders.Add((unitKey, sliderUI));
+						numericSliders.Add((unitKey, info, sliderUI));
 					}
 				}
 				void UpdateFaction()
@@ -212,25 +223,24 @@ public partial class StrategyControlPanelUI // SpawnTroops
 			{
 				var factionStatsList = Value.FactionStats.GetValueList(
 					StatsType.세력_병력_최대허용량,
-					StatsType.세력_병력_편제요구량);
+					StatsType.세력_병력_현재보유량);
 
 				세력_병력_최대허용량 = factionStatsList[0].Value;
-				세력_병력_편제요구량 = factionStatsList[1].Value;
-				세력_병력_신규편재 = 0;
+				세력_병력_현재보유량 = factionStatsList[1].Value;
+				세력_병력_신규편제수 = 0;
 
 				int length = numericSliders.Count;
 				for (int i = 0 ; i < length ; i++)
 				{
-					(UnitKey _, NumericSliderUI slider) = numericSliders[i];
-					세력_병력_신규편재 += slider.Value;
+					(UnitKey _, UnitInfo _, NumericSliderUI slider) = numericSliders[i];
+					세력_병력_신규편제수 += (int)slider.Value;
 				}
-				float 세력_병력_여유용량 = 세력_병력_최대허용량 - 세력_병력_편제요구량 - 세력_병력_신규편재;
+				float 세력_병력_여유용량 = 세력_병력_최대허용량 - 세력_병력_현재보유량 - 세력_병력_신규편제수;
 				for (int i = 0 ; i < length ; i++)
 				{
-					(UnitKey key, NumericSliderUI slider) = numericSliders[i];
-					var info = StrategyManager.Key2UnitInfo.GetAsset(key);
-					slider.Label = info.DisplayName;
-					slider.SetMinMax(0, 세력_병력_여유용량, true);
+					(UnitKey key, UnitInfo info, NumericSliderUI slider) = numericSliders[i];
+					slider.Label = $"{info.DisplayName} : (+{info.UnitProfileObject.유닛_인력})";
+					slider.SetMinMax(0, (int)(세력_병력_여유용량 /info.UnitProfileObject.유닛_인력), true);
 					slider.AddOnValueChange(OnChangeSliderValue);
 				}
 				CheckSliderVaule();
@@ -238,23 +248,24 @@ public partial class StrategyControlPanelUI // SpawnTroops
 			private void OnChangeSliderValue(float _)
 			{
 				int length = numericSliders.Count;
-				세력_병력_신규편재 = 0;
+				세력_병력_신규편제수 = 0;
 				for (int i = 0 ; i < length ; i++)
 				{
-					(UnitKey _, NumericSliderUI slider) = numericSliders[i];
-					세력_병력_신규편재 += slider.Value;
+					(UnitKey _, UnitInfo info, NumericSliderUI slider) = numericSliders[i];
+					세력_병력_신규편제수 += (int)slider.Value * info.UnitProfileObject.유닛_인력;
 				}
-				float 세력_병력_여유용량 = 세력_병력_최대허용량 - 세력_병력_편제요구량 - 세력_병력_신규편재;
+				float 세력_병력_여유용량 = 세력_병력_최대허용량 - 세력_병력_현재보유량 - 세력_병력_신규편제수;
 				for (int i = 0 ; i < length ; i++)
 				{
-					(UnitKey key, NumericSliderUI slider) = numericSliders[i];
-					slider.SetHandleClamp(0, 세력_병력_여유용량 + slider.Value);
+					(UnitKey key, UnitInfo info, NumericSliderUI slider) = numericSliders[i];
+					slider.SetHandleClamp(0, (int)(세력_병력_여유용량 + (slider.Value * info.UnitProfileObject.유닛_인력))/ info.UnitProfileObject.유닛_인력);
 				}
 				CheckSliderVaule();
 			}
 			private void CheckSliderVaule()
 			{
-				if (세력_병력_최대허용량 <= 0)
+				float 세력_병력_혀용용량 = 세력_병력_최대허용량 - 세력_병력_현재보유량;
+				if (세력_병력_혀용용량 <= 0)
 				{
 					if (KeyPair.TryFindPair<FillRectUI>("TotalFill", out var fill))
 					{
@@ -267,17 +278,15 @@ public partial class StrategyControlPanelUI // SpawnTroops
 				}
 				else
 				{
-					float 세력_병력_예상치 = 세력_병력_신규편재 +  세력_병력_편제요구량;
-
 					if (KeyPair.TryFindPair<FillRectUI>("TotalFill", out var fill))
 					{
-						float rate = (float)세력_병력_예상치 / (float)세력_병력_최대허용량;
-						fill.SetValueText(rate, $"{세력_병력_예상치} / {세력_병력_최대허용량}");
+						float rate = (float)세력_병력_신규편제수 / (float)세력_병력_혀용용량;
+						fill.SetValueText(rate, $"{세력_병력_신규편제수} / {세력_병력_혀용용량}");
 					}
 
 					if (KeyPair.TryFindPair<Button>("배치하기", out var confirm))
 					{
-						confirm.interactable = 세력_병력_예상치 <= 세력_병력_최대허용량;
+						confirm.interactable = 세력_병력_신규편제수 <= 세력_병력_혀용용량;
 					}
 				}
 			}

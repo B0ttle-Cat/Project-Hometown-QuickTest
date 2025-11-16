@@ -19,7 +19,6 @@ public partial class Faction : IEquatable<Faction> , IDisposable
 
 		factionStats = new StatsList(new StatsValue(StatsType.세력_점령속도비율, data.captureSpeed),
 			new StatsValue(StatsType.세력_병력_최대허용량, data.maxOperationPoint),
-			new StatsValue(StatsType.세력_병력_편제요구량, data.requireOperationPoint),
 			new StatsValue(StatsType.세력_병력_현재보유량, data.currentOperationPoint),
 			new StatsValue(StatsType.세력_물자_최대허용량, data.maxMaterialPoint),
 			new StatsValue(StatsType.세력_물자_현재보유량, data.currentMaterialPoint),
@@ -48,10 +47,12 @@ public partial class Faction : IEquatable<Faction> , IDisposable
 	[ShowInInspector]
 	public string FactionName => factionName; 
 	[ShowInInspector]
-	public int FactionID => factionID; 
-	public Color FactionColor => factionColor; 
-	public Sprite FactionIcon => factionIcon; 
+	public int FactionID => factionID;
+	[ShowInInspector]
+	public Color FactionColor => factionColor;
+	public Sprite FactionIcon => factionIcon;
 	public GameObject DefaultUnitPrefab => defaultUnitPrefab;
+	[ShowInInspector]
 	public StatsList FactionStats => factionStats;
 	public List<UnitKey> AvailableUnitKeyList => availableUnitKeyList; 
 

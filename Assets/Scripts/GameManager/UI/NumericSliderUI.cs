@@ -23,7 +23,7 @@ public class NumericSliderUI : MonoBehaviour
 	private bool isShowPersantButton;
 	public float Value
 	{
-		get => slider.GetValue();
+		get => slider.GetValue() ;
 		set => slider.SetValue(value);
 	}
 	public string Label
@@ -45,6 +45,7 @@ public class NumericSliderUI : MonoBehaviour
 			}
 		}
 	}
+
 	public void SetMinMax(float min, float max, bool wholeNumbers)
 	{
 		InitCanvasGroup();

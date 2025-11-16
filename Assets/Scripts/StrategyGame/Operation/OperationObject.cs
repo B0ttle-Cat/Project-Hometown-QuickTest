@@ -54,9 +54,6 @@ public partial class OperationObject : MonoBehaviour  // Main
 public partial class OperationObject // Stats
 {
 	int computeFrame = -1;
-
-
-
 	public void ComputeOperationValue()
 	{
 		int thisFrame = Time.frameCount;
@@ -112,7 +109,6 @@ public partial class OperationObject : IVisibilityEvent<OperationObject>
 			}
 		}
 	}
-
 }
 public partial class OperationObject : IStrategyElement
 {

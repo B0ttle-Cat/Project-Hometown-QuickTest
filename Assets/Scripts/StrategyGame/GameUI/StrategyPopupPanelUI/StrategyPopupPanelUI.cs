@@ -57,7 +57,7 @@ public partial class StrategyPopupPanelUI
 	{
 		if (TopMessage(out var ui))
 		{
-			if(OrderPair[ui.gameObject] == order)
+			if (OrderPair.TryGetValue(ui.gameObject, out var _order) && _order == order)
 			{
 				ui.OnHide();
 				OrderPair.Remove(ui.gameObject);

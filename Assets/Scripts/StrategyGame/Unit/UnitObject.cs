@@ -153,14 +153,16 @@ public partial class UnitObject: IOperationBelonger
 	public int OperationID => operationObject == null ? -1 : operationObject.OperationID;
 	public bool HasOperation => OperationID >= 0;
 
+	public Vector3 operationOffset;
+
 	partial void InitOperationObject()
 	{
 		operationObject = null;
 	}
 	void IOperationBelonger.SetOperationBelong(OperationObject operationObject)
 	{
-		this.operationObject = operationObject;
 		if (operationObject == null) return;
+		this.operationObject = operationObject;
 
 		ThisVisibility.OnChangeVisible -= operationObject.ChangeVisibleUnit;
 		ThisVisibility.OnChangeVisible += operationObject.ChangeVisibleUnit;
@@ -175,6 +177,7 @@ public partial class UnitObject: IOperationBelonger
 		{
 			operationObject.ChangeInvisibleUnit(this);
 		}
+		operationOffset = ThisMovement.CurrentPosition - operationObject.ThisMovement.CurrentPosition;
 	}
 	OperationObject IOperationBelonger.GetBelongedOperation()
 	{
@@ -188,6 +191,7 @@ public partial class UnitObject: IOperationBelonger
 			ThisVisibility.OnChangeInvisible -= operationObject.ChangeInvisibleUnit;
 			operationObject = null;
 		}
+		operationOffset = Vector3.zero;
 	}
 }
 

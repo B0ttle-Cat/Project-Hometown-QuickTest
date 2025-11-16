@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
 
 using Pathfinding;
+using Pathfinding.RVO;
 
 using Sirenix.OdinInspector;
 
 using UnityEngine;
 
 [RequireComponent(typeof(Seeker))]
+[RequireComponent(typeof(RVOController))]
 public partial class UnitObject : INodeMovement
 {
 	private Vector3 operationMoveTarget;
@@ -22,6 +24,7 @@ public partial class UnitObject : INodeMovement
 	private float sectionLength = 0f;
 	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
 	private float tempLength = 0f;
+	[FoldoutGroup("INodeMovement"), ShowInInspector]
 
 	private Seeker seeker;
 	private int movementIndex;
@@ -29,9 +32,12 @@ public partial class UnitObject : INodeMovement
 	private List<Vector3> tempMovePath;
 	private Queue<Vector3> findingPoints;
 
+	private RVOController rvoController;
+
 	public INodeMovement ThisMovement => this;
 	public INodeMovement ParentMovement => operationObject;
 	public Seeker ThisSeeker => seeker;
+	public RVOController RVO => rvoController;
 	Vector3 INodeMovement.CurrentPosition
 	{
 		get
@@ -55,8 +61,12 @@ public partial class UnitObject : INodeMovement
 	float INodeMovement.SectionLength { get => sectionLength; set => sectionLength = value; }
 	float INodeMovement.TempLength { get => tempLength; set => tempLength = value; }
 
+
 	partial void InitMovement()
 	{
+		seeker = GetComponent<Seeker>();
+		rvoController = GetComponent<RVOController>();
+
 		movePath = new List<Vector3>();
 		tempMovePath = null;
 		findingPoints = new Queue<Vector3>();
@@ -66,8 +76,6 @@ public partial class UnitObject : INodeMovement
 		InitPositionAndVelocity(out movePosition, out moveVelocity);
 		UpdateMovementTransform();
 
-		seeker = GetComponent<Seeker>();
-		if (seeker == null) seeker = gameObject.AddComponent<Seeker>();
 	}
 	private void InitPositionAndVelocity(out Vector3 position, out Vector3 velocity)
 	{
@@ -104,43 +112,61 @@ public partial class UnitObject : INodeMovement
 			sectionLength -= delteMove.magnitude;
 			if (sectionLength < 0) sectionLength = 0f;
 		}
+
 		UpdateMovementTransform();
 	}
-	void OperationSetPositionAndVelocity(in Vector3 position, in float deltaTime)
+	void OperationSetPositionAndVelocity(in Vector3 nextPosition, in float deltaTime)
 	{
 		if (!HasOperation) return;
-		Vector3 nextPosition = position;
 		Vector3 currPosition = ThisMovement.CurrentPosition;
 		Vector3 currVelocity = ThisMovement.CurrentVelocity;
 		float smoothTime = ThisMovement.SmoothTime;
 		float maxSpeed = ThisMovement.MaxSpeed;
+		Vector3 operationLocalOffset = operationObject.transform.TransformVector(operationOffset);
 
-		float distance = Vector3.Distance(currPosition, nextPosition);
+		float distance = Vector3.Distance(currPosition, nextPosition + operationLocalOffset);
 		float oneDistance = maxSpeed * (smoothTime + 0.2f);
 		if (distance > oneDistance)
 		{
-			operationMoveTarget = position;
+			operationMoveTarget = nextPosition;
 			maxSpeed *= distance / oneDistance;
 		}
 
-		currPosition = Vector3.SmoothDamp(currPosition, operationMoveTarget, ref currVelocity, smoothTime, maxSpeed, deltaTime);
-		Vector3 delteMove = currPosition - movePosition;
-		movePosition = currPosition;
-		moveVelocity = currVelocity;
+		Vector3 target = operationMoveTarget + operationLocalOffset;
+		currPosition = Vector3.SmoothDamp(currPosition, target, ref currVelocity, smoothTime, maxSpeed, deltaTime);
+
+		Vector3 delteMove = currPosition - transform.position;
+		if (rvoController.isActiveAndEnabled)
+		{
+			rvoController.SetTarget(target, currVelocity.magnitude, maxSpeed, target);
+			delteMove = rvoController.CalculateMovementDelta(movePosition, deltaTime);
+			movePosition += delteMove;
+			moveVelocity = currVelocity;
+		}
+		else
+		{
+			movePosition = currPosition;
+			moveVelocity = currVelocity;
+		}
+
 		sectionLength -= delteMove.magnitude;
 		if (sectionLength < 0) sectionLength = 0f;
-
 		UpdateMovementTransform();
 	}
-	void UpdateMovementTransform()
+	void UpdateMovementTransform(bool skip = false)
 	{
 		transform.position = movePosition;
 		if (moveVelocity.sqrMagnitude > 0.1f)
 			transform.LookAt(movePosition + moveVelocity.normalized);
-		transform.hasChanged = false; 
+		transform.hasChanged = false;
 	}
 	public void OnStayUpdate(in float deltaTime)
 	{
-		OperationSetPositionAndVelocity(in operationMoveTarget, in deltaTime);
+		if (HasOperation)
+		{
+
+			Vector3 operationPosition = operationObject.ThisMovement.CurrentPosition;
+			OperationSetPositionAndVelocity(in operationPosition, in deltaTime);
+		}
 	}
 }

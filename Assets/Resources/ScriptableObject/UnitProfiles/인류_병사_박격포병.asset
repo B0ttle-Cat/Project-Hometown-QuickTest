@@ -17,7 +17,7 @@ MonoBehaviour:
   displayName: "\uBC15\uACA9\uD3EC\uBCD1"
   weaponType: 0
   protectType: 0
-  "\uC720\uB2DB_\uC778\uB825": 1
+  "\uC720\uB2DB_\uC778\uB825": 2
   "\uC720\uB2DB_\uBB3C\uC790": 1
   "\uC720\uB2DB_\uC804\uB825": 1
   "\uC720\uB2DB_\uCD5C\uB300\uB0B4\uAD6C\uB3C4": 100
@@ -50,4 +50,4 @@ MonoBehaviour:
   "\uC720\uB2DB_\uACF5\uACA9\uBC94\uC704": 10
   "\uC720\uB2DB_\uD589\uB3D9\uBC94\uC704": 10
   "\uC720\uB2DB_\uC2DC\uC57C\uBC94\uC704": 10
-  connectSkill: []
+  personalSkills: []

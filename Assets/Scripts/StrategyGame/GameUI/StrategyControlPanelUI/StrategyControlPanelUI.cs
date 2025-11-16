@@ -165,10 +165,11 @@ public partial class StrategyControlPanelUI
 			}
 			public void Dispose()
 			{
-				if (!isDispose) return;
+				if (isDispose) return;
 				isDispose = true;
 
 				Invisible();
+				OnBeforeChangeValue();
 				OnDispose();
 				value = default;
 				panelUI = null;
