@@ -2,8 +2,11 @@
 
 using UnityEngine;
 
+[RequireComponent(typeof(Collider))]
 public class SectorTrigger : MonoBehaviour
 {
+	private Collider thisCollider;
+
 	private HashSet<Collider> colliderList;
 	private List<CaptureTag> captureTagList;
 
@@ -12,6 +15,7 @@ public class SectorTrigger : MonoBehaviour
 
 	private void Awake()
 	{
+		thisCollider = GetComponent<Collider>();
 		colliderList = new HashSet<Collider>();
 		captureTagList = new List<CaptureTag>();
 	}
@@ -44,5 +48,12 @@ public class SectorTrigger : MonoBehaviour
 			var unit = other.GetComponentInParent<CaptureTag>();
 			captureTagList.Remove(unit);
 		}
+	}
+
+	public bool OverlapTrigger(in Vector3 point)
+	{
+		var result = thisCollider.ClosestPoint(point);
+		float sqrDistance = Vector3.SqrMagnitude(result - point);
+		return Mathf.Approximately(sqrDistance, 0f);
 	}
 }

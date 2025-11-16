@@ -58,8 +58,14 @@ public static class StrategyElementUtility
 		int factionID = spawnTroopsInfo.factionID;
 		var organizations = spawnTroopsInfo.organizations;
 		int length = organizations.Length;
-
 		Vector3 randomPosCenter = sector.transform.position;
+
+		var newObject = new GameObject();
+		var operationObject = newObject.AddComponent<OperationObject>();
+		operationObject.Init(spawnTroopsInfo.factionID);
+
+		StrategyManager.Collector.AddElement<OperationObject>(operationObject);
+		newObject.gameObject.name = $"OperationObject_{operationObject.OperationID}";
 
 		List<int> spawnUnitIds = new List<int>(length);
 		for (int i = 0 ; i < length ; i++)
@@ -71,8 +77,6 @@ public static class StrategyElementUtility
 			spawnUnitIds.Add(unit.UnitID);
 		}
 
-		var operationObject = new OperationObject(spawnTroopsInfo.factionID);
-		StrategyManager.Collector.AddElement<OperationObject>(operationObject);
 		operationObject.Init(in spawnUnitIds);
 		return operationObject;
 	}
@@ -84,5 +88,5 @@ public static class StrategyElementUtility
 		StrategyManager.Collector.RemoveElement<OperationObject>(operation);
 		operation.Dispose();
 	}
-	#endregion OperationObject 
+	#endregion 
 }

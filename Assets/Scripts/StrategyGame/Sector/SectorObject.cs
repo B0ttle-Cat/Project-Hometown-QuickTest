@@ -7,6 +7,8 @@ using SectorData = StrategyGamePlayData.SectorData;
 [RequireComponent(typeof(CameraVisibilityGroupInStrategy))]
 public partial class SectorObject : MonoBehaviour
 {
+	private SectorTrigger sectorTrigger;
+
 	private SectorData.Profile profile;
 	private SectorData.Capture capture;
 	private SectorData.MainStats mainStats;
@@ -23,8 +25,9 @@ public partial class SectorObject : MonoBehaviour
 	// 카메라에서 보이는지 판단하는 기능
 	private CameraVisibilityGroup visibilityGroup;
 
-	public void Awake()
+    public void Awake()
 	{
+		sectorTrigger = GetComponentInChildren<SectorTrigger>();
 		visibilityGroup = GetComponent<CameraVisibilityGroupInStrategy>();
 	}
 	public void Init(in StrategyStartSetterData.SectorData data)
@@ -109,6 +112,12 @@ public partial class SectorObject // Getter
 		data.captureFactionID = factionID;
 		data.captureProgress = progress;
 		capture.Invoke();
+	}
+
+	public bool OverlapTrigger(in Vector3 point)
+	{
+		if (sectorTrigger == null) return false;
+		return sectorTrigger.OverlapTrigger(in point);
 	}
 }
 public partial class SectorObject : IStrategyElement

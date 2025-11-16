@@ -31,13 +31,15 @@ public partial class StrategyUpdate : MonoBehaviour
 		거점_자원갱신이벤트,
 		거점_유닛버프계산,
 
-		유닛_인스턴스생성,
+		유닛_기본변수_갱신,
 		유닛_버프_계산,
 		유닛_이동,
 		유닛_상태_업데이트,     // 유닛의 위치와 스텟을 토대로 어떤 행동을 할지 결정한다.
 		유닛_공격_업데이트,     // 공격 딜레이 계산 및 공격 생성
 		유닛_데미지_계산,          // 충돌된 데이미 계산을 진행
 		유닛_사망_처리,           // HP 없는 유닛을 삭제.
+
+		작전_기본변수_갱신,
 
 		UI,
 
@@ -165,10 +167,12 @@ public partial class StrategyUpdate : MonoBehaviour
 			(UpdateLogicSort.거점_자원갱신이벤트,  new StrategyUpdate_EndedResourcesSupply(this)),
 			(UpdateLogicSort.거점_유닛버프계산, null),
 
-			(UpdateLogicSort.유닛_인스턴스생성, null),
+			(UpdateLogicSort.유닛_기본변수_갱신, null),
 			(UpdateLogicSort.유닛_버프_계산,  new StrategyUpdate_UnitBuff(this)),
 
-			(UpdateLogicSort.유닛_이동,  null),
+			(UpdateLogicSort.작전_기본변수_갱신, new StrategyUpdate_OperationUpdate(this)),
+
+			(UpdateLogicSort.유닛_이동,  new StrategyUpdate_NodeMovement(this)),
 			(UpdateLogicSort.유닛_상태_업데이트,  null),
 			(UpdateLogicSort.유닛_공격_업데이트,  null),
 			(UpdateLogicSort.유닛_데미지_계산,  null),
@@ -202,7 +206,7 @@ public partial class StrategyUpdate : MonoBehaviour
 	}
 	private void Update()
 	{
-		if(ThisTime != null) ThisTime.TimeUpdate();
+		if (ThisTime != null) ThisTime.TimeUpdate();
 		float deltaTime = Time.deltaTime;
 		foreach ((UpdateLogicSort type, IStrategyUpdater updater) in updateList)
 		{
@@ -291,3 +295,70 @@ public abstract class StrategyUpdateSubClass<T> : IStrategyUpdater where T : Str
 	}
 }
 
+public class StrategyUpdate_OperationUpdate : StrategyUpdateSubClass<StrategyUpdate_OperationUpdate.OperationUpdate>
+{
+	public StrategyUpdate_OperationUpdate(StrategyUpdate updater) : base(updater)
+	{
+	}
+
+	protected override void Start()
+	{
+		UpdateList = new();
+		var iList = StrategyManager.Collector.OperationList;
+		foreach (var item in iList)
+		{
+			if (item == null) continue;
+			UpdateList.Add(new(item, this));
+		}
+		StrategyManager.Collector.AddChangeListener<OperationObject>(ChangeList);
+	}
+	protected override void Dispose()
+	{
+		StrategyManager.Collector.RemoveChangeListener<OperationObject>(ChangeList);
+	}
+	private void ChangeList(IStrategyElement element, bool isAdd)
+	{
+		if (element is not OperationObject op) return;
+
+		if (isAdd)
+		{
+			UpdateList.Add(new OperationUpdate(op, this));
+		}
+		else
+		{
+			int findIndex = UpdateList.FindIndex(l => l.operationObject == op);
+			if (findIndex >= 0) return;
+			UpdateList.RemoveAt(findIndex);
+		}
+	}
+
+	protected override void Update(in float deltaTime)
+	{
+		int length = UpdateList.Count;
+		for (int i = 0 ; i < length ; i++)
+		{
+			var update = updateList[i];
+			if (update == null) continue;
+			update.Update(deltaTime);
+		}
+	}
+	public class OperationUpdate : UpdateLogic
+	{
+		public OperationObject operationObject;
+		public OperationUpdate(OperationObject operationObject, StrategyUpdateSubClass<OperationUpdate> thisSubClass) : base(thisSubClass)
+		{
+			this.operationObject = operationObject;
+		}
+
+		protected override void OnDispose()
+		{
+			operationObject = null;
+		}
+
+		protected override void OnUpdate(in float deltaTime)
+		{
+			if (operationObject == null) return;
+			operationObject.ComputeOperationValue();
+		}
+	}
+}

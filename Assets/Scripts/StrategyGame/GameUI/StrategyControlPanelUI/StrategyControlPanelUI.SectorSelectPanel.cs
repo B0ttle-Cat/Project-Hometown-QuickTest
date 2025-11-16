@@ -114,11 +114,11 @@ public partial class StrategyControlPanelUI // SectorSelectPanel
 			public event UnityAction onConstructFacilities;
 			public event UnityAction onPlanningOperationMovements;
 			public event UnityAction onUseFacilitiesSkill;
-			public SectorPanel(SectorObject sector, ControlPanelItem panel) : base(sector, panel) {}
-			protected override void OnInit()
+			public SectorPanel(SectorObject sector, ControlPanelItem panel) : base(sector, panel) 
 			{
 				iconList = new GameObject[32];
 				SetupButtons();
+				ChangeValue(Value);
 			}
 			protected override void OnDispose()
 			{

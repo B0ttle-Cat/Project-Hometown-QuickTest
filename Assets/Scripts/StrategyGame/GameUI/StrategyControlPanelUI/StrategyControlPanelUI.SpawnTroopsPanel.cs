@@ -112,13 +112,10 @@ public partial class StrategyControlPanelUI // SpawnTroops
 			{
 				selectSector = sector;
 				this.viewStack = viewStack;
-			}
-
-
-			protected override void OnInit()
-			{
 				numericSliders = new List<(StrategyGamePlayData.UnitKey, NumericSliderUI)>();
+				ChangeValue(Value);
 			}
+
 			protected override void OnDispose()
 			{
 				numericSliders?.Clear();

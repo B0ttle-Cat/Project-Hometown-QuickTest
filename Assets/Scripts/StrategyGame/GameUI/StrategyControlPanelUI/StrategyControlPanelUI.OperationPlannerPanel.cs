@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using Sirenix.OdinInspector;
 
@@ -39,7 +38,7 @@ public partial class StrategyControlPanelUI
 		private const string infoMessage = @"표시된 거점을 우클릭하여 이동 목적지를 설정 할 수 있습니다.
 shift를 누르고 선택하면 경로를 지정할 수 있습니다.";
 
-		private MovementPlan movementPlan;
+		private MovePath movementPlan;
 
 		public OperationPlannerPanel(GameObject prefab, Transform root, MovementPathRenderer pathRenderPrefab, StrategyControlPanelUI panelUI) : base(prefab, root, panelUI)
 		{
@@ -53,7 +52,7 @@ shift를 누르고 선택하면 경로를 지정할 수 있습니다.";
 		{
 			selectOperation = null;
 			pathRenderPrefab = null;
-			if(movementPlan != null)
+			if (movementPlan != null)
 			{
 				movementPlan.Dispose();
 			}
@@ -65,8 +64,8 @@ shift를 누르고 선택하면 경로를 지정할 수 있습니다.";
 			StrategyManager.Selecter.RemoveListener_OnPointingTarget(OnPointing);
 		}
 
-  
-        protected override void OnShow()
+
+		protected override void OnShow()
 		{
 			StrategyManager.Selecter.AddListener_OnPointingTarget(OnPointing);
 		}
@@ -74,21 +73,16 @@ shift를 누르고 선택하면 경로를 지정할 수 있습니다.";
 		{
 			if (selectable == null || selectable is not SectorObject sector) return;
 
-			int recentlyNodeID = selectOperation.ThisMovement.SafeRecentlyVisitedNode();
-			int targetNodeID = StrategyManager.SectorNetwork.SectorToNodeIndex(sector);
-			if (StrategyManager.SectorNetwork.IsConnectedNode(recentlyNodeID, targetNodeID))
+			bool clearPath = !Keyboard.current.shiftKey.isPressed;
+			selectOperation.ThisMovement.SetMovePath(clearPath, sector);
+			List<Vector3> planList = selectOperation.ThisMovement.MovePath;
+			if (movementPlan == null)
 			{
-				bool clearPath = !Keyboard.current.shiftKey.isPressed;
-				selectOperation.ThisMovement.SetMovePath(clearPath, sector);
-				LinkedList<INodeMovement.MovementPlan> planList = selectOperation.ThisMovement.MovementPlanList;
-				if (movementPlan == null)
-				{
-					movementPlan = new MovementPlan(planList, pathRenderPrefab, this);
-				}
-				else
-				{
-					movementPlan.ChangeValue(planList);
-				}
+				movementPlan = new MovePath(planList, pathRenderPrefab, this);
+			}
+			else
+			{
+				movementPlan.ChangeValue(planList);
 			}
 		}
 		private void OnLastDeselect(ISelectable selectable)
@@ -119,28 +113,24 @@ shift를 누르고 선택하면 경로를 지정할 수 있습니다.";
 		}
 
 
-		protected class MovementPlan : ViewItem<LinkedList<INodeMovement.MovementPlan>>
+		protected class MovePath : ViewItem<List<Vector3>>
 		{
 			private MovementPathRenderer pathRenderer;
-			public MovementPlan(LinkedList<INodeMovement.MovementPlan> item, MovementPathRenderer pathRenderPrefab, ControlPanelItem panel) : base(item, panel)
+			public MovePath(List<Vector3> item, MovementPathRenderer pathRenderPrefab, ControlPanelItem panel) : base(item, panel)
 			{
-				if(pathRenderPrefab != null)
+				if (pathRenderPrefab != null)
 				{
 					pathRenderer = GameObject.Instantiate(pathRenderPrefab);
-					pathRenderer.ShowDetail();
 				}
+				ChangeValue(Value);
 			}
 			protected override void OnDispose()
 			{
-				if(pathRenderer != null)
+				if (pathRenderer != null)
 				{
 					GameObject.Destroy(pathRenderer);
 					pathRenderer = null;
 				}
-			}
-			protected override void OnInit()
-			{
-
 			}
 			protected override void OnBeforeChangeValue()
 			{

@@ -289,10 +289,6 @@ MonoBehaviour:
         width: 1
       - point: {x: 5, y: 0, z: -15}
         width: 1
-    - sectorA: Sector_02
-      connectDir: 0
-      sectorB: Sector_01
-      waypoint: []
     - sectorA: Sector_03
       connectDir: 0
       sectorB: Sector_01

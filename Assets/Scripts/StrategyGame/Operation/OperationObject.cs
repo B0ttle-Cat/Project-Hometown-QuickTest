@@ -6,7 +6,7 @@ using UnityEngine;
 
 using static StrategyGamePlayData;
 
-public partial class OperationObject :IDisposable  // Main
+public partial class OperationObject : MonoBehaviour, IDisposable  // Main
 {
 	[SerializeField]
 	private int operationID;
@@ -14,7 +14,6 @@ public partial class OperationObject :IDisposable  // Main
 	private string teamName;
 	[SerializeField]
 	private int factionID;
-
 	public OperationObject This => this;
 	public int OperationID { get => operationID; private set => operationID = value; }
 	public string TeamName
@@ -33,7 +32,7 @@ public partial class OperationObject :IDisposable  // Main
 			teamName = value;
 		}
 	}
-	public OperationObject(int factionID)
+	internal void Init(int factionID)
 	{
 		this.operationID = -1;
 		this.teamName = "";
@@ -42,6 +41,7 @@ public partial class OperationObject :IDisposable  // Main
 	public void Init(in List<int> unitList)
 	{
 		InitOrganization(unitList);
+		InitMovement();
 	}
 	public void DeInit()
 	{
@@ -54,35 +54,26 @@ public partial class OperationObject :IDisposable  // Main
 		factionID = -1;
 	}
 	partial void InitOrganization(in List<int> unitList);
+	partial void InitMovement();
 	partial void DeInitOrganization();
+
+
 }
 
 public partial class OperationObject // Stats
 {
 	int computeFrame = -1;
 
-	private Vector3 position;
-	private int moveSpeed;
+
+
 	public void ComputeOperationValue()
 	{
 		int thisFrame = Time.frameCount;
 		if (computeFrame == thisFrame) return;
 		computeFrame = thisFrame;
-		position = GetPosition();
-		moveSpeed = GetMoveSpeed();
+		//moveSpeed = GetMoveSpeed();
 	}
-	private Vector3 GetPosition()
-	{
-		int count = 0;
-		Vector3 point = Vector3.zero;
-		foreach (var item in GetAllUnitObj)
-		{
-			point += item.ThisMovement.CurrentPosition;
-			++count;
-		}
-		if (count > 1) point /= count;
-		return point;
-	}
+
 	private int GetMoveSpeed()
 	{
 		float average = (float)GetAllUnitObj.Select(i => i.GetStateValue(StatsType.유닛_이동속도)).Average();

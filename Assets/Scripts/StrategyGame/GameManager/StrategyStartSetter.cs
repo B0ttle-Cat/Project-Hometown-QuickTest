@@ -176,15 +176,7 @@ public partial class StrategyStartSetter : MonoBehaviour
 		var data = strategyStartSetterData.GetData();
 		var networkDatas = data.sectorLinkDatas;
 		var sectors = StrategyManager.Collector.SectorList;
-		int length = sectors.Count;
-		NetworkNode[] nodes = new NetworkNode[length];
-        for (int i = 0 ; i < length ; i++)
-        {
-			var sector = sectors[i];
-			nodes[i]=new NetworkNode(i, sector);
-		}
-
-        await network.Init(nodes, sectors.ToArray(),networkDatas);
+        await network.Init(sectors,networkDatas);
 	}
     internal void OnStartSetter_Mission(StrategyMissionTree mission)
     {
@@ -194,6 +186,9 @@ public partial class StrategyStartSetter : MonoBehaviour
 		// 서브 미션 세팅
 		mission.InitSubMission();
 	}
+    internal async Awaitable OnStartSetter_Operation()
+    {
+    }
 }
 public partial class StrategyStartSetter // Instantiate
 {

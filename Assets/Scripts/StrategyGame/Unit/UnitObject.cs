@@ -37,7 +37,7 @@ public partial class UnitObject : MonoBehaviour
 		get => StrategyManager.Collector.FindFaction(FactionID);
 	}
 
-	public void Init(string displayName = "", int factionID = -1)
+    public void Init(string displayName = "", int factionID = -1)
 	{
 		factionID = (factionID == -1 && profile != null) ? FactionID : factionID;
 
@@ -90,10 +90,12 @@ public partial class UnitObject : MonoBehaviour
 	private void InitOther(UnitProfileObject profileObj)
 	{
 		InitProfileObject(profileObj);
+		InitMovement();
 		InitOperationObject();
 		InitVisibility();
 	}
 	partial void InitProfileObject(UnitProfileObject profileObj);
+	partial void InitMovement();
 	partial void InitVisibility();
 	partial void InitOperationObject();
 
@@ -107,7 +109,7 @@ public partial class UnitObject // StateValue
 	private StatsGroup skillBuffGroup;
 	public StatsList MainStatsList => StatsData.GetStatsList();
 	public StatsGroup SkillBuffGroup => skillBuffGroup ??= new StatsGroup();
-	public int GetStateValue(StatsType type) => MainStatsList.GetValueInt(type) + SkillBuffGroup.GetValueInt(type);
+	public int GetStateValue(StatsType type) => StrategyManager.IsNotReady? 0 : MainStatsList.GetValueInt(type) + SkillBuffGroup.GetValueInt(type);
 
 
 	partial void InitProfileObject(UnitProfileObject profileObj)

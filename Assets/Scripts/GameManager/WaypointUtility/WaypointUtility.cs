@@ -27,39 +27,39 @@ public static class WaypointUtility
 		private readonly Vector3[] points;
 		private readonly Vector3[] reversPoint;
 		[ShowInInspector,ReadOnly]
-		private readonly float distance;
+		private readonly float length;
 		public int NetworkID => networkID;
-		public (int start, int last) Tips => (startNodeID, lastNodeID); 
+		public (int start, int last) Tips => (startNodeID, lastNodeID);
 		public Vector3[] Points => points;
 		public Vector3[] ReversPoint => reversPoint;
-		public float Distance => distance;
+		public float Length => length;
 
 		public WaypointLine(int id, NetworkNode startNode, NetworkNode lastNode, Waypoint[] waypoints, int samplesPerSegment = 10)
 		{
 			networkID = id;
 			startNodeID = startNode.NetworkID;
-			lastNodeID = lastNode.NetworkID; 
+			lastNodeID = lastNode.NetworkID;
 			points = GetLineWithWaypoints(startNode.Position, lastNode.Position, waypoints, samplesPerSegment);
 			reversPoint = points.Reverse().ToArray();
-			distance = _Distance();
-		}
+			length = _Length();
 
-		private float _Distance()
-		{
-			var points = this.points;
-			int length = this.points.Length;
-			if (length < 0) return 0f;
-
-			float distance = 0f;
-			Vector3 prev = this.points[0];
-			Vector3 next = prev;
-			for (int i = 0 ; i < length ; i++)
+			float _Length()
 			{
-				next = this.points[i];
-				distance += Vector3.Distance(prev, next);
-				prev = next;
+				var points = this.points;
+				int length = this.points.Length;
+				if (length < 0) return 0f;
+
+				float distance = 0f;
+				Vector3 prev = this.points[0];
+				Vector3 next = prev;
+				for (int i = 0 ; i < length ; i++)
+				{
+					next = this.points[i];
+					distance += Vector3.Distance(prev, next);
+					prev = next;
+				}
+				return distance;
 			}
-			return distance;
 		}
 	}
 

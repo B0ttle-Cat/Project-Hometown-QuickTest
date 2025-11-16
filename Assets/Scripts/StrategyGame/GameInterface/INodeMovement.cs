@@ -1,101 +1,194 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
+using Pathfinding;
+
 using UnityEngine;
 
 public interface INodeMovement
 {
-	public struct MovementPlan
-	{
-		public int prevNodeID;
-		public int nextNodeID;
-
-		public Vector3[] path;
-	}
-
-	public INodeMovement ThisMovement { get; }
+	INodeMovement ThisMovement { get; }
+	INodeMovement ParentMovement => null;
+	Seeker ThisSeeker { get; }
 	Vector3 CurrentPosition { get; }
 	Vector3 CurrentVelocity { get; }
 	float SmoothTime { get; }
 	float MaxSpeed { get; }
-	int RecentlyVisitedNode { get; } // 최근 방문 노드
-	LinkedList<MovementPlan> MovementPlanList { get; set; }
-	int PrevVisitNide => EmptyPath ? SafeRecentlyVisitedNode() : MovementPlanList.First.Value.prevNodeID; // 이전 노드 
-	int NextVisitNide => EmptyPath ? SafeRecentlyVisitedNode() : MovementPlanList.First.Value.nextNodeID; // 다음 노드
-	int LastVisitNide => EmptyPath ? SafeRecentlyVisitedNode() : MovementPlanList.Last.Value.nextNodeID;  // 마지막 노드
-	bool HasPath => MovementPlanList != null && MovementPlanList.Count > 0;
-	bool EmptyPath => !HasPath;
-
-	int SafeRecentlyVisitedNode()
-	{
-		if(FindRecentlyNode(out NetworkNode recentlyNode))
-		{
-			return recentlyNode.NetworkID;
-		}
-		return -1;
-	}
-
+	int MovementIndex { get; set; }
+	List<Vector3> MovePath { get; set; }
+	List<Vector3> TempMovePath { get; set; }
+	Queue<Vector3> FindingPoints { get; set; }
+	bool HasPath => MovePath != null && MovePath.Count > 0;
+	bool HasTampPath => TempMovePath != null && TempMovePath.Count > 0;
+	bool EmptyPath => !HasPath && !HasTampPath;
+	float TotalLength { get; set; }
+	float SectionLength { get; set; }
+	float TempLength { get; set; }
 	void SetMovePath(params SectorObject[] waypointSectors) => SetMovePath(true, waypointSectors);
 	void SetMovePath(bool clearPath, params SectorObject[] waypointSectors)
 	{
-		var nodeIds = waypointSectors.Select(i => StrategyManager.SectorNetwork.SectorToNodeIndex(i)).ToArray();
-		SetMovePath(clearPath, nodeIds);
+		SetMovePath(clearPath, waypointSectors.Select(i => i.transform.position).ToArray());
 	}
-	void SetMovePath(params int[] waypointNodeID) => SetMovePath(true, waypointNodeID);
-	void SetMovePath(bool clearPath, params int[] waypointNodeID)
+	void SetMovePath(bool clearPath, params Vector3[] waypoints)
 	{
-		MovementPlanList ??= new LinkedList<MovementPlan>();
-		if (clearPath) ClearMovePath();
+		if (ThisSeeker == null) return;
+		if (waypoints == null || waypoints.Length == 0) return;
 
-		int length = waypointNodeID.Length;
+		MovePath ??= new List<Vector3>();
+		FindingPoints ??= new Queue<Vector3>();
+
+		if (clearPath)
+		{
+			ClearMovePath();
+		}
+		bool isWait = FindingPoints.Count > 0;
+		int length = waypoints.Length;
 		for (int i = 0 ; i < length ; i++)
 		{
-			int lastIndex = LastVisitNide;
-			int nextIndex = waypointNodeID[i];
-			if (lastIndex == nextIndex) continue;
+			FindingPoints.Enqueue(waypoints[i]);
+		}
+		if (isWait) return;
 
-			List<int> nodePath = new List<int>();
-			StrategyManager.SectorNetwork.FindShortestPath(lastIndex, nextIndex, nodePath);
-			StrategyManager.SectorNetwork.NodePathToVectorPath(in nodePath, out List<Vector3> pointPath);
-			MovementPlanList.AddLast(new MovementPlan()
+		StartPath(CurrentPosition);
+		void StartPath(Vector3 prevPoint)
+		{
+			if (!FindingPoints.TryDequeue(out var nextPoint)) return;
+
+			ThisSeeker.StartPath(start: prevPoint, nextPoint, (path) =>
 			{
-				prevNodeID = lastIndex,
-				nextNodeID = nextIndex,
-				path = pointPath.ToArray(),
+				if (path.error) return;
+				var abPath = path as ABPath;
+				MovePath.AddRange(abPath.vectorPath);
+				if (TempMovePath != null)
+				{
+					TempMovePath.Clear();
+					TempMovePath = null;
+					TempLength = 0;
+				}
+				TotalLength += abPath.GetTotalLength();
+				StartPath(nextPoint);
 			});
 		}
 	}
 	void ClearMovePath()
 	{
-		if (MovementPlanList != null)
-			MovementPlanList.Clear();
+		TempMovePath = new List<Vector3>();
+		TempMovePath.AddRange(MovePath);
+		TempLength = TotalLength + SectionLength;
+
+		TotalLength = 0;
+		SectionLength = 0;
+		if (MovePath != null) MovePath.Clear();
+		if (FindingPoints != null) FindingPoints.Clear();
+		if (ThisSeeker != null) ThisSeeker.CancelCurrentPathRequest();
 	}
-	Vector3 SmoothDampMove(Vector3 target, out Vector3 velocity, in float deltaTime)
+
+	bool FindNextMovementTarget(out Vector3 nextTarget)
+	{
+		if (EmptyPath)
+		{
+			nextTarget = CurrentPosition;
+			return false;
+		}
+		Vector3 curr = CurrentPosition;
+		List<Vector3> Path = HasTampPath ? TempMovePath : MovePath;
+
+		while (Path.Count >= 2)
+		{
+			Vector3 prev = Path[0];
+			Vector3 next = Path[1];
+			Vector3 toNextDir = next - prev;
+			Vector3 toMoveDir = next - curr;
+
+			float dot = Vector3.Dot(toMoveDir, toNextDir);
+			if (dot <= 0f)
+			{
+				RemoveAtFirst();
+				continue;
+			}
+			float sqrMagnitude = toMoveDir.sqrMagnitude;
+			if (Mathf.Approximately(sqrMagnitude, 0f))
+			{
+				RemoveAtFirst();
+				continue;
+			}
+			break;
+		}
+		if (Path.Count == 0)
+		{
+			nextTarget = CurrentPosition;
+			return false;
+		}
+		if (Path.Count == 1)
+		{
+			nextTarget = Path[0];
+			RemoveAtFirst();
+			return true;
+		}
+		nextTarget = Path[1];
+		return true;
+
+		void RemoveAtFirst()
+		{
+			if (Path.Count == 0) return;
+
+			if (Path.Count >= 2)
+			{
+				float distance = Vector3.Distance(Path[0], Path[1]);
+				TotalLength -= distance;
+				SectionLength = distance;
+			}
+			Path.RemoveAt(0);
+		}
+	}
+	Vector3 NextSmoothMovement(in Vector3 nextTarget, out Vector3 velocity, in float deltaTime)
 	{
 		Vector3 position = CurrentPosition;
 		velocity = CurrentVelocity;
-		float smoothTime = SmoothTime;
-		return Vector3.SmoothDamp(position, target, ref velocity, smoothTime, MaxSpeed, deltaTime);
-	}
-	bool FindRecentlyNode(out NetworkNode recentlyNode)
-	{
-		var find = StrategyManager.SectorNetwork.IndexToNode(RecentlyVisitedNode);
-		if(find != null)
+		float remainingDistance = HasTampPath? TempLength : TotalLength + SectionLength;
+		if (remainingDistance <= 0f || Mathf.Approximately(remainingDistance, 0f))
 		{
-			recentlyNode = find;
-			return true;
+			velocity = Vector3.zero;
+			return position;
 		}
+		Vector3 diraction = (nextTarget - position).normalized * remainingDistance;
 
-		if (StrategyManager.SectorNetwork.FindClosestNode(CurrentPosition, out recentlyNode))
+		Vector3 nextPosition = Vector3.SmoothDamp(position, position + diraction, ref velocity, SmoothTime, MaxSpeed, deltaTime);
+
+		float moveDelta = Vector3.Distance(position, nextPosition);
+		if (Vector3.Distance(position, nextPosition) > remainingDistance)
 		{
-			return recentlyNode != null;
+			nextPosition = nextTarget;
+			velocity = Vector3.zero;
 		}
-		return false;
+		return nextPosition;
 	}
+	public void NextConstantSpeedMovement(ref Vector3 nextTarget, out Vector3 velocity, in float deltaTime)
+	{
+		Vector3 position = CurrentPosition;
+		float remainingDistance = HasTampPath? TempLength : TotalLength + SectionLength;
+		float maxSpeed = MaxSpeed;
+
+		if (Mathf.Approximately(remainingDistance, 0f) || remainingDistance <= maxSpeed * deltaTime)
+		{
+			velocity = Vector3.zero;
+		}
+		Vector3 direction = (nextTarget - position).normalized;
+
+		velocity = direction * maxSpeed;
+		Vector3 nextPosition = position + velocity * deltaTime;
+
+		if (Vector3.Distance(position, nextTarget) > remainingDistance)
+		{
+			nextPosition = nextTarget;
+			velocity = Vector3.zero;
+		}
+		nextTarget = nextPosition;
+	}
+
 
 	void OnMoveStart();
-	void OnExitFirstNode();
-	void OnEnterLastNode();
-	void OnMoveEnded();
-	void OnSetPositionAndVelocity(in Vector3 position, in Vector3 velocity);
+	void OnMoveStop();
+	void SetPositionAndVelocity(in Vector3 position, in Vector3 delteMove, in Vector3 velocity, in float deltaTime);
+	void OnStayUpdate(in float deltaTime);
 }

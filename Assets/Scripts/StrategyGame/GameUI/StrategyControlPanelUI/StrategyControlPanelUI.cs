@@ -154,15 +154,14 @@ public partial class StrategyControlPanelUI
 			public IKeyPairChain KeyPair => keyPair;
 			public bool IsShow => isShow;
 			public bool IsViewValid => keyPair != null;
-			public ViewItem(TValue item, ControlPanelItem panel)
+			public ViewItem(TValue item, ControlPanelItem panel, bool callChangeValue = false)
 			{
 				value = item;
 				panelUI = panel;
 				keyPair = panel.panelObject.GetKeyPairChain();
 				isShow = false;
 				isDispose = false;
-				OnInit();
-				ChangeValue(Value);
+				if(callChangeValue) ChangeValue(Value);
 			}
 			public void Dispose()
 			{
@@ -192,7 +191,6 @@ public partial class StrategyControlPanelUI
 				if (this.value != null) OnAfterChangeValue();
 			}
 			protected abstract void OnDispose();
-			protected abstract void OnInit();
 			protected abstract void OnVisible();
 			protected abstract void OnInvisible();
 			protected abstract void OnBeforeChangeValue();

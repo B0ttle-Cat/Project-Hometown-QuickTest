@@ -63,7 +63,7 @@ public class StrategyManager : MonoBehaviour
 		viewAndControl = GetComponentInChildren<StrategyViewAndControlModeChanger>();
 
 	}
-	private void OnDestroy()
+    private void OnDestroy()
 	{
 		Manager = null;
 
@@ -119,6 +119,7 @@ public class StrategyManager : MonoBehaviour
 
 		OnStopGame();
 
+		#region 기초적인 유효성 검사
 		if ((gameUI = gameUI != null ? gameUI : FindAnyObjectByType<StrategyGameUI>()) != null)
 		{
 			gameUI.DeInit();
@@ -172,7 +173,9 @@ public class StrategyManager : MonoBehaviour
 			Debug.LogError("GameStart: No StrategyStatistics ThisComponent found in children of GameManager.");
 			return;
 		}
+		#endregion
 
+		#region 각 독립 기능의 초기화.
 		Collector.Init();
 		Mission.Init();
 		Statistics.Init();
@@ -182,26 +185,36 @@ public class StrategyManager : MonoBehaviour
 		key2Name = KeyPairDisplayName.Load(preparedData.LanguageType, "_Default");
 		key2Sprite = KeyPairSprite.Load(preparedData.LanguageType, "_Default");
 		key2UnitInfo = KeyPairUnitInfo.Load(preparedData.LanguageType, "_Default");
+		#endregion
+
+		#region 이 구역 순서에 주의할 것: 각 항목은 초기화를 위해 이전 항목의 정보를 요구 할 수 있음
 		// 시작 세력 세팅
 		setter.OnStartSetter_Faction();
 
 		// Sector 세팅
 		await setter.OnStartSetter_Sector();
 
-		// Sector Network 초기화
+		// Sector Network 세팅
 		await setter.OnStartSetter_SectorNetwork(sectorNetwork);
 
 		// Unit 세팅
 		await setter.OnStartSetter_Unit();
 
+		// Operation 세팅
+		await setter.OnStartSetter_Operation();
+
 		// 점령 지역 세팅
 		setter.OnStartSetter_Capture();
 
+		// 미션 정보 세팅
 		setter.OnStartSetter_Mission(mission);
+		#endregion
 
-		// 시작 전 대기 프레임
+		// 시작 전 대기 프레임 : 없어도 되긴 하지만 혹시 모를 안전성을 위하여.
+		// 어떠한 경우라도 OnStartGame 는 현재 활성화 되어 있는 모든 오브젝트들의 Awake 와 OnEnable 다음에 호출 되도록 하기 위하여.
 		await Awaitable.NextFrameAsync();
 
+		#region 초기화 작업 마무리
 		Destroy(setter);
 		setter = null;
 
@@ -222,6 +235,7 @@ public class StrategyManager : MonoBehaviour
 			updater.SetTime(time);
 			time.enabled = true;
 		}
+		#endregion
 
 		OnStartGame();
 	}
