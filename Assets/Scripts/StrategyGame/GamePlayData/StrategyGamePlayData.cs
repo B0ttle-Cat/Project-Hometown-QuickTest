@@ -677,14 +677,11 @@ public partial class StrategyGamePlayData
 		[HorizontalGroup, HideLabel, SerializeField]
 		private int value;
 
-		public StatsType StatsType => statsType;
+		public readonly StatsType StatsType => statsType;
 		public int Value
 		{
-			get => value; set
-			{
-				if (this.value == value) return;
-				this.value = value;
-			}
+            readonly get => value;
+			set => this.value = value;
 		}
 
 		public StatsValue(StatsType statsType)
@@ -692,58 +689,38 @@ public partial class StrategyGamePlayData
 			this.statsType = statsType;
 			this.value = 0;
 		}
+		public StatsValue((StatsType t, int v) item)
+		{
+			this.statsType = item.t;
+			this.value = item.v;
+		}
 		public StatsValue(StatsType statsType, int value)
 		{
 			this.statsType = statsType;
 			this.value = value;
 		}
-
-		public static StatsValue operator +(StatsValue p1, StatsValue p2)
-		{
-			if (p1.statsType != StatsType.None)
-			{
-				return new StatsValue(p1.statsType, p1.value + p2.value);
-			}
-			else
-			{
-				return new StatsValue(p2.statsType, p1.value + p2.value);
-			}
-		}
-		public static StatsValue operator -(StatsValue p1, StatsValue p2)
-		{
-			if (p1.statsType != StatsType.None)
-			{
-				return new StatsValue(p1.statsType, p1.value - p2.value);
-			}
-			else
-			{
-				return new StatsValue(p2.statsType, p1.value - p2.value);
-			}
-		}
-		public static StatsValue operator +(StatsValue p1, int p2)
-		{
-			return new StatsValue(p1.statsType, p1.value + p2);
-		}
-		public static StatsValue operator -(StatsValue p1, int p2)
-		{
-			return new StatsValue(p1.statsType, p1.value - p2);
-		}
-		public static StatsValue operator +(int p1, StatsValue p2)
-		{
-			return new StatsValue(p2.statsType, p1 + p2.value);
-		}
-		public static StatsValue operator -(int p1, StatsValue p2)
-		{
-			return new StatsValue(p2.statsType, p1 - p2.value);
-		}
-		public static bool operator ==(StatsValue p1, StatsValue p2)
-		{
-			return p1.Equals(p2);
-		}
-		public static bool operator !=(StatsValue p1, StatsValue p2)
-		{
-			return !p1.Equals(p2);
-		}
+		// int로 변환
+		public static implicit operator int(StatsValue v) =>v.value;
+		public static StatsValue operator +(StatsValue p1, StatsValue p2) => new StatsValue(p1.statsType != StatsType.None ? p1.statsType : p2.statsType, p1.value + p2.value);
+		public static StatsValue operator -(StatsValue p1, StatsValue p2) => new StatsValue(p1.statsType != StatsType.None ? p1.statsType : p2.statsType, p1.value - p2.value);
+		public static StatsValue operator +(StatsValue p1, int p2) => new StatsValue(p1.statsType, p1.value + p2);
+		public static StatsValue operator -(StatsValue p1, int p2) => new StatsValue(p1.statsType, p1.value - p2);
+		public static int operator +(int p1, StatsValue p2) => p1 + p2.value;
+		public static int operator -(int p1, StatsValue p2) => p1 - p2.value;
+		public static bool operator >(StatsValue a, StatsValue b) => a.value > b.value;
+		public static bool operator <(StatsValue a, StatsValue b) => a.value < b.value;
+		public static bool operator >(StatsValue a, int b) => a.value > b;
+		public static bool operator <(StatsValue a, int b) => a.value < b;
+		public static bool operator >(int a, StatsValue b) => a > b.value;
+		public static bool operator <(int a, StatsValue b) => a < b.value;
+		public static bool operator >=(StatsValue a, StatsValue b) => a.value >= b.value;
+		public static bool operator <=(StatsValue a, StatsValue b) => a.value <= b.value;
+		public static bool operator >=(StatsValue a, int b) => a.value >= b;
+		public static bool operator <=(StatsValue a, int b) => a.value <= b;
+		public static bool operator >=(int a, StatsValue b) => a >= b.value;
+		public static bool operator <=(int a, StatsValue b) => a <= b.value;
+		public static bool operator ==(StatsValue p1, StatsValue p2) => p1.Equals(p2);
+		public static bool operator !=(StatsValue p1, StatsValue p2) => !p1.Equals(p2);
 		public override bool Equals(object obj)
 		{
 			return obj is StatsValue value &&
@@ -755,6 +732,14 @@ public partial class StrategyGamePlayData
 			return HashCode.Combine(statsType, value);
 		}
 		public static StatsValue None => new StatsValue(StatsType.None);
+		public void Clamp(int min, int max)
+		{
+			value = Mathf.Clamp(value, max, max);
+		}
+		public void Negate()
+		{
+			value = -value;
+		}
 	}
 	[Serializable]
 	public class StatsList : IDisposable, IDataCopy<StatsList>
@@ -873,7 +858,7 @@ public partial class StrategyGamePlayData
 			if (findindex < 0)
 			{
 				findindex = values.Count;
-				values.Add(value);
+				values.Add((new StatsValue(value.StatsType)));
 			}
 			var nextValue = values[findindex] + value;
 			if (values[findindex] != nextValue)
@@ -896,7 +881,7 @@ public partial class StrategyGamePlayData
 			if (findindex < 0)
 			{
 				findindex = values.Count;
-				values.Add(0 - value);
+				values.Add(new StatsValue(value.StatsType));
 			}
 			var nextValue = values[findindex] - value;
 			if (values[findindex] != nextValue)

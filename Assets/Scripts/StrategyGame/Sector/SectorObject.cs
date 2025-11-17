@@ -94,7 +94,7 @@ public partial class SectorObject // Getter
 	{
 		return (0, 0);
 	}
-	public (int value, int max) GetOperation()
+	public (int value, int max) GetPersonnel()
 	{
 		return (0, 0);
 	}
@@ -112,6 +112,24 @@ public partial class SectorObject // Getter
 		data.captureFactionID = factionID;
 		data.captureProgress = progress;
 		capture.Invoke();
+	}
+	public void SetPersonnel(int value, int max)
+	{
+	}
+	public void SetMaterial(int value, int max)
+	{
+	}
+	public void SetElectric(int value, int max)
+	{
+	}
+	public void SetPersonnel(int value)
+	{
+	}
+	public void SetMaterial(int value)
+	{
+	}
+	public void SetElectric(int value)
+	{
 	}
 
 	public bool OverlapTrigger(in Vector3 point)

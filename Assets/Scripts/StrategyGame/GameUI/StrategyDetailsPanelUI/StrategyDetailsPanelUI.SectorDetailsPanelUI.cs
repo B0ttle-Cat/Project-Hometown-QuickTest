@@ -370,7 +370,7 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 			void UpdateFillRectUI()
 			{
 				SetFillRectUI("Fill Durability", selectSector.GetDurability(), "방어벽 없음");
-				SetFillRectUI("Fill Operation", selectSector.GetOperation(), "병력 보충 불가");
+				SetFillRectUI("Fill Operation", selectSector.GetPersonnel(), "병력 보충 불가");
 				SetFillRectUI("Fill Material", selectSector.GetMaterial(), "물자 보충 불가");
 				SetFillRectUI("Fill Electric", selectSector.GetElectric(), "전력 보충 불가");
 			}

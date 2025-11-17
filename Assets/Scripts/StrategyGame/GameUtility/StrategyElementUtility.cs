@@ -44,7 +44,7 @@ public static class StrategyElementUtility
 
 		if (StrategyManager.Collector.TryFindFaction(factionID, out var faction))
 		{
-			faction.PayFor_UnitCounter(profile.유닛_인력);
+			faction.API_UnitCounter(profile.유닛_인력);
 		}
 		return unitObject;
 	}
@@ -54,7 +54,7 @@ public static class StrategyElementUtility
 		
 		if (StrategyManager.Collector.TryFindFaction(unitObject.FactionID, out var faction))
 		{
-			faction.PayFor_UnitCounter(-unitObject.StatsData.GetValue(StatsType.유닛_인력));
+			faction.API_UnitCounter(-unitObject.StatsData.GetValue(StatsType.유닛_인력));
 		}
 		unitObject.Deinit();
 		StrategyManager.Collector.RemoveElement<UnitObject>(unitObject);

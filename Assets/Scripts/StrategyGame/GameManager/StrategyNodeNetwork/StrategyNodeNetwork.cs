@@ -40,6 +40,19 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 	AstarPath ActiveAstarPath => AstarPath.active;
 	PointGraph thisPointGraph;
 
+	public class SectorNode
+	{
+		public SectorObject sector;
+		public Vector3 position;
+
+		public NodeNetworkInfo[] nodeNetworkInfo;
+
+		public struct NodeNetworkInfo
+		{
+			public SectorObject nextSector;
+		}
+	}
+
 	public async Awaitable Init(List<SectorObject> sectorList, StrategyStartSetterData.SectorLinkData[] sectorLinkData)
 	{
 		AstarData data = ActiveAstarPath.data;
