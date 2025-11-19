@@ -121,11 +121,11 @@ public partial class StrategyUpdate
 				//	return cbBuffList;
 				//}
 				//
-				//StatsList MainStatsList = sector.MainStatsList;
+				//StatsList CurrStatsList = sector.CurrStatsList;
 				//StatsGroup FacilitiesBuffGroup = sector.TryGetStatsList_Facilities;
 				//StatsGroup supportBuffGroup = sector.SupportBuffGroup;
 				//
-				//var mainList = MainStatsList.GetValueList(SectorBuffType);
+				//var mainList = CurrStatsList.GetValueList(SectorBuffType);
 				//var facilitiesList = FacilitiesBuffGroup.GetValueList(SectorBuffType);
 				//var supportList = supportBuffGroup.GetValueList(SectorBuffType);
 				//

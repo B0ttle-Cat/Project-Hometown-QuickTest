@@ -46,7 +46,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2d82bbf2c5d767348a29fc6784ffc047, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlPoint
+  m_EditorClassIdentifier: Assembly-CSharp::SectorObject
 --- !u!114 &3338242986635090369
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,4 +1,4 @@
-fileFormatVersion: 2
+﻿fileFormatVersion: 2
 guid: 97fe0319f1fc73b43a9b0fa05370679b
 TextureImporter:
   internalIDToNameTable: []
@@ -163,7 +163,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: electric
+      name: electricity
       rect:
         serializedVersion: 2
         x: 587
@@ -201,7 +201,7 @@ TextureImporter:
         value: '{"sliceOnImport":false,"gridCellCount":{"x":2.0,"y":2.0},"gridSpriteSize":{"x":587.0,"y":586.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
       base: 1218001533
-      electric: -1710544365
+      electricity: -1710544365
       material: 1328324774
       personnel: -1346640611
   mipmapLimitGroupName: 

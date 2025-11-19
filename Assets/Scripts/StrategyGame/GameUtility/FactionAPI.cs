@@ -31,7 +31,7 @@ public static class FactionAPI
 		return nowValue >= value;
 	}
 
-	public static bool API_CanAffordElectric(this Faction faction, int value)
+	public static bool API_CanAffordElectricity(this Faction faction, int value)
 	{
 		if (faction.IsNotAlive()) return false;
 
@@ -46,7 +46,7 @@ public static class FactionAPI
 		if (faction.IsNotAlive()) return;
 
 		var sectorList = StrategyManager.Collector.SectorList;
-		var values = sectorList.Where(i => i.CaptureFaction == faction).Select(i => i.GetElectric().value).ToArray();
+		var values = sectorList.Where(i => i.CaptureFaction == faction).Select(i => i.GetElectricity().value).ToArray();
 
 		//StrategyManager.NodeNetwork
 
@@ -59,7 +59,7 @@ public static class FactionAPI
 		//	{
 		//		var sector = sectorList[i];
 		//		total += values[i];
-		//		sector.SetElectric(values[i]);
+		//		sector.SetElectricity(values[i]);
 		//	}
 
 		//	totalValue.Value = value;
@@ -67,12 +67,12 @@ public static class FactionAPI
 		//}
 	}
 
-	public static void API_PayForElectric(this Faction faction, int value)
+	public static void API_PayForElectricity(this Faction faction, int value)
 	{
 		if (faction.IsNotAlive()) return;
 
 		var sectorList = StrategyManager.Collector.SectorList;
-		var values = sectorList.Where(i => i.CaptureFaction == faction).Select(i => i.GetElectric().value).ToArray();
+		var values = sectorList.Where(i => i.CaptureFaction == faction).Select(i => i.GetElectricity().value).ToArray();
 
 		StatsValue totalValue = faction.FactionStats.GetValue(StatsType.세력_전력_현재);
 		if(PayCostByCutDown(value, totalValue, values))
@@ -83,7 +83,7 @@ public static class FactionAPI
             {
 				var sector = sectorList[i];
 				total += values[i];
-				sector.SetElectric(values[i]);
+				sector.SetElectricity(values[i]);
 			}
 			
 			totalValue.Value = value;
@@ -106,7 +106,7 @@ public static class FactionAPI
 		faction.FactionStats.SetValue(nowValue);
 	}
 
-	public static void API_SupplyElectric(this Faction faction, int value)
+	public static void API_SupplyElectricity(this Faction faction, int value)
 	{
 		if (faction.IsNotAlive()) return;
 
@@ -130,7 +130,7 @@ public static class FactionAPI
 		return nowValue >= maxValue;
 	}
 
-	public static bool API_IsElectricFull(this Faction faction)
+	public static bool API_IsElectricityFull(this Faction faction)
 	{
 		if (faction.IsNotAlive()) return true;
 

@@ -77,8 +77,8 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		[FoldoutGroup("@factionName/Stats")] public int maxMaterialPoint;
 		[FoldoutGroup("@factionName/Stats")] public int currentMaterialPoint;
 		[Space]
-		[FoldoutGroup("@factionName/Stats")] public int maxElectricPoint;
-		[FoldoutGroup("@factionName/Stats")] public int currentElectricPoint;
+		[FoldoutGroup("@factionName/Stats")] public int maxElectricityPoint;
+		[FoldoutGroup("@factionName/Stats")] public int currentElectricityPoint;
 		[Space]
 		[FoldoutGroup("@factionName/Stats")] public int captureSpeed;
 
@@ -146,7 +146,6 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 			mainStatsData = Target.StatsData.Copy();
 			facilitiesStatsData = Target.FacilitiesData.Copy();
 			supportStatsData = Target.SupportData.Copy();
-			spawnOperationData = Target.SpawnOperationData.Copy();
 			captureTime = Target.CaptureData.captureTime;
 
 			profileData.sectorName = Target.gameObject.name;
@@ -158,7 +157,6 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 			Target.Stats.SetData(mainStatsData.Copy(), true);
 			Target.Facilities.SetData(facilitiesStatsData.Copy(), true);
 			Target.Support.SetData(supportStatsData.Copy(), true);
-			Target.SpawnOperation.SetData(spawnOperationData.Copy(), true);
 
 			var captureData =  Target.CaptureData;
 			captureData.captureTime = captureTime;
@@ -168,6 +166,7 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		[ButtonGroup("@GroupName/Button"), PropertyOrder(-98)]
 		private void ResetDetulsStats()
 		{
+			profileData.currentStats = StatsList.SectorCurrentStatsList;
 			mainStatsData.stats = StatsList.SectorStatsList;
 		}
 #endif
@@ -182,8 +181,6 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		public StrategyGamePlayData.SectorData.Facilities.Data facilitiesStatsData;
 		[InlineProperty, HideLabel, FoldoutGroup("@GroupName/Support")]
 		public StrategyGamePlayData.SectorData.Support.Data supportStatsData;
-		[InlineProperty, HideLabel, FoldoutGroup("@GroupName/Spawn")]
-		public StrategyGamePlayData.SectorData.SpawnOperation.Data spawnOperationData;
 	}
 	[Serializable]
 	public struct UnitData

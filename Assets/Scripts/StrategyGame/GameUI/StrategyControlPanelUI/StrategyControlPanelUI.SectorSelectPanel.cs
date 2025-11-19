@@ -241,7 +241,7 @@ public partial class StrategyControlPanelUI // SectorSelectPanel
 				SetFillRectUI("Fill Durability", Value.GetDurability());
 				SetFillRectUI("Fill Operation", Value.GetPersonnel());
 				SetFillRectUI("Fill Material", Value.GetMaterial());
-				SetFillRectUI("Fill Electric", Value.GetElectric());
+				SetFillRectUI("Fill Electricity", Value.GetElectricity());
 			}
 			private void SetFillRectUI(string fillRectName, (int value, int max, int supply) item)
 			{

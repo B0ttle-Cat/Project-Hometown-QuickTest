@@ -3,9 +3,9 @@
 using static StrategyGamePlayData;
 public partial class StrategyUpdate
 {
-	public class StrategyUpdate_ElectricSupply : StrategyUpdateSubClass<StrategyUpdate_ElectricSupply.ResourcesSupply>
+	public class StrategyUpdate_ElectricitySupply : StrategyUpdateSubClass<StrategyUpdate_ElectricitySupply.ResourcesSupply>
 	{
-		public StrategyUpdate_ElectricSupply(StrategyUpdate updater) : base(updater)
+		public StrategyUpdate_ElectricitySupply(StrategyUpdate updater) : base(updater)
 		{
 		}
 		protected override void Start()
@@ -61,7 +61,8 @@ public partial class StrategyUpdate
 
 				int max = sector.SectorStatsGroup.GetValue(MaxType);
 				int supply = sector.SectorStatsGroup.GetValue(SupplyType);
-				int curr = sector.MainStatsList.GetValue(CurrType);
+				int curr = sector.CurrStatsList.GetValue(CurrType);
+				if (max < curr) return;
 
 				bool isUpdate = false;
 
@@ -71,11 +72,11 @@ public partial class StrategyUpdate
 
 				if (isUpdate)
 				{
-					sector.SetElectric(curr);
+					sector.SetElectricity(curr);
 
 					string key = $"{sector.SectorName}_{UpdateLogicSort.거점_자원갱신이벤트}";
 					TempData.SetTrigger(key, UpdateLogicSort.거점_자원갱신이벤트);
-					//Debug.Log($"Pressed ElectricSupply| Sector:{sector.SectorName,-10} | Faction:{sector.CaptureData.captureFactionID,-10} | Point:{curr,4}/{max-4}");
+					//Debug.Log($"Pressed ElectricitySupply| Sector:{sector.SectorName,-10} | Faction:{sector.CaptureData.captureFactionID,-10} | Point:{curr,4}/{max-4}");
 				}
 			}
 		}

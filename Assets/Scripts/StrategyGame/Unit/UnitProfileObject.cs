@@ -88,7 +88,6 @@ public class UnitProfileObject : ScriptableObject
 			유닛_전력 = statsData.GetValue(StatsType.유닛_전력);
 
 			유닛_최대내구도 = statsData.GetValue(StatsType.유닛_최대내구도);
-			유닛_현재내구도 = statsData.GetValue(StatsType.유닛_현재내구도);
 
 			유닛_공격력 = statsData.GetValue(StatsType.유닛_공격력);
 			유닛_방어력 = statsData.GetValue(StatsType.유닛_방어력);
@@ -145,7 +144,6 @@ public class UnitProfileObject : ScriptableObject
 			statsData.SetValue(StatsType.유닛_전력, 유닛_전력);
 
 			statsData.SetValue(StatsType.유닛_최대내구도, 유닛_최대내구도);
-			statsData.SetValue(StatsType.유닛_현재내구도, 유닛_현재내구도);
 
 			statsData.SetValue(StatsType.유닛_공격력, 유닛_공격력);
 			statsData.SetValue(StatsType.유닛_방어력, 유닛_방어력);
@@ -248,7 +246,6 @@ public class UnitProfileObject : ScriptableObject
 			new (StatsType.유닛_전력, 유닛_전력),
 
 			new (StatsType.유닛_최대내구도, 유닛_최대내구도),
-			new (StatsType.유닛_현재내구도, 유닛_현재내구도),
 			new (StatsType.유닛_공격력, 유닛_공격력),
 			new (StatsType.유닛_방어력, 유닛_방어력),
 			new (StatsType.유닛_치유력, 유닛_치유력),

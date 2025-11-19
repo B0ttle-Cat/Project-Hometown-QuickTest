@@ -235,14 +235,16 @@ public partial class StrategyMapPanelUI // SectorLabelGroup
 
 				selectButton.onClick.RemoveAllListeners();
 				selectButton.onClick.AddListener(() => StrategyManager.Selecter.OnSystemSelectObject(Sector));
-				if (Sector != null && Sector.TryGetStatsList_StatusEffec(out var statsList))
+				if (Sector != null)
 				{
 					Sector.SectorStatsGroup.AddListener(OnChangeStatsGroup, OnChangeStatsGroup);
 				}
 			}
 
-			public void OnChangeStatsGroup(string _)
+			public void OnChangeStatsGroup(string changeKey)
 			{
+				if (string.IsNullOrWhiteSpace(changeKey)) return;
+				if (!changeKey.StartsWith(SectorObject.StatsGroupName_MainStats)) return;
 				ChangeIconList();
 			}
 			public void ChangeIconList()
@@ -255,11 +257,12 @@ public partial class StrategyMapPanelUI // SectorLabelGroup
 					}
 					iconlist ??= new List<GameObject>();
 					iconlist.Clear();
-					Sector.TryGetStatsList_StatusEffec(out var statsList);
+
 					var keyList = Sector.GetStatsKeyListInGroup(SectorObject.StatsGroupName_StatusEffect);
-					foreach(string key in keyList)
+					int substringCount = SectorObject.StatsGroupName_StatusEffect.Length;
+					foreach (string key in keyList)
 					{
-						string iconKey = $"Icon_status_effect_{key}";
+						string iconKey = $"Icon_status_effect_{key.Substring(substringCount)}";
 						if (StrategyManager.Key2Sprite.TryGetAsset(iconKey, out var sprite) && sprite != null)
 						{
 							KeyPair.FindPairChainAndCopy<Image>("Icon", iconParent, out var iconImage);

@@ -325,7 +325,10 @@ public partial class StrategyGamePlayData
 				// 적용되어 있는 각종 효과
 				public EffectsFlag effects;
 
-				public StatsList defaultStats;
+				[FoldoutGroup("CurrentStats"),InlineProperty,HideLabel]
+				public StatsList currentStats;
+				[FoldoutGroup("EffectStats"),InlineProperty,HideLabel]
+				public StatsList effectsStats;
 
 				public readonly string EffectString()
 				{
@@ -338,12 +341,13 @@ public partial class StrategyGamePlayData
 						sectorName = sectorName,
 						environmentalKey = environmentalKey,
 						effects = effects,
-						defaultStats = defaultStats.Copy(),
+						currentStats = currentStats.Copy(),
+						effectsStats = effectsStats.Copy()
 					};
 				}
 				public StatsList GetStatsList()
 				{
-					return defaultStats;
+					return currentStats;
 				}
 			}
 		}
@@ -377,6 +381,7 @@ public partial class StrategyGamePlayData
 			[Serializable]
 			public struct Data : IDataCopy<Data>
 			{
+				[InlineProperty,HideLabel]
 				public StatsList stats;
 				public Data(StatsList stats = null) : this()
 				{
@@ -474,32 +479,6 @@ public partial class StrategyGamePlayData
 				Defensive,
 				Supply,
 				Facilities,
-			}
-		}
-
-		[Serializable]
-		public class SpawnOperation : GamePlayData<SpawnOperation.Data>
-		{
-			public SpawnOperation(Data data) : base(data)
-			{
-			}
-			[Serializable]
-			public struct Data : IDataCopy<Data>
-			{
-				public SpawnInfo[] supportInfos;
-
-				public Data Copy()
-				{
-					return new Data()
-					{
-						supportInfos = supportInfos.Clone() as SpawnInfo[],
-					};
-				}
-			}
-			[Serializable]
-			public struct SpawnInfo
-			{
-
 			}
 		}
 	}
@@ -655,23 +634,17 @@ public partial class StrategyGamePlayData
 		}
 	}
 
-
-
-	public static StatsType[] SectorDurabilityStats =new StatsType[]
+	public static StatsType[] SectorCurrentStats =new StatsType[]
 	{
-		StatsType.거점_내구도_최대,
 		StatsType.거점_내구도_현재,
-	};
-
-	public static StatsType[] SectorSupplyStats =new StatsType[]
-	{
 		StatsType.거점_인력_현재,
 		StatsType.거점_물자_현재,
 		StatsType.거점_전력_현재,
 	};
 
 	public static StatsType[] SectorSupplyStats_Max =new StatsType[]
-	{
+	{   
+		StatsType.거점_내구도_최대,
 		StatsType.거점_인력_최대,
 		StatsType.거점_물자_최대,
 		StatsType.거점_전력_최대,
@@ -817,19 +790,21 @@ public partial class StrategyGamePlayData
 			);
 		public static StatsList SectorStatsList => new StatsList(
 				new StatsValue(StatsType.거점_내구도_최대, 500),
-				new StatsValue(StatsType.거점_내구도_현재, 500),
 
 				new StatsValue(StatsType.거점_인력_최대, 100),
 				new StatsValue(StatsType.거점_물자_최대, 1000),
 				new StatsValue(StatsType.거점_전력_최대, 1000),
 
-				new StatsValue(StatsType.거점_인력_현재, 50),
-				new StatsValue(StatsType.거점_물자_현재, 50),
-				new StatsValue(StatsType.거점_전력_현재, 50),
-
+				new StatsValue(StatsType.거점_내구도_회복, 5),
 				new StatsValue(StatsType.거점_인력_회복, 5),
 				new StatsValue(StatsType.거점_물자_회복, 50),
 				new StatsValue(StatsType.거점_전력_회복, 50)
+		);
+		public static StatsList SectorCurrentStatsList => new StatsList(
+				new StatsValue(StatsType.거점_내구도_현재, 500),
+				new StatsValue(StatsType.거점_인력_현재, 0),
+				new StatsValue(StatsType.거점_물자_현재, 0),
+				new StatsValue(StatsType.거점_전력_현재, 0)
 		);
 		public void Invoke(in StatsValue statsValue)
 		{
@@ -1090,6 +1065,7 @@ public partial class StrategyGamePlayData
 		}
 		public void SetList(string key, StatsList list)
 		{
+			if (string.IsNullOrWhiteSpace(key) || list == null) return;
 			int findindex = values.FindIndex(b=>b.Key == key);
 			if (findindex < 0)
 			{

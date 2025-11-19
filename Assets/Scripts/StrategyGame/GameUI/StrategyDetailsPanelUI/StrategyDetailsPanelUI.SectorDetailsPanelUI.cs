@@ -376,7 +376,7 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 			void OnChangeStatsData(SectorData.MainStats.Data data)
 			{
 				UpdateFillRectUI();
-				UpdateStatePanel("Stats KeyValue", "Base Stats", selectSector.MainStatsList?.GetValueList());
+				UpdateStatePanel("Stats KeyValue", "Base Stats", selectSector.CurrStatsList?.GetValueList());
 			}
 			void OnChangeFacilitiesData(SectorData.Facilities.Data data)
 			{
@@ -395,7 +395,7 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 				SetFillRectUI("Fill Durability", selectSector.GetDurability(), "방어벽 없음");
 				SetFillRectUI("Fill Operation", selectSector.GetPersonnel(), "병력 보충 불가");
 				SetFillRectUI("Fill Material", selectSector.GetMaterial(), "물자 보충 불가");
-				SetFillRectUI("Fill Electric", selectSector.GetElectric(), "전력 보충 불가");
+				SetFillRectUI("Fill Electricity", selectSector.GetElectricity(), "전력 보충 불가");
 			}
 			void UpdateStatePanel(string stateItemName, string statePanelName, List<StatsValue> list)
 			{

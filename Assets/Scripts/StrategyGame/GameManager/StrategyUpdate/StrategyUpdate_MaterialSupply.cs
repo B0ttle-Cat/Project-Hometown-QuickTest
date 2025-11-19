@@ -61,7 +61,7 @@ public partial class StrategyUpdate
 
 				int max = sector.SectorStatsGroup.GetValue(MaxType);
 				int supply = sector.SectorStatsGroup.GetValue(SupplyType);
-				int curr = sector.MainStatsList.GetValue(CurrType);
+				int curr = sector.CurrStatsList.GetValue(CurrType);
 
 				bool isUpdate = false;
 

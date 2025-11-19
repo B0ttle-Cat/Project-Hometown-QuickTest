@@ -1,4 +1,4 @@
-%YAML 1.1
+﻿%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &11400000
 MonoBehaviour:
@@ -35,8 +35,8 @@ MonoBehaviour:
       currentOperationPoint: 0
       maxMaterialPoint: 100
       currentMaterialPoint: 0
-      maxElectricPoint: 100
-      currentElectricPoint: 0
+      maxElectricityPoint: 100
+      currentElectricityPoint: 0
       captureSpeed: 1
       defaultUnitPrefab: {fileID: 2460545361625872358, guid: 47ee3d89ec6dbf842b177734ea94c8d2, type: 3}
       availableUnitKeyList:
@@ -51,8 +51,8 @@ MonoBehaviour:
       currentOperationPoint: 0
       maxMaterialPoint: 100
       currentMaterialPoint: 0
-      maxElectricPoint: 100
-      currentElectricPoint: 0
+      maxElectricityPoint: 100
+      currentElectricityPoint: 0
       captureSpeed: 0
       defaultUnitPrefab: {fileID: 2460545361625872358, guid: 47ee3d89ec6dbf842b177734ea94c8d2, type: 3}
       availableUnitKeyList:
@@ -64,30 +64,34 @@ MonoBehaviour:
         sectorName: Sector_00
         environmentalKey: 
         effects: 0
+        currentStats:
+          values:
+          - statsType: 2032
+            value: 500
+          - statsType: 2002
+            value: 0
+          - statsType: 2012
+            value: 0
+          - statsType: 2022
+            value: 0
       mainStatsData:
         stats:
           values:
-          - statsType: 2100
-            value: 500
-          - statsType: 2101
+          - statsType: 2030
             value: 500
           - statsType: 2000
             value: 100
-          - statsType: 2001
-            value: 1000
-          - statsType: 2002
+          - statsType: 2010
             value: 1000
           - statsType: 2020
-            value: 50
-          - statsType: 2021
-            value: 50
-          - statsType: 2022
-            value: 50
-          - statsType: 2010
+            value: 1000
+          - statsType: 2031
+            value: 5
+          - statsType: 2001
             value: 5
           - statsType: 2011
             value: 50
-          - statsType: 2012
+          - statsType: 2021
             value: 50
       captureTime: 0
       facilitiesStatsData:
@@ -104,30 +108,34 @@ MonoBehaviour:
         sectorName: Sector_01
         environmentalKey: 
         effects: 0
+        currentStats:
+          values:
+          - statsType: 2032
+            value: 500
+          - statsType: 2002
+            value: 0
+          - statsType: 2012
+            value: 0
+          - statsType: 2022
+            value: 0
       mainStatsData:
         stats:
           values:
-          - statsType: 2100
-            value: 500
-          - statsType: 2101
+          - statsType: 2030
             value: 500
           - statsType: 2000
             value: 100
-          - statsType: 2001
-            value: 1000
-          - statsType: 2002
+          - statsType: 2010
             value: 1000
           - statsType: 2020
-            value: 50
-          - statsType: 2021
-            value: 50
-          - statsType: 2022
-            value: 50
-          - statsType: 2010
+            value: 1000
+          - statsType: 2031
+            value: 5
+          - statsType: 2001
             value: 5
           - statsType: 2011
             value: 50
-          - statsType: 2012
+          - statsType: 2021
             value: 50
       captureTime: 0
       facilitiesStatsData:
@@ -144,30 +152,34 @@ MonoBehaviour:
         sectorName: Sector_02
         environmentalKey: 
         effects: 0
+        currentStats:
+          values:
+          - statsType: 2032
+            value: 500
+          - statsType: 2002
+            value: 0
+          - statsType: 2012
+            value: 0
+          - statsType: 2022
+            value: 0
       mainStatsData:
         stats:
           values:
-          - statsType: 2100
-            value: 500
-          - statsType: 2101
+          - statsType: 2030
             value: 500
           - statsType: 2000
             value: 100
-          - statsType: 2001
-            value: 1000
-          - statsType: 2002
+          - statsType: 2010
             value: 1000
           - statsType: 2020
-            value: 50
-          - statsType: 2021
-            value: 50
-          - statsType: 2022
-            value: 50
-          - statsType: 2010
+            value: 1000
+          - statsType: 2031
+            value: 5
+          - statsType: 2001
             value: 5
           - statsType: 2011
             value: 50
-          - statsType: 2012
+          - statsType: 2021
             value: 50
       captureTime: 0
       facilitiesStatsData:
@@ -184,30 +196,34 @@ MonoBehaviour:
         sectorName: Sector_03
         environmentalKey: 
         effects: 0
+        currentStats:
+          values:
+          - statsType: 2032
+            value: 500
+          - statsType: 2002
+            value: 0
+          - statsType: 2012
+            value: 0
+          - statsType: 2022
+            value: 0
       mainStatsData:
         stats:
           values:
-          - statsType: 2100
-            value: 500
-          - statsType: 2101
+          - statsType: 2030
             value: 500
           - statsType: 2000
             value: 100
-          - statsType: 2001
-            value: 1000
-          - statsType: 2002
+          - statsType: 2010
             value: 1000
           - statsType: 2020
-            value: 50
-          - statsType: 2021
-            value: 50
-          - statsType: 2022
-            value: 50
-          - statsType: 2010
+            value: 1000
+          - statsType: 2031
+            value: 5
+          - statsType: 2001
             value: 5
           - statsType: 2011
             value: 50
-          - statsType: 2012
+          - statsType: 2021
             value: 50
       captureTime: 0
       facilitiesStatsData:
@@ -224,30 +240,34 @@ MonoBehaviour:
         sectorName: Sector_04
         environmentalKey: 
         effects: 0
+        currentStats:
+          values:
+          - statsType: 2032
+            value: 500
+          - statsType: 2002
+            value: 0
+          - statsType: 2012
+            value: 0
+          - statsType: 2022
+            value: 0
       mainStatsData:
         stats:
           values:
-          - statsType: 2100
-            value: 500
-          - statsType: 2101
+          - statsType: 2030
             value: 500
           - statsType: 2000
             value: 100
-          - statsType: 2001
-            value: 1000
-          - statsType: 2002
+          - statsType: 2010
             value: 1000
           - statsType: 2020
-            value: 50
-          - statsType: 2021
-            value: 50
-          - statsType: 2022
-            value: 50
-          - statsType: 2010
+            value: 1000
+          - statsType: 2031
+            value: 5
+          - statsType: 2001
             value: 5
           - statsType: 2011
             value: 50
-          - statsType: 2012
+          - statsType: 2021
             value: 50
       captureTime: 0
       facilitiesStatsData:

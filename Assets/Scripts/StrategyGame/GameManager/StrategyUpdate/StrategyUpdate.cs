@@ -158,7 +158,7 @@ public partial class StrategyUpdate : MonoBehaviour
 			(UpdateLogicSort.거점_시설_건설,  new StrategyUpdate_ConstructUpdate(this)),
 			(UpdateLogicSort.거점_시설버프계산,  null),
 
-			(UpdateLogicSort.거점_전력_보충,  new StrategyUpdate_ElectricSupply(this)),
+			(UpdateLogicSort.거점_전력_보충,  new StrategyUpdate_ElectricitySupply(this)),
 			(UpdateLogicSort.거점_물자_보충,  new StrategyUpdate_MaterialSupply(this)),
 			(UpdateLogicSort.거점_인력_보충,  new StrategyUpdate_PersonnelSupply(this)),
 
