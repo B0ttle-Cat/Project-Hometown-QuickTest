@@ -50,7 +50,7 @@ public partial class StrategyUpdate
             {
 				if (sector == null || !sector.isActiveAndEnabled) return;
 
-				string key = $"{sector.SectorName}_{UpdateLogicSort.거점_자원갱신종료이벤트}";
+				string key = $"{sector.SectorName}_{UpdateLogicSort.거점_자원갱신종료}";
 				if (!TempData.GetTrigger(key)) return;
 
 				sector.Stats.Invoke();

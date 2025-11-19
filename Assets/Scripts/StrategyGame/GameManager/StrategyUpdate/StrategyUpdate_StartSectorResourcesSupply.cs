@@ -3,9 +3,9 @@
 using static StrategyGamePlayData;
 public partial class StrategyUpdate
 {
-	public class StrategyUpdate_ResourcesSupply : StrategyUpdateSubClass<StrategyUpdate_ResourcesSupply.ResourcesSupply>
-	{
-		public StrategyUpdate_ResourcesSupply(StrategyUpdate updater) : base(updater)
+	public class StrategyUpdate_StartSectorResourcesSupply : StrategyUpdateSubClass<StrategyUpdate_StartSectorResourcesSupply.ResourcesSupply>
+	{	 
+		public StrategyUpdate_StartSectorResourcesSupply(StrategyUpdate updater) : base(updater)
 		{
 		}
 		protected override void Start()
@@ -89,12 +89,12 @@ public partial class StrategyUpdate
 				(int curr, int max) manpower = Update_Manpower(ref electricPlanner, in deltaTime, 1f);
 				if (isUpdate)
 				{
-					string key = $"{sector.SectorName}_{UpdateLogicSort.거점_자원갱신종료이벤트}";
-					TempData.SetTrigger(key, UpdateLogicSort.거점_자원갱신종료이벤트);
+					string key = $"{sector.SectorName}_ResourcesSupply";
+					TempData.SetTrigger(key, UpdateLogicSort.거점_자원갱신종료);
 
 					int factionID = sector.CaptureData.captureFactionID;
-					key = $"{factionID}_{UpdateLogicSort.세력_자원갱신종료이벤트}";
-					TempData.SetTrigger(key, UpdateLogicSort.세력_자원갱신종료이벤트);
+					key = $"{factionID}_ResourcesSupply";
+					TempData.SetTrigger(key, UpdateLogicSort.세력_자원갱신종료);
 					if (TempData.TryGetValue<FactionTempSupplyValue>(FactionTempSupplyValueKey(factionID), out var tempValue))
 					{
 						tempValue.electric += electric.curr;

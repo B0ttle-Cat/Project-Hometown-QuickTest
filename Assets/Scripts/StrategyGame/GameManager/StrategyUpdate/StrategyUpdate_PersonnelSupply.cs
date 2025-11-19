@@ -66,12 +66,12 @@ public partial class StrategyUpdate
 				{
 					sector.SetManpower(curr);
 
-					string key = $"{sector.SectorName}_{UpdateLogicSort.거점_자원갱신종료이벤트}";
-					TempData.SetTrigger(key, UpdateLogicSort.거점_자원갱신종료이벤트);
+					string key = $"{sector.SectorName}_{UpdateLogicSort.거점_자원갱신종료}";
+					TempData.SetTrigger(key, UpdateLogicSort.거점_자원갱신종료);
 
 					int factionID = sector.CaptureData.captureFactionID;
-					key = $"{factionID}_{UpdateLogicSort.세력_자원갱신종료이벤트}";
-					TempData.SetTrigger(key, UpdateLogicSort.세력_자원갱신종료이벤트);
+					key = $"{factionID}_{UpdateLogicSort.세력_자원갱신종료}";
+					TempData.SetTrigger(key, UpdateLogicSort.세력_자원갱신종료);
 					if (TempData.TryGetValue<FactionTempSupplyValue>(FactionTempSupplyValueKey(factionID), out var tempValue))
 					{
 						tempValue.manpower += curr;

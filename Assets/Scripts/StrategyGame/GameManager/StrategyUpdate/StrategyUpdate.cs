@@ -25,14 +25,14 @@ public partial class StrategyUpdate : MonoBehaviour
 
 		거점_시설_건설,
 
-		세력_자원갱신시작이벤트,
+		세력_자원갱신시작,
 		거점_전력_보충,
 		거점_재료_보충,
 		거점_인력_보충,
-		거점_자원_보충,
-		거점_물류_네트워크_업데이트,
-		거점_자원갱신종료이벤트,
-		세력_자원갱신종료이벤트,
+		거점_자원갱신시작,
+		거점_자원분배,
+		거점_자원갱신종료,
+		세력_자원갱신종료,
 		거점_유닛버프계산,
 
 		유닛_기본변수_갱신,
@@ -166,13 +166,11 @@ public partial class StrategyUpdate : MonoBehaviour
 			(UpdateLogicSort.거점_시설버프계산, null),
 			(UpdateLogicSort.거점_유닛버프계산, null),
 
-			(UpdateLogicSort.세력_자원갱신시작이벤트,  new StrategyUpdate_StartFactionResourcesSupply(this)),
-			(UpdateLogicSort.거점_자원_보충,  new StrategyUpdate_ResourcesSupply(this)),
-			//(UpdateLogicSort.거점_재료_보충,  new StrategyUpdate_MaterialSupply(this)),
-			//(UpdateLogicSort.거점_인력_보충,  new StrategyUpdate_ManpowerSupply(this)),
-			(UpdateLogicSort.거점_물류_네트워크_업데이트,  null),
-			(UpdateLogicSort.거점_자원갱신종료이벤트,  new StrategyUpdate_EndedSectorResourcesSupply(this)),
-			(UpdateLogicSort.세력_자원갱신종료이벤트,  new StrategyUpdate_EndedFactionResourcesSupply(this)),
+			(UpdateLogicSort.세력_자원갱신시작,  new StrategyUpdate_StartFactionResourcesSupply(this)),
+			(UpdateLogicSort.거점_자원갱신시작,  new StrategyUpdate_StartSectorResourcesSupply(this)),
+			(UpdateLogicSort.거점_자원분배,  null),
+			(UpdateLogicSort.거점_자원갱신종료,  new StrategyUpdate_EndedSectorResourcesSupply(this)),
+			(UpdateLogicSort.세력_자원갱신종료,  new StrategyUpdate_EndedFactionResourcesSupply(this)),
 
 			(UpdateLogicSort.유닛_기본변수_갱신, null),
 			(UpdateLogicSort.유닛_버프_계산,  new StrategyUpdate_UnitBuff(this)),

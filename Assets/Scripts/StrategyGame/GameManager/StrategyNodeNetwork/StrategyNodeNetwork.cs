@@ -44,12 +44,24 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 	{
 		public SectorObject sector;
 		public Vector3 position;
+		public List<Neighbor> neighbors;
 
-		public Neighbor[] neighbors;
-		public class Neighbor
+        public SectorNetwork(SectorObject sector)
+        {
+            this.sector = sector;
+			position = sector.transform.position;
+			neighbors = new List<Neighbor>();
+		}
+
+        public class Neighbor
 		{
-			SectorObject sector;
+			public SectorObject sector;
 			public float distance;
+		}
+
+		public void AddNeighbor(SectorObject sectorObject)
+		{
+
 		}
 	}
 	private Dictionary<SectorObject, SectorNetwork> sectorNetworkList;
@@ -59,6 +71,7 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 		AstarData data = ActiveAstarPath.data;
 		thisPointGraph = data.AddGraph<PointGraph>();
 		thisPointGraph.Scan();
+		sectorNetworkList = new Dictionary<SectorObject, SectorNetwork>(sectorList.Count);
 
 		ActiveAstarPath.AddWorkItem(() =>
 		{
@@ -66,6 +79,7 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 			PointNode[] pointNodes = new PointNode[nodeLength];
 			for (int i = 0 ; i < nodeLength ; i++)
 			{
+				sectorNetworkList.Add(sectorList[i], new SectorNetwork(sectorList[i]));
 				pointNodes[i] = thisPointGraph.AddNode((Int3)sectorList[i].transform.position);
 			}
 			int linkLength = sectorLinkData.Length;
@@ -111,7 +125,7 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 
 		AstarPath.active.FlushWorkItems();
 
-		sectorNetworkList = new Dictionary<SectorObject, SectorNetwork>(sectorList.Count);
+		
 
 		isInit = true;
 	}
