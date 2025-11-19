@@ -109,33 +109,34 @@ public partial class StrategyUpdate
 
 			private List<StatsValue> GetSectorBuffState()
 			{
-				var sector = GetEnterSector();
-				if (sector == null) return new List<StatsValue>();
-
-				var enterSector = GetEnterSector();
-
-				string cbBugffKey = $"SectorUnitBuff_{enterSector.SectorName}";
-				if (TempData.TryGetValue(cbBugffKey, out List<StatsValue> cbBuffList))
-				{
-					return cbBuffList;
-				}
-
-				StatsList MainStatsList = sector.MainStatsList;
-				StatsGroup FacilitiesBuffGroup = sector.FacilitiesBuffGroup;
-				StatsGroup supportBuffGroup = sector.SupportBuffGroup;
-
-				var mainList = MainStatsList.GetValueList(SectorBuffType);
-				var facilitiesList = FacilitiesBuffGroup.GetValueList(SectorBuffType);
-				var supportList = supportBuffGroup.GetValueList(SectorBuffType);
-
-				int length = SectorBuffType.Length;
-				cbBuffList = new List<StatsValue>(length);
-				for (int i = 0 ; i < length ; i++)
-				{
-					cbBuffList.Add(mainList[i] + facilitiesList[i] + supportList[i]);
-				}
-
-				return cbBuffList;
+				return new List<StatsValue>();
+				//var sector = GetEnterSector();
+				//if (sector == null) return new List<StatsValue>();
+				//
+				//var enterSector = GetEnterSector();
+				//
+				//string cbBugffKey = $"SectorUnitBuff_{enterSector.SectorName}";
+				//if (TempData.TryGetValue(cbBugffKey, out List<StatsValue> cbBuffList))
+				//{
+				//	return cbBuffList;
+				//}
+				//
+				//StatsList MainStatsList = sector.MainStatsList;
+				//StatsGroup FacilitiesBuffGroup = sector.TryGetStatsList_Facilities;
+				//StatsGroup supportBuffGroup = sector.SupportBuffGroup;
+				//
+				//var mainList = MainStatsList.GetValueList(SectorBuffType);
+				//var facilitiesList = FacilitiesBuffGroup.GetValueList(SectorBuffType);
+				//var supportList = supportBuffGroup.GetValueList(SectorBuffType);
+				//
+				//int length = SectorBuffType.Length;
+				//cbBuffList = new List<StatsValue>(length);
+				//for (int i = 0 ; i < length ; i++)
+				//{
+				//	cbBuffList.Add(mainList[i] + facilitiesList[i] + supportList[i]);
+				//}
+				//
+				//return cbBuffList;
 			}
 		}
 	}

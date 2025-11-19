@@ -1,6 +1,9 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+
+using UnityEngine;
 
 using static StrategyGamePlayData;
+using static StrategyGamePlayData.SectorData.Support;
 
 using SectorData = StrategyGamePlayData.SectorData;
 
@@ -16,6 +19,7 @@ public partial class SectorObject : MonoBehaviour
 	private SectorData.Support support;
 	private SectorData.SpawnOperation spawnOperation;
 
+	private StatsGroup sectorStatsGroup;
 	// 시설물에 대한 스텟
 	private StatsGroup facilitiesStatsGroup;
 	// 지원 정책에 대한 스텟
@@ -81,10 +85,39 @@ public partial class SectorObject // Getter
 	public ref readonly SectorData.SpawnOperation.Data SpawnOperationData => ref spawnOperation.ReadonlyData();
 
 	public StatsList MainStatsList => StatsData.GetStatsList();
-	public StatsGroup FacilitiesBuffGroup => facilitiesStatsGroup ??= new StatsGroup();
-	public StatsGroup SupportBuffGroup => supportStatsGroup ??= new StatsGroup();
-	public StatsGroup StatusEffectStatsGroup => statusEffectStatsGroup ??= new StatsGroup();
-
+	public StatsGroup SectorStatsGroup => sectorStatsGroup ??= new StatsGroup();
+	public const string StatsGroupName_Default = "Default";
+	public const string StatsGroupName_Facilities = "Facilities";
+	public const string StatsGroupName_Support = "Support";
+	public const string StatsGroupName_StatusEffect = "StatusEffect";
+	public bool TryGetStatsListInGroup(string groupName, out StatsList statsList)
+	{
+		return SectorStatsGroup.TryGetList(groupName, out statsList);
+	}
+	public List<string> GetStatsKeyListInGroup(string startsWith = "", string endsWith = "")
+	{
+		return SectorStatsGroup.GetkeyList(startsWith, endsWith);
+	}
+	public void SetStatsListInGroup(string groupName, StatsList statsList)
+	{
+		SectorStatsGroup.SetList(groupName, statsList);
+	}
+	public bool TryGetStatsList_Default( out StatsList statsList)
+	{
+		return TryGetStatsListInGroup(StatsGroupName_Default, out statsList);
+	}
+	public bool TryGetStatsList_Facilities(int slotIndex, out StatsList statsList)
+	{
+		return TryGetStatsListInGroup($"{StatsGroupName_Facilities}_{slotIndex}", out statsList);
+	}
+	public bool TryGetStatsList_Support(SupportType supportType, out StatsList statsList)
+	{
+		return TryGetStatsListInGroup($"{StatsGroupName_Support}_{supportType}", out statsList);
+	}
+	public bool TryGetStatsList_StatusEffec(out StatsList statsList)
+	{
+		return TryGetStatsListInGroup(StatsGroupName_StatusEffect, out statsList);
+	}
 	public string SectorName => ProfileData.sectorName;
 	public Faction CaptureFaction => StrategyManager.Collector.FindFaction(CaptureFactionID);
 	public int CaptureFactionID => CaptureData.captureFactionID;
@@ -92,19 +125,51 @@ public partial class SectorObject // Getter
 
 	public (int value, int max) GetDurability()
 	{
-		return (0, 0);
+		const StatsType CurrType = StatsType.거점_내구도_현재;
+		const StatsType MaxType = StatsType.거점_내구도_최대;
+		//const StatsType SupplyType = StatsType.거점_인력_회복;
+
+		var currMain = MainStatsList.GetValue(statsType: CurrType);
+		var maxMain = MainStatsList.GetValue(MaxType);
+		//var supplyMain = MainStatsList.GetValue(SupplyType);
+
+		return (currMain.Value, maxMain.Value);
 	}
 	public (int value, int max) GetPersonnel()
 	{
-		return (0, 0);
+		const StatsType CurrType = StatsType.거점_인력_현재;
+		const StatsType MaxType = StatsType.거점_인력_최대;
+		//const StatsType SupplyType = StatsType.거점_인력_회복;
+
+		var currMain = MainStatsList.GetValue(statsType: CurrType);
+		var maxMain = MainStatsList.GetValue(MaxType);
+		//var supplyMain = MainStatsList.GetValue(SupplyType);
+
+		return (currMain.Value, maxMain.Value);
 	}
-	public (int value, int max) GetMaterial()
+	public (int value, int max, int supply) GetMaterial()
 	{
-		return (0, 0);
+		const StatsType CurrType = StatsType.거점_물자_현재;
+		const StatsType MaxType = StatsType.거점_물자_최대;
+		const StatsType SupplyType = StatsType.거점_물자_회복;
+
+		var currMain = MainStatsList.GetValue(statsType: CurrType);
+		var maxMain = MainStatsList.GetValue(MaxType);
+		var supplyMain = MainStatsList.GetValue(SupplyType);
+
+		return (currMain.Value, maxMain.Value, supplyMain.Value);
 	}
-	public (int value, int max) GetElectric()
+	public (int value, int max, int supply) GetElectric()
 	{
-		return (0, 0);
+		const StatsType CurrType = StatsType.거점_전력_현재;
+		const StatsType MaxType = StatsType.거점_전력_최대;
+		const StatsType SupplyType = StatsType.거점_전력_회복;
+
+		var currMain = MainStatsList.GetValue(statsType: CurrType);
+		var maxMain = MainStatsList.GetValue(MaxType);
+		var supplyMain = MainStatsList.GetValue(SupplyType);
+
+		return (currMain.Value, maxMain.Value, supplyMain.Value);
 	}
 	public void SetCaptureData(int factionID, float progress)
 	{
@@ -112,15 +177,6 @@ public partial class SectorObject // Getter
 		data.captureFactionID = factionID;
 		data.captureProgress = progress;
 		capture.Invoke();
-	}
-	public void SetPersonnel(int value, int max)
-	{
-	}
-	public void SetMaterial(int value, int max)
-	{
-	}
-	public void SetElectric(int value, int max)
-	{
 	}
 	public void SetPersonnel(int value)
 	{
@@ -131,7 +187,6 @@ public partial class SectorObject // Getter
 	public void SetElectric(int value)
 	{
 	}
-
 	public bool OverlapTrigger(in Vector3 point)
 	{
 		if (sectorTrigger == null) return false;

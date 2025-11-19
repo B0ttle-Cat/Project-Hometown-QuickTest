@@ -218,7 +218,10 @@ public partial class StrategyMapPanelUI // SectorLabelGroup
 				}
 
 				if (selectButton != null) selectButton.onClick.RemoveAllListeners();
-				if (Sector != null) Sector.StatusEffectStatsGroup.RemoveListener(OnChangeGroupKey, OnRemoveGroupKey);
+				if (Sector != null)
+				{
+					Sector.SectorStatsGroup.RemoveListener(OnChangeStatsGroup, OnChangeStatsGroup);
+				}
 			}
 
 			protected override void Visible()
@@ -232,14 +235,13 @@ public partial class StrategyMapPanelUI // SectorLabelGroup
 
 				selectButton.onClick.RemoveAllListeners();
 				selectButton.onClick.AddListener(() => StrategyManager.Selecter.OnSystemSelectObject(Sector));
-				Sector.StatusEffectStatsGroup.AddListener(OnChangeGroupKey, OnRemoveGroupKey);
+				if (Sector != null && Sector.TryGetStatsList_StatusEffec(out var statsList))
+				{
+					Sector.SectorStatsGroup.AddListener(OnChangeStatsGroup, OnChangeStatsGroup);
+				}
 			}
 
-			public void OnChangeGroupKey(string key)
-			{
-				ChangeIconList();
-			}
-			public void OnRemoveGroupKey(string key)
+			public void OnChangeStatsGroup(string _)
 			{
 				ChangeIconList();
 			}
@@ -253,13 +255,12 @@ public partial class StrategyMapPanelUI // SectorLabelGroup
 					}
 					iconlist ??= new List<GameObject>();
 					iconlist.Clear();
-
-					var keyList = Sector.StatusEffectStatsGroup.GetkeyList();
-					int length = keyList.Count;
-					for (int i = 0 ; i < length ; i++)
+					Sector.TryGetStatsList_StatusEffec(out var statsList);
+					var keyList = Sector.GetStatsKeyListInGroup(SectorObject.StatsGroupName_StatusEffect);
+					foreach(string key in keyList)
 					{
-						var key = $"Icon_status_effect_{keyList[i]}";
-						if (StrategyManager.Key2Sprite.TryGetAsset(key, out var sprite) && sprite != null)
+						string iconKey = $"Icon_status_effect_{key}";
+						if (StrategyManager.Key2Sprite.TryGetAsset(iconKey, out var sprite) && sprite != null)
 						{
 							KeyPair.FindPairChainAndCopy<Image>("Icon", iconParent, out var iconImage);
 							iconImage.sprite = sprite;

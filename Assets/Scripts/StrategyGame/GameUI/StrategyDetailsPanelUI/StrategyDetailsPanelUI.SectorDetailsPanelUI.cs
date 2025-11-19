@@ -179,6 +179,27 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 				selectSector = null;
 			}
 
+			protected virtual void SetFillRectUI(string fillRectName, (int value, int max, int supply) item, string noneText)
+			{
+				int value = item.value;
+				int max = item.max;
+				int supply = item.supply;
+				KeyPair.FindPairChain<FillRectUI>(fillRectName, out var fillRectUI);
+				if (fillRectUI == null) return;
+
+				if (max > 0)
+				{
+					float rate = (float)value / (float)max;
+					if (!fillRectUI.gameObject.activeSelf)
+						fillRectUI.gameObject.SetActive(true);
+					fillRectUI.SetValueText(rate, $"{value,10} / {max,-10} | ({supply:+#;-#;+0})");
+				}
+				else
+				{
+					if (fillRectUI.gameObject.activeSelf)
+						fillRectUI.gameObject.SetActive(false);
+				}
+			}
 			protected virtual void SetFillRectUI(string fillRectName, (int value, int max) item, string noneText)
 			{
 				int value = item.value;
@@ -360,12 +381,14 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 			void OnChangeFacilitiesData(SectorData.Facilities.Data data)
 			{
 				UpdateFillRectUI();
-				UpdateStatePanel("Stats KeyValue", "Facilities Stats", selectSector.FacilitiesBuffGroup.GetValueList());
+				UpdateStatePanel("Stats KeyValue", "Facilities Stats",
+					selectSector.SectorStatsGroup.GetValueList(SectorObject.StatsGroupName_Facilities));
 			}
 			void OnChangeSupportData(SectorData.Support.Data data)
 			{
 				UpdateFillRectUI();
-				UpdateStatePanel("Stats KeyValue", "Support Stats", selectSector.SupportBuffGroup.GetValueList());
+				UpdateStatePanel("Stats KeyValue", "Support Stats",
+					selectSector.SectorStatsGroup.GetValueList(SectorObject.StatsGroupName_Support));
 			}
 			void UpdateFillRectUI()
 			{
@@ -486,14 +509,14 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 				SetupSlider(Supply, data.supplyPoint, selectSector.Controller.OnChangeSupport_Supply);
 				SetupSlider(Facilities, data.facilitiesPoint, selectSector.Controller.OnChangeSupport_Facilities);
 
-				UpdateSupportState("Offensive", Offensive, offensiveItemList);
-				UpdateSupportState("Defensive", Defensive, defensiveItemList);
-				UpdateSupportState("Supply", Supply, supplyItemList);
-				UpdateSupportState("Facilities", Facilities, facilitiesItemList);
+				UpdateSupportState(SectorData.Support.SupportType.Offensive, Offensive, offensiveItemList);
+				UpdateSupportState(SectorData.Support.SupportType.Defensive, Defensive, defensiveItemList);
+				UpdateSupportState(SectorData.Support.SupportType.Supply, Supply, supplyItemList);
+				UpdateSupportState(SectorData.Support.SupportType.Facilities, Facilities, facilitiesItemList);
 			}
-			void UpdateSupportState(string key, GameObject supportPanel, Dictionary<StatsType, LabelTextUI> itemList)
+			void UpdateSupportState(SectorData.Support.SupportType key, GameObject supportPanel, Dictionary<StatsType, LabelTextUI> itemList)
 			{
-				if (!selectSector.SupportBuffGroup.TryGetList(key, out var statsList)) return;
+				if (!selectSector.TryGetStatsList_Support(key, out var statsList)) return;
 
 				var list = statsList.GetValueList();
 				int length = list == null ? 0 : list.Count;
@@ -731,7 +754,7 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 
 			void UpdateFacilitiesState(GameObject FacilitiesPanel, Dictionary<StatsType, LabelTextUI> itemList)
 			{
-				var list = selectSector.FacilitiesBuffGroup.GetValueList();
+				var list = selectSector.SectorStatsGroup.GetValueList(SectorObject.StatsGroupName_Facilities);
 
 				int length = list == null ? 0 : list.Count;
 				for (int i = 0 ; i < length ; i++)

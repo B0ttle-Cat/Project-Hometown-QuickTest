@@ -269,7 +269,7 @@ public abstract class StrategyUpdateSubClass<T> : IStrategyUpdater where T : Str
 	{
 
 	}
-	public abstract class UpdateLogic : IDisposable
+	public abstract partial class UpdateLogic : IDisposable
 	{
 		protected StrategyUpdateSubClass<T> thisSubClass;
 		protected StrategyUpdate Updater => thisSubClass == null ? null : thisSubClass.thisUpdater;
@@ -292,6 +292,43 @@ public abstract class StrategyUpdateSubClass<T> : IStrategyUpdater where T : Str
 
 		protected abstract void OnUpdate(in float deltaTime);
 		protected abstract void OnDispose();
+	}
+	public abstract partial class UpdateLogic // ResourcesSupply
+	{
+		protected bool UpdateResupplyTime(ref float currentResupplyTime, in float deltaTime, float resupplyTime)
+		{
+			currentResupplyTime -= deltaTime;
+			if (currentResupplyTime <= 0)
+			{
+				currentResupplyTime = resupplyTime;
+				return true;
+			}
+			return false;
+		}
+		protected void CumulativeUpdate(in int current, in int max, in int supplyPerMinute, ref float cumulative, in float deltaTime)
+		{
+			if (current >= max)
+			{
+				cumulative = 0;
+				return;
+			}
+			float supplyPerDelta  = ((float)supplyPerMinute / 60f) * deltaTime;
+			cumulative += supplyPerDelta;
+		}
+		protected void SupplyUpdate(ref int current, in int max, ref float cumulative, ref bool isUpdate)
+		{
+			if (current >= max)
+			{
+				cumulative = 0;
+				return;
+			}
+			int intCumulative = Mathf.FloorToInt(cumulative);
+			float rate = cumulative - intCumulative;
+
+			current = Mathf.Clamp(current + intCumulative, 0, max);
+			isUpdate = true;
+		}
+
 	}
 }
 public class StrategyUpdate_OperationUpdate : StrategyUpdateSubClass<StrategyUpdate_OperationUpdate.OperationUpdate>

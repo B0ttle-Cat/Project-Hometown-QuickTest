@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 
-using UnityEngine;
-
 using static StrategyGamePlayData;
 public partial class StrategyUpdate
 {
@@ -38,9 +36,9 @@ public partial class StrategyUpdate
 		{
 			private SectorObject sector;
 
-			private const StatsType MaxType = StatsType.거점_물자_최대허용량;
-			private const StatsType SupplyType = StatsType.거점_물자_분당회복량;
-			private const StatsType CurrType = StatsType.거점_물자_현재보유량;
+			private const StatsType MaxType = StatsType.거점_물자_최대;
+			private const StatsType SupplyType = StatsType.거점_물자_회복;
+			private const StatsType CurrType = StatsType.거점_물자_현재;
 			private const float resupplyTime = 10f;
 
 			float replenish; // 다음 보충까지 남은 시간.
@@ -61,74 +59,23 @@ public partial class StrategyUpdate
 				if (sector == null || !sector.isActiveAndEnabled) return;
 				if (sector.CaptureData.captureFactionID < 0) return;
 
-				StatsList MainStatsList = sector.MainStatsList;
-				StatsGroup FacilitiesBuffGroup = sector.FacilitiesBuffGroup;
-				StatsGroup supportBuffGroup = sector.SupportBuffGroup;
-
-				var maxMain = MainStatsList.GetValue(MaxType);
-				var maxFacilities = FacilitiesBuffGroup.GetValue(MaxType);
-				var maxSupport = supportBuffGroup.GetValue(MaxType);
-				var maxTotal = maxMain+ maxFacilities + maxSupport;
-
-				var supplyMain = MainStatsList.GetValue(SupplyType);
-				var supplyFacilities = FacilitiesBuffGroup.GetValue(SupplyType);
-				var supplySupport = supportBuffGroup.GetValue(SupplyType);
-				var supplyTotal = supplyMain + supplyFacilities + supplySupport;
-
-				var currMain = MainStatsList.GetValue(CurrType);
-				var currTotal = currMain;
-
-				int 최대보유량 = maxTotal.Value;
-				int 분당회복량 = supplyTotal.Value;
-				int 현재보유량 = currTotal.Value;
+				int max = sector.SectorStatsGroup.GetValue(MaxType);
+				int supply = sector.SectorStatsGroup.GetValue(SupplyType);
+				int curr = sector.MainStatsList.GetValue(CurrType);
 
 				bool isUpdate = false;
 
-				CumulativeUpdate(in 현재보유량, in 최대보유량, in 분당회복량, ref surplus, in deltaTime);
+				CumulativeUpdate(in curr, in max, in supply, ref surplus, in deltaTime);
 				if (UpdateResupplyTime(ref replenish, deltaTime, resupplyTime))
-					SupplyUpdate(ref 현재보유량, in 최대보유량, ref surplus, ref isUpdate);
-
-				bool UpdateResupplyTime(ref float currentResupplyTime, in float deltaTime, float resupplyTime)
-				{
-					currentResupplyTime -= deltaTime;
-					if (currentResupplyTime <= 0)
-					{
-						currentResupplyTime = resupplyTime;
-						return true;
-					}
-					return false;
-				}
-				void CumulativeUpdate(in int current, in int max, in int supplyPerMinute, ref float cumulative, in float deltaTime)
-				{
-					if (current >= max)
-					{
-						cumulative = 0;
-						return;
-					}
-					float supplyPerDelta  = ((float)supplyPerMinute / 60f) * deltaTime;
-					cumulative += supplyPerDelta;
-				}
-				void SupplyUpdate(ref int current, in int max, ref float cumulative, ref bool isUpdate)
-				{
-					if (current >= max)
-					{
-						cumulative = 0;
-						return;
-					}
-					int intCumulative = Mathf.FloorToInt(cumulative);
-					float rate = cumulative - intCumulative;
-
-					current = Mathf.Clamp(current + intCumulative, 0, max);
-					isUpdate = true;
-				}
+					SupplyUpdate(ref curr, in max, ref surplus, ref isUpdate);
 
 				if (isUpdate)
 				{
-					MainStatsList.SetValue(CurrType, 현재보유량);
+					sector.SetMaterial(curr);
 
 					string key = $"{sector.SectorName}_{UpdateLogicSort.거점_자원갱신이벤트}";
 					TempData.SetTrigger(key, UpdateLogicSort.거점_자원갱신이벤트);
-					//Debug.Log($"Pressed MaterialSupply| Sector:{sector.SectorName,-10} | Faction:{sector.CaptureData.captureFactionID,-10} | Point:{현재보유량,4}/{최대보유량 - 4}");
+					//Debug.Log($"Pressed MaterialSupply| Sector:{sector.SectorName,-10} | Faction:{sector.CaptureData.captureFactionID,-10} | Point:{curr,4}/{max - 4}");
 				}
 			}
 		}

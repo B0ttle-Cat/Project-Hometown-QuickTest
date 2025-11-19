@@ -243,6 +243,27 @@ public partial class StrategyControlPanelUI // SectorSelectPanel
 				SetFillRectUI("Fill Material", Value.GetMaterial());
 				SetFillRectUI("Fill Electric", Value.GetElectric());
 			}
+			private void SetFillRectUI(string fillRectName, (int value, int max, int supply) item)
+			{
+				int value = item.value;
+				int max = item.max;
+				int supply = item.supply;
+				KeyPair.FindPairChain<FillRectUI>(fillRectName, out var fillRectUI);
+				if (fillRectUI == null) return;
+
+				if (max > 0)
+				{
+					float rate = (float)value / (float)max;
+					if (!fillRectUI.gameObject.activeSelf)
+						fillRectUI.gameObject.SetActive(true);
+					fillRectUI.SetValueText(rate, $"{value,10} / {max,-10} | ({supply:+#;-#;+0})");
+				}
+				else
+				{
+					if (fillRectUI.gameObject.activeSelf)
+						fillRectUI.gameObject.SetActive(false);
+				}
+			}
 			private void SetFillRectUI(string fillRectName, (int value, int max) item)
 			{
 				int value = item.value;

@@ -222,8 +222,8 @@ public partial class StrategyControlPanelUI // SpawnTroops
 			private void OnChangeFactionStats(StatsValue _)
 			{
 				var factionStatsList = Value.FactionStats.GetValueList(
-					StatsType.세력_병력_최대허용량,
-					StatsType.세력_병력_현재보유량);
+					StatsType.세력_병력_최대,
+					StatsType.세력_병력_현재);
 
 				세력_병력_최대허용량 = factionStatsList[0].Value;
 				세력_병력_현재보유량 = factionStatsList[1].Value;

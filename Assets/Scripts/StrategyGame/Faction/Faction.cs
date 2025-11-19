@@ -18,12 +18,12 @@ public partial class Faction : IEquatable<Faction> , IDisposable
 		defaultUnitPrefab = data.defaultUnitPrefab;
 
 		factionStats = new StatsList(new StatsValue(StatsType.세력_점령속도비율, data.captureSpeed),
-			new StatsValue(StatsType.세력_병력_최대허용량, data.maxOperationPoint),
-			new StatsValue(StatsType.세력_병력_현재보유량, data.currentOperationPoint),
-			new StatsValue(StatsType.세력_물자_최대허용량, data.maxMaterialPoint),
-			new StatsValue(StatsType.세력_물자_현재보유량, data.currentMaterialPoint),
-			new StatsValue(StatsType.세력_전력_최대허용량, data.maxElectricPoint),
-			new StatsValue(StatsType.세력_전력_현재보유량, data.currentElectricPoint)
+			new StatsValue(StatsType.세력_병력_최대, data.maxOperationPoint),
+			new StatsValue(StatsType.세력_병력_현재, data.currentOperationPoint),
+			new StatsValue(StatsType.세력_물자_최대, data.maxMaterialPoint),
+			new StatsValue(StatsType.세력_물자_현재, data.currentMaterialPoint),
+			new StatsValue(StatsType.세력_전력_최대, data.maxElectricPoint),
+			new StatsValue(StatsType.세력_전력_현재, data.currentElectricPoint)
 			);
 		availableUnitKeyList = data.AvailableUnitKeyList();
 	}

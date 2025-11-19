@@ -324,6 +324,9 @@ public partial class StrategyGamePlayData
 				public string environmentalKey;
 				// 적용되어 있는 각종 효과
 				public EffectsFlag effects;
+
+				public StatsList defaultStats;
+
 				public readonly string EffectString()
 				{
 					return effects.ToString();
@@ -334,8 +337,13 @@ public partial class StrategyGamePlayData
 					{
 						sectorName = sectorName,
 						environmentalKey = environmentalKey,
-						effects = effects
+						effects = effects,
+						defaultStats = defaultStats.Copy(),
 					};
+				}
+				public StatsList GetStatsList()
+				{
+					return defaultStats;
 				}
 			}
 		}
@@ -459,6 +467,13 @@ public partial class StrategyGamePlayData
 						facilitiesPoint = facilitiesPoint
 					};
 				}
+			}
+			public enum SupportType
+			{
+				Offensive,
+				Defensive,
+				Supply,
+				Facilities,
 			}
 		}
 
@@ -644,25 +659,25 @@ public partial class StrategyGamePlayData
 
 	public static StatsType[] SectorDurabilityStats =new StatsType[]
 	{
-		StatsType.거점_최대내구도,
-		StatsType.거점_현재내구도,
+		StatsType.거점_내구도_최대,
+		StatsType.거점_내구도_현재,
 	};
 
 	public static StatsType[] SectorSupplyStats =new StatsType[]
 	{
-		StatsType.거점_인력_현재보유량,
-		StatsType.거점_물자_현재보유량,
-		StatsType.거점_전력_현재보유량,
+		StatsType.거점_인력_현재,
+		StatsType.거점_물자_현재,
+		StatsType.거점_전력_현재,
 	};
 
 	public static StatsType[] SectorSupplyStats_Max =new StatsType[]
 	{
-		StatsType.거점_인력_최대허용량,
-		StatsType.거점_물자_최대허용량,
-		StatsType.거점_전력_최대허용량,
-		StatsType.거점_인력_분당회복량,
-		StatsType.거점_물자_분당회복량,
-		StatsType.거점_전력_분당회복량,
+		StatsType.거점_인력_최대,
+		StatsType.거점_물자_최대,
+		StatsType.거점_전력_최대,
+		StatsType.거점_인력_회복,
+		StatsType.거점_물자_회복,
+		StatsType.거점_전력_회복,
 	};
 
 	public static string SuffixStatsType(StatsType type) => type switch
@@ -680,7 +695,7 @@ public partial class StrategyGamePlayData
 		public readonly StatsType StatsType => statsType;
 		public int Value
 		{
-            readonly get => value;
+			readonly get => value;
 			set => this.value = value;
 		}
 
@@ -700,7 +715,7 @@ public partial class StrategyGamePlayData
 			this.value = value;
 		}
 		// int로 변환
-		public static implicit operator int(StatsValue v) =>v.value;
+		public static implicit operator int(StatsValue v) => v.value;
 		public static StatsValue operator +(StatsValue p1, StatsValue p2) => new StatsValue(p1.statsType != StatsType.None ? p1.statsType : p2.statsType, p1.value + p2.value);
 		public static StatsValue operator -(StatsValue p1, StatsValue p2) => new StatsValue(p1.statsType != StatsType.None ? p1.statsType : p2.statsType, p1.value - p2.value);
 		public static StatsValue operator +(StatsValue p1, int p2) => new StatsValue(p1.statsType, p1.value + p2);
@@ -801,20 +816,20 @@ public partial class StrategyGamePlayData
 			new StatsValue(StatsType.None)
 			);
 		public static StatsList SectorStatsList => new StatsList(
-				new StatsValue(StatsType.거점_최대내구도, 500),
-				new StatsValue(StatsType.거점_현재내구도, 500),
+				new StatsValue(StatsType.거점_내구도_최대, 500),
+				new StatsValue(StatsType.거점_내구도_현재, 500),
 
-				new StatsValue(StatsType.거점_인력_최대허용량, 100),
-				new StatsValue(StatsType.거점_물자_최대허용량, 1000),
-				new StatsValue(StatsType.거점_전력_최대허용량, 1000),
+				new StatsValue(StatsType.거점_인력_최대, 100),
+				new StatsValue(StatsType.거점_물자_최대, 1000),
+				new StatsValue(StatsType.거점_전력_최대, 1000),
 
-				new StatsValue(StatsType.거점_인력_현재보유량, 50),
-				new StatsValue(StatsType.거점_물자_현재보유량, 50),
-				new StatsValue(StatsType.거점_전력_현재보유량, 50),
+				new StatsValue(StatsType.거점_인력_현재, 50),
+				new StatsValue(StatsType.거점_물자_현재, 50),
+				new StatsValue(StatsType.거점_전력_현재, 50),
 
-				new StatsValue(StatsType.거점_인력_분당회복량, 5),
-				new StatsValue(StatsType.거점_물자_분당회복량, 50),
-				new StatsValue(StatsType.거점_전력_분당회복량, 50)
+				new StatsValue(StatsType.거점_인력_회복, 5),
+				new StatsValue(StatsType.거점_물자_회복, 50),
+				new StatsValue(StatsType.거점_전력_회복, 50)
 		);
 		public void Invoke(in StatsValue statsValue)
 		{
@@ -1111,50 +1126,67 @@ public partial class StrategyGamePlayData
 			}
 			return false;
 		}
-		public List<string> GetkeyList()
+		private bool CheckKey(in KeyValue keyValue, string startsWith = "", string endsWith = "")
 		{
-			return values.Select(i => i.Key).ToList();
-		}
+			string key = keyValue.Key;
 
-		public StatsValue GetValue(StatsType statsType)
+			if (!string.IsNullOrWhiteSpace(startsWith) && !key.StartsWith(startsWith))
+				return false;
+
+			if (!string.IsNullOrWhiteSpace(endsWith) && !key.EndsWith(endsWith))
+				return false;
+
+			return true;
+		}
+		public List<string> GetkeyList(string startsWith = "", string endsWith = "")
+		{
+			return values.Where(i=> CheckKey(in i, startsWith,endsWith)).Select(i => i.Key).ToList();
+		}
+		public StatsValue GetValue(StatsType statsType, string startsWith = "", string endsWith = "")
 		{
 			StatsValue statsValue = new StatsValue(statsType,0);
 			int length = values.Count;
 
 			for (int i = 0 ; i < length ; i++)
 			{
-				if (values[i].List == null) continue;
+				var keyValue = values[i];
+				if (keyValue.List == null) continue;
+				if (!CheckKey(in keyValue, startsWith, endsWith)) continue;
 				statsValue += values[i].List.GetValue(statsType);
 			}
 			return statsValue;
 		}
-		public int GetValueInt(StatsType statsType)
+		public int GetValueInt(StatsType statsType, string startsWith = "", string endsWith = "")
 		{
 			int statsValue = 0;
 			int length = values.Count;
 			for (int i = 0 ; i < length ; i++)
 			{
-				var list = values[i].List;
-				if (list == null) continue;
-				statsValue += list.GetValueInt(statsType);
+				var keyValue = values[i];
+				if (keyValue.List == null) continue;
+				if (!CheckKey(in keyValue, startsWith, endsWith)) continue;
+				statsValue += keyValue.List.GetValueInt(statsType);
 			}
 			return statsValue;
 		}
-		public List<StatsValue> GetValueList()
+		public List<StatsValue> GetValueList(string startsWith = "", string endsWith = "")
 		{
 			var merge = StatsList.Empty;
 			int length = values.Count;
 			merge.ClearValues();
 			for (int i = 0 ; i < length ; i++)
 			{
-				merge.MergeList(values[i].List);
+				var keyValue = values[i];
+				if (keyValue.List == null) continue;
+				if (!CheckKey(in keyValue, startsWith, endsWith)) continue;
+				merge.MergeList(keyValue.List);
 			}
 			var result = new List<StatsValue>();
 			result.AddRange(merge.GetValueList());
 			merge.Dispose();
 			return result;
 		}
-		public List<StatsValue> GetValueList(params StatsType[] types)
+		public List<StatsValue> GetValueList(string startsWith, string endsWith, params StatsType[] types)
 		{
 			if (values == null || values.Count == 0 || types == null || types.Length == 0)
 				return new List<StatsValue>();
@@ -1165,8 +1197,10 @@ public partial class StrategyGamePlayData
 			int length = values.Count;
 			for (int i = 0 ; i < length ; i++)
 			{
-				var list = values[i].List;
-				var findDic = list.GetValueList(types);
+				var keyValue = values[i];
+				if (keyValue.List == null) continue;
+				if (!CheckKey(in keyValue, startsWith, endsWith)) continue;
+				var findDic = keyValue.List.GetValueList(types);
 				foreach (var findItem in findDic)
 				{
 					var statsType = findItem.StatsType;
@@ -1178,12 +1212,14 @@ public partial class StrategyGamePlayData
 
 			return newList;
 		}
+		public List<StatsValue> GetValueList(params StatsType[] types)
+		{
+			return GetValueList("", "", types);
+		}
 		public StatsGroup Copy()
 		{
 			return new StatsGroup(values.ToArray());
 		}
-
-
 		public void AddListener(Action<string> onChangeGroupKey, Action<string> onRemoveGroupKey)
 		{
 			if (onChangeGroupKey != null)
