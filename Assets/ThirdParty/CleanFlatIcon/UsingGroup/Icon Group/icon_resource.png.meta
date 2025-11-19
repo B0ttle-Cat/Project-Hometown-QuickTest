@@ -141,7 +141,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: personnel
+      name: manpower
       rect:
         serializedVersion: 2
         x: 0
@@ -203,7 +203,7 @@ TextureImporter:
       base: 1218001533
       electricity: -1710544365
       material: 1328324774
-      personnel: -1346640611
+      manpower: -1346640611
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

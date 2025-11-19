@@ -189,7 +189,7 @@ public partial class SectorObject // Getter
 
 		return (currMain.Value, maxMain.Value);
 	}
-	public (int value, int max) GetPersonnel()
+	public (int value, int max) GetManpower()
 	{
 		const StatsType CurrType = StatsType.거점_인력_현재;
 		const StatsType MaxType = StatsType.거점_인력_최대;
@@ -232,7 +232,7 @@ public partial class SectorObject // Getter
 		data.captureProgress = progress;
 		capture.Invoke();
 	}
-	public void SetPersonnel(int value)
+	public void SetManpower(int value)
 	{
 		CurrStatsList.SetValue(StatsType.거점_인력_현재, value);
 	}

@@ -6803,7 +6803,7 @@ GameObject:
   m_Component:
   - component: {fileID: 724487841}
   m_Layer: 5
-  m_Name: Info_Personnel
+  m_Name: Info_Manpower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9934,7 +9934,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1092728532}
   m_Layer: 5
-  m_Name: Info_Personnel
+  m_Name: Info_Manpower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10448,7 +10448,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1181829345}
   m_Layer: 5
-  m_Name: Info_Personnel
+  m_Name: Info_Manpower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

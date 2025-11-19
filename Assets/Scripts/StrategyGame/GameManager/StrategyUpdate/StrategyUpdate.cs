@@ -160,7 +160,7 @@ public partial class StrategyUpdate : MonoBehaviour
 
 			(UpdateLogicSort.거점_전력_보충,  new StrategyUpdate_ElectricitySupply(this)),
 			(UpdateLogicSort.거점_물자_보충,  new StrategyUpdate_MaterialSupply(this)),
-			(UpdateLogicSort.거점_인력_보충,  new StrategyUpdate_PersonnelSupply(this)),
+			(UpdateLogicSort.거점_인력_보충,  new StrategyUpdate_ManpowerSupply(this)),
 
 			(UpdateLogicSort.거점_물류_네트워크_업데이트,  null),
 

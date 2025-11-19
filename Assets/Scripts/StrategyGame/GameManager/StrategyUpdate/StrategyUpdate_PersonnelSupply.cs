@@ -3,9 +3,9 @@
 using static StrategyGamePlayData;
 public partial class StrategyUpdate
 {
-    public class StrategyUpdate_PersonnelSupply : StrategyUpdateSubClass<StrategyUpdate_PersonnelSupply.ResourcesSupply>
+    public class StrategyUpdate_ManpowerSupply : StrategyUpdateSubClass<StrategyUpdate_ManpowerSupply.ResourcesSupply>
 	{
-		public StrategyUpdate_PersonnelSupply(StrategyUpdate updater) : base(updater)
+		public StrategyUpdate_ManpowerSupply(StrategyUpdate updater) : base(updater)
 		{
 		}
 
@@ -71,11 +71,11 @@ public partial class StrategyUpdate
 
 				if (isUpdate)
 				{
-					sector.SetPersonnel(curr);
+					sector.SetManpower(curr);
 
 					string key = $"{sector.SectorName}_{UpdateLogicSort.거점_자원갱신이벤트}";
 					TempData.SetTrigger(key, UpdateLogicSort.거점_자원갱신이벤트);
-					//Debug.Log($"Pressed PersonnelSupply| Sector:{sector.SectorName,-10} | Faction:{sector.CaptureData.captureFactionID,-10} | Point:{현재보유량,4}/{최대보유량 - 4}");
+					//Debug.Log($"Pressed ManpowerSupply| Sector:{sector.SectorName,-10} | Faction:{sector.CaptureData.captureFactionID,-10} | Point:{현재보유량,4}/{최대보유량 - 4}");
 				}
 			}
 		}
