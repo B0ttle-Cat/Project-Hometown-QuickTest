@@ -66,12 +66,17 @@ public static class WaypointUtility
 	public static Vector3[] GetLineWithWaypoints(Vector3 start, Vector3 last, Waypoint[] waypoints, int samplesPerSegment = 10)
 	{
 		var result = new List<Vector3>();
+		float segmentPersamples = 1 / samplesPerSegment;
 		if (waypoints == null || waypoints.Length == 0)
 		{
-			result.Add(start);
-			result.Add(last);
+			for (int i = 0 ; i <= samplesPerSegment ; i++)
+			{
+				float t = i * segmentPersamples;
+				result.Add(Vector3.Lerp(start, last, t));
+			}
 			return result.ToArray();
 		}
+
 
 		// 전체 포인트 배열
 		var points = new List<Vector3> { start };
@@ -100,7 +105,7 @@ public static class WaypointUtility
 
 			for (int s = 0 ; s <= samplesPerSegment ; s++)
 			{
-				float t = s / (float)samplesPerSegment;
+				float t = s * segmentPersamples;
 
 				Vector3 catmullPoint = 0.5f * ((2f * P1) +
 											   (-P0 + P2) * t +

@@ -3410,7 +3410,7 @@ MonoBehaviour:
     target: {fileID: 8036133129342870184}
   - key: Fill Material
     target: {fileID: 5867862752514708554}
-  - key: Fill Electricity
+  - key: Fill Electric
     target: {fileID: 1706139187427917576}
   - key: Base Stats
     target: {fileID: 1946815323108895858}
@@ -7238,7 +7238,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5126413108319421799, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
       propertyPath: m_Name
-      value: Fill Electricity
+      value: Fill Electric
       objectReference: {fileID: 0}
     - target: {fileID: 5208070350384272659, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
       propertyPath: m_Color.a

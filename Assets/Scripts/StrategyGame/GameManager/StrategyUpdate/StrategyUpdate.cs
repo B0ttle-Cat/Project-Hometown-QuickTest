@@ -18,17 +18,21 @@ public partial class StrategyUpdate : MonoBehaviour
 	public enum UpdateLogicSort
 	{
 		None = 0,
+		Start = 1,
 
 		거점_점령상태,
 		거점_시설버프계산,
 
 		거점_시설_건설,
 
+		세력_자원갱신시작이벤트,
 		거점_전력_보충,
 		거점_재료_보충,
-		거점_물류_네트워크_업데이트,
 		거점_인력_보충,
-		거점_자원갱신이벤트,
+		거점_자원_보충,
+		거점_물류_네트워크_업데이트,
+		거점_자원갱신종료이벤트,
+		세력_자원갱신종료이벤트,
 		거점_유닛버프계산,
 
 		유닛_기본변수_갱신,
@@ -108,10 +112,10 @@ public partial class StrategyUpdate : MonoBehaviour
 			int findIndex = dataList.FindIndex(d=>d.key == key);
 			if (findIndex < 0) dataList.Add(new DataValue(key, true));
 		}
-		public void SetTrigger(string key, UpdateLogicSort alive)
+		public void SetTrigger(string key, UpdateLogicSort aliveLimit)
 		{
 			int findIndex = dataList.FindIndex(d=>d.key == key);
-			if (findIndex < 0) dataList.Add(new DataValue(key, true, alive));
+			if (findIndex < 0) dataList.Add(new DataValue(key, true, aliveLimit));
 		}
 
 		public bool RemoveValue(string key)
@@ -154,18 +158,21 @@ public partial class StrategyUpdate : MonoBehaviour
 		tempData = new StrategyUpdateTempData();
 		updateList = new List<(UpdateLogicSort type, IStrategyUpdater updater)>()
 		{
+			(UpdateLogicSort.Start,  null),
+
 			(UpdateLogicSort.거점_점령상태,  new StrategyUpdate_CaptureUpdate(this)),
 			(UpdateLogicSort.거점_시설_건설,  new StrategyUpdate_ConstructUpdate(this)),
-			(UpdateLogicSort.거점_시설버프계산,  null),
 
-			(UpdateLogicSort.거점_전력_보충,  new StrategyUpdate_ElectricitySupply(this)),
-			(UpdateLogicSort.거점_재료_보충,  new StrategyUpdate_MaterialSupply(this)),
-			(UpdateLogicSort.거점_인력_보충,  new StrategyUpdate_ManpowerSupply(this)),
-
-			(UpdateLogicSort.거점_물류_네트워크_업데이트,  null),
-
-			(UpdateLogicSort.거점_자원갱신이벤트,  new StrategyUpdate_EndedResourcesSupply(this)),
+			(UpdateLogicSort.거점_시설버프계산, null),
 			(UpdateLogicSort.거점_유닛버프계산, null),
+
+			(UpdateLogicSort.세력_자원갱신시작이벤트,  new StrategyUpdate_StartFactionResourcesSupply(this)),
+			(UpdateLogicSort.거점_자원_보충,  new StrategyUpdate_ResourcesSupply(this)),
+			//(UpdateLogicSort.거점_재료_보충,  new StrategyUpdate_MaterialSupply(this)),
+			//(UpdateLogicSort.거점_인력_보충,  new StrategyUpdate_ManpowerSupply(this)),
+			(UpdateLogicSort.거점_물류_네트워크_업데이트,  null),
+			(UpdateLogicSort.거점_자원갱신종료이벤트,  new StrategyUpdate_EndedSectorResourcesSupply(this)),
+			(UpdateLogicSort.세력_자원갱신종료이벤트,  new StrategyUpdate_EndedFactionResourcesSupply(this)),
 
 			(UpdateLogicSort.유닛_기본변수_갱신, null),
 			(UpdateLogicSort.유닛_버프_계산,  new StrategyUpdate_UnitBuff(this)),
@@ -297,6 +304,7 @@ public abstract class StrategyUpdateSubClass<T> : IStrategyUpdater where T : Str
 	{
 		protected bool ResourcesUpdate(ref int current, in int max, in int supplyPerTanSec, ref float supplement, ref float currentResupplyTime, in float resetResupplyTime, in float deltaTime)
 		{
+			if(max <= 0 || max < current) return false;
 			CumulativeUpdate(in current, in max, in supplyPerTanSec, ref supplement, in deltaTime);
 			if (CheckResupplyTime(ref currentResupplyTime, in resetResupplyTime, in deltaTime))
 			{
@@ -341,6 +349,33 @@ public abstract class StrategyUpdateSubClass<T> : IStrategyUpdater where T : Str
 			return true;
 		}
 
+	}
+	public abstract partial class UpdateLogic // Faction
+	{
+		public string FactionKey(Faction faction) => FactionKey(faction.FactionID);
+		public string FactionIsAliveKey(Faction faction) => FactionIsAliveKey(faction);
+		public string FactionTempSupplyValueKey(Faction faction) => FactionTempSupplyValueKey(faction);
+		public string FactionKey(int faction) => $"FactionKey_{faction}";
+		public string FactionIsAliveKey(int faction) => $"FactionIsAliveKey_{faction}";
+		public string FactionTempSupplyValueKey(int faction) => $"FactionTempSupplyValueKey_{faction}";
+		public record FactionTempSupplyValue
+		{
+			public readonly  int factionID;
+
+			public int manpower;
+			public int manpowerMax;
+
+			public int material;
+			public int materialMax;
+
+			public int electric;
+			public int electricMax;
+
+            public FactionTempSupplyValue(Faction faction)
+            {
+				this.factionID = faction == null ? -1 : faction.FactionID;
+			}
+        }
 	}
 }
 public class StrategyUpdate_OperationUpdate : StrategyUpdateSubClass<StrategyUpdate_OperationUpdate.OperationUpdate>

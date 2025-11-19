@@ -1,22 +1,24 @@
 ﻿using System.Collections.Generic;
+
+using static StrategyUpdate.StrategyUpdate_EndedSectorResourcesSupply;
 public partial class StrategyUpdate
 {
-    public class StrategyUpdate_EndedResourcesSupply : StrategyUpdateSubClass<StrategyUpdate_EndedResourcesSupply.EndedResourcesSupply>
+	public class StrategyUpdate_EndedSectorResourcesSupply : StrategyUpdateSubClass<ResourcesSupply>
 	{
-        public StrategyUpdate_EndedResourcesSupply(StrategyUpdate updater) : base(updater)
+        public StrategyUpdate_EndedSectorResourcesSupply(StrategyUpdate updater) : base(updater)
         {
         }
 
         protected override void Start()
         {
-			updateList = new List<EndedResourcesSupply>();
+			updateList = new List<ResourcesSupply>();
 			var list = StrategyManager.Collector.SectorList;
 			int length = list.Count;
 			for (int i = 0 ; i < length ; i++)
 			{
-				var cb = list[i];
-				if (cb == null) continue;
-				updateList.Add(new EndedResourcesSupply(this, cb));
+				var sector = list[i];
+				if (sector == null) continue;
+				updateList.Add(new ResourcesSupply(this, sector));
 			}
 		}
 
@@ -32,10 +34,10 @@ public partial class StrategyUpdate
 
 		}
 
-        public class EndedResourcesSupply : UpdateLogic
+        public class ResourcesSupply : UpdateLogic
         {
 			private SectorObject sector;
-			public EndedResourcesSupply(StrategyUpdateSubClass<EndedResourcesSupply> thisSubClass, SectorObject sector) :base(thisSubClass)
+			public ResourcesSupply(StrategyUpdateSubClass<ResourcesSupply> thisSubClass, SectorObject sector) :base(thisSubClass)
 			{
 				this.sector = sector;
 			}
@@ -48,7 +50,7 @@ public partial class StrategyUpdate
             {
 				if (sector == null || !sector.isActiveAndEnabled) return;
 
-				string key = $"{sector.SectorName}_{UpdateLogicSort.거점_자원갱신이벤트}";
+				string key = $"{sector.SectorName}_{UpdateLogicSort.거점_자원갱신종료이벤트}";
 				if (!TempData.GetTrigger(key)) return;
 
 				sector.Stats.Invoke();

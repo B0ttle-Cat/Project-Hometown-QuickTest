@@ -181,11 +181,11 @@ public partial class SectorObject // Getter
 	{
 		const StatsType CurrType = StatsType.거점_내구도_현재;
 		const StatsType MaxType = StatsType.거점_내구도_최대;
-		//const StatsType SupplyType = StatsType.거점_인력_회복;
+		//const StatsType supplyType = StatsType.거점_인력_회복;
 
 		var currMain = CurrStatsList.GetValue(statsType: CurrType);
 		var maxMain = SectorStatsGroup.GetValue(MaxType);
-		//var supplyMain = CurrStatsList.GetValue(SupplyType);
+		//var supplyMain = CurrStatsList.GetValue(supplyType);
 
 		return (currMain.Value, maxMain.Value);
 	}
@@ -193,11 +193,11 @@ public partial class SectorObject // Getter
 	{
 		const StatsType CurrType = StatsType.거점_인력_현재;
 		const StatsType MaxType = StatsType.거점_인력_최대;
-		//const StatsType SupplyType = StatsType.거점_인력_회복;
+		//const StatsType supplyType = StatsType.거점_인력_회복;
 
 		var currMain = CurrStatsList.GetValue(statsType: CurrType);
 		var maxMain = SectorStatsGroup.GetValue(MaxType);
-		//var supplyMain = CurrStatsList.GetValue(SupplyType);
+		//var supplyMain = CurrStatsList.GetValue(supplyType);
 
 		return (currMain.Value, maxMain.Value);
 	}
@@ -213,7 +213,7 @@ public partial class SectorObject // Getter
 
 		return (currMain.Value, maxMain.Value, supplyMain.Value);
 	}
-	public (int value, int max, int supply) GetElectricity()
+	public (int value, int max, int supply) GetElectric()
 	{
 		const StatsType CurrType = StatsType.거점_전력_현재;
 		const StatsType MaxType = StatsType.거점_전력_최대;
@@ -240,7 +240,7 @@ public partial class SectorObject // Getter
 	{
 		CurrStatsList.SetValue(StatsType.거점_재료_현재, value);
 	}
-	public void SetElectricity(int value)
+	public void SetElectric(int value)
 	{
 		CurrStatsList.SetValue(StatsType.거점_전력_현재, value);
 	}

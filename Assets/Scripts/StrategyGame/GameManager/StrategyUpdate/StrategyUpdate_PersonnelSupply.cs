@@ -35,7 +35,6 @@ public partial class StrategyUpdate
 		public class ResourcesSupply : UpdateLogic
 		{
 			private SectorObject sector;
-
 			private const StatsType MaxType = StatsType.거점_인력_최대;
 			private const StatsType SupplyType = StatsType.거점_인력_회복;
 			private const StatsType CurrType = StatsType.거점_인력_현재;
@@ -67,9 +66,17 @@ public partial class StrategyUpdate
 				{
 					sector.SetManpower(curr);
 
-					string key = $"{sector.SectorName}_{UpdateLogicSort.거점_자원갱신이벤트}";
-					TempData.SetTrigger(key, UpdateLogicSort.거점_자원갱신이벤트);
-					//Debug.Log($"Pressed ManpowerSupply| Sector:{sector.SectorName,-10} | Faction:{sector.CaptureData.captureFactionID,-10} | Point:{현재보유량,4}/{최대보유량 - 4}");
+					string key = $"{sector.SectorName}_{UpdateLogicSort.거점_자원갱신종료이벤트}";
+					TempData.SetTrigger(key, UpdateLogicSort.거점_자원갱신종료이벤트);
+
+					int factionID = sector.CaptureData.captureFactionID;
+					key = $"{factionID}_{UpdateLogicSort.세력_자원갱신종료이벤트}";
+					TempData.SetTrigger(key, UpdateLogicSort.세력_자원갱신종료이벤트);
+					if (TempData.TryGetValue<FactionTempSupplyValue>(FactionTempSupplyValueKey(factionID), out var tempValue))
+					{
+						tempValue.manpower += curr;
+						tempValue.manpowerMax += max;
+					}
 				}
 			}
 		}

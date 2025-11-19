@@ -22,8 +22,8 @@ public partial class Faction : IEquatable<Faction> , IDisposable
 			new StatsValue(StatsType.세력_병력_현재, data.currentOperationPoint),
 			new StatsValue(StatsType.세력_물자_최대, data.maxMaterialPoint),
 			new StatsValue(StatsType.세력_물자_현재, data.currentMaterialPoint),
-			new StatsValue(StatsType.세력_전력_최대, data.maxElectricityPoint),
-			new StatsValue(StatsType.세력_전력_현재, data.currentElectricityPoint)
+			new StatsValue(StatsType.세력_전력_최대, data.maxElectricPoint),
+			new StatsValue(StatsType.세력_전력_현재, data.currentElectricPoint)
 			);
 		availableUnitKeyList = data.AvailableUnitKeyList();
 	}

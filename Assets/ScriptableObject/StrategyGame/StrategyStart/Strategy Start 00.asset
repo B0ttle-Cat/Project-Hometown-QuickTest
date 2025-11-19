@@ -35,8 +35,8 @@ MonoBehaviour:
       currentOperationPoint: 0
       maxMaterialPoint: 100
       currentMaterialPoint: 0
-      maxElectricityPoint: 100
-      currentElectricityPoint: 0
+      maxElectricPoint: 100
+      currentElectricPoint: 0
       captureSpeed: 1
       defaultUnitPrefab: {fileID: 2460545361625872358, guid: 47ee3d89ec6dbf842b177734ea94c8d2, type: 3}
       availableUnitKeyList:
@@ -51,8 +51,8 @@ MonoBehaviour:
       currentOperationPoint: 0
       maxMaterialPoint: 100
       currentMaterialPoint: 0
-      maxElectricityPoint: 100
-      currentElectricityPoint: 0
+      maxElectricPoint: 100
+      currentElectricPoint: 0
       captureSpeed: 0
       defaultUnitPrefab: {fileID: 2460545361625872358, guid: 47ee3d89ec6dbf842b177734ea94c8d2, type: 3}
       availableUnitKeyList:

@@ -77,8 +77,8 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		[FoldoutGroup("@factionName/Stats")] public int maxMaterialPoint;
 		[FoldoutGroup("@factionName/Stats")] public int currentMaterialPoint;
 		[Space]
-		[FoldoutGroup("@factionName/Stats")] public int maxElectricityPoint;
-		[FoldoutGroup("@factionName/Stats")] public int currentElectricityPoint;
+		[FoldoutGroup("@factionName/Stats")] public int maxElectricPoint;
+		[FoldoutGroup("@factionName/Stats")] public int currentElectricPoint;
 		[Space]
 		[FoldoutGroup("@factionName/Stats")] public int captureSpeed;
 

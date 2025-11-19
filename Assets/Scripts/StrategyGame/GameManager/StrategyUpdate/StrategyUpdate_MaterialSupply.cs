@@ -67,9 +67,17 @@ public partial class StrategyUpdate
 				{
 					sector.SetMaterial(curr);
 
-					string key = $"{sector.SectorName}_{UpdateLogicSort.거점_자원갱신이벤트}";
-					TempData.SetTrigger(key, UpdateLogicSort.거점_자원갱신이벤트);
-					//Debug.Log($"Pressed MaterialSupply| Sector:{sector.SectorName,-10} | Faction:{sector.CaptureData.captureFactionID,-10} | Point:{curr,4}/{max - 4}");
+					string key = $"{sector.SectorName}_{UpdateLogicSort.거점_자원갱신종료이벤트}";
+					TempData.SetTrigger(key, UpdateLogicSort.거점_자원갱신종료이벤트);
+
+					int factionID = sector.CaptureData.captureFactionID;
+					key = $"{factionID}_{UpdateLogicSort.세력_자원갱신종료이벤트}";
+					TempData.SetTrigger(key, UpdateLogicSort.세력_자원갱신종료이벤트);
+					if (TempData.TryGetValue<FactionTempSupplyValue>(FactionTempSupplyValueKey(factionID), out var tempValue))
+					{
+						tempValue.material += curr;
+						tempValue.manpowerMax += max;
+					}
 				}
 			}
 		}

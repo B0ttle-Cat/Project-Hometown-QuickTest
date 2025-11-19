@@ -40,18 +40,19 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 	AstarPath ActiveAstarPath => AstarPath.active;
 	PointGraph thisPointGraph;
 
-	public class SectorNode
+	public class SectorNetwork
 	{
 		public SectorObject sector;
 		public Vector3 position;
 
-		public NodeNetworkInfo[] nodeNetworkInfo;
-
-		public struct NodeNetworkInfo
+		public Neighbor[] neighbors;
+		public class Neighbor
 		{
-			public SectorObject nextSector;
+			SectorObject sector;
+			public float distance;
 		}
 	}
+	private Dictionary<SectorObject, SectorNetwork> sectorNetworkList;
 
 	public async Awaitable Init(List<SectorObject> sectorList, StrategyStartSetterData.SectorLinkData[] sectorLinkData)
 	{
@@ -109,6 +110,8 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 		});
 
 		AstarPath.active.FlushWorkItems();
+
+		sectorNetworkList = new Dictionary<SectorObject, SectorNetwork>(sectorList.Count);
 
 		isInit = true;
 	}

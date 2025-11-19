@@ -110,8 +110,8 @@ public partial class StrategyUpdate
 			private List<StatsValue> GetSectorBuffState()
 			{
 				return new List<StatsValue>();
-				//var sector = GetEnterSector();
-				//if (sector == null) return new List<StatsValue>();
+				//var faction = GetEnterSector();
+				//if (faction == null) return new List<StatsValue>();
 				//
 				//var enterSector = GetEnterSector();
 				//
@@ -121,9 +121,9 @@ public partial class StrategyUpdate
 				//	return cbBuffList;
 				//}
 				//
-				//StatsList CurrStatsList = sector.CurrStatsList;
-				//StatsGroup FacilitiesBuffGroup = sector.TryGetStatsList_Facilities;
-				//StatsGroup supportBuffGroup = sector.SupportBuffGroup;
+				//StatsList CurrStatsList = faction.CurrStatsList;
+				//StatsGroup FacilitiesBuffGroup = faction.TryGetStatsList_Facilities;
+				//StatsGroup supportBuffGroup = faction.SupportBuffGroup;
 				//
 				//var mainList = CurrStatsList.GetValueList(SectorBuffType);
 				//var facilitiesList = FacilitiesBuffGroup.GetValueList(SectorBuffType);

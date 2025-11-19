@@ -1177,7 +1177,7 @@ GameObject:
   - component: {fileID: 411704565658653919}
   - component: {fileID: 8691116672692282520}
   m_Layer: 5
-  m_Name: Fill Electricity
+  m_Name: Fill Electric
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3260,7 +3260,7 @@ MonoBehaviour:
     target: {fileID: 5711310659728119174}
   - key: Fill Material
     target: {fileID: 8313322026100546996}
-  - key: Fill Electricity
+  - key: Fill Electric
     target: {fileID: 2104949900783509892}
   - key: "\uC804\uD22C\uC6D0 \uBC30\uCE58"
     target: {fileID: 6613950769622325350}
