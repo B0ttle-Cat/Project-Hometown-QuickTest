@@ -203,9 +203,9 @@ public partial class SectorObject // Getter
 	}
 	public (int value, int max, int supply) GetMaterial()
 	{
-		const StatsType CurrType = StatsType.거점_물자_현재;
-		const StatsType MaxType = StatsType.거점_물자_최대;
-		const StatsType SupplyType = StatsType.거점_물자_회복;
+		const StatsType CurrType = StatsType.거점_재료_현재;
+		const StatsType MaxType = StatsType.거점_재료_최대;
+		const StatsType SupplyType = StatsType.거점_재료_회복;
 
 		var currMain = CurrStatsList.GetValue(statsType: CurrType);
 		var maxMain = SectorStatsGroup.GetValue(MaxType);
@@ -238,7 +238,7 @@ public partial class SectorObject // Getter
 	}
 	public void SetMaterial(int value)
 	{
-		CurrStatsList.SetValue(StatsType.거점_물자_현재, value);
+		CurrStatsList.SetValue(StatsType.거점_재료_현재, value);
 	}
 	public void SetElectricity(int value)
 	{

@@ -25,7 +25,7 @@ public partial class StrategyUpdate : MonoBehaviour
 		거점_시설_건설,
 
 		거점_전력_보충,
-		거점_물자_보충,
+		거점_재료_보충,
 		거점_물류_네트워크_업데이트,
 		거점_인력_보충,
 		거점_자원갱신이벤트,
@@ -159,7 +159,7 @@ public partial class StrategyUpdate : MonoBehaviour
 			(UpdateLogicSort.거점_시설버프계산,  null),
 
 			(UpdateLogicSort.거점_전력_보충,  new StrategyUpdate_ElectricitySupply(this)),
-			(UpdateLogicSort.거점_물자_보충,  new StrategyUpdate_MaterialSupply(this)),
+			(UpdateLogicSort.거점_재료_보충,  new StrategyUpdate_MaterialSupply(this)),
 			(UpdateLogicSort.거점_인력_보충,  new StrategyUpdate_ManpowerSupply(this)),
 
 			(UpdateLogicSort.거점_물류_네트워크_업데이트,  null),
@@ -295,38 +295,50 @@ public abstract class StrategyUpdateSubClass<T> : IStrategyUpdater where T : Str
 	}
 	public abstract partial class UpdateLogic // ResourcesSupply
 	{
-		protected bool UpdateResupplyTime(ref float currentResupplyTime, in float deltaTime, float resupplyTime)
+		protected bool ResourcesUpdate(ref int current, in int max, in int supplyPerTanSec, ref float supplement, ref float currentResupplyTime, in float resetResupplyTime, in float deltaTime)
+		{
+			CumulativeUpdate(in current, in max, in supplyPerTanSec, ref supplement, in deltaTime);
+			if (CheckResupplyTime(ref currentResupplyTime, in resetResupplyTime, in deltaTime))
+			{
+				return SupplyUpdate(ref current, in max, ref supplement);
+			}
+			return false;
+		}
+		protected void CumulativeUpdate(in int current, in int max, in int supplyPerTanSec, ref float supplement, in float deltaTime)
+		{
+			if (current >= max)
+			{
+				supplement = 0;
+				return;
+			}
+			float supplyPerDelta  = supplyPerTanSec * 0.1f * deltaTime;
+			supplement += supplyPerDelta;
+		}
+		protected bool CheckResupplyTime(ref float currentResupplyTime, in float resetResupplyTime, in float deltaTime)
 		{
 			currentResupplyTime -= deltaTime;
 			if (currentResupplyTime <= 0)
 			{
-				currentResupplyTime = resupplyTime;
+				currentResupplyTime = resetResupplyTime;
 				return true;
 			}
 			return false;
 		}
-		protected void CumulativeUpdate(in int current, in int max, in int supplyPerMinute, ref float cumulative, in float deltaTime)
+		protected bool SupplyUpdate(ref int current, in int max, ref float cumulative)
 		{
 			if (current >= max)
 			{
 				cumulative = 0;
-				return;
+				return false;
 			}
-			float supplyPerDelta  = ((float)supplyPerMinute / 60f) * deltaTime;
-			cumulative += supplyPerDelta;
-		}
-		protected void SupplyUpdate(ref int current, in int max, ref float cumulative, ref bool isUpdate)
-		{
-			if (current >= max)
-			{
-				cumulative = 0;
-				return;
-			}
-			int intCumulative = Mathf.FloorToInt(cumulative);
-			float rate = cumulative - intCumulative;
+			if (cumulative < 1) return false;
+			
+			int intCumulative = (int)cumulative;
+			cumulative -= intCumulative;
 
 			current = Mathf.Clamp(current + intCumulative, 0, max);
-			isUpdate = true;
+			
+			return true;
 		}
 
 	}

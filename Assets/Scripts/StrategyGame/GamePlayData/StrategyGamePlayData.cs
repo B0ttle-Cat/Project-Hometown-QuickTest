@@ -327,8 +327,6 @@ public partial class StrategyGamePlayData
 
 				[FoldoutGroup("CurrentStats"),InlineProperty,HideLabel]
 				public StatsList currentStats;
-				[FoldoutGroup("EffectStats"),InlineProperty,HideLabel]
-				public StatsList effectsStats;
 
 				public readonly string EffectString()
 				{
@@ -342,7 +340,6 @@ public partial class StrategyGamePlayData
 						environmentalKey = environmentalKey,
 						effects = effects,
 						currentStats = currentStats.Copy(),
-						effectsStats = effectsStats.Copy()
 					};
 				}
 				public StatsList GetStatsList()
@@ -638,7 +635,7 @@ public partial class StrategyGamePlayData
 	{
 		StatsType.거점_내구도_현재,
 		StatsType.거점_인력_현재,
-		StatsType.거점_물자_현재,
+		StatsType.거점_재료_현재,
 		StatsType.거점_전력_현재,
 	};
 
@@ -646,10 +643,10 @@ public partial class StrategyGamePlayData
 	{   
 		StatsType.거점_내구도_최대,
 		StatsType.거점_인력_최대,
-		StatsType.거점_물자_최대,
+		StatsType.거점_재료_최대,
 		StatsType.거점_전력_최대,
 		StatsType.거점_인력_회복,
-		StatsType.거점_물자_회복,
+		StatsType.거점_재료_회복,
 		StatsType.거점_전력_회복,
 	};
 
@@ -792,18 +789,18 @@ public partial class StrategyGamePlayData
 				new StatsValue(StatsType.거점_내구도_최대, 500),
 
 				new StatsValue(StatsType.거점_인력_최대, 100),
-				new StatsValue(StatsType.거점_물자_최대, 1000),
+				new StatsValue(StatsType.거점_재료_최대, 1000),
 				new StatsValue(StatsType.거점_전력_최대, 1000),
 
 				new StatsValue(StatsType.거점_내구도_회복, 5),
 				new StatsValue(StatsType.거점_인력_회복, 5),
-				new StatsValue(StatsType.거점_물자_회복, 50),
+				new StatsValue(StatsType.거점_재료_회복, 50),
 				new StatsValue(StatsType.거점_전력_회복, 50)
 		);
 		public static StatsList SectorCurrentStatsList => new StatsList(
 				new StatsValue(StatsType.거점_내구도_현재, 500),
 				new StatsValue(StatsType.거점_인력_현재, 0),
-				new StatsValue(StatsType.거점_물자_현재, 0),
+				new StatsValue(StatsType.거점_재료_현재, 0),
 				new StatsValue(StatsType.거점_전력_현재, 0)
 		);
 		public void Invoke(in StatsValue statsValue)

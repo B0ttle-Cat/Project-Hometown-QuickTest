@@ -36,19 +36,19 @@ public partial class StrategyUpdate
 		{
 			private SectorObject sector;
 
-			private const StatsType MaxType = StatsType.거점_물자_최대;
-			private const StatsType SupplyType = StatsType.거점_물자_회복;
-			private const StatsType CurrType = StatsType.거점_물자_현재;
-			private const float resupplyTime = 10f;
+			private const StatsType MaxType = StatsType.거점_재료_최대;
+			private const StatsType SupplyType = StatsType.거점_재료_회복;
+			private const StatsType CurrType = StatsType.거점_재료_현재;
 
-			float replenish; // 다음 보충까지 남은 시간.
-			float surplus; // 여분의 보충량
+			private const float resetResupplyTime = 10f;
+			float currentResupplyTime; // 다음 보충까지 남은 시간.
+			float supplement; // 다음에 보충될 양
 
 			public ResourcesSupply(StrategyUpdateSubClass<ResourcesSupply> thisSubClass, SectorObject sector) : base(thisSubClass)
 			{
 				this.sector = sector;
-				replenish = resupplyTime;
-				surplus = 0f;
+				currentResupplyTime = resetResupplyTime;
+				supplement = 0f;
 			}
 			protected override void OnDispose()
 			{
@@ -63,13 +63,7 @@ public partial class StrategyUpdate
 				int supply = sector.SectorStatsGroup.GetValue(SupplyType);
 				int curr = sector.CurrStatsList.GetValue(CurrType);
 
-				bool isUpdate = false;
-
-				CumulativeUpdate(in curr, in max, in supply, ref surplus, in deltaTime);
-				if (UpdateResupplyTime(ref replenish, deltaTime, resupplyTime))
-					SupplyUpdate(ref curr, in max, ref surplus, ref isUpdate);
-
-				if (isUpdate)
+				if (ResourcesUpdate(ref curr, in max, in supply, ref supplement, ref currentResupplyTime, resetResupplyTime, in deltaTime))
 				{
 					sector.SetMaterial(curr);
 

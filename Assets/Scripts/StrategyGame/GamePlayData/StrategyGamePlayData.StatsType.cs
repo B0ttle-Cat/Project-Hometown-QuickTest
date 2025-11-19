@@ -1,4 +1,6 @@
-﻿public partial class StrategyGamePlayData // StatsType
+﻿using Sirenix.OdinInspector;
+
+public partial class StrategyGamePlayData // StatsType
 {
     // 유닛 피해량 (명중)
     // 기본 피해량 = (유닛_공격력 - 유닛_방어력)
@@ -77,18 +79,22 @@
 
 		#region 거점_능력치
 		거점_인력_최대            = 2000,
+		[LabelText("거점_인력_회복 (10초당)")]
 		거점_인력_회복            = 2001,
 		거점_인력_현재            = 2002,
 							            
-		거점_물자_최대            = 2010,
-		거점_물자_회복            = 2011,
-		거점_물자_현재            = 2012,
+		거점_재료_최대            = 2010,
+		[LabelText("거점_재료_회복 (10초당)")]
+		거점_재료_회복            = 2011,
+		거점_재료_현재            = 2012,
 							            
 		거점_전력_최대            = 2020,
+		[LabelText("거점_전력_회복 (10초당)")]
 		거점_전력_회복            = 2021,
 		거점_전력_현재            = 2022,
 
 		거점_내구도_최대          = 2030,
+		[LabelText("거점_내구도_회복 (10초당)")]
 		거점_내구도_회복          = 2031,
 		거점_내구도_현재          = 2032,
 		#endregion			            
