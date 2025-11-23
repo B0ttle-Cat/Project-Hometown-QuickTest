@@ -6,11 +6,9 @@ public partial class UnitObject : ISelectableByMouse
 	{
 		(this as ISelectable).SelfDeselect();
 	}
-
-	public Vector3 clickCenter => transform.position;
 	bool ISelectableByMouse.IsSelectMouse { get; set; }
 	bool ISelectableByMouse.IsPointEnter { get; set; }
-	Vector3 ISelectableByMouse.ClickCenter => clickCenter;
+	Vector3 ISelectableByMouse.ClickCenter => transform.position;
 	void ISelectableByMouse.OnPointEnter()
 	{
 	}

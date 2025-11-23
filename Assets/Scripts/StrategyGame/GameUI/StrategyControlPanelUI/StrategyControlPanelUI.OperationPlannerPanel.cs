@@ -7,8 +7,6 @@ using UnityEngine.InputSystem;
 public partial class StrategyControlPanelUI
 {
 	[SerializeField, FoldoutGroup("OperationPlanner")]
-	private GameObject operationPlannerPrefab;
-	[SerializeField, FoldoutGroup("OperationPlanner")]
 	private Transform operationPlannerToot;
 	[SerializeField, FoldoutGroup("OperationPlanner")]
 	private MovementPathRenderer pathRenderPrefab;
@@ -27,7 +25,7 @@ public partial class StrategyControlPanelUI
 		}
 		else
 		{
-			operationPlannerPanel = new OperationPlannerPanel(operationPlannerPrefab, operationPlannerToot, pathRenderPrefab, this, HideOperationPlannerPanel);
+			operationPlannerPanel = new OperationPlannerPanel(operationPlannerToot, pathRenderPrefab, this, HideOperationPlannerPanel);
 		}
 		ViewStack.Push(operationPlannerPanel);
 		return operationPlannerPanel;
@@ -43,14 +41,12 @@ public partial class StrategyControlPanelUI
 	public class OperationPlannerPanel : ControlPanelItem, IPanelTarget
 	{
 		private MovementPathRenderer pathRenderPrefab;
-		private MovementPathRenderer pathRenderObject;
 		private OperationObject selectOperation;
 		private const string infoMessage = @"표시된 거점을 우클릭하여 이동 목적지를 설정 할 수 있습니다.
 shift를 누르고 선택하면 경로를 지정할 수 있습니다.";
 
 		private MovePath movementPlan;
-
-		public OperationPlannerPanel(GameObject prefab, Transform root, MovementPathRenderer pathRenderPrefab, StrategyControlPanelUI panelUI, Action onClose) : base(prefab, root, panelUI, onClose)
+		public OperationPlannerPanel(Transform root, MovementPathRenderer pathRenderPrefab, StrategyControlPanelUI panelUI, Action onClose) : base(null, root, panelUI, onClose)
 		{
 			selectOperation = null;
 			this.pathRenderPrefab = pathRenderPrefab;
@@ -167,8 +163,6 @@ shift를 누르고 선택하면 경로를 지정할 수 있습니다.";
 			if (movementPlan == null) return;
 			movementPlan.OnChangeProgress(progress);
 		}
-
-
 		protected class MovePath : ViewItem<Vector3[]>
 		{
 			private MovementPathRenderer pathRenderer;
