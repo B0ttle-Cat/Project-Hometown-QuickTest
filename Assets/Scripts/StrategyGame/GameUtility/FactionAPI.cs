@@ -47,24 +47,6 @@ public static class FactionAPI
 
 		var sectorList = StrategyManager.Collector.SectorList;
 		var values = sectorList.Where(i => i.CaptureFaction == faction).Select(i => i.GetElectric().value).ToArray();
-
-		//StrategyManager.NodeNetwork
-
-		//StatsValue totalValue = faction.FactionStats.GetValue(StatsType.세력_물자_현재);
-		//if (PayCostByCutDown(value, totalValue, values))
-		//{
-		//	int total = 0;
-		//	int length = values.Length;
-		//	for (int i = 0 ; i < length ; i++)
-		//	{
-		//		var faction = sectorList[i];
-		//		total += values[i];
-		//		faction.SetElectric(values[i]);
-		//	}
-
-		//	totalValue.Value = value;
-		//	faction.FactionStats.SetValue(totalValue);
-		//}
 	}
 
 	public static void API_PayForElectric(this Faction faction, int value)

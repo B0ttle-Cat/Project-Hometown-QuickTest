@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using Pathfinding;
 
@@ -9,25 +10,34 @@ using UnityEngine;
 [RequireComponent(typeof(Seeker))]
 public partial class OperationObject : INodeMovement
 {
-	[FoldoutGroup("INodeMovement"), ShowInInspector]
-	private Vector3 movePosition = Vector3.zero;
-	[FoldoutGroup("INodeMovement"), ShowInInspector]
+	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
+	private Vector3 movePosition;
+	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
 	private Vector3 moveVelocity = Vector3.zero;
+	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
+	private float smoothTime = 0f;
 	[FoldoutGroup("INodeMovement"), ShowInInspector]
 	private int moveSpeed;
-	[FoldoutGroup("INodeMovement"), ShowInInspector]
-	private float smoothTime = 0f;
+	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
+	private float initLength = 0f;
+	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
 	private float totalLength = 0f;
+	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
 	private float sectionLength = 0f;
+	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
 	private float tempLength = 0f;
-
 	private Seeker seeker;
 	private int movementIndex;
+    private Vector3[] initPath;
 	private List<Vector3> movePath;
 	private List<Vector3> tempMovePath;
 	private Queue<Vector3> findingPoints;
+	private Action onMovePathUpdate;
+	private Action<float> onMoveProgress;
+    private Action onStartMove;
+    private Action onEndedMove;
 
-	public INodeMovement ThisMovement => this;
+    public INodeMovement ThisMovement => this;
 	public Seeker ThisSeeker => seeker;
 	Vector3 INodeMovement.CurrentPosition
 	{
@@ -45,15 +55,22 @@ public partial class OperationObject : INodeMovement
 	float INodeMovement.SmoothTime => smoothTime;
 	float INodeMovement.MaxSpeed => moveSpeed;
 	int INodeMovement.MovementIndex { get => movementIndex; set => movementIndex = value; }
-	List<Vector3> INodeMovement.MovePath { get => movePath; set => movePath = value; }
+    Vector3[] INodeMovement.InitPath { get => initPath; set => initPath = value; }
+    List<Vector3> INodeMovement.MovePath { get => movePath; set => movePath = value; }
 	List<Vector3> INodeMovement.TempMovePath { get => tempMovePath; set => tempMovePath = value; }
 	Queue<Vector3> INodeMovement.FindingPoints { get => findingPoints; set => findingPoints = value; }
+	float INodeMovement.InitLength { get => initLength; set => initLength = value; }
 	float INodeMovement.TotalLength { get => totalLength; set => totalLength = value; }
 	float INodeMovement.SectionLength { get => sectionLength; set => sectionLength = value; }
 	float INodeMovement.TempLength { get => tempLength; set => tempLength = value; }
+	Action INodeMovement.OnChangeMovePath { get => onMovePathUpdate; set => onMovePathUpdate = value; }
+	Action<float> INodeMovement.OnChangeMoveProgress { get => onMoveProgress; set => onMoveProgress = value; }
+	Action INodeMovement.OnStartMove { get => onStartMove; set => onStartMove = value; }
+	Action INodeMovement.OnEndedMove { get => onEndedMove; set => onEndedMove = value; }
 
 	partial void InitMovement()
 	{
+		initPath = new Vector3[0];
 		movePath = new List<Vector3>();
 		tempMovePath = null;
 		findingPoints = new Queue<Vector3>();

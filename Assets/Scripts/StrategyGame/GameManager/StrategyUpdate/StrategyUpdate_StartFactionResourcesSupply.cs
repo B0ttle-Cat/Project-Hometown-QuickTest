@@ -50,7 +50,7 @@ public partial class StrategyUpdate
 				if (faction.IsNotAlive()) return;
 
 				TempData.SetTrigger(FactionIsAliveKey(faction), UpdateLogicSort.End);
-				TempData.SetValue(FactionTempSupplyValueKey(faction), new FactionTempSupplyValue(faction), UpdateLogicSort.세력_자원갱신종료);
+				TempData.SetValue(FactionTempSupplyValueKey(faction), new TempSupplyValue(faction), UpdateLogicSort.세력_자원갱신종료);
 			}
 		}
 	}

@@ -3,10 +3,6 @@ using System.Collections.Generic;
 
 using Pathfinding;
 
-
-
-
-
 #if UNITY_EDITOR
 #endif
 
@@ -53,15 +49,18 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 			neighbors = new List<Neighbor>();
 		}
 
-        public class Neighbor
+        public readonly struct Neighbor
 		{
-			public SectorObject sector;
-			public float distance;
-		}
+			public readonly SectorObject sector;
+            public Neighbor(SectorObject sector)
+            {
+				this.sector = sector;
+			}
+        }
 
 		public void AddNeighbor(SectorObject sectorObject)
 		{
-
+			neighbors.Add(new Neighbor(sectorObject));
 		}
 	}
 	private Dictionary<SectorObject, SectorNetwork> sectorNetworkList;
@@ -73,61 +72,70 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 		thisPointGraph.Scan();
 		sectorNetworkList = new Dictionary<SectorObject, SectorNetwork>(sectorList.Count);
 
-		ActiveAstarPath.AddWorkItem(() =>
-		{
+		ActiveAstarPath.AddWorkItem(() => {
 			int nodeLength = sectorList.Count;
 			PointNode[] pointNodes = new PointNode[nodeLength];
 			for (int i = 0 ; i < nodeLength ; i++)
 			{
-				sectorNetworkList.Add(sectorList[i], new SectorNetwork(sectorList[i]));
-				pointNodes[i] = thisPointGraph.AddNode((Int3)sectorList[i].transform.position);
+				var sector = sectorList[i];
+				sectorNetworkList.Add(sector, new SectorNetwork(sector));
+				pointNodes[i] = thisPointGraph.AddNode((Int3)sector.transform.position);
 			}
 			int linkLength = sectorLinkData.Length;
 			for (int i = 0 ; i < linkLength ; i++)
 			{
 				StrategyStartSetterData.SectorLinkData link = sectorLinkData[i];
-				var sectorAName = link.sectorA;
-				var sectorBName = link.sectorB;
+				if (link.connectDir == ConnectDirType.Disconnected) continue;
+				if (link.connectDir == ConnectDirType.Backward) link = link.ReverseDir;
+
+				OffMeshLinks.Directionality directionality = link.connectDir == ConnectDirType.Both ? OffMeshLinks.Directionality.TwoWay : OffMeshLinks.Directionality.OneWay;
+
+				string sectorAName = link.sectorA;
+				string sectorBName = link.sectorB;
 				int indexA = sectorList.FindIndex(s=>s.gameObject.name == sectorAName);
 				int indexB = sectorList.FindIndex(s=>s.gameObject.name == sectorBName);
+				SectorObject sectorA = sectorList[indexA];
+				SectorObject sectorB = sectorList[indexB];
 
+				sectorNetworkList[sectorA].AddNeighbor(sectorB);
+				sectorNetworkList[sectorB].AddNeighbor(sectorA);
 
-				if (link.connectDir == ConnectDirType.Backward)
-					link = link.ReverseDir;
-
-				Vector3[] waypoint = WaypointUtility.GetLineWithWaypoints(sectorList[indexA].transform.position, sectorList[indexB].transform.position, link.waypoint);
+				Vector3[] waypoint = WaypointUtility.GetLineWithWaypoints(sectorA.transform.position, sectorB.transform.position, link.waypoint);
 				int pointCount = waypoint.Length;
-				if (pointCount >= 2)
+				if (pointCount == 2)
 				{
-					PointNode _prev = pointNodes[indexA];
-					PointNode _next = pointNodes[indexB];
+					// waypoint가 시작/끝 만 있는 경우
+					PointNode prev = pointNodes[indexA];
+					PointNode next = pointNodes[indexB];
+					uint cost = (uint)(next.position - prev.position).costMagnitude;
+					GraphNode.Connect(prev, next, cost, directionality);
+				}
+				else if (pointCount > 2)
+				{
+					PointNode prev = pointNodes[indexA];
+					PointNode last = pointNodes[indexB];
 					for (int ii = 1 ; ii < pointCount - 1 ; ii++)
 					{
 						var point = waypoint[ii];
-						var prev = _prev;
 						var next = thisPointGraph.AddNode((Int3)point);
 						var cost = (uint)(next.position - prev.position).costMagnitude;
-						GraphNode.Connect(prev, next, cost);
-						_prev = next;
+						GraphNode.Connect(prev, next, cost, directionality);
+						prev = next;
 					}
-					var _cost = (uint)(_next.position - _prev.position).costMagnitude;
-					GraphNode.Connect(_prev, _next, _cost);
-				}
-				else
-				{
-					PointNode prev = pointNodes[indexA];
-					PointNode next = pointNodes[indexB];
-					var cost = (uint)(next.position - prev.position).costMagnitude;
-					GraphNode.Connect(prev, next, cost);
+					var _cost = (uint)(last.position - prev.position).costMagnitude;
+					GraphNode.Connect(prev, last, _cost, directionality);
 				}
 			}
 		});
 
 		AstarPath.active.FlushWorkItems();
 
-		
-
 		isInit = true;
+	}
+	
+	public bool GetSectorNetwork(SectorObject sector, out SectorNetwork item)
+	{
+		return sectorNetworkList.TryGetValue(sector, out item);
 	}
 	void IStrategyStartGame.OnStartGame()
 	{

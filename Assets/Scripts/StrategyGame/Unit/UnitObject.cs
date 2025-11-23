@@ -102,7 +102,9 @@ public partial class UnitObject : MonoBehaviour
 
 	public void Deinit()
 	{
+		DeselectSelf();
 	}
+	partial void DeselectSelf();
 }
 public partial class UnitObject // StateValue
 {

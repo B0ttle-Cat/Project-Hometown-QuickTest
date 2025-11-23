@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using Sirenix.OdinInspector;
 
@@ -71,9 +70,8 @@ public partial class StrategyMapPanelUI // OperationLabelGroup
 
 		protected override void OnShow()
 		{
-			StrategyManager.Collector.AddChangeListener<OperationObject>(OnChangeList, out IList currentList);
-			if (currentList == null || currentList is not List<OperationObject> operationList) return;
-			if (operationList.Count == 0) return;
+			StrategyManager.Collector.AddChangeListener<OperationObject>(OnChangeList, out List<OperationObject> operationList);
+			if (operationList == null || operationList.Count == 0) return;
 
 			int length = operationList.Count;
 			for (int i = 0 ; i < length ; i++)

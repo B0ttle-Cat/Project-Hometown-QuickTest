@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using Pathfinding;
 using Pathfinding.RVO;
@@ -19,22 +20,28 @@ public partial class UnitObject : INodeMovement
 	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
 	private float smoothTime = 0f;
 	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
+	private float initLength = 0f;
+	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
 	private float totalLength = 0f;
 	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
 	private float sectionLength = 0f;
 	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
 	private float tempLength = 0f;
-	[FoldoutGroup("INodeMovement"), ShowInInspector]
 
 	private Seeker seeker;
 	private int movementIndex;
+	private Vector3[] initPath;
 	private List<Vector3> movePath;
 	private List<Vector3> tempMovePath;
 	private Queue<Vector3> findingPoints;
+	private Action onMovePathUpdate;
+	private Action<float> onMoveProgress;
+    private Action onEndedMove;
+    private Action onStartMove;
 
 	private RVOController rvoController;
 
-	public INodeMovement ThisMovement => this;
+    public INodeMovement ThisMovement => this;
 	public INodeMovement ParentMovement => operationObject;
 	public Seeker ThisSeeker => seeker;
 	public RVOController RVO => rvoController;
@@ -54,15 +61,20 @@ public partial class UnitObject : INodeMovement
 	float INodeMovement.SmoothTime => smoothTime;
 	float INodeMovement.MaxSpeed => GetStateValue(StrategyGamePlayData.StatsType.유닛_이동속도);
 	int INodeMovement.MovementIndex { get => movementIndex; set => movementIndex = value; }
+    Vector3[] INodeMovement.InitPath { get => initPath; set => initPath = value; }
 	List<Vector3> INodeMovement.MovePath { get => movePath; set => movePath = value; }
 	List<Vector3> INodeMovement.TempMovePath { get => tempMovePath; set => tempMovePath = value; }
 	Queue<Vector3> INodeMovement.FindingPoints { get => findingPoints; set => findingPoints = value; }
+	float INodeMovement.InitLength { get => initLength; set => initLength = value; }
 	float INodeMovement.TotalLength { get => totalLength; set => totalLength = value; }
 	float INodeMovement.SectionLength { get => sectionLength; set => sectionLength = value; }
 	float INodeMovement.TempLength { get => tempLength; set => tempLength = value; }
+	Action INodeMovement.OnChangeMovePath { get => onMovePathUpdate; set => onMovePathUpdate = value; }
+	Action<float> INodeMovement.OnChangeMoveProgress { get => onMoveProgress; set => onMoveProgress = value; }
+    Action INodeMovement.OnStartMove { get => onStartMove; set => onStartMove = value; }
+    Action INodeMovement.OnEndedMove { get => onEndedMove; set => onEndedMove = value; }
 
-
-	partial void InitMovement()
+    partial void InitMovement()
 	{
 		seeker = GetComponent<Seeker>();
 		rvoController = GetComponent<RVOController>();
@@ -164,7 +176,6 @@ public partial class UnitObject : INodeMovement
 	{
 		if (HasOperation)
 		{
-
 			Vector3 operationPosition = operationObject.ThisMovement.CurrentPosition;
 			OperationSetPositionAndVelocity(in operationPosition, in deltaTime);
 		}

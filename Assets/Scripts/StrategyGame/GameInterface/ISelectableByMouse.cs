@@ -7,6 +7,9 @@ public interface ISelectable
 		pass = null;
 		return false;
 	}
+	void SelfSelect() => StrategyManager.Selecter.OnSystemSelectObject(this);
+	void SelfDeselect() => StrategyManager.Selecter.OnSystemDeselectObject(this);
+	void SelfPointing() => StrategyManager.Selecter.OnSystemPointingTarget(this);
 	void OnSelect();
 	void OnDeselect();
 	void OnSingleSelect();

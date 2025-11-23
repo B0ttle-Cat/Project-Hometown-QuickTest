@@ -51,6 +51,11 @@ public class MovementPathRenderer : MonoBehaviour
 		this.paths = paths;
 		SetMovementPlan();
 	}
+	public void SetProgress(float progress)
+	{
+		splineExtrude.Range = new Vector2(progress, 1);
+		splineExtrude.Rebuild();
+	}
 
 	[Button]
 	private void SetMovementPlan()

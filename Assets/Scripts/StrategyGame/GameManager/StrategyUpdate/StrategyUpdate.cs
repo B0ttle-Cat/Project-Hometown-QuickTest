@@ -21,27 +21,26 @@ public partial class StrategyUpdate : MonoBehaviour
 		Start = 1,
 
 		거점_점령상태,
-		거점_시설버프계산,
 
 		거점_시설_건설,
 
-		세력_자원갱신시작,
-		거점_전력_보충,
-		거점_재료_보충,
-		거점_인력_보충,
 		거점_자원갱신시작,
-		거점_자원분배,
 		거점_자원갱신종료,
-		세력_자원갱신종료,
-		거점_유닛버프계산,
+		
+		거점_시설보급,
+		거점_버프계산,
 
-		유닛_기본변수_갱신,
-		유닛_버프_계산,
+		세력_자원갱신시작,
+		세력_자원갱신종료,
+
+		유닛_보급충전,
+		유닛_기본변수갱신,
+		유닛_버프계산,
 		유닛_이동,
-		유닛_상태_업데이트,     // 유닛의 위치와 스텟을 토대로 어떤 행동을 할지 결정한다.
-		유닛_공격_업데이트,     // 공격 딜레이 계산 및 공격 생성
-		유닛_데미지_계산,          // 충돌된 데이미 계산을 진행
-		유닛_사망_처리,           // HP 없는 유닛을 삭제.
+		유닛_상태_업데이트,			// 유닛의 위치와 스텟을 토대로 어떤 행동을 할지 결정한다.
+		유닛_공격_업데이트,			// 공격 딜레이 계산 및 공격 생성
+		유닛_데미지_계산,			// 충돌된 데이미 계산을 진행
+		유닛_사망_처리,				// HP 없는 유닛을 삭제.
 
 		작전_기본변수_갱신,
 
@@ -49,6 +48,7 @@ public partial class StrategyUpdate : MonoBehaviour
 
 
 		End = int.MaxValue,
+		//거점_자원분배,			// 자원 분배대신 건물을 건설하여 일정 범위 내에 보급 보너스를 주는식으로...
 	}
 	public class StrategyUpdateTempData : IDisposable
 	{
@@ -94,7 +94,7 @@ public partial class StrategyUpdate : MonoBehaviour
 		{
 			int findIndex = dataList.FindIndex(d=>d.key == key);
 			if (findIndex < 0) dataList.Add(new DataValue(key, value));
-			else dataList[findIndex] = new DataValue(key, value);
+			else dataList[findIndex] = new DataValue(key, value, dataList[findIndex].alive);
 		}
 		public void SetValue(string key, object value, UpdateLogicSort alive)
 		{
@@ -163,25 +163,26 @@ public partial class StrategyUpdate : MonoBehaviour
 			(UpdateLogicSort.거점_점령상태,  new StrategyUpdate_CaptureUpdate(this)),
 			(UpdateLogicSort.거점_시설_건설,  new StrategyUpdate_ConstructUpdate(this)),
 
-			(UpdateLogicSort.거점_시설버프계산, null),
-			(UpdateLogicSort.거점_유닛버프계산, null),
-
 			(UpdateLogicSort.세력_자원갱신시작,  new StrategyUpdate_StartFactionResourcesSupply(this)),
 			(UpdateLogicSort.거점_자원갱신시작,  new StrategyUpdate_StartSectorResourcesSupply(this)),
-			(UpdateLogicSort.거점_자원분배,  null),
-			(UpdateLogicSort.거점_자원갱신종료,  new StrategyUpdate_EndedSectorResourcesSupply(this)),
-			(UpdateLogicSort.세력_자원갱신종료,  new StrategyUpdate_EndedFactionResourcesSupply(this)),
 
-			(UpdateLogicSort.유닛_기본변수_갱신, null),
-			(UpdateLogicSort.유닛_버프_계산,  new StrategyUpdate_UnitBuff(this)),
+			(UpdateLogicSort.거점_시설보급, null),
+			(UpdateLogicSort.거점_버프계산, null),
+			(UpdateLogicSort.유닛_보급충전, null),
+
+			(UpdateLogicSort.유닛_기본변수갱신, null),
+			(UpdateLogicSort.유닛_버프계산,  new StrategyUpdate_UnitBuff(this)),
 
 			(UpdateLogicSort.작전_기본변수_갱신, new StrategyUpdate_OperationUpdate(this)),
 
-			(UpdateLogicSort.유닛_이동,  new StrategyUpdate_NodeMovement(this)),
 			(UpdateLogicSort.유닛_상태_업데이트,  null),
+			(UpdateLogicSort.유닛_이동,  new StrategyUpdate_NodeMovement(this)),
 			(UpdateLogicSort.유닛_공격_업데이트,  null),
 			(UpdateLogicSort.유닛_데미지_계산,  null),
 			(UpdateLogicSort.유닛_사망_처리,  null),
+
+			(UpdateLogicSort.거점_자원갱신종료,  new StrategyUpdate_EndedSectorResourcesSupply(this)),
+			(UpdateLogicSort.세력_자원갱신종료,  new StrategyUpdate_EndedFactionResourcesSupply(this)),
 
 			(UpdateLogicSort.End, null)
 		};
@@ -298,148 +299,94 @@ public abstract class StrategyUpdateSubClass<T> : IStrategyUpdater where T : Str
 		protected abstract void OnUpdate(in float deltaTime);
 		protected abstract void OnDispose();
 	}
-	public abstract partial class UpdateLogic // ResourcesSupply
+	public abstract partial class UpdateLogic // Sector
 	{
-		protected bool ResourcesUpdate(ref int current, in int max, in int supplyPerTanSec, ref float supplement, ref float currentResupplyTime, in float resetResupplyTime, in float deltaTime)
-		{
-			if(max <= 0 || max < current) return false;
-			CumulativeUpdate(in current, in max, in supplyPerTanSec, ref supplement, in deltaTime);
-			if (CheckResupplyTime(ref currentResupplyTime, in resetResupplyTime, in deltaTime))
-			{
-				return SupplyUpdate(ref current, in max, ref supplement);
-			}
-			return false;
-		}
-		protected void CumulativeUpdate(in int current, in int max, in int supplyPerTanSec, ref float supplement, in float deltaTime)
-		{
-			if (current >= max)
-			{
-				supplement = 0;
-				return;
-			}
-			float supplyPerDelta  = supplyPerTanSec * 0.1f * deltaTime;
-			supplement += supplyPerDelta;
-		}
-		protected bool CheckResupplyTime(ref float currentResupplyTime, in float resetResupplyTime, in float deltaTime)
-		{
-			currentResupplyTime -= deltaTime;
-			if (currentResupplyTime <= 0)
-			{
-				currentResupplyTime = resetResupplyTime;
-				return true;
-			}
-			return false;
-		}
-		protected bool SupplyUpdate(ref int current, in int max, ref float cumulative)
-		{
-			if (current >= max)
-			{
-				cumulative = 0;
-				return false;
-			}
-			if (cumulative < 1) return false;
-			
-			int intCumulative = (int)cumulative;
-			cumulative -= intCumulative;
-
-			current = Mathf.Clamp(current + intCumulative, 0, max);
-			
-			return true;
-		}
-
+		public string SectorTempSupplyValueKey(SectorObject sector) => SectorTempSupplyValueKey(sector.SectorID);
+		public string SectorTempSupplyValueKey(int sector) => $"SectorTempSupplyValueKey_{sector}";
 	}
 	public abstract partial class UpdateLogic // Faction
 	{
 		public string FactionKey(Faction faction) => FactionKey(faction.FactionID);
-		public string FactionIsAliveKey(Faction faction) => FactionIsAliveKey(faction);
-		public string FactionTempSupplyValueKey(Faction faction) => FactionTempSupplyValueKey(faction);
+		public string FactionIsAliveKey(Faction faction) => FactionIsAliveKey(faction.FactionID);
+		public string FactionTempSupplyValueKey(Faction faction) => FactionTempSupplyValueKey(faction.FactionID);
 		public string FactionKey(int faction) => $"FactionKey_{faction}";
 		public string FactionIsAliveKey(int faction) => $"FactionIsAliveKey_{faction}";
 		public string FactionTempSupplyValueKey(int faction) => $"FactionTempSupplyValueKey_{faction}";
-		public record FactionTempSupplyValue
+		public struct TempSupplyValue
 		{
-			public readonly  int factionID;
+			public readonly int elementID;
 
 			public int manpower;
 			public int manpowerMax;
+			public int manpowerSupply;
+			public bool manpowerIsUpdate;
 
 			public int material;
 			public int materialMax;
+			public int materialSupply;
+			public bool materialIsUpdate;
 
 			public int electric;
 			public int electricMax;
+			public int electricSupply;
+			public bool electricIsUpdate;
+			public TempSupplyValue(int elementID)
+			{
+				this.elementID = elementID;
+				manpower = 0; manpowerMax = 0; manpowerSupply = 0;
+				material = 0; materialMax = 0; materialSupply = 0;
+				electric = 0; electricMax = 0; electricSupply = 0;
+				manpowerIsUpdate = materialIsUpdate = electricIsUpdate = false;
 
-            public FactionTempSupplyValue(Faction faction)
-            {
-				this.factionID = faction == null ? -1 : faction.FactionID;
 			}
-        }
+			public TempSupplyValue(IStrategyElement element)
+			{
+				elementID = element == null ? -1 : element.ID;
+				manpower = 0; manpowerMax = 0; manpowerSupply = 0;
+				material = 0; materialMax = 0; materialSupply = 0;
+				electric = 0; electricMax = 0; electricSupply = 0;
+				manpowerIsUpdate = materialIsUpdate = electricIsUpdate = false;
+			}
+
+			public static TempSupplyValue operator +(TempSupplyValue a, TempSupplyValue b)
+			{
+				return new TempSupplyValue(a.elementID)
+				{
+					manpower = a.manpower + b.manpower,
+					material = a.material + b.material,
+					electric = a.electric + b.electric,
+					manpowerMax = a.manpowerMax + b.manpowerMax,
+					materialMax = a.materialMax + b.materialMax,
+					electricMax = a.electricMax + b.electricMax,
+					manpowerSupply = a.manpowerSupply + b.manpowerSupply,
+					materialSupply = a.materialSupply + b.materialSupply,
+					electricSupply = a.electricSupply + b.electricSupply,
+					manpowerIsUpdate = a.manpowerIsUpdate || b.manpowerIsUpdate,
+					materialIsUpdate = a.materialIsUpdate || b.materialIsUpdate,
+					electricIsUpdate = a.electricIsUpdate || b.electricIsUpdate
+				};
+			}
+			public static TempSupplyValue operator -(TempSupplyValue a, TempSupplyValue b)
+			{
+				return new TempSupplyValue(a.elementID)
+				{
+					manpower = a.manpower - b.manpower,
+					material = a.material - b.material,
+					electric = a.electric - b.electric,
+					manpowerMax = a.manpowerMax - b.manpowerMax,
+					materialMax = a.materialMax - b.materialMax,
+					electricMax = a.electricMax - b.electricMax,
+					manpowerSupply = a.manpowerSupply - b.manpowerSupply,
+					materialSupply = a.materialSupply - b.materialSupply,
+					electricSupply = a.electricSupply - b.electricSupply,
+					manpowerIsUpdate = a.manpowerIsUpdate || b.manpowerIsUpdate,
+					materialIsUpdate = a.materialIsUpdate || b.materialIsUpdate,
+					electricIsUpdate = a.electricIsUpdate || b.electricIsUpdate
+				};
+			}
+		}
 	}
 }
-public class StrategyUpdate_OperationUpdate : StrategyUpdateSubClass<StrategyUpdate_OperationUpdate.OperationUpdate>
+public partial class StrategyUpdate
 {
-	public StrategyUpdate_OperationUpdate(StrategyUpdate updater) : base(updater)
-	{
-	}
-
-	protected override void Start()
-	{
-		UpdateList = new();
-		var iList = StrategyManager.Collector.OperationList;
-		foreach (var item in iList)
-		{
-			if (item == null) continue;
-			UpdateList.Add(new(item, this));
-		}
-		StrategyManager.Collector.AddChangeListener<OperationObject>(ChangeList);
-	}
-	protected override void Dispose()
-	{
-		StrategyManager.Collector.RemoveChangeListener<OperationObject>(ChangeList);
-	}
-	private void ChangeList(IStrategyElement element, bool isAdd)
-	{
-		if (element is not OperationObject op) return;
-
-		if (isAdd)
-		{
-			UpdateList.Add(new OperationUpdate(op, this));
-		}
-		else
-		{
-			int findIndex = UpdateList.FindIndex(l => l.operationObject == op);
-			if (findIndex >= 0) return;
-			UpdateList.RemoveAt(findIndex);
-		}
-	}
-
-	protected override void Update(in float deltaTime)
-	{
-		int length = UpdateList.Count;
-		for (int i = 0 ; i < length ; i++)
-		{
-			var update = updateList[i];
-			if (update == null) continue;
-			update.Update(deltaTime);
-		}
-	}
-	public class OperationUpdate : UpdateLogic
-	{
-		public OperationObject operationObject;
-		public OperationUpdate(OperationObject operationObject, StrategyUpdateSubClass<OperationUpdate> thisSubClass) : base(thisSubClass)
-		{
-			this.operationObject = operationObject;
-		}
-
-		protected override void OnDispose()
-		{
-			operationObject = null;
-		}
-
-		protected override void OnUpdate(in float deltaTime)
-		{
-			if (operationObject == null) return;
-			operationObject.ComputeOperationValue();
-		}
-	}
 }

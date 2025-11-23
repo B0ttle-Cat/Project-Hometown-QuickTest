@@ -16,7 +16,7 @@ public partial class StrategyUpdate
 		protected override void Start()
 		{
 			UpdateList = new();
-			var iList = StrategyManager.Collector.GetAllEnumerable();
+			var iList = StrategyManager.Collector.GetAllElementIList();
 			foreach (IList list in iList)
 			{
 				if (list is List<UnitObject> unitList)
@@ -99,15 +99,22 @@ public partial class StrategyUpdate
 				}
 				if (thisMovement.EmptyPath)
 				{
-					OnMoveStop();
-					thisMovement.OnStayUpdate(in deltaTime);
+					MoveStop();
+					StayUpdate(in deltaTime);
 					return;
 				}
 				else
 				{
-					OnMoveStart();
+					MoveStart();
+					MoveUpdate(in deltaTime);
 				}
-
+			}
+			private void StayUpdate(in float deltaTime)
+			{
+				thisMovement.OnStayUpdate(in deltaTime);
+			}
+			private void MoveUpdate(in float deltaTime)
+			{
 				if (thisMovement.FindNextMovementTarget(out var nextPoint))
 				{
 					nextPoint = thisMovement.NextSmoothMovement(in nextPoint, out var velocity, in deltaTime);
@@ -122,17 +129,17 @@ public partial class StrategyUpdate
 					thisMovement.SetPositionAndVelocity(in position, in delteMove, in velocity, in deltaTime);
 				}
 			}
-			private void OnMoveStart()
+			private void MoveStart()
 			{
 				if (moveState) return;
 				moveState = true;
-				thisMovement.OnMoveStart();
+				thisMovement.MoveStart();
 			}
-			private void OnMoveStop()
+			private void MoveStop()
 			{
 				if (!moveState) return;
 				moveState = false;
-				thisMovement.OnMoveStop();
+				thisMovement.MoveStop();
 			}
 		}
 	}

@@ -4,28 +4,23 @@ using System.Collections.Generic;
 
 using NUnit.Framework;
 
+using Sirenix.OdinInspector;
+
 using UnityEngine;
 public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 {
-	public abstract class ElementList
+	public abstract class CollectList
 	{
 		public abstract IList IList { get; }
-
-		public abstract void OnAddListener(Action<IList> action);
-		public abstract void OnRemoveListener(Action<IList> action);
-		public abstract void OnAddListener(Action<IStrategyElement, bool> action);
-		public abstract void OnRemoveListener(Action<IStrategyElement, bool> action);
 	}
-
 	[Serializable]
-	public class ElementList<T> : ElementList, IEnumerable<T>, IDisposable where T : class, IStrategyElement
+	public class ElementList<T> : CollectList, IEnumerable<T>, IDisposable where T : class, IStrategyElement
 	{
 		[SerializeField]
 		private List<T> list;
 		public List<T> List => list ??= new List<T>();
 		public override IList IList => List;
 
-		private Action<List<T>> onChangeList;
 		private Action<T, bool> onChange;
 		private bool sleepCallback;
 		public IEnumerator<T> GetEnumerator()
@@ -40,9 +35,8 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 		private int nextUniqueID;
 		private HashSet<int> recyclingID;
 		private int[] lockingID;
-		public void Init(int capacity = 32)
+		public ElementList(int capacity = 32)
 		{
-			onChangeList = null;
 			onChange = null;
 
 			sleepCallback = false;
@@ -74,7 +68,6 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 			}
 			nextUniqueID = 0;
 			recyclingID = null;
-			onChangeList = null;
 			onChange = null;
 			sleepCallback = false;
 		}
@@ -156,7 +149,6 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 					Invoke(dequeue, true);
 				}
 				changeList = null;
-				Invoke();
 			}
 			return isChange;
 		}
@@ -182,7 +174,6 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 					Invoke(dequeue, false);
 				}
 				changeList = null;
-				Invoke();
 			}
 			return isChange;
 		}
@@ -196,7 +187,6 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 				element.ThisElement.ID = GetNextUniqueID();
 				UsedUniqueID(element.ThisElement.ID);
 				element._InStrategyCollector();
-				Invoke();
 				Invoke(element, true);
 				return true;
 			}
@@ -209,21 +199,10 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 			{
 				RemoveUniqueID(element.ID);
 				element._OutStrategyCollector();
-				Invoke();
 				Invoke(element, false);
 				return true;
 			}
 			return false;
-		}
-
-		public void Invoke()
-		{
-			if (sleepCallback || onChangeList == null) return;
-			try
-			{
-				onChangeList.Invoke(List);
-			}
-			catch (Exception ex) { Debug.LogException(ex); }
 		}
 		public void Invoke(T element, bool isAdded)
 		{
@@ -234,29 +213,17 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 			}
 			catch (Exception ex) { Debug.LogException(ex); }
 		}
-		public override void OnAddListener(Action<IList> action)
-		{
-			if (action == null) return;
-			onChangeList -= action;
-			onChangeList += action;
-		}
-		public override void OnRemoveListener(Action<IList> action)
-		{
-			if (action == null) return;
-			onChangeList -= action;
-		}
-		public override void OnAddListener(Action<IStrategyElement, bool> action)
+		public void OnAddListener(Action<IStrategyElement, bool> action)
 		{
 			if (action == null) return;
 			onChange -= action;
 			onChange += action;
 		}
-		public override void OnRemoveListener(Action<IStrategyElement, bool> action)
+		public void OnRemoveListener(Action<IStrategyElement, bool> action)
 		{
 			if (action == null) return;
 			onChange -= action;
 		}
-
 		public T Find(Func<T, bool> condition)
 		{
 			if (condition == null) return null;
@@ -306,7 +273,210 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 			}
 		}
 	}
+	[Serializable]
+	public class OtherTypeList<T> : CollectList, IEnumerable<T>, IDisposable
+	{
+		[SerializeField]
+		private List<T> list;
+		public List<T> List => list ??= new List<T>();
+		public override IList IList => List;
 
+		private Action<T, bool> onChange;
+		private bool sleepCallback;
+		public IEnumerator<T> GetEnumerator()
+		{
+			return List.GetEnumerator();
+		}
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return List.GetEnumerator();
+		}
+
+		private int nextUniqueID;
+		private HashSet<int> recyclingID;
+		private int[] lockingID;
+		public OtherTypeList(int capacity = 32)
+		{
+			onChange = null;
+
+			sleepCallback = false;
+
+			if (list == null)
+			{
+				list = new List<T>(capacity);
+			}
+			else
+			{
+				int length = list.Count;
+				for (int i = 0 ; i < length ; i++)
+				{
+					var element = list[i];
+					if (element != null && element is IStrategyElement iElement)
+						iElement._OutStrategyCollector();
+				}
+				list.Clear();
+			}
+			nextUniqueID = 0;
+			recyclingID = new HashSet<int>();
+		}
+		public void Dispose()
+		{
+			if (list != null)
+			{
+				list.Clear();
+				list = null;
+			}
+			nextUniqueID = 0;
+			recyclingID = null;
+			onChange = null;
+			sleepCallback = false;
+		}
+		public bool AddItem(IEnumerable<T> item)
+		{
+			Queue<T> changeList = new Queue<T>();
+			sleepCallback = true;
+			foreach (var element in item)
+			{
+				if (AddItem(element))
+				{
+					changeList.Enqueue(element);
+				}
+			}
+			sleepCallback = false;
+
+			int changeListCount = changeList.Count;
+			bool isChange = changeListCount > 0;
+			if (isChange)
+			{
+				while (changeList.TryDequeue(out var dequeue))
+				{
+					Invoke(dequeue, true);
+				}
+				changeList = null;
+			}
+			return isChange;
+		}
+		public bool RemoveItem(IEnumerable<T> item)
+		{
+			Queue<T> changeList = new Queue<T>();
+			sleepCallback = true;
+			foreach (var element in item)
+			{
+				if (RemoveItem(element))
+				{
+					changeList.Enqueue(element);
+				}
+			}
+			sleepCallback = false;
+
+			int changeListCount = changeList.Count;
+			bool isChange = changeListCount > 0;
+			if (isChange)
+			{
+				while (changeList.TryDequeue(out var dequeue))
+				{
+					Invoke(dequeue, false);
+				}
+				changeList = null;
+			}
+			return isChange;
+		}
+		public bool AddItem(T item)
+		{
+			if (item == null) return false;
+
+			if (!list.Contains(item))
+			{
+				list.Add(item);
+				Invoke(item, true);
+				return true;
+			}
+			return false;
+		}
+		public bool RemoveItem(T item)
+		{
+			if (item == null) return false;
+			if (list.Remove(item))
+			{
+				Invoke(item, false);
+				return true;
+			}
+			return false;
+		}
+		public void Invoke(T item, bool isAdded)
+		{
+			if (sleepCallback || onChange == null) return;
+			try
+			{
+				onChange.Invoke(item, isAdded);
+			}
+			catch (Exception ex) { Debug.LogException(ex); }
+		}
+		public void OnAddListener(Action<T, bool> action)
+		{
+			if (action == null) return;
+			onChange -= action;
+			onChange += action;
+		}
+		public void OnRemoveListener(Action<T, bool> action)
+		{
+			if (action == null) return;
+			onChange -= action;
+		}
+		public bool TryFind(Func<T, bool> condition, out T t)
+		{
+			if (condition == null)
+			{
+				t = default;
+				return false;
+			}
+			int length = list.Count;
+
+			for (int i = 0 ; i < length ; i++)
+			{
+				var item = list[i];
+				if (item == null) continue;
+				if (condition.Invoke(item))
+				{
+					t = item;
+					return true;
+				}
+			}
+
+			t = default;
+			return false;
+		}
+		public List<T> FindList(Func<T, bool> condition)
+		{
+			List<T> result = new List<T>();
+
+			if (condition == null) return result;
+
+			int length = list.Count;
+
+			for (int i = 0 ; i < length ; i++)
+			{
+				var item = list[i];
+				if (item == null) continue;
+				if (condition.Invoke(item))
+				{
+					result.Add(item);
+				}
+			}
+
+			return result;
+		}
+		public void Foreach(Action<T> action)
+		{
+			if (action == null) return;
+			foreach (var item in list)
+			{
+				if (item == null) continue;
+
+				action(item);
+			}
+		}
+	}
 	[SerializeField]
 	private ElementList<SectorObject> sectorList;
 	[SerializeField]
@@ -317,26 +487,30 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 	public ElementList<OperationObject> operationList;
 	[SerializeField]
 	private ElementList<SkillObject> skillList;
-	[SerializeField]
-	private ElementList<IStrategyElement> otherList;
-	private Dictionary<Type, ElementList> _elementLists;
+	private Dictionary<Type, CollectList> _elementLists;
 	public List<SectorObject> SectorList => sectorList?.List ?? new List<SectorObject>();
 	public List<Faction> FactionList => factionList?.List ?? new List<Faction>();
 	public List<UnitObject> UnitList => unitList?.List ?? new List<UnitObject>();
 	public List<OperationObject> OperationList => operationList?.List ?? new List<OperationObject>();
 	public List<SkillObject> SkillList => skillList?.List ?? new List<SkillObject>();
-	public List<IStrategyElement> OtherList => otherList?.List ?? new List<IStrategyElement>();
+	public event Action<IStrategyElement, bool> OnChangeAnyElement;
 	private Dictionary<Type, IList> _listCache;
 
-	public IEnumerable<IList> GetAllEnumerable()
+	// Other
+	[ShowInInspector]
+	private Dictionary<Type, CollectList> otherList;
+	public Dictionary<Type, CollectList> OtherList => otherList ?? new Dictionary<Type, CollectList>();
+
+
+	public IEnumerable<IList> GetAllElementIList()
 	{
 		yield return SectorList;
 		yield return FactionList;
 		yield return UnitList;
 		yield return OperationList;
 		yield return SkillList;
-		yield return OtherList;
 	}
+	#region Init
 	internal void Init()
 	{
 		InitSector();
@@ -345,37 +519,53 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 		InitOperation();
 		InitSkill();
 		InitOther();
+
+		OnChangeAnyElement = null;
+		sectorList.OnAddListener(_OnChangeAnyElement);
+		factionList.OnAddListener(_OnChangeAnyElement);
+		unitList.OnAddListener(_OnChangeAnyElement);
+		operationList.OnAddListener(_OnChangeAnyElement);
+		skillList.OnAddListener(_OnChangeAnyElement);
 	}
 	private void InitListTypeCache()
 	{
-		_listCache ??= new Dictionary<Type, IList>
+		_listCache = new Dictionary<Type, IList>
 		{
 			[typeof(SectorObject)] = SectorList,
 			[typeof(Faction)] = FactionList,
 			[typeof(UnitObject)] = UnitList,
 			[typeof(OperationObject)] = OperationList,
 			[typeof(SkillObject)] = SkillList,
-			[typeof(IStrategyElement)] = OtherList
 		};
 	}
 	private void InitElementListCache()
 	{
-		_elementLists = new Dictionary<Type, ElementList>
+		_elementLists = new Dictionary<Type, CollectList>
 		{
 			[typeof(SectorObject)] = sectorList,
 			[typeof(Faction)] = factionList,
 			[typeof(UnitObject)] = unitList,
 			[typeof(OperationObject)] = operationList,
 			[typeof(SkillObject)] = skillList,
-			[typeof(IStrategyElement)] = otherList,
 		};
 	}
-	public void InitSector() => (sectorList ??= new ElementList<SectorObject>()).Init(32);
-	public void InitFaction() => (factionList ??= new ElementList<Faction>()).Init(8);
-	public void InitUnit() => (unitList ??= new ElementList<UnitObject>()).Init(512);
-	public void InitOperation() => (operationList ??= new ElementList<OperationObject>()).Init(32);
-	public void InitSkill() => (skillList ??= new ElementList<SkillObject>()).Init(512);
-	public void InitOther() => (otherList ??= new ElementList<IStrategyElement>()).Init(64);
+	public void InitSector() => sectorList = new ElementList<SectorObject>(32);
+	public void InitFaction() => factionList = new ElementList<Faction>(8);
+	public void InitUnit() => unitList = new ElementList<UnitObject>(512);
+	public void InitOperation() => operationList = new ElementList<OperationObject>(32);
+	public void InitSkill() => skillList = new ElementList<SkillObject>(512);
+	public void InitOther()
+	{
+		if (otherList != null)
+		{
+			foreach (var item in otherList)
+			{
+				if (item.Value is IDisposable disposable) disposable.Dispose();
+			}
+			otherList = null;
+		}
+		otherList = new Dictionary<Type, CollectList>();
+	}
 	public void Dispose()
 	{
 		sectorList?.Dispose();
@@ -383,8 +573,24 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 		unitList?.Dispose();
 		operationList?.Dispose();
 		skillList?.Dispose();
-		otherList?.Dispose();
+
+		sectorList= null;
+		factionList = null;
+		unitList = null;
+		operationList = null;
+		skillList = null;
+		
+		if (otherList != null)
+		{
+			foreach (var item in otherList)
+			{
+				if (item.Value is IDisposable disposable) disposable.Dispose();
+			}
+			otherList = null;
+		}
 	}
+	#endregion
+	#region Add/Remove
 	public void AddElement<TList, TItem>(TList elements) where TList : IEnumerable<TItem> where TItem : class, IStrategyElement
 	{
 		_ = elements switch
@@ -394,7 +600,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 			IEnumerable<UnitObject> item => unitList.AddElement(item),
 			IEnumerable<OperationObject> item => operationList.AddElement(item),
 			IEnumerable<SkillObject> item => skillList.AddElement(item),
-			_ => otherList.AddElement(elements),
+			_ => default
 		};
 	}
 	public void AddElement<T>(T element) where T : class, IStrategyElement
@@ -406,7 +612,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 			UnitObject item => unitList.AddElement(item),
 			OperationObject item => operationList.AddElement(item),
 			SkillObject item => skillList.AddElement(item),
-			_ => otherList.AddElement(element),
+			_ => default
 		};
 	}
 	public void RemoveElement<T>(T element) where T : class, IStrategyElement
@@ -418,18 +624,8 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 			UnitObject item => unitList.RemoveElement(item),
 			OperationObject item => operationList.RemoveElement(item),
 			SkillObject item => skillList.RemoveElement(item),
-			_ => otherList.RemoveElement(element),
+			_ => default,
 		};
-	}
-	private IList GetListByType<T>()
-	{
-		InitListTypeCache();
-		return _listCache.TryGetValue(typeof(T), out var list) ? list : OtherList;
-	}
-	private ElementList GetElementByType<T>()
-	{
-		InitElementListCache();
-		return _elementLists.TryGetValue(typeof(T), out var element) ? element : otherList;
 	}
 	public void RemoveElement<T>(IEnumerable<T> elements) where T : class, IStrategyElement
 	{
@@ -439,31 +635,54 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 		}
 	}
 
-	public void AddChangeListListener<T>(Action<IList> action, bool callAtAfter = false) where T : class, IStrategyElement
+	public void AddOther<T>(T item)
 	{
-		if (action == null) return;
-
-		var element = GetElementByType<T>();
-		element.OnAddListener(action);
-		if (callAtAfter)
+		var dic = OtherList;
+		var typeKey = typeof(T);
+		if (dic.TryGetValue(typeKey, out var collectList) && collectList is OtherTypeList<T> otherList)
 		{
-			action.Invoke(element.IList);
+			otherList.AddItem(item);
+		}
+		else
+		{
+			otherList = new OtherTypeList<T>(8);
+			dic[typeKey] = otherList;
+			otherList.AddItem(item);
 		}
 	}
-	public void RemoveChangeListListener<T>(Action<IList> action) where T : class, IStrategyElement
+	public void RemoveOther<T>(T item)
 	{
-		if (action == null) return;
-
-		var element = GetElementByType<T>();
-		element.OnRemoveListener(action);
+		var dic = OtherList;
+		var typeKey = typeof(T);
+		OtherTypeList<T> otherList = null;
+		if (!dic.TryGetValue(typeKey, out var collectList) || collectList is not OtherTypeList<T>)
+		{
+			return;
+		}
+		otherList = dic[typeKey] as OtherTypeList<T>;
+		otherList.RemoveItem(item);
 	}
-	public void AddChangeListener<T>(Action<IStrategyElement, bool> action, out IList getCurrentList) where T : class, IStrategyElement
+	#endregion
+	#region GetListByType
+	private IList GetListByType<T>()
+	{
+		InitListTypeCache();
+		return _listCache.TryGetValue(typeof(T), out var list) ? list : default;
+	}
+	private ElementList<T> GetElementByType<T>() where T : class, IStrategyElement
+	{
+		InitElementListCache();
+		return _elementLists.TryGetValue(typeof(T), out var element) ? element as ElementList<T> : default;
+	}
+	#endregion
+	#region ChangeListener
+	public void AddChangeListener<T>(Action<IStrategyElement, bool> action, out List<T> getCurrentList) where T : class, IStrategyElement
 	{
 		var element = GetElementByType<T>();
 
 		element.OnAddListener(action);
 
-		getCurrentList = element.IList is List<T> ? element.IList : null;
+		getCurrentList = element.IList as List<T>;
 	}
 	public void AddChangeListener<T>(Action<IStrategyElement, bool> action) where T : class, IStrategyElement
 	{
@@ -475,9 +694,64 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 	{
 		if (action == null) return;
 
-		ElementList element = GetElementByType<T>();
+		ElementList<T> element = GetElementByType<T>();
 		element.OnRemoveListener(action);
 	}
+	public void AddChangeAnyListener(Action<IStrategyElement, bool> action, Action<IStrategyElement> allForeach = null)
+	{
+		if (allForeach != null)
+		{
+			foreach (var list in GetAllElementIList())
+			{
+				foreach (IStrategyElement element in list)
+				{
+					allForeach.Invoke(element);
+				}
+			}
+		}
+		OnChangeAnyElement -= action;
+		OnChangeAnyElement += action;
+	}
+	public void RemoveChangeAnyListener(Action<IStrategyElement, bool> action)
+	{
+		OnChangeAnyElement -= action;
+	}
+	private void _OnChangeAnyElement(IStrategyElement element, bool added)
+	{
+		OnChangeAnyElement?.Invoke(element, added);
+	}
+	public void AddOtherChangeListener<T>(Action<T, bool> action, Action<T> allForeach = null)
+	{
+		var dic = OtherList;
+		var typeKey = typeof(T);
+		if (dic.TryGetValue(typeKey, out var collectList) && collectList is OtherTypeList<T> otherList)
+		{
+			otherList.OnAddListener(action);
+		}
+		else
+		{
+			otherList = new OtherTypeList<T>();
+			dic[typeKey] = otherList;
+			otherList.OnAddListener(action);
+		}
+		if (allForeach != null)
+		{
+			foreach (var item in otherList.List)
+			{
+				allForeach?.Invoke(item);
+			}
+		}
+	}
+	public void RemoveOtherChangeListener<T>(Action<T, bool> action)
+	{
+		var dic = OtherList;
+		var typeKey = typeof(T);
+		if (dic.TryGetValue(typeKey, out var collectList) && collectList is OtherTypeList<T> otherList)
+		{
+			otherList.OnRemoveListener(action);
+		}
+	}
+	#endregion
 }
 public partial class StrategyElementCollector // Finder 
 {
@@ -682,7 +956,7 @@ public partial class StrategyElementCollector // ForEach
 	#region Foreach
 	public void ForEachAll(Action<IStrategyElement> func)
 	{
-		foreach (var list in GetAllEnumerable())
+		foreach (var list in GetAllElementIList())
 		{
 			for (int i = 0 ; i < list.Count ; i++)
 			{
@@ -738,10 +1012,5 @@ public partial class StrategyElementCollector // ForEach
 	public void ForEachSkill(Func<SkillObject, bool> func) => ForEach(func);
 	public void ForEachSkill(Action<SkillObject, ForeachIndex> func) => ForEach(func);
 	public void ForEachSkill(Func<SkillObject, ForeachIndex, bool> func) => ForEach(func);
-	#endregion
-
-	#region Other
-	public void ForEachOther(Action<IStrategyElement> func) => ForEach(func);
-	public void ForEachOther(Func<IStrategyElement, bool> func) => ForEach(func);
 	#endregion
 }

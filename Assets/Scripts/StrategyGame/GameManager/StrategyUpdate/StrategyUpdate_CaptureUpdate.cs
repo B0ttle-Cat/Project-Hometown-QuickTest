@@ -10,9 +10,17 @@ public partial class StrategyUpdate
 {
 	public class StrategyUpdate_CaptureUpdate : StrategyUpdateSubClass<CaptureUpdate>
 	{
-        public StrategyUpdate_CaptureUpdate(StrategyUpdate updater) : base(updater)
+		private List<CaptureTag> captureTagList;
+
+		public StrategyUpdate_CaptureUpdate(StrategyUpdate updater) : base(updater)
         {
-        }
+			captureTagList = new List<CaptureTag>();
+		}
+        protected override void Dispose()
+        {
+			captureTagList = null;
+			StrategyManager.Collector.RemoveOtherChangeListener<CaptureTag>(OnChangeCaptureTag);
+		}
 
         protected override void Start()
 		{
@@ -25,8 +33,28 @@ public partial class StrategyUpdate
 				if (cb == null) continue;
 				UpdateList.Add(new CaptureUpdate(this,cb));
 			}
+
+			StrategyManager.Collector.AddOtherChangeListener<CaptureTag>(OnChangeCaptureTag, AllForeach);
+			void AllForeach(CaptureTag item)
+			{
+				OnChangeCaptureTag(item, true);
+			}
 		}
-		protected override void Update(in float deltaTime)
+        private void OnChangeCaptureTag(CaptureTag item, bool added)
+        {
+			if (item == null) return;
+
+			if(added)
+			{
+				captureTagList.Add(item);
+			}
+			else
+			{
+				captureTagList.Remove(item);
+			}
+		}
+
+        protected override void Update(in float deltaTime)
 		{
 			if (UpdateList == null) return;
 
@@ -68,8 +96,9 @@ public partial class StrategyUpdate
 		public class CaptureUpdate : UpdateLogic
 		{
 			public SectorObject sector;
-			public SectorTrigger sectorTrigger;
+			public CylinderArea sectorArea;
 			public SectorColor sectorColor;
+			private List<CaptureTag> captureTagList;
 			public float captureTime;
 
 			public int ownerFactionID;		// 점령 세력
@@ -143,13 +172,13 @@ public partial class StrategyUpdate
 				public int faactionID;
 				public float progress;
 			}
-			public CaptureUpdate(StrategyUpdateSubClass<CaptureUpdate> thisSubClass, SectorObject sector) : base(thisSubClass)
+			public CaptureUpdate(StrategyUpdate_CaptureUpdate thisSubClass, SectorObject sector) : base(thisSubClass)
 			{
 				this.sector = sector;
-				this.sectorTrigger = sector.GetComponentInChildren<SectorTrigger>(true);
+				this.sectorArea = sector.GetComponentInChildren<CylinderArea>(true);
 				this.sectorColor = sector.GetComponentInChildren<SectorColor>(true);
 				if(sectorColor == null) sectorColor = sector.gameObject.AddComponent<SectorColor>();
-
+				captureTagList = thisSubClass.captureTagList;
 				var data = sector.CaptureData;
 
 				this.captureTime = Mathf.Max(data.captureTime, 1f);
@@ -167,12 +196,13 @@ public partial class StrategyUpdate
 			protected override void OnDispose()
 			{
 				sector = null;
-				sectorTrigger = null;
+				sectorArea = null;
 				if (factionProgress != null)
 				{
 					factionProgress.Dispose();
 					factionProgress = null;
 				}
+				captureTagList = null;
 			}
 			protected override void OnUpdate(in float deltaTime)
 			{
@@ -298,14 +328,15 @@ public partial class StrategyUpdate
 					return delta;
 				}
 
-				
 			}
 			private (Dictionary<int, int> factionPoint, int totalPoint) ComputeFactionTotals()
 			{
 				var dict = new Dictionary<int,int>();
 				int total = 0;
-				foreach (var tag in sectorTrigger.CaptureTagList)
+				foreach (var tag in captureTagList)
 				{
+					if (!sectorArea.IsOverlap(tag.transform.position)) continue;
+
 					if (!dict.ContainsKey(tag.factionID)) dict[tag.factionID] = 0;
 					dict[tag.factionID] += Mathf.Max(0, tag.pointValue);
 					total += Mathf.Max(0, tag.pointValue);

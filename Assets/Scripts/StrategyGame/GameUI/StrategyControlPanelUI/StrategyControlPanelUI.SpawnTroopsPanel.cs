@@ -19,7 +19,7 @@ public partial class StrategyControlPanelUI // SpawnTroops
 	private SpawnTroopsPanel spawnOperationPanel;
 	public IPanelTarget ShowSpawnTroops()
 	{
-		spawnOperationPanel = new SpawnTroopsPanel(spawnOperationPrefab, spawnOperationRoot, this);
+		spawnOperationPanel = new SpawnTroopsPanel(spawnOperationPrefab, spawnOperationRoot, this, HideSpawnOperation);
 		ViewStack.Push(spawnOperationPanel);
 		return spawnOperationPanel;
 	}
@@ -36,7 +36,7 @@ public partial class StrategyControlPanelUI // SpawnTroops
 
 		[SerializeField, FoldoutGroup("ViewItem"), InlineProperty, HideLabel]
 		private SpawnPanel sectorPanel;
-		public SpawnTroopsPanel(GameObject prefab, Transform root, StrategyControlPanelUI panelUI) : base(prefab, root, panelUI)
+		public SpawnTroopsPanel(GameObject prefab, Transform root, StrategyControlPanelUI panelUI, Action onClose) : base(prefab, root, panelUI, onClose)
 		{
 			sectorPanel = null;
 			FloatingPanelUI = null;

@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 
+using Sirenix.OdinInspector;
+
 using UnityEngine;
 
-[RequireComponent(typeof(Collider))]
 public class SectorTrigger : MonoBehaviour
 {
 	private Collider thisCollider;
@@ -10,7 +11,9 @@ public class SectorTrigger : MonoBehaviour
 	private HashSet<Collider> colliderList;
 	private List<CaptureTag> captureTagList;
 
+	[ShowInInspector]
 	public HashSet<Collider> ColliderList => colliderList;
+	[ShowInInspector]
 	public List<CaptureTag> CaptureTagList => captureTagList;
 
 	private void Awake()

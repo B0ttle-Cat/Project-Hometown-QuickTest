@@ -65,8 +65,8 @@ public static class WaypointUtility
 
 	public static Vector3[] GetLineWithWaypoints(Vector3 start, Vector3 last, Waypoint[] waypoints, int samplesPerSegment = 10)
 	{
-		var result = new List<Vector3>();
-		float segmentPersamples = 1 / samplesPerSegment;
+		var result = new List<Vector3>(samplesPerSegment);
+		float segmentPersamples = 1f / samplesPerSegment;
 		if (waypoints == null || waypoints.Length == 0)
 		{
 			for (int i = 0 ; i <= samplesPerSegment ; i++)
@@ -76,7 +76,7 @@ public static class WaypointUtility
 			}
 			return result.ToArray();
 		}
-
+		int waypointsCount = waypoints.Length;
 
 		// 전체 포인트 배열
 		var points = new List<Vector3> { start };
@@ -86,19 +86,21 @@ public static class WaypointUtility
 		// 전체 width 배열
 		var widths = new List<float>();
 		// 시작점 width = 첫 웨이포인트 width
-		widths.Add(waypoints.Length > 0 ? Mathf.Clamp01(waypoints[0].width) : 1f);
-		for (int i = 0 ; i < waypoints.Length ; i++)
+		widths.Add(waypointsCount > 0 ? Mathf.Clamp01(waypoints[0].width) : 1f);
+		for (int i = 0 ; i < waypointsCount ; i++)
 			widths.Add(Mathf.Clamp01(waypoints[i].width));
 		// 마지막점 width = 마지막 웨이포인트 width
-		widths.Add(waypoints.Length > 0 ? Mathf.Clamp01(waypoints[waypoints.Length - 1].width) : 1f);
+		widths.Add(waypointsCount > 0 ? Mathf.Clamp01(waypoints[waypointsCount - 1].width) : 1f);
 
 		// 슬라이딩 윈도우로 Catmull-Rom 계산
-		for (int i = 0 ; i < points.Count - 1 ; i++)
+		int pointCount = points.Count;
+		var tempResult = new List<Vector3>(samplesPerSegment * pointCount);
+		for (int i = 0 ; i < pointCount - 1 ; i++)
 		{
 			Vector3 P0 = i == 0 ? points[i] : points[i - 1];
 			Vector3 P1 = points[i];
 			Vector3 P2 = points[i + 1];
-			Vector3 P3 = (i + 2 < points.Count) ? points[i + 2] : points[i + 1];
+			Vector3 P3 = (i + 2 < pointCount) ? points[i + 2] : points[i + 1];
 
 			// 현재 segment의 width = P1과 P2 사이
 			float width = (widths[i] +  widths[i + 1]) * 0.5f;
@@ -115,9 +117,34 @@ public static class WaypointUtility
 				Vector3 linearPoint = Vector3.Lerp(P1, P2, t);
 				Vector3 finalPoint = Vector3.Lerp(linearPoint, catmullPoint, width);
 
-				if (result.Count == 0 || result[result.Count - 1] != finalPoint)
-					result.Add(finalPoint);
+				if (tempResult.Count == 0 || tempResult[tempResult.Count - 1] != finalPoint)
+					tempResult.Add(finalPoint);
 			}
+		}
+		int tempResultCount = tempResult.Count;
+
+		float[] cumulativeLength = new float[tempResultCount];
+		cumulativeLength[0] = 0f;
+		for (int i = 1 ; i < tempResultCount ; i++)
+		{
+			cumulativeLength[i] = cumulativeLength[i - 1] + Vector3.Distance(tempResult[i - 1], tempResult[i]);
+		}
+
+		float totalLength = cumulativeLength[^1];
+
+		for (int i = 0 ; i <= samplesPerSegment ; i++)
+		{
+			float targetLength = totalLength * segmentPersamples * i;
+
+			// targetLength에 맞는 segment 찾기
+			int index = 0;
+			while (index < tempResultCount - 1 && cumulativeLength[index + 1] < targetLength)
+				index++;
+
+			// 두 점 사이 보간
+			float segmentLength = cumulativeLength[index + 1] - cumulativeLength[index];
+			float localT = segmentLength > 0f ? (targetLength - cumulativeLength[index]) / segmentLength : 0f;
+			result.Add(Vector3.Lerp(tempResult[index], tempResult[index + 1], localT));
 		}
 
 		return result.ToArray();

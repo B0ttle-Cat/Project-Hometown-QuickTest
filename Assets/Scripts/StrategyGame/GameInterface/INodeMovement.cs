@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using Pathfinding;
@@ -15,15 +16,21 @@ public interface INodeMovement
 	float SmoothTime { get; }
 	float MaxSpeed { get; }
 	int MovementIndex { get; set; }
+	Vector3[] InitPath { get; set; }
 	List<Vector3> MovePath { get; set; }
 	List<Vector3> TempMovePath { get; set; }
 	Queue<Vector3> FindingPoints { get; set; }
 	bool HasPath => MovePath != null && MovePath.Count > 0;
 	bool HasTampPath => TempMovePath != null && TempMovePath.Count > 0;
 	bool EmptyPath => !HasPath && !HasTampPath;
+	float InitLength { get; set; }
 	float TotalLength { get; set; }
 	float SectionLength { get; set; }
 	float TempLength { get; set; }
+	Action OnStartMove { get; set; }
+	Action OnEndedMove { get; set; }
+	Action OnChangeMovePath { get; set; }
+	Action<float> OnChangeMoveProgress { get; set; }
 	void SetMovePath(params SectorObject[] waypointSectors) => SetMovePath(true, waypointSectors);
 	void SetMovePath(bool clearPath, params SectorObject[] waypointSectors)
 	{
@@ -49,14 +56,24 @@ public interface INodeMovement
 		}
 		if (isWait) return;
 
-		StartPath(CurrentPosition);
+		StartPath(MovePath.Count == 0 ? CurrentPosition : MovePath[^1]);
 		void StartPath(Vector3 prevPoint)
 		{
-			if (!FindingPoints.TryDequeue(out var nextPoint)) return;
-
+			if (!FindingPoints.TryDequeue(out var nextPoint))
+			{
+				InitPath = MovePath.ToArray();
+				InitLength = TotalLength;
+				OnChangeMovePath?.Invoke();
+				OnChangeMoveProgress?.Invoke(0);
+				return;
+			}
 			ThisSeeker.StartPath(start: prevPoint, nextPoint, (path) =>
 			{
-				if (path.error) return;
+				if (path.error)
+				{
+					Debug.LogError("Path Error:" + path.errorLog);
+					return;
+				}
 				var abPath = path as ABPath;
 				MovePath.AddRange(abPath.vectorPath);
 				if (TempMovePath != null)
@@ -65,6 +82,7 @@ public interface INodeMovement
 					TempMovePath = null;
 					TempLength = 0;
 				}
+
 				TotalLength += abPath.GetTotalLength();
 				StartPath(nextPoint);
 			});
@@ -139,6 +157,7 @@ public interface INodeMovement
 				SectionLength = distance;
 			}
 			Path.RemoveAt(0);
+			OnChangeMoveProgress?.Invoke(1f - TotalLength / InitLength);
 		}
 	}
 	Vector3 NextSmoothMovement(in Vector3 nextTarget, out Vector3 velocity, in float deltaTime)
@@ -163,7 +182,7 @@ public interface INodeMovement
 		}
 		return nextPosition;
 	}
-	public void NextConstantSpeedMovement(ref Vector3 nextTarget, out Vector3 velocity, in float deltaTime)
+	void NextConstantSpeedMovement(ref Vector3 nextTarget, out Vector3 velocity, in float deltaTime)
 	{
 		Vector3 position = CurrentPosition;
 		float remainingDistance = HasTampPath? TempLength : TotalLength + SectionLength;
@@ -185,7 +204,16 @@ public interface INodeMovement
 		}
 		nextTarget = nextPosition;
 	}
-
+	void MoveStart()
+	{
+		OnMoveStart();
+		OnStartMove?.Invoke();
+	}
+	void MoveStop()
+	{
+		OnMoveStop();
+		OnEndedMove?.Invoke();
+	}
 
 	void OnMoveStart();
 	void OnMoveStop();

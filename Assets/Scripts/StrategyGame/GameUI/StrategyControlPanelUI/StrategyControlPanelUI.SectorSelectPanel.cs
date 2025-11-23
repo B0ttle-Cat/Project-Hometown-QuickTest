@@ -19,7 +19,7 @@ public partial class StrategyControlPanelUI // SectorSelectPanel
 
 	public IPanelTarget ShowSectorSelectPanel()
 	{
-		sectorSelectPanel = new SectorSelectPanel(sectorSelectPrefab, sectorSelectRoot, this);
+		sectorSelectPanel = new SectorSelectPanel(sectorSelectPrefab, sectorSelectRoot, this, HideSectorSelectPanel);
 		ViewStack.Push(sectorSelectPanel);
 		return sectorSelectPanel;
 	}
@@ -37,7 +37,7 @@ public partial class StrategyControlPanelUI // SectorSelectPanel
 
 		[SerializeField, FoldoutGroup("ViewItem"), InlineProperty, HideLabel]
 		private SectorPanel sectorPanel;
-		public SectorSelectPanel(GameObject prefab, Transform root, StrategyControlPanelUI panelUI) : base(prefab, root, panelUI)
+		public SectorSelectPanel(GameObject prefab, Transform root, StrategyControlPanelUI panelUI, Action onClose) : base(prefab, root, panelUI, onClose)
 		{
 			sectorPanel = null;
 			FloatingPanelUI = null;

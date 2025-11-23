@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 using Sirenix.OdinInspector;
 
@@ -18,7 +17,18 @@ public partial class StrategyControlPanelUI
 
 	public IPanelTarget ShowOperationPlannerPanel()
 	{
-		operationPlannerPanel = new OperationPlannerPanel(operationPlannerPrefab, operationPlannerToot, pathRenderPrefab, this);
+		if (ViewStack.Peek(out var peek) && peek is OperationPlannerPanel)
+		{
+			return operationPlannerPanel;
+		}
+		else if (ViewStack.TryGetType<OperationPlannerPanel>(out var tryGet))
+		{
+			operationPlannerPanel = tryGet;
+		}
+		else
+		{
+			operationPlannerPanel = new OperationPlannerPanel(operationPlannerPrefab, operationPlannerToot, pathRenderPrefab, this, HideOperationPlannerPanel);
+		}
 		ViewStack.Push(operationPlannerPanel);
 		return operationPlannerPanel;
 	}
@@ -40,12 +50,11 @@ shift를 누르고 선택하면 경로를 지정할 수 있습니다.";
 
 		private MovePath movementPlan;
 
-		public OperationPlannerPanel(GameObject prefab, Transform root, MovementPathRenderer pathRenderPrefab, StrategyControlPanelUI panelUI) : base(prefab, root, panelUI)
+		public OperationPlannerPanel(GameObject prefab, Transform root, MovementPathRenderer pathRenderPrefab, StrategyControlPanelUI panelUI, Action onClose) : base(prefab, root, panelUI, onClose)
 		{
 			selectOperation = null;
 			this.pathRenderPrefab = pathRenderPrefab;
 			movementPlan = null;
-			StrategyManager.PopupUI.ShowTopMessage(this, infoMessage);
 		}
 
 		protected override void OnDispose()
@@ -56,17 +65,16 @@ shift를 누르고 선택하면 경로를 지정할 수 있습니다.";
 			{
 				movementPlan.Dispose();
 			}
-			StrategyManager.PopupUI.HideTopMessage(this);
 		}
-
 		protected override void OnHide()
 		{
+			StrategyManager.PopupUI.HideTopMessage(this);
 			StrategyManager.Selecter.RemoveListener_OnPointingTarget(OnPointing);
+			RemoveTarget(selectOperation);
 		}
-
-
 		protected override void OnShow()
 		{
+			StrategyManager.PopupUI.ShowTopMessage(this, infoMessage);
 			StrategyManager.Selecter.AddListener_OnPointingTarget(OnPointing);
 		}
 		private void OnPointing(ISelectable selectable)
@@ -75,7 +83,76 @@ shift를 누르고 선택하면 경로를 지정할 수 있습니다.";
 
 			bool clearPath = !Keyboard.current.shiftKey.isPressed;
 			selectOperation.ThisMovement.SetMovePath(clearPath, sector);
-			List<Vector3> planList = selectOperation.ThisMovement.MovePath;
+		}
+		void IPanelTarget.AddTarget(IStrategyElement element)
+		{
+			if (element is not OperationObject operation) return;
+			AddTarget(operation);
+		}
+		void IPanelTarget.RemoveTarget(IStrategyElement element)
+		{
+			if (element is not OperationObject operation) return;
+			RemoveTarget(operation);
+		}
+		void IPanelTarget.ClearTarget()
+		{
+			selectOperation = null;
+			if (movementPlan != null)
+				movementPlan.Dispose();
+			movementPlan = null;
+		}
+		void AddTarget(OperationObject operation)
+		{
+			if (operation == null) return;
+			if (selectOperation != operation)
+			{
+				if (selectOperation != null)
+				{
+					RemoveTarget(selectOperation);
+				}
+
+				selectOperation = operation;
+				selectOperation.ThisMovement.OnChangeMovePath += OnChangeMovePath;
+				selectOperation.ThisMovement.OnChangeMoveProgress += OnChangeMoveProgress;
+				OnChangeMovePath();
+				float progress = 1f - selectOperation.ThisMovement.TotalLength / selectOperation.ThisMovement.InitLength;
+				OnChangeMoveProgress(progress);
+			}
+		}
+		void RemoveTarget(OperationObject operation)
+		{
+			if (operation == null) return;
+			if (selectOperation == operation)
+			{
+				selectOperation.ThisMovement.OnChangeMovePath -= OnChangeMovePath;
+				selectOperation.ThisMovement.OnChangeMoveProgress -= OnChangeMoveProgress;
+				selectOperation = null;
+				OnChangeMovePath();
+			}
+		}
+		private void OnChangeMovePath()
+		{
+			if (selectOperation == null)
+			{
+				if (movementPlan != null)
+				{
+					movementPlan.Dispose();
+					movementPlan = null;
+				}
+				return;
+			}
+
+			Vector3[] planList = selectOperation.ThisMovement.InitPath;
+			if (planList.Length == 0)
+			{
+				if (movementPlan != null)
+				{
+					movementPlan.Dispose();
+					movementPlan = null;
+				}
+				return;
+			}
+
 			if (movementPlan == null)
 			{
 				movementPlan = new MovePath(planList, pathRenderPrefab, this);
@@ -85,38 +162,17 @@ shift를 누르고 선택하면 경로를 지정할 수 있습니다.";
 				movementPlan.ChangeValue(planList);
 			}
 		}
-		private void OnLastDeselect(ISelectable selectable)
+		private void OnChangeMoveProgress(float progress)
 		{
-
+			if (movementPlan == null) return;
+			movementPlan.OnChangeProgress(progress);
 		}
 
 
-		void IPanelTarget.AddTarget(IStrategyElement element)
-		{
-			if (element is not OperationObject operation) return;
-			if (selectOperation != operation)
-			{
-				selectOperation = operation;
-			}
-		}
-		void IPanelTarget.RemoveTarget(IStrategyElement element)
-		{
-			if (element is not OperationObject operation) return;
-			if (selectOperation == operation)
-			{
-				selectOperation = null;
-			}
-		}
-		void IPanelTarget.ClearTarget()
-		{
-			selectOperation = null;
-		}
-
-
-		protected class MovePath : ViewItem<List<Vector3>>
+		protected class MovePath : ViewItem<Vector3[]>
 		{
 			private MovementPathRenderer pathRenderer;
-			public MovePath(List<Vector3> item, MovementPathRenderer pathRenderPrefab, ControlPanelItem panel) : base(item, panel)
+			public MovePath(Vector3[] item, MovementPathRenderer pathRenderPrefab, ControlPanelItem panel) : base(item, panel)
 			{
 				if (pathRenderPrefab != null)
 				{
@@ -128,7 +184,7 @@ shift를 누르고 선택하면 경로를 지정할 수 있습니다.";
 			{
 				if (pathRenderer != null)
 				{
-					GameObject.Destroy(pathRenderer);
+					GameObject.Destroy(pathRenderer.gameObject);
 					pathRenderer = null;
 				}
 			}
@@ -140,7 +196,7 @@ shift를 누르고 선택하면 경로를 지정할 수 있습니다.";
 			protected override void OnAfterChangeValue()
 			{
 				if (pathRenderer != null)
-					pathRenderer.SetMovementPlan(Value.ToArray());
+					pathRenderer.SetMovementPlan(Value);
 			}
 			protected override void OnVisible()
 			{
@@ -151,6 +207,12 @@ shift를 누르고 선택하면 경로를 지정할 수 있습니다.";
 			{
 				if (pathRenderer != null)
 					pathRenderer.gameObject.SetActive(false);
+			}
+			public void OnChangeProgress(float progress)
+			{
+				if (pathRenderer != null)
+					pathRenderer.SetProgress(progress);
+
 			}
 		}
 	}

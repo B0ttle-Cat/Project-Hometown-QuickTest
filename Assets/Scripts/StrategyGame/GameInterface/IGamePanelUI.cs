@@ -46,6 +46,16 @@ public interface IViewStack
 			}
 		}
 	}
+	bool Peek(out IPanelItemUI peek)
+	{
+		peek = null;
+		if (ViewPanelUIStack == null)
+		{
+			return false;
+		}
+		ViewPanelUIStack.TryPeek(out peek);
+		return peek != null;
+	}
 	void ClearViewStack()
 	{
 		if (ViewPanelUIStack == null) return;
@@ -57,6 +67,35 @@ public interface IViewStack
 			item.Dispose();
 		}
 		ViewPanelUIStack.Clear();
+	}
+	public bool HasType<T> () where T : IPanelItemUI
+	{
+		if(ViewPanelUIStack == null) return false;
+		foreach (var item in ViewPanelUIStack)
+		{
+			if(item == null) continue;
+			if (item is T) return true;
+		}
+		return false;
+	}
+	public bool TryGetType<T>(out T getT) where T : IPanelItemUI
+	{
+		if (ViewPanelUIStack == null)
+		{
+			getT = default; 
+			return false;
+		}
+		foreach (var item in ViewPanelUIStack)
+		{
+			if (item == null) continue;
+			if (item is T t)
+			{
+				getT = t;
+				return true;
+			}
+		}
+		getT = default;
+		return false;
 	}
 }
 public interface IPanelItemUI : IDisposable

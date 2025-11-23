@@ -41,7 +41,7 @@ public partial class StrategyControlPanelUI
 	public abstract class ControlPanelItem : IPanelItemUI
 	{
 		protected StrategyControlPanelUI panelUI;
-
+		protected Action close;
 		private GameObject panelPrefab;
 		private Transform panelRoot;
 
@@ -49,15 +49,20 @@ public partial class StrategyControlPanelUI
 
 		public bool IsShow { get; private set; }
 		public bool IsDispose { get; private set; }
-		public ControlPanelItem(GameObject prefab, Transform root, StrategyControlPanelUI panelUI)
+		public ControlPanelItem(GameObject prefab, Transform root, StrategyControlPanelUI panelUI, Action close)
 		{
 			this.panelUI = panelUI;
 			this.panelPrefab = prefab;
 			this.panelRoot = root;
+			this.close = close;
 
 			panelObject = null;
 			IsShow = false;
 			IsDispose = false;
+		}
+		public void CloseSelf()
+		{
+			close?.Invoke();
 		}
 		public void Dispose()
 		{

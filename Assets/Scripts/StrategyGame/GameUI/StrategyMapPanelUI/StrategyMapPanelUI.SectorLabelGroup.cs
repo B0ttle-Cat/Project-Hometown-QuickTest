@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using Sirenix.OdinInspector;
 
@@ -76,9 +75,8 @@ public partial class StrategyMapPanelUI // SectorLabelGroup
 
 		protected override void OnShow()
 		{
-			StrategyManager.Collector.AddChangeListener<SectorObject>(OnChangeList, out IList currentList);
-			if (currentList == null || currentList is not List<SectorObject> sectorList) return;
-			if (sectorList.Count == 0) return;
+			StrategyManager.Collector.AddChangeListener<SectorObject>(OnChangeList, out List<SectorObject> sectorList);
+			if (sectorList == null || sectorList.Count == 0) return;
 
 			int length = sectorList.Count;
 			for (int i = 0 ; i < length ; i++)

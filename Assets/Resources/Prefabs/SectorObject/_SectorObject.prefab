@@ -47,6 +47,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d82bbf2c5d767348a29fc6784ffc047, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SectorObject
+  profile:
+    _data:
+      sectorName: 
+      environmentalKey: 
+      effects: 0
+      currentStats:
+        values: []
+  mainStats:
+    _data:
+      stats:
+        values: []
+  facilities:
+    _data:
+      slotData: []
+  support:
+    _data:
+      supportPoint: 0
+      offensivePoint: 0
+      defensivePoint: 0
+      supplyPoint: 0
+      facilitiesPoint: 0
+  capture:
+    _data:
+      captureFactionID: 0
+      captureProgress: 0
+      captureTime: 0
+  sectorStatsGroup:
+    values: []
 --- !u!114 &3338242986635090369
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80,8 +108,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6116972158825158651}
-  - component: {fileID: 246105451304623920}
-  - component: {fileID: 5249756648461258429}
+  - component: {fileID: 6875361661067794626}
   m_Layer: 20
   m_Name: Trigger
   m_TagString: Untagged
@@ -99,35 +126,12 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: -1, z: 0}
-  m_LocalScale: {x: 10, y: 1, z: 10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7324596390385222986}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &246105451304623920
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7918457449481402264}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 20
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &5249756648461258429
+--- !u!114 &6875361661067794626
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -136,9 +140,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 7918457449481402264}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a181df4d9f83f3643a6f20c76cbcf7c1, type: 3}
+  m_Script: {fileID: 11500000, guid: fc17c9c3939a3d54d9ecff7f30a18203, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlPointCollider
+  m_EditorClassIdentifier: Assembly-CSharp::CylinderArea
+  radius: 5
+  height: 5
+  heightPivot: 0
+  axisDirection: 1
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
+  overlapGizmoColor: {r: 1, g: 0, b: 0, a: 1}
+  highlightGizmoColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  checkOverlapCollider: 0
 --- !u!1 &8262306400016143932
 GameObject:
   m_ObjectHideFlags: 0

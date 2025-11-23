@@ -8,7 +8,7 @@
 //	[Serializable]
 //	public struct Data
 //	{
-//		public int factionID;
+//		public int elementID;
 //		public string factionName;
 //		public Color factionColor;
 //		public Sprite factionIcon;

@@ -7,9 +7,10 @@ using static StrategyGamePlayData;
 public class StrategyManager : MonoBehaviour
 {
 	public static StrategyManager Manager;
-	
-	public static bool IsReady => Manager != null && Manager.didAwake;
-	public static bool IsNotReady => !IsReady;
+
+	public static bool IsReadyManager => IsReadyScene && Manager.IsGameManagerReady;
+	public static bool IsReadyScene => Manager != null && Manager.didAwake && Manager.IsGameSceneReady;
+	public static bool IsNotReady => !IsReadyScene;
 	public static Camera MainCamera => Manager == null ? null : Manager.mainCamera;
 	public static StrategyGameUI GameUI => Manager == null ? null : Manager.gameUI;
 	public static StrategyPopupPanelUI PopupUI => GameUI.PopupPanelUI;
@@ -30,6 +31,7 @@ public class StrategyManager : MonoBehaviour
 	public static GameStartingData PreparedData;
 	//public static 
 	public bool IsGameSceneReady { get; private set; }
+	public bool IsGameManagerReady { get; private set; }
 
 	[SerializeField]
 	private Camera mainCamera;
@@ -50,6 +52,7 @@ public class StrategyManager : MonoBehaviour
 	private void Awake()
 	{
 		IsGameSceneReady = false;
+		IsGameManagerReady = false;
 		Manager = this;
 		mainCamera = mainCamera == null ? Camera.main : mainCamera;
 		gameUI = FindAnyObjectByType<StrategyGameUI>();
@@ -210,8 +213,12 @@ public class StrategyManager : MonoBehaviour
 		setter.OnStartSetter_Mission(mission);
 		#endregion
 
-		// 시작 전 대기 프레임 : 없어도 되긴 하지만 혹시 모를 안전성을 위하여.
+		IsGameManagerReady = true;
+		// Awaitable.WaitForSecondsAsync 를 하는 이유는...
 		// 어떠한 경우라도 OnStartGame 는 현재 활성화 되어 있는 모든 오브젝트들의 Awake 와 OnEnable 다음에 호출 되도록 하기 위하여.
+		// 또한 IsGameManagerReady 를 통해 대기중이던 로직이 실행될 시간을 벌어주기 위하여.
+		// 두번 하는 이유는 확실한 순서를 위하여.
+		await Awaitable.NextFrameAsync();
 		await Awaitable.NextFrameAsync();
 
 		#region 초기화 작업 마무리

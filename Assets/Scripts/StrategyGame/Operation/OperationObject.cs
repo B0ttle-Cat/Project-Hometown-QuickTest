@@ -43,11 +43,12 @@ public partial class OperationObject : MonoBehaviour  // Main
 	public void DeInit()
 	{
 		DeInitOrganization();
+		DeselectSelf();
 	}
 	partial void InitOrganization(in List<int> unitList);
 	partial void InitMovement();
 	partial void DeInitOrganization();
-
+	partial void DeselectSelf();
 
 }
 
@@ -130,28 +131,40 @@ public partial class OperationObject : IStrategyElement
 }
 public partial class OperationObject : ISelectable
 {
+    partial void DeselectSelf()
+    {
+		(this as ISelectable).SelfDeselect();
+	}
+
 	void ISelectable.OnSelect()
 	{
-		if(StrategyManager.ViewAndControl.CurrentMode == ViewAndControlModeType.OperationsMode)
+
+	}
+	void ISelectable.OnDeselect()
+	{
+
+	}
+	void ISelectable.OnFirstSelect()
+	{
+	}
+	void ISelectable.OnLastDeselect()
+	{
+	}
+	void ISelectable.OnSingleSelect()
+	{
+		if (StrategyManager.ViewAndControl.CurrentMode == ViewAndControlModeType.OperationsMode)
 		{
 			StrategyManager.GameUI.ControlPanelUI.OpenUI();
 			var setTarget = StrategyManager.GameUI.ControlPanelUI.ShowOperationPlannerPanel();
+			if (setTarget == null) return;
 			setTarget.AddTarget(this);
 		}
 	}
-	void ISelectable.OnDeselect()
-    {
-	}
-    void ISelectable.OnFirstSelect()
-    {
-    }
-    void ISelectable.OnLastDeselect()
-    {
-    }
-    void ISelectable.OnSingleSelect()
-    {
-	}
 	void ISelectable.OnSingleDeselect()
 	{
+		if (StrategyManager.ViewAndControl.CurrentMode == ViewAndControlModeType.OperationsMode)
+		{
+			StrategyManager.GameUI.ControlPanelUI.HideOperationPlannerPanel();
+		}
 	}
 }

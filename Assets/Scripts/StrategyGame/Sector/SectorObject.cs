@@ -13,8 +13,6 @@ using SectorData = StrategyGamePlayData.SectorData;
 [RequireComponent(typeof(CameraVisibilityGroupInStrategy))]
 public partial class SectorObject : MonoBehaviour
 {
-	private SectorTrigger sectorTrigger;
-
 	[SerializeField, BoxGroup("Main")]
 	private SectorData.Profile profile;
 	[SerializeField, BoxGroup("Main")]
@@ -32,7 +30,6 @@ public partial class SectorObject : MonoBehaviour
 
     public void Awake()
 	{
-		sectorTrigger = GetComponentInChildren<SectorTrigger>();
 		visibilityGroup = GetComponent<CameraVisibilityGroupInStrategy>();
 	}
 	public void Init(in StrategyStartSetterData.SectorData data)
@@ -244,19 +241,15 @@ public partial class SectorObject // Getter
 	{
 		CurrStatsList.SetValue(StatsType.거점_전력_현재, value);
 	}
-	public bool OverlapTrigger(in Vector3 point)
-	{
-		if (sectorTrigger == null) return false;
-		return sectorTrigger.OverlapTrigger(in point);
-	}
 }
 public partial class SectorObject : IStrategyElement
 {
 	public IStrategyElement ThisElement => this;
 	public bool IsInCollector { get; set; }
     int IStrategyElement.ID { get; set; }
+	public int SectorID => ThisElement.ID;
 
-    public void InStrategyCollector()
+	public void InStrategyCollector()
 	{
 	}
 
