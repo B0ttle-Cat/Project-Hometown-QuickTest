@@ -1,4 +1,4 @@
-﻿%YAML 1.1
+%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &11400000
 MonoBehaviour:
@@ -102,8 +102,6 @@ MonoBehaviour:
         defensivePoint: 0
         supplyPoint: 0
         facilitiesPoint: 0
-      spawnOperationData:
-        supportInfos: []
     - profileData:
         sectorName: Sector_01
         environmentalKey: 
@@ -146,8 +144,6 @@ MonoBehaviour:
         defensivePoint: 0
         supplyPoint: 0
         facilitiesPoint: 0
-      spawnOperationData:
-        supportInfos: []
     - profileData:
         sectorName: Sector_02
         environmentalKey: 
@@ -190,8 +186,6 @@ MonoBehaviour:
         defensivePoint: 0
         supplyPoint: 0
         facilitiesPoint: 0
-      spawnOperationData:
-        supportInfos: []
     - profileData:
         sectorName: Sector_03
         environmentalKey: 
@@ -234,8 +228,6 @@ MonoBehaviour:
         defensivePoint: 0
         supplyPoint: 0
         facilitiesPoint: 0
-      spawnOperationData:
-        supportInfos: []
     - profileData:
         sectorName: Sector_04
         environmentalKey: 
@@ -278,8 +270,6 @@ MonoBehaviour:
         defensivePoint: 0
         supplyPoint: 0
         facilitiesPoint: 0
-      spawnOperationData:
-        supportInfos: []
     unitDatas:
     - unitKey: 2100
       factionName: Faction_00

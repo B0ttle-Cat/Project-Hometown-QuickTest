@@ -7,10 +7,10 @@ using static StrategyGamePlayData;
 public class StrategyManager : MonoBehaviour
 {
 	public static StrategyManager Manager;
-
 	public static bool IsReadyManager => IsReadyScene && Manager.IsGameManagerReady;
 	public static bool IsReadyScene => Manager != null && Manager.didAwake && Manager.IsGameSceneReady;
-	public static bool IsNotReady => !IsReadyScene;
+	public static bool IsNotReadyScene => !IsReadyScene;
+	public static bool IsNotReadyManager => !IsReadyManager;
 	public static Camera MainCamera => Manager == null ? null : Manager.mainCamera;
 	public static StrategyGameUI GameUI => Manager == null ? null : Manager.gameUI;
 	public static StrategyPopupPanelUI PopupUI => GameUI.PopupPanelUI;
@@ -64,7 +64,6 @@ public class StrategyManager : MonoBehaviour
 		selecter = GetComponentInChildren<StrategyMouseSelecter>();
 		nodeNetwork = GetComponentInChildren<StrategyNodeNetwork>();
 		viewAndControl = GetComponentInChildren<StrategyViewAndControlModeChanger>();
-
 	}
     private void OnDestroy()
 	{

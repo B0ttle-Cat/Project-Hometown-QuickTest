@@ -32,12 +32,13 @@ public partial class StrategyUpdate : MonoBehaviour
 
 		세력_자원갱신시작,
 		세력_자원갱신종료,
+		
+		각종_상태_업데이트,			// 전체 FSM Update 진행
 
 		유닛_보급충전,
 		유닛_기본변수갱신,
 		유닛_버프계산,
 		유닛_이동,
-		유닛_상태_업데이트,			// 유닛의 위치와 스텟을 토대로 어떤 행동을 할지 결정한다.
 		유닛_공격_업데이트,			// 공격 딜레이 계산 및 공격 생성
 		유닛_데미지_계산,			// 충돌된 데이미 계산을 진행
 		유닛_사망_처리,				// HP 없는 유닛을 삭제.
@@ -170,12 +171,13 @@ public partial class StrategyUpdate : MonoBehaviour
 			(UpdateLogicSort.거점_버프계산, null),
 			(UpdateLogicSort.유닛_보급충전, null),
 
+			(UpdateLogicSort.각종_상태_업데이트,  null),
+
 			(UpdateLogicSort.유닛_기본변수갱신, null),
 			(UpdateLogicSort.유닛_버프계산,  new StrategyUpdate_UnitBuff(this)),
 
 			(UpdateLogicSort.작전_기본변수_갱신, new StrategyUpdate_OperationUpdate(this)),
 
-			(UpdateLogicSort.유닛_상태_업데이트,  null),
 			(UpdateLogicSort.유닛_이동,  new StrategyUpdate_NodeMovement(this)),
 			(UpdateLogicSort.유닛_공격_업데이트,  null),
 			(UpdateLogicSort.유닛_데미지_계산,  null),
@@ -246,6 +248,7 @@ public abstract class StrategyUpdateSubClass<T> : IStrategyUpdater where T : Str
 	public StrategyUpdateSubClass(StrategyUpdate updater)
 	{
 		thisUpdater = updater;
+		updateList = new List<T>();
 	}
 	protected List<T> updateList;
 	public virtual List<T> UpdateList { get => updateList; protected set => updateList = value; }
@@ -389,4 +392,5 @@ public abstract class StrategyUpdateSubClass<T> : IStrategyUpdater where T : Str
 }
 public partial class StrategyUpdate
 {
+
 }

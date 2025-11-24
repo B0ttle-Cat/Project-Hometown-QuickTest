@@ -751,7 +751,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 			otherList.OnRemoveListener(action);
 		}
 	}
-	#endregion
+    #endregion
 }
 public partial class StrategyElementCollector // Finder 
 {

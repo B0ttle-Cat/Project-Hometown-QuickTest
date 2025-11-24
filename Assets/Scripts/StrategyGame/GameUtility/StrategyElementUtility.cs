@@ -78,14 +78,21 @@ public static class StrategyElementUtility
 		var organizations = spawnTroopsInfo.organizations;
 		int length = organizations == null ? 0 : organizations.Length;
 		Vector3 sectorCenter = sector.transform.position;
+		float radius = 5f;
+
 
 		var newObject = new GameObject();
 		var newOperation = newObject.AddComponent<OperationObject>();
+		if(!newObject.TryGetComponent<NearbySearcher>(out var nearbySearcher))
+		{
+			nearbySearcher = newObject.AddComponent<NearbySearcher>();
+		}
+		nearbySearcher.BaseRadius = radius;
 
 
 		StrategyManager.Collector.AddElement<OperationObject>(newOperation);
-		newObject.gameObject.name = $"OperationObject_{newOperation.OperationID}";
-		newObject.gameObject.transform.position = sectorCenter;
+		newObject.name = $"OperationObject_{newOperation.OperationID}";
+		newObject.transform.position = sectorCenter;
 		if (string.IsNullOrWhiteSpace(teamName))
 		{
 			teamName = $"{newOperation.OperationID}";
@@ -101,11 +108,12 @@ public static class StrategyElementUtility
 			for (int ii = 0 ; ii < count ; ii++)
 			{
 				UnitObject unit = Instantiate(key, factionID);
-				Vector2 randomPos = Random.insideUnitCircle.normalized * (5f * Random.value);
+				Vector2 randomPos = Random.insideUnitCircle * radius;
 				unit.transform.position = sectorCenter + new Vector3(randomPos.x, 0f, randomPos.y);
 				spawnUnitIds.Add(unit.UnitID);
 			}
 		}
+
 
 		newOperation.Init(in spawnUnitIds);
 		return newOperation;
