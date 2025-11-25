@@ -150,7 +150,12 @@ public abstract class FiniteStateMachine<T> : MonoBehaviour, IFSMInterface<T>, I
 		public T StateUpdate(in float deltaTime)
 		{
 			StateStart();
-			return OnStateUpdate(in deltaTime);
+			var nextState = OnStateUpdate(in deltaTime);
+			if (nextState.Equals(ThisType))
+			{
+				OnAliveUpdate(in deltaTime);
+			}
+			return nextState;
 		}
 		private void StateAwake()
 		{
@@ -171,6 +176,7 @@ public abstract class FiniteStateMachine<T> : MonoBehaviour, IFSMInterface<T>, I
 
 		protected abstract void OnStateStart();
 		protected abstract T OnStateUpdate(in float deltaTime);
+		protected virtual void OnAliveUpdate(in float deltaTime) { }
 	}
 	public class EmptyState : BaseState
 	{

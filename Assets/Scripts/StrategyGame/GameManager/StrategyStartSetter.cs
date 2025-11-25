@@ -39,7 +39,7 @@ public partial class StrategyStartSetter : MonoBehaviour
 	{
 		if (StrategyManager.PreparedData == null)
 		{
-			var data = strategyStartSetterData.GetData();
+			ref readonly var data = ref strategyStartSetterData.ReadonlyData();
 			StrategyManager.PreparedData = new StrategyGamePlayData.GameStartingData(new()
 			{
 				LanguageType = Language.Type.Korean,
@@ -52,8 +52,8 @@ public partial class StrategyStartSetter : MonoBehaviour
 	}
 	internal void OnStartSetter_Faction()
 	{
-		var data = strategyStartSetterData.GetData();
-		var factions = strategyStartSetterData.GetData().factionDatas;
+		ref readonly var data = ref strategyStartSetterData.ReadonlyData();
+		var factions = data.factionDatas;
 		int length = factions.Length;
 		for (int i = 0 ; i < length ; i++)
 		{
@@ -66,12 +66,17 @@ public partial class StrategyStartSetter : MonoBehaviour
 			collector.AddElement<Faction>(faction);
 		}
 	}
+	internal void OnStartSetter_FactionRelation(StrategyFactionRelation factionRelation)
+	{
+		ref readonly var data = ref  strategyStartSetterData.ReadonlyData();
+		factionRelation.Init(collector, data.factionRelations);
+	}
 	internal async Awaitable OnStartSetter_Sector()
 	{
 		// 일단 씬에 있는 모든 SectorData 컴퍼넌트를 수집
 		var allSector = GameObject.FindObjectsByType<SectorObject>(FindObjectsInactive.Include, FindObjectsSortMode.InstanceID);
 
-		var data = strategyStartSetterData.GetData();
+		var data = strategyStartSetterData.ReadonlyData();
 		var sectors = data.sectorDatas;
 
 		int cbLength = allSector.Length;
@@ -98,7 +103,7 @@ public partial class StrategyStartSetter : MonoBehaviour
 		List<UnitObject> includeSceneUnits = new ();
 		includeSceneUnits.AddRange(GameObject.FindObjectsByType<UnitObject>(FindObjectsInactive.Include, FindObjectsSortMode.InstanceID));
 
-		var data = strategyStartSetterData.GetData();
+		var data = strategyStartSetterData.ReadonlyData();
 		var unitDatas = data.unitDatas;
 
 		int dataLength = unitDatas.Length;
@@ -136,7 +141,7 @@ public partial class StrategyStartSetter : MonoBehaviour
 	}
 	internal void OnStartSetter_Capture()
 	{
-		var data = strategyStartSetterData.GetData();
+		ref readonly var data = ref strategyStartSetterData.ReadonlyData();
 		var occData = data.captureDatas;
 
 		collector.ForEachSector(SetCapture);
@@ -163,7 +168,7 @@ public partial class StrategyStartSetter : MonoBehaviour
 	}
     internal async Awaitable OnStartSetter_SectorNetwork(StrategyNodeNetwork network)
     {
-		var data = strategyStartSetterData.GetData();
+		var data = strategyStartSetterData.ReadonlyData();
 		var networkDatas = data.sectorLinkDatas;
 		var sectors = collector.SectorList;
         await network.Init(sectors,networkDatas);
@@ -181,7 +186,7 @@ public partial class StrategyStartSetter : MonoBehaviour
 		List<OperationObject> includeSceneOperations = new ();
 		includeSceneOperations.AddRange(GameObject.FindObjectsByType<OperationObject>(FindObjectsInactive.Include, FindObjectsSortMode.InstanceID));
 
-		var data = strategyStartSetterData.GetData();
+		var data = strategyStartSetterData.ReadonlyData();
 		var opDatas = data.operationDatas;
 		int length = opDatas.Length;
         for (int i = 0 ; i < length ; i++)

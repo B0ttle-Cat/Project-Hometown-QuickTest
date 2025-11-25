@@ -331,3 +331,7 @@ MonoBehaviour:
       connectDir: 1
       sectorB: Sector_00
       waypoint: []
+    factionRelations:
+    - factionA: Faction_00
+      relationType: 0
+      factionB: Faction_01

@@ -21,9 +21,6 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 	[ShowInInspector, ToggleGroup("onShowGizmo")]
 	public bool onShowUnitPreview { get; set; } = true;
 #endif
-	[Space, SerializeField, InlineProperty, HideLabel]
-	private Data data;
-	protected override Data _data { get => data; set => data = value; }
 	[Serializable]
 	public struct Data
 	{
@@ -33,22 +30,23 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		public double unscaleGamePlayTime;
 		public double gamePlayTime;
 
-		[Space]
-		[FoldoutGroup("Overview")]
 		public Overview overview;
-		[FoldoutGroup("Mission")]
 		public Mission mission;
 
-		[Space]
+		[TitleGroup("MainData")]
 		public FactionData[] factionDatas;
+		[TitleGroup("MainData")]
 		public SectorData[] sectorDatas;
+		[TitleGroup("MainData")]
 		public UnitData[] unitDatas;
+		[TitleGroup("MainData")]
 		public OperationData[] operationDatas;
-		[Space]
-		[TableList]
+		[TitleGroup("OtherData"), TableList]
 		public CaptureData[] captureDatas;
-		[Space]
+		[TitleGroup("OtherData")]
 		public SectorLinkData[] sectorLinkDatas;
+		[TitleGroup("OtherData")]
+		public FactionRelation[] factionRelations;
 #if UNITY_EDITOR
 		private IEnumerable<string> GetFactionName()
 		{
@@ -512,5 +510,43 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 				missionScript = missionScript
 			};
 		}
+	}
+
+	[Serializable]
+	public struct FactionRelation
+	{
+		[HorizontalGroup, ValueDropdown("@GetFactionNames($property)"), HideLabel, SuffixLabel("Faction A  ",overlay: true)]
+		public string factionA;
+		[HorizontalGroup(width:80), ValueDropdown("GetRelationType"), HideLabel]
+		public int relationType;
+		[HorizontalGroup, ValueDropdown("@GetFactionNames($property)"), HideLabel, SuffixLabel("Faction B  ",overlay: true)]
+		public string factionB;
+
+
+#if UNITY_EDITOR
+		private static IEnumerable<string> GetFactionNames(InspectorProperty property)
+		{
+			// 루트까지 올라감
+			var root = property.Tree.WeakTargets.FirstOrDefault() as StrategyStartSetterData;
+			if (root == null)
+				return new[] { "(No Parent Data)" };
+
+			var bases = root.data.factionDatas;
+			if (bases == null || bases.Length == 0)
+				return new[] { "(No Data)" };
+
+			return bases.Select(x => x.factionName).Prepend("");
+		}
+		private static ValueDropdownList<int> GetRelationType()
+		{
+			ValueDropdownList<int> list = new ValueDropdownList<int>();
+
+			list.Add("중립", 0);
+			list.Add("우호", 1);
+			list.Add("적대", 2);
+
+			return list;
+		}
+#endif
 	}
 }

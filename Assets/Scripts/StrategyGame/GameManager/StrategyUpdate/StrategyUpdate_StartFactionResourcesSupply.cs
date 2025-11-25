@@ -8,7 +8,9 @@ public partial class StrategyUpdate
 		public StrategyUpdate_StartFactionResourcesSupply(StrategyUpdate updater) : base(updater)
 		{
 		}
-
+		protected override void Dispose()
+		{
+		}
 		protected override void Start()
 		{
 			updateList = new List<ResourcesSupply>();

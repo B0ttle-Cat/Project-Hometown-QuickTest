@@ -31,6 +31,7 @@ public interface INodeMovement
 	Action OnEndedMove { get; set; }
 	Action OnChangeMovePath { get; set; }
 	Action<float> OnChangeMoveProgress { get; set; }
+
 	void SetMovePath(params SectorObject[] waypointSectors) => SetMovePath(true, waypointSectors);
 	void SetMovePath(bool clearPath, params SectorObject[] waypointSectors)
 	{
@@ -214,6 +215,8 @@ public interface INodeMovement
 		OnMoveStop();
 		OnEndedMove?.Invoke();
 	}
+
+	bool IsNodeMovableState();
 
 	void OnMoveStart();
 	void OnMoveStop();

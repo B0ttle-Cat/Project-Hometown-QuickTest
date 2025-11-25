@@ -97,6 +97,9 @@ public partial class StrategyUpdate
 				{
 					return;
 				}
+
+				if (!thisMovement.IsNodeMovableState()) return;
+
 				if (thisMovement.EmptyPath)
 				{
 					MoveStop();

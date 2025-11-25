@@ -83,12 +83,6 @@ public static class StrategyElementUtility
 
 		var newObject = new GameObject();
 		var newOperation = newObject.AddComponent<OperationObject>();
-		if(!newObject.TryGetComponent<NearbySearcher>(out var nearbySearcher))
-		{
-			nearbySearcher = newObject.AddComponent<NearbySearcher>();
-		}
-		nearbySearcher.BaseRadius = radius;
-
 
 		StrategyManager.Collector.AddElement<OperationObject>(newOperation);
 		newObject.name = $"OperationObject_{newOperation.OperationID}";
@@ -115,7 +109,7 @@ public static class StrategyElementUtility
 		}
 
 
-		newOperation.Init(in spawnUnitIds);
+		newOperation.Init(in spawnUnitIds, in radius);
 		return newOperation;
 	}
 	public static void Destroy(OperationObject operation)

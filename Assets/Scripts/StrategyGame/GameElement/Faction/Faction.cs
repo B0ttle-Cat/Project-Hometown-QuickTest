@@ -8,7 +8,7 @@ using UnityEngine;
 using static StrategyGamePlayData;
 
 [Serializable]
-public partial class Faction : IEquatable<Faction> , IDisposable
+public partial class Faction : IEquatable<Faction>, IDisposable
 {
 	public Faction(in StrategyStartSetterData.FactionData data)
 	{
@@ -24,14 +24,17 @@ public partial class Faction : IEquatable<Faction> , IDisposable
 			new StatsValue(StatsType.세력_물자_현재, data.currentMaterialPoint),
 			new StatsValue(StatsType.세력_전력_최대, data.maxElectricPoint),
 			new StatsValue(StatsType.세력_전력_현재, data.currentElectricPoint)
-			);
+		);
 		availableUnitKeyList = data.AvailableUnitKeyList();
+
+		detectingList = new HashSet<IStrategyElement>();
 	}
 	public void Dispose()
 	{
 		factionIcon = null;
 		defaultUnitPrefab = null;
 		availableUnitKeyList = null;
+		detectingList = null;
 	}
 
 	private string factionName;
@@ -44,8 +47,10 @@ public partial class Faction : IEquatable<Faction> , IDisposable
 	private StatsList factionStats;
 	private List<UnitKey> availableUnitKeyList;
 
+	private HashSet<IStrategyElement> detectingList;
+
 	[ShowInInspector]
-	public string FactionName => factionName; 
+	public string FactionName => factionName;
 	[ShowInInspector]
 	public int FactionID => factionID;
 	[ShowInInspector]
@@ -54,8 +59,9 @@ public partial class Faction : IEquatable<Faction> , IDisposable
 	public GameObject DefaultUnitPrefab => defaultUnitPrefab;
 	[ShowInInspector]
 	public StatsList FactionStats => factionStats;
-	public List<UnitKey> AvailableUnitKeyList => availableUnitKeyList; 
+	public List<UnitKey> AvailableUnitKeyList => availableUnitKeyList;
 
+	public HashSet<IStrategyElement> DetectingList => detectingList;
 
 	public static bool TryFindFaction(string factionName, out Faction find)
 	{
@@ -65,49 +71,46 @@ public partial class Faction : IEquatable<Faction> , IDisposable
 	{
 		return StrategyManager.Collector.TryFindElement<Faction>(f => f.factionID == factionID, out find);
 	}
-    public override bool Equals(object obj)
-    {
-        return Equals(obj as Faction);
-    }
-    public bool Equals(Faction other)
-    {
-        return other is not null &&
-               factionName == other.factionName &&
-               factionID == other.factionID;
-    }
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(factionName, factionID);
-    }
-
-
-    public static bool operator ==(Faction left, Faction right)
-    {
-        return EqualityComparer<Faction>.Default.Equals(left, right);
-    }
-    public static bool operator !=(Faction left, Faction right)
-    {
-        return !(left == right);
-    }
+	public override bool Equals(object obj)
+	{
+		return Equals(obj as Faction);
+	}
+	public bool Equals(Faction other)
+	{
+		return other is not null &&
+			   factionName == other.factionName &&
+			   factionID == other.factionID;
+	}
+	public override int GetHashCode()
+	{
+		return HashCode.Combine(factionName, factionID);
+	}
+	public static bool operator ==(Faction left, Faction right)
+	{
+		return EqualityComparer<Faction>.Default.Equals(left, right);
+	}
+	public static bool operator !=(Faction left, Faction right)
+	{
+		return !(left == right);
+	}
 }
 public partial class Faction : IStrategyElement
 {
 	public IStrategyElement ThisElement => this;
 	public bool IsInCollector { get; set; }
-    int IStrategyElement.ID { get => factionID; set => factionID = value; }
+	int IStrategyElement.ID { get => factionID; set => factionID = value; }
 
-    public void InStrategyCollector()
+	public void InStrategyCollector()
 	{
 	}
 	public void OutStrategyCollector()
 	{
 	}
 
-    void IStrategyStartGame.OnStartGame()
-    {
-    }
-
-    void IStrategyStartGame.OnStopGame()
-    {
-    }
+	void IStrategyStartGame.OnStartGame()
+	{
+	}
+	void IStrategyStartGame.OnStopGame()
+	{
+	}
 }

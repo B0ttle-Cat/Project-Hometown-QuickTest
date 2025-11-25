@@ -23,6 +23,7 @@ public class StrategyManager : MonoBehaviour
 	public static StrategyMouseSelecter Selecter => Manager == null ? null : Manager.selecter;
 	public static StrategyNodeNetwork NodeNetwork => Manager == null ? null : Manager.nodeNetwork;
 	public static StrategyViewAndControlModeChanger ViewAndControl => Manager == null ? null : Manager.viewAndControl;
+	public static StrategyFactionRelation FactionRelation => Manager == null? null : Manager.factionRelation;
 	public static KeyPairDisplayName Key2Name => Manager == null ? null : Manager.key2Name;
 	public static KeyPairSprite Key2Sprite => Manager == null ? null : Manager.key2Sprite;
 	public static KeyPairUnitInfo Key2UnitInfo => Manager == null ? null : Manager.key2UnitInfo;
@@ -45,6 +46,7 @@ public class StrategyManager : MonoBehaviour
 	private StrategyMouseSelecter selecter;
 	private StrategyNodeNetwork nodeNetwork;
 	private StrategyViewAndControlModeChanger viewAndControl;
+	private StrategyFactionRelation factionRelation;
 
 	private KeyPairDisplayName key2Name;
 	private KeyPairSprite key2Sprite;
@@ -64,6 +66,7 @@ public class StrategyManager : MonoBehaviour
 		selecter = GetComponentInChildren<StrategyMouseSelecter>();
 		nodeNetwork = GetComponentInChildren<StrategyNodeNetwork>();
 		viewAndControl = GetComponentInChildren<StrategyViewAndControlModeChanger>();
+		factionRelation = GetComponentInChildren<StrategyFactionRelation>();
 	}
     private void OnDestroy()
 	{
@@ -192,6 +195,7 @@ public class StrategyManager : MonoBehaviour
 		#region 이 구역 순서에 주의할 것: 각 항목은 초기화를 위해 이전 항목의 정보를 요구 할 수 있음
 		// 시작 세력 세팅
 		setter.OnStartSetter_Faction();
+		setter.OnStartSetter_FactionRelation(factionRelation);
 
 		// Sector 세팅
 		await setter.OnStartSetter_Sector();
@@ -213,7 +217,7 @@ public class StrategyManager : MonoBehaviour
 		#endregion
 
 		IsGameManagerReady = true;
-		// Awaitable.WaitForSecondsAsync 를 하는 이유는...
+		// Awaitable.NextFrameAsync 를 하는 이유는...
 		// 어떠한 경우라도 OnStartGame 는 현재 활성화 되어 있는 모든 오브젝트들의 Awake 와 OnEnable 다음에 호출 되도록 하기 위하여.
 		// 또한 IsGameManagerReady 를 통해 대기중이던 로직이 실행될 시간을 벌어주기 위하여.
 		// 두번 하는 이유는 확실한 순서를 위하여.

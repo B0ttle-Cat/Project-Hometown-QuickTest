@@ -102,6 +102,12 @@ public partial class OperationObject : INodeMovement
 			velocity *= rate;
 		}
 	}
+
+	bool INodeMovement.IsNodeMovableState()
+	{
+		return FsmFlag.HasFlag(FSMFlag.NodeMovement);
+	}
+
 	void INodeMovement.OnMoveStart()
 	{
 		moveVelocity = Vector3.zero;

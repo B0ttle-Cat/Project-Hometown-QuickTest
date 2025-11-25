@@ -28,6 +28,8 @@ public partial class UnitObject : INodeMovement
 	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
 	private float tempLength = 0f;
 
+	private float moveRadius = 0.5f;
+
 	private Seeker seeker;
 	private int movementIndex;
 	private Vector3[] initPath;
@@ -74,10 +76,11 @@ public partial class UnitObject : INodeMovement
     Action INodeMovement.OnStartMove { get => onStartMove; set => onStartMove = value; }
     Action INodeMovement.OnEndedMove { get => onEndedMove; set => onEndedMove = value; }
 
-    partial void InitMovement()
+	partial void InitMovement()
 	{
 		seeker = GetComponent<Seeker>();
 		rvoController = GetComponent<RVOController>();
+		moveRadius = rvoController.radius;
 
 		movePath = new List<Vector3>();
 		tempMovePath = null;
@@ -94,6 +97,12 @@ public partial class UnitObject : INodeMovement
 		position = transform.position;
 		velocity = Vector2.zero;
 	}
+
+	bool INodeMovement.IsNodeMovableState()
+	{
+		return FsmFlag.HasFlag(FSMFlag.NodeMovement);
+	}
+
 	void INodeMovement.OnMoveStart()
 	{
 		operationMoveTarget = Vector3.zero;
@@ -148,7 +157,7 @@ public partial class UnitObject : INodeMovement
 		currPosition = Vector3.SmoothDamp(currPosition, target, ref currVelocity, smoothTime, maxSpeed, deltaTime);
 
 		Vector3 delteMove = currPosition - transform.position;
-		if (rvoController.isActiveAndEnabled)
+		if (rvoController != null && rvoController.isActiveAndEnabled)
 		{
 			rvoController.SetTarget(target, currVelocity.magnitude, maxSpeed, target);
 			delteMove = rvoController.CalculateMovementDelta(movePosition, deltaTime);

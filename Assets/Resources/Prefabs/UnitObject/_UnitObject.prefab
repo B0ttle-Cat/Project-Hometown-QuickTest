@@ -10,11 +10,11 @@ GameObject:
   m_Component:
   - component: {fileID: 2444870497716522056}
   - component: {fileID: 3203544414131407364}
-  - component: {fileID: 4132202085799089646}
-  - component: {fileID: 7935832438594412248}
+  - component: {fileID: -6848436480592291150}
   - component: {fileID: 7235125821253552112}
   - component: {fileID: 2455348339527989827}
   - component: {fileID: 2997822074442965579}
+  - component: {fileID: 8354607733487220838}
   m_Layer: 21
   m_Name: _UnitObject
   m_TagString: Untagged
@@ -50,9 +50,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1b2a1e7433a36d439b76c62a58bde5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Unit
+  fsmFlag: 0
   operationObject: {fileID: 0}
   operationOffset: {x: 0, y: 0, z: 0}
---- !u!114 &4132202085799089646
+--- !u!114 &-6848436480592291150
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -61,32 +62,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 2460545361625872358}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a56627bdf7f00d4ab3f1299c5a75513, type: 3}
+  m_Script: {fileID: 11500000, guid: 21c6d238096f12e4bb413744de3f8fe7, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UnitObjectTrigger
---- !u!136 &7935832438594412248
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2460545361625872358}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 1, z: 0}
+  m_EditorClassIdentifier: Assembly-CSharp::UnitFiniteStateMachine
 --- !u!114 &7235125821253552112
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -199,6 +177,29 @@ MonoBehaviour:
   wallAvoidFalloff: 1
   priority: 0.5
   debug: 0
+--- !u!136 &8354607733487220838
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2460545361625872358}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!1 &2609880498311265087
 GameObject:
   m_ObjectHideFlags: 0

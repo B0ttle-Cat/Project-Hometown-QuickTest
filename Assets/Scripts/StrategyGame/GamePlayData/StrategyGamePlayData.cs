@@ -237,7 +237,7 @@ public partial class StrategyGamePlayData // Prepared Data (준비된 데이터)
 					unscaleGamePlayTime = unscaleGamePlayTime,
 					gamePlayTime = gamePlayTime,
 					overview = overview.Copy(),
-					mission = mission.Copy()
+					mission = mission.Copy(),
 				};
 			}
 		}

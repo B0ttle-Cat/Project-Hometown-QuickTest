@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
+using static StrategyUpdate.StrategyUpdate_UnitCombatTargetUpdate;
+
 public interface IStrategyUpdater : IDisposable
 {
 	void Start();
@@ -26,27 +28,29 @@ public partial class StrategyUpdate : MonoBehaviour
 
 		거점_자원갱신시작,
 		거점_자원갱신종료,
-		
+
 		거점_시설보급,
 		거점_버프계산,
 
 		세력_자원갱신시작,
 		세력_자원갱신종료,
-		
-		각종_상태_업데이트,			// 전체 FSM Update 진행
 
+		NearbyUpdate,
+		세력_감지목록_업데이트,
+		각종_상태_업데이트,         // 전체 FSM Update 진행
+
+		유닛_CombatTarget_업데이트,
 		유닛_보급충전,
 		유닛_기본변수갱신,
 		유닛_버프계산,
 		유닛_이동,
-		유닛_공격_업데이트,			// 공격 딜레이 계산 및 공격 생성
-		유닛_데미지_계산,			// 충돌된 데이미 계산을 진행
-		유닛_사망_처리,				// HP 없는 유닛을 삭제.
+		유닛_공격_업데이트,         // 공격 딜레이 계산 및 공격 생성
+		유닛_데미지_계산,          // 충돌된 데이미 계산을 진행
+		유닛_사망_처리,               // HP 없는 유닛을 삭제.
 
 		작전_기본변수_갱신,
 
 		UI,
-
 
 		End = int.MaxValue,
 		//거점_자원분배,			// 자원 분배대신 건물을 건설하여 일정 범위 내에 보급 보너스를 주는식으로...
@@ -171,7 +175,10 @@ public partial class StrategyUpdate : MonoBehaviour
 			(UpdateLogicSort.거점_버프계산, null),
 			(UpdateLogicSort.유닛_보급충전, null),
 
-			(UpdateLogicSort.각종_상태_업데이트,  null),
+			(UpdateLogicSort.NearbyUpdate, new StrategyUpdate_NearbyUpdate(this)),
+			(UpdateLogicSort.세력_감지목록_업데이트, new StrategyUpdate_FactionDetectListUpdate(this)),
+			(UpdateLogicSort.유닛_CombatTarget_업데이트, new StrategyUpdate_UnitCombatTargetUpdate(this)),
+			(UpdateLogicSort.각종_상태_업데이트,  new StrategyUpdate_FSMUpdater(this)),
 
 			(UpdateLogicSort.유닛_기본변수갱신, null),
 			(UpdateLogicSort.유닛_버프계산,  new StrategyUpdate_UnitBuff(this)),
@@ -272,12 +279,9 @@ public abstract class StrategyUpdateSubClass<T> : IStrategyUpdater where T : Str
 
 		Dispose();
 	}
+	protected abstract void Dispose();
 	protected abstract void Start();
 	protected abstract void Update(in float deltaTime);
-	protected virtual void Dispose()
-	{
-
-	}
 	public abstract partial class UpdateLogic : IDisposable
 	{
 		protected StrategyUpdateSubClass<T> thisSubClass;
@@ -392,5 +396,79 @@ public abstract class StrategyUpdateSubClass<T> : IStrategyUpdater where T : Str
 }
 public partial class StrategyUpdate
 {
+	public class StrategyUpdate_UnitCombatTargetUpdate : StrategyUpdateSubClass<CombatTarget>
+	{
+		public StrategyUpdate_UnitCombatTargetUpdate(StrategyUpdate updater) : base(updater)
+		{
+		}
 
+		protected override void Dispose()
+		{
+		}
+
+		protected override void Start()
+		{
+			StrategyManager.Collector.AddChangeListener<UnitObject>(OnChangeValue, ForeachAll);
+			void ForeachAll(IStrategyElement element)
+			{
+				OnChangeValue(element, true);
+			}
+		}
+
+		private void OnChangeValue(IStrategyElement element, bool added)
+		{
+			if (element == null || element is not UnitObject unitObject) return;
+
+			if (added)
+			{
+				UpdateList.Add(new CombatTarget(unitObject, this));
+			}
+			else
+			{
+				int findIndex = UpdateList.FindIndex(i=>i.unitObject == unitObject);
+				if (findIndex < 0) return;
+				UpdateList.RemoveAt(findIndex);
+			}
+		}
+
+
+
+		protected override void Update(in float deltaTime)
+		{
+		}
+
+		public class CombatTarget : UpdateLogic
+		{
+			public readonly UnitObject unitObject;
+			public readonly IUnitCombatController combatController;
+			public CombatTarget(UnitObject unitObject, StrategyUpdate_UnitCombatTargetUpdate thisSubClass) : base(thisSubClass)
+			{
+				this.unitObject = unitObject;
+				combatController = unitObject;
+			}
+
+			protected override void OnDispose()
+			{
+			}
+
+			protected override void OnUpdate(in float deltaTime)
+			{
+				if (unitObject == null) return;
+				if (!combatController.IsCombatState) return;
+
+				combatController.UpdateParameters();
+
+				if (combatController.IsKeepingTargetAllowed()) return;
+
+				if (combatController.SearchingNewTarget(out var newTarget))
+				{
+					combatController.SetCombatTarget(newTarget);
+				}
+				else
+				{
+					combatController.ClearCombatTarget();
+				}
+			}
+		}
+	}
 }

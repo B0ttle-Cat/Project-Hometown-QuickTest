@@ -684,6 +684,15 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 
 		getCurrentList = element.IList as List<T>;
 	}
+	public void AddChangeListener<T>(Action<IStrategyElement, bool> action, Action<IStrategyElement> allForeach) where T : class, IStrategyElement
+	{
+		AddChangeListener(action, out List<T> list);
+		if (allForeach == null || list == null || list.Count == 0) return;
+		foreach (var item in list)
+		{
+			allForeach.Invoke(item);
+		}
+	}
 	public void AddChangeListener<T>(Action<IStrategyElement, bool> action) where T : class, IStrategyElement
 	{
 		var element = GetElementByType<T>();
@@ -751,6 +760,11 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 			otherList.OnRemoveListener(action);
 		}
 	}
+
+    internal void AddChangeListener<T>(object onChangeValue, object foreachAll)
+    {
+        throw new NotImplementedException();
+    }
     #endregion
 }
 public partial class StrategyElementCollector // Finder 

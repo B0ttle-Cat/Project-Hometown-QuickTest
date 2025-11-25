@@ -10,6 +10,10 @@ public partial class StrategyUpdate
 		{
 		}
 
+		protected override void Dispose()
+		{
+		}
+
 		protected override void Start()
 		{
 			updateList = new List<ConstructUpdate>();

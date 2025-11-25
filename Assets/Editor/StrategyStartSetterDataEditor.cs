@@ -29,7 +29,7 @@ public class StrategyStartSetterDataEditor : OdinEditor
 
 		if (_target == null || !_target.onShowGizmo) return;
 
-		var data = _target.GetData();
+		ref readonly var data = ref _target.ReadonlyData();
 		var sectorDatas = data.sectorDatas;
 		var captureDatas = data.captureDatas;
 		var factionDatas = data.factionDatas;

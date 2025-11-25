@@ -3,7 +3,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(NearbySearcher))]
-public partial class OperationObject : INearbyValueGetter
+public partial class OperationObject : INearbySearcherValueGetter
 {
 	private float searcherRange;
 	public INearbySearcher Searcher { get; set; }
@@ -20,9 +20,14 @@ public partial class OperationObject : INearbyValueGetter
 	}
 	private HashSet<INearbyElement> ignoreNearbyList;
 
-	partial void InitNearby()
+	partial void InitNearby(in float baseRadius)
 	{
-		Searcher = GetComponent<NearbySearcher>();
+		if (TryGetComponent<NearbySearcher>(out var nearbySearcher))
+		{
+			nearbySearcher = gameObject.AddComponent<NearbySearcher>();
+		}
+		nearbySearcher.BaseRadius = baseRadius;
+		Searcher = nearbySearcher;
 		Searcher.Init(this);
 		ignoreNearbyList = new HashSet<INearbyElement>();
 	}
@@ -43,7 +48,7 @@ public partial class OperationObject : INearbyValueGetter
 		if (ignoreNearbyList == null) return;
 		ignoreNearbyList.Remove(item);
 	}
-	HashSet<INearbyElement> INearbyValueGetter.GetIgnoreList()
+	HashSet<INearbyElement> INearbySearcherValueGetter.GetIgnoreList()
 	{
 		return ignoreNearbyList ??= new HashSet<INearbyElement>();
 	}

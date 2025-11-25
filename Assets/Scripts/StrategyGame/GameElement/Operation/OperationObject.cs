@@ -33,18 +33,18 @@ public partial class OperationObject : MonoBehaviour  // Main
 		this.factionID = factionID;
 		this.teamName = teamName;
 	}
-	
-	public void Init(in List<int> unitList)
+
+	public void Init(in List<int> unitList, in float baseRadius)
 	{
-		InitOrganization(unitList);
+		InitOrganization(in unitList);
 		InitMovement();
 		InitFSM();
-		InitNearby();
+		InitNearby(in baseRadius);
 	}
 	partial void InitOrganization(in List<int> unitList);
 	partial void InitMovement();
 	partial void InitFSM();
-	partial void InitNearby();
+	partial void InitNearby(in float baseRadius);
 	
 	public void DeInit()
 	{
