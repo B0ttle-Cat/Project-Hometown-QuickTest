@@ -1,10 +1,6 @@
 ﻿using UnityEngine;
-public interface ITargetableCombatant : INearbyElement
-{
 
-}
-
-public partial class UnitObject : IUnitCombatController, ITargetableCombatant
+public partial class UnitObject : IUnitCombatController, INearbyElement, ITargetableCombatant
 {
 
 	public IUnitCombatController ThisCombatController => this;
@@ -35,21 +31,22 @@ public partial class UnitObject : IUnitCombatController, ITargetableCombatant
 		combatCurrentTarget = null;
 	}
 	float INearbyElement.Radius => moveRadius;
-	Vector3 INearbyElement.Position => movePosition;
-
+	Vector3 ITargetableCombatant.Position => movePosition;
 	Vector3 IUnitCombatController.Position => movePosition;
 	float IUnitCombatController.AttackRange => combatAttackRange;
 	float IUnitCombatController.ActionRange => combatActionRange;
 	float IUnitCombatController.VisionRange => combatVisionRange;
 	ITargetableCombatant IUnitCombatController.CurrentTarget => ThisCombatController.IsCombatState ? combatCurrentTarget : null;
-	bool IUnitCombatController.TargetInAttackRange => ThisCombatController.HasCurrentTarget ? isTargetInAttackRange : false;
-	bool IUnitCombatController.TargetInActionRange => ThisCombatController.HasCurrentTarget ? isTargetInActionRange : false;
+	bool IUnitCombatController.TargetInAttackRange => ThisCombatController.HasCurrentTarget && isTargetInAttackRange;
+	bool IUnitCombatController.TargetInActionRange => ThisCombatController.HasCurrentTarget && isTargetInActionRange;
+	public ITargetableCombatant RootTargetable => operationObject == null ?  this : operationObject;
+
 
 	void IUnitCombatController.UpdateParameters()
 	{
-		combatAttackRange = StatsData.GetValue(StrategyGamePlayData.StatsType.유닛_공격범위) * 0.01f;
-		combatActionRange = StatsData.GetValue(StrategyGamePlayData.StatsType.유닛_행동범위) * 0.01f;
-		combatVisionRange = StatsData.GetValue(StrategyGamePlayData.StatsType.유닛_시야범위) * 0.01f;
+		combatAttackRange = StatsData.GetValue(StrategyGamePlayData.StatsType.유닛_공격범위);
+		combatActionRange = StatsData.GetValue(StrategyGamePlayData.StatsType.유닛_행동범위);
+		combatVisionRange = StatsData.GetValue(StrategyGamePlayData.StatsType.유닛_시야범위);
 
 		if (combatCurrentTarget != null)
 		{
@@ -110,7 +107,7 @@ public partial class UnitObject : IUnitCombatController, ITargetableCombatant
 			ThisCombatController.ClearCombatTarget();
 			return;
 		}
-		if (combatCurrentTarget.ThisElement.ID == newTarget.ThisElement.ID) return;
+		if (combatCurrentTarget != null && combatCurrentTarget.ThisElement.ID == newTarget.ThisElement.ID) return;
 		combatCurrentTarget = newTarget;
 
 		if (combatCurrentTarget != null)

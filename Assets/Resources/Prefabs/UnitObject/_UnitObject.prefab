@@ -50,6 +50,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1b2a1e7433a36d439b76c62a58bde5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Unit
+  debugRender: {fileID: 933335122341834021}
   fsmFlag: 0
   operationObject: {fileID: 0}
   operationOffset: {x: 0, y: 0, z: 0}
@@ -211,6 +212,7 @@ GameObject:
   - component: {fileID: 5677258521748763196}
   - component: {fileID: 3132913609070053383}
   - component: {fileID: 2284964294701983283}
+  - component: {fileID: 933335122341834021}
   m_Layer: 21
   m_Name: Unit
   m_TagString: Untagged
@@ -289,3 +291,15 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &933335122341834021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2609880498311265087}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff3793e4ade384d4094c295230e46877, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDebugRender

@@ -16,14 +16,16 @@ public partial class OperationObject : IFSMController<OperationFSMType>
 	public FSMFlag FsmFlag => fsmFlag;
 	public IFSMController<OperationFSMType> FSMController => this;
 	public IFSMInterface<OperationFSMType> FSMInterface { get; set; }
+	public event Action<OperationFSMType> OnChangeFSMFState;
 	partial void InitFSM()
 	{
-		if(TryGetComponent<OperationFiniteStateMachine>(out var fsm))
+		if(!TryGetComponent<OperationFiniteStateMachine>(out var fsm))
 		{
 			fsm = gameObject.AddComponent<OperationFiniteStateMachine>();
 		}
 		FSMInterface = fsm;
 		FSMController.InitState(OnStateEnterCallback, OnStateExitCallback, OperationFSMType.Idle, FSMController.GetStateList());
+		OnChangeFSMFState = null;
 	}
 	partial void DeinitFSM()
 	{
@@ -31,6 +33,8 @@ public partial class OperationObject : IFSMController<OperationFSMType>
 
 		FSMController.DeinitState();
 		FSMInterface = null;
+
+		OnChangeFSMFState = null;
 	}
 
 	private void OnStateEnterCallback(OperationFSMType type)
@@ -41,6 +45,8 @@ public partial class OperationObject : IFSMController<OperationFSMType>
 			OperationFSMType.Combat => FSMFlag.Combat,
 			_ => fsmFlag
 		};
+
+		OnChangeFSMFState?.Invoke(type);
 	}
 
 	private void OnStateExitCallback(OperationFSMType type)

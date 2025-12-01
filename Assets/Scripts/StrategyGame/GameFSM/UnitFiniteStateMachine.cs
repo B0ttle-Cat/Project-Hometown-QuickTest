@@ -51,7 +51,7 @@ public class UnitFiniteStateMachine : FiniteStateMachine<UnitFSMType>
 			var op = unitObject.operationObject;
 			if (op == null)
 			{
-				return false;
+				return NextStateIsChasing();
 			}
 			else
 			{
@@ -73,7 +73,7 @@ public class UnitFiniteStateMachine : FiniteStateMachine<UnitFSMType>
 	
 		protected override UnitFSMType OnStateUpdate(in float deltaTime)
 		{
-			if (IsCombat() && NextStateIsChasing())
+			if (IsCombat())
 			{
 				return UnitFSMType.Chasing;
 			}

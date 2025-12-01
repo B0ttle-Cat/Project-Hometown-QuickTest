@@ -5189,10 +5189,10 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1234401990}
-  - {fileID: 4796101}
   - {fileID: 58857479}
+  - {fileID: 4796101}
   - {fileID: 1555327484}
+  - {fileID: 1234401990}
   m_Father: {fileID: 449196672}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -5948,8 +5948,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 122672814}
   m_HandleRect: {fileID: 122672813}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 0.5124801
+  m_Value: 0.9999998
+  m_Size: 0.51248
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -7490,7 +7490,7 @@ MonoBehaviour:
     seed: 0
     pivotPointRoot: {fileID: 0}
     spreadOutCount: 10
-  showGraphs: 1
+  showGraphs: 0
   showGraphsInStandalonePlayer: 0
 --- !u!4 &781089590
 Transform:
@@ -13361,9 +13361,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1572051154}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae2b1e6868707684d991470513443337, type: 3}
+  m_Script: {fileID: 11500000, guid: b44b189bbe98862438f7bc44e3be8644, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StrategySectorNetwork
+  groundParent: {fileID: 1784292391}
+  groundLayerMask:
+    serializedVersion: 2
+    m_Bits: 7340543
 --- !u!114 &1572051164
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13482,7 +13486,7 @@ GameObject:
   - component: {fileID: 1655734316}
   - component: {fileID: 1655734315}
   - component: {fileID: 1655734314}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13575,7 +13579,7 @@ Transform:
   m_GameObject: {fileID: 1655734313}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.52, z: 0}
+  m_LocalPosition: {x: 0, y: -0.5, z: 0}
   m_LocalScale: {x: 100, y: 1, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -15326,7 +15330,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1784292391}
   m_Layer: 0
-  m_Name: Ground
+  m_Name: Map
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16747,6 +16751,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1784292391}
     m_Modifications:
+    - target: {fileID: 1152005454630061899, guid: 65b2fe5c02731a74dae76d0e92cc7e7c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.98
+      objectReference: {fileID: 0}
     - target: {fileID: 4300306911235521037, guid: 65b2fe5c02731a74dae76d0e92cc7e7c, type: 3}
       propertyPath: m_Name
       value: Sector_00

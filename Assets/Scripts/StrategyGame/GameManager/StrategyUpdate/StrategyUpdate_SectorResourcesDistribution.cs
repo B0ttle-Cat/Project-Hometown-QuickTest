@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-using static StrategyNodeNetwork;
+using static StrategyPathfinding;
 using static StrategyUpdate.StrategyUpdate_SectorResourcesDistribution;
 
 public partial class StrategyUpdate

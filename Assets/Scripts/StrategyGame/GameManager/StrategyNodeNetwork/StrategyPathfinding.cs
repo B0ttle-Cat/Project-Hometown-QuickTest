@@ -3,15 +3,19 @@ using System.Collections.Generic;
 
 using Pathfinding;
 
-#if UNITY_EDITOR
-#endif
-
 using UnityEngine;
 
 using static NetworkLink;
 
-public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
+public partial class StrategyPathfinding : MonoBehaviour, IStrategyStartGame
 {
+	[SerializeField]
+	private Transform groundParent;
+	[SerializeField]
+	private LayerMask groundLayerMask;
+
+
+
 	[Serializable]
 	public readonly struct PointInfo
 	{
@@ -26,8 +30,6 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 			this.closetNodeID = closetNodeID;
 		}
 	}
-	private bool isInit;
-
 	private void Awake()
 	{
 
@@ -35,6 +37,7 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 
 	AstarPath ActiveAstarPath => AstarPath.active;
 	PointGraph thisPointGraph;
+	RecastGraph thisRecastGraph;
 
 	public class SectorNetwork
 	{
@@ -42,21 +45,21 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 		public Vector3 position;
 		public List<Neighbor> neighbors;
 
-        public SectorNetwork(SectorObject sector)
-        {
-            this.sector = sector;
+		public SectorNetwork(SectorObject sector)
+		{
+			this.sector = sector;
 			position = sector.transform.position;
 			neighbors = new List<Neighbor>();
 		}
 
-        public readonly struct Neighbor
+		public readonly struct Neighbor
 		{
 			public readonly SectorObject sector;
-            public Neighbor(SectorObject sector)
-            {
+			public Neighbor(SectorObject sector)
+			{
 				this.sector = sector;
 			}
-        }
+		}
 
 		public void AddNeighbor(SectorObject sectorObject)
 		{
@@ -67,12 +70,44 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 
 	public async Awaitable Init(List<SectorObject> sectorList, StrategyStartSetterData.SectorLinkData[] sectorLinkData)
 	{
-		AstarData data = ActiveAstarPath.data;
-		thisPointGraph = data.AddGraph<PointGraph>();
-		thisPointGraph.Scan();
 		sectorNetworkList = new Dictionary<SectorObject, SectorNetwork>(sectorList.Count);
 
-		ActiveAstarPath.AddWorkItem(() => {
+		AstarData data = ActiveAstarPath.data;
+		thisPointGraph = data.AddGraph<PointGraph>();
+		thisPointGraph.name = "MainPointGraph";
+		thisPointGraph.Scan();
+
+		thisRecastGraph = data.AddGraph<RecastGraph>();
+		thisRecastGraph.name = "MainRecastGraph";
+
+		// groundParent 기준으로 모든 Collider Bounds 합산
+		Bounds combined = CalculateCombinedBounds(groundParent);
+
+		thisRecastGraph.useTiles = true;
+		thisRecastGraph.forcedBoundsCenter = combined.center;
+		thisRecastGraph.forcedBoundsSize = combined.size;
+
+		thisRecastGraph.collectionSettings.rasterizeTerrain = false;
+		thisRecastGraph.collectionSettings.rasterizeMeshes = false;
+		thisRecastGraph.collectionSettings.rasterizeColliders = true;
+		thisRecastGraph.collectionSettings.layerMask = groundLayerMask;
+
+		// 필요한 기본 설정(필요 최소만 기입)
+		thisRecastGraph.cellSize = 0.15f;
+		thisRecastGraph.tileSizeX = 128;
+		thisRecastGraph.tileSizeZ = 128;
+		thisRecastGraph.maxEdgeLength = 20;
+
+		thisRecastGraph.walkableHeight = 2f;
+		thisRecastGraph.walkableClimb = 0.5f;
+		thisRecastGraph.characterRadius = 0.4f;
+		thisRecastGraph.maxSlope = 30f;
+
+		thisRecastGraph.Scan();
+
+		bool wating = true;
+		ActiveAstarPath.AddWorkItem(() =>
+		{
 			int nodeLength = sectorList.Count;
 			PointNode[] pointNodes = new PointNode[nodeLength];
 			for (int i = 0 ; i < nodeLength ; i++)
@@ -126,13 +161,57 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 					GraphNode.Connect(prev, last, _cost, directionality);
 				}
 			}
+			wating = false;
 		});
 
 		AstarPath.active.FlushWorkItems();
 
-		isInit = true;
+		while (wating)
+		{
+			await Awaitable.NextFrameAsync();
+		}
 	}
-	
+
+
+	private Bounds CalculateCombinedBounds(Transform parent)
+	{
+		bool initialized = false;
+		Bounds result = default;
+
+		Collider[] colliders = parent.GetComponentsInChildren<Collider>(true);
+
+		for (int i = 0 ; i < colliders.Length ; i++)
+		{
+			Collider c = colliders[i];
+
+			// LayerMask 필터
+			int layer = c.gameObject.layer;
+			if ((groundLayerMask.value & (1 << layer)) == 0)
+				continue;
+
+			Bounds b = c.bounds;
+
+			if (!initialized)
+			{
+				result = b;
+				initialized = true;
+			}
+			else
+			{
+				result.Encapsulate(b);
+			}
+		}
+
+		// col 없는 경우 문제 방지 위해 최소 사이즈
+		if (!initialized)
+			result = new Bounds(parent.position, Vector3.one);
+
+		return result;
+	}
+
+
+
+
 	public bool GetSectorNetwork(SectorObject sector, out SectorNetwork item)
 	{
 		return sectorNetworkList.TryGetValue(sector, out item);
@@ -147,9 +226,31 @@ public partial class StrategyNodeNetwork : MonoBehaviour, IStrategyStartGame
 		{
 			ActiveAstarPath.AddWorkItem(() =>
 			{
-				thisPointGraph.Clear();
+				if (thisPointGraph != null)
+				{
+					thisPointGraph.Clear();
+					AstarPath.active.data.RemoveGraph(thisPointGraph);
+					thisPointGraph = null;
+				}
+
+				if(thisRecastGraph != null)
+				{
+					AstarPath.active.data.RemoveGraph(thisRecastGraph);
+					thisRecastGraph = null;
+				}
 			});
 			ActiveAstarPath.FlushWorkItems();
 		}
+	}
+
+	internal void FindNodePath(Seeker thisSeeker, Vector3 prevPoint, Vector3 nextPoint, OnPathDelegate findPath)
+	{
+		GraphMask graphMask = GraphMask.FromGraphName("MainPointGraph");
+		thisSeeker.StartPath(prevPoint, nextPoint, findPath, graphMask);
+	}
+	internal void FindNavPath(Seeker thisSeeker, Vector3 prevPoint, Vector3 nextPoint, OnPathDelegate findPath)
+	{
+		GraphMask graphMask = GraphMask.FromGraphName("MainRecastGraph");
+		thisSeeker.StartPath(prevPoint, nextPoint, findPath);
 	}
 }

@@ -166,7 +166,7 @@ public partial class StrategyStartSetter : MonoBehaviour
 			});
 		}
 	}
-    internal async Awaitable OnStartSetter_SectorNetwork(StrategyNodeNetwork network)
+    internal async Awaitable OnStartSetter_SectorNetwork(StrategyPathfinding network)
     {
 		var data = strategyStartSetterData.ReadonlyData();
 		var networkDatas = data.sectorLinkDatas;
@@ -205,20 +205,5 @@ public partial class StrategyStartSetter : MonoBehaviour
 				collector.AddElement(op);
 			}
 		}
-	}
-}
-public partial class StrategyStartSetter // Instantiate
-{
-	private void ResetWithData(UnitObject unit, in UnitData unitData)
-	{
-		if (unit == null) return;
-
-		GameObject unitObject = unit.gameObject;
-
-		var position = unitData.position;
-		var rotation = Quaternion.Euler(unitData.rotation);
-		unitObject.transform.SetPositionAndRotation(position, rotation);
-		unitObject.gameObject.name = name;
-		unit.Init(unitData);
 	}
 }

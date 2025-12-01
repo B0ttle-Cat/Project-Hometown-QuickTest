@@ -25,7 +25,7 @@ public partial class StrategyUpdate
 					for (int i = 0 ; i < length ; i++)
 					{
 						var item = unitList[i];
-						if (item == null || item is not INodeMovement movement || movement != movement.ParentMovement) continue;
+						if (item == null || item is not INodeMovement movement || null != movement.ParentMovement) continue;
 						UpdateList.Add(new(movement, this));
 					}
 				}

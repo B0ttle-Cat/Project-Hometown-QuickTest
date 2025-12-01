@@ -9,7 +9,7 @@ public enum OperationFSMType
 [RequireComponent(typeof(OperationObject))]
 public class OperationFiniteStateMachine : FiniteStateMachine<OperationFSMType>
 {
-	private OperationObject combatTarget;
+	private ITargetableCombatant combatTarget;
 
 	public override IState<OperationFSMType>[] GetStateList()
 	{
@@ -70,8 +70,8 @@ public class OperationFiniteStateMachine : FiniteStateMachine<OperationFSMType>
 				if (unit == null) continue;
 				if (unit.FactionID != operationFactionID)
 				{
-					operationFsm.combatTarget = unit.operationObject;
-					return true;
+					operationFsm.combatTarget = unit.RootTargetable;
+					if(operationFsm.combatTarget != null) return true;
 				}
 			}
 			return false;
@@ -100,7 +100,7 @@ public class OperationFiniteStateMachine : FiniteStateMachine<OperationFSMType>
 		protected override void OnStateEnter()
 		{
 			var unitList = operation.GetAllUnitObj;
-			Vector3 position = operationFsm.combatTarget.ThisMovement.CurrentPosition;
+			Vector3 position = operationFsm.combatTarget.Position;
 			int length = unitList == null ? 0 : unitList.Count;
 			for (int i = 0 ; i < length ; i++)
 			{
@@ -138,7 +138,7 @@ public class OperationFiniteStateMachine : FiniteStateMachine<OperationFSMType>
 			if(operationFsm.combatTarget == null) return;
 
 			var unitList = operation.GetAllUnitObj;
-			Vector3 position = operationFsm.combatTarget.ThisMovement.CurrentPosition;
+			Vector3 position = operationFsm.combatTarget.Position;
 			int length = unitList == null ? 0 : unitList.Count;
 			for (int i = 0 ; i < length ; i++)
 			{

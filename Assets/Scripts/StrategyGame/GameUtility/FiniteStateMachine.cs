@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Sirenix.OdinInspector;
+
 using UnityEngine;
 
 public interface IFSMController<T> where T : Enum
@@ -43,7 +45,11 @@ public interface IState<T> where T : Enum
 public abstract class FiniteStateMachine<T> : MonoBehaviour, IFSMInterface<T>, IFSMUpdater where T : Enum
 {
 	private IState<T> currentState;
-	public T CurrentStateType => currentState.ThisType;
+	[ShowInInspector]
+	public T CurrentStateType => currentState == null ? default : currentState.ThisType;
+
+	[SerializeField]
+	private bool testPause;
 
 	public Dictionary<T, IState<T>> stateList;
 	private Action<T> onStateEnterCallback;
@@ -59,6 +65,7 @@ public abstract class FiniteStateMachine<T> : MonoBehaviour, IFSMInterface<T>, I
 	}
 	protected virtual void OnDestroy()
 	{
+		if (StrategyManager.IsDestroy) return;
 		StrategyManager.Collector.RemoveOther<IFSMUpdater>(this);
 	}
 	public void InitState(Action<T> onStateEnterCallback, Action<T> onStateExitCallback, T initState, params IState<T>[] state)
@@ -110,6 +117,7 @@ public abstract class FiniteStateMachine<T> : MonoBehaviour, IFSMInterface<T>, I
 	public void StateUpdate(in float deltaTime)
 	{
 		if (currentState == null || stateList == null) return;
+		if (testPause) return;
 
 		T prevState = currentState.ThisType;
 		T nextState = currentState.StateUpdate(in deltaTime);

@@ -69,7 +69,7 @@ public partial class StrategyUpdate
 				StrategyManager.Collector.ForEachAll(item =>
 				{
 					if (item is not INearbySearcherValueGetter searcherValueGetter) return;
-					if (searcherValueGetter.FactionID == thisFactionID) return;
+					if (searcherValueGetter.FactionID != thisFactionID) return;
 					var searcher = searcherValueGetter.Searcher;
 					if (searcher == null) return;
 

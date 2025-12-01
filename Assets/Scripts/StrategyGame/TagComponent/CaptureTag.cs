@@ -17,6 +17,7 @@ public class CaptureTag : MonoBehaviour
 	}
     private void OnDestroy()
     {
+		if (StrategyManager.IsDestroy) return; 
 		StrategyManager.Collector.RemoveOther(this);
 	}
 }

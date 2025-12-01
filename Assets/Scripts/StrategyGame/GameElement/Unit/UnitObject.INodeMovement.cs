@@ -10,7 +10,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(Seeker))]
 [RequireComponent(typeof(RVOController))]
-public partial class UnitObject : INodeMovement
+public partial class UnitObject // Movement
 {
 	private Vector3 operationMoveTarget;
 	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
@@ -38,43 +38,10 @@ public partial class UnitObject : INodeMovement
 	private Queue<Vector3> findingPoints;
 	private Action onMovePathUpdate;
 	private Action<float> onMoveProgress;
-    private Action onEndedMove;
-    private Action onStartMove;
+	private Action onEndedMove;
+	private Action onStartMove;
 
 	private RVOController rvoController;
-
-    public INodeMovement ThisMovement => this;
-	public INodeMovement ParentMovement => operationObject;
-	public Seeker ThisSeeker => seeker;
-	public RVOController RVO => rvoController;
-	Vector3 INodeMovement.CurrentPosition
-	{
-		get
-		{
-			if (transform.hasChanged)
-			{
-				transform.hasChanged = false;
-				movePosition = transform.position;
-			}
-			return movePosition;
-		}
-	}
-	Vector3 INodeMovement.CurrentVelocity => moveVelocity;
-	float INodeMovement.SmoothTime => smoothTime;
-	float INodeMovement.MaxSpeed => GetStateValue(StrategyGamePlayData.StatsType.유닛_이동속도);
-	int INodeMovement.MovementIndex { get => movementIndex; set => movementIndex = value; }
-    Vector3[] INodeMovement.InitPath { get => initPath; set => initPath = value; }
-	List<Vector3> INodeMovement.MovePath { get => movePath; set => movePath = value; }
-	List<Vector3> INodeMovement.TempMovePath { get => tempMovePath; set => tempMovePath = value; }
-	Queue<Vector3> INodeMovement.FindingPoints { get => findingPoints; set => findingPoints = value; }
-	float INodeMovement.InitLength { get => initLength; set => initLength = value; }
-	float INodeMovement.TotalLength { get => totalLength; set => totalLength = value; }
-	float INodeMovement.SectionLength { get => sectionLength; set => sectionLength = value; }
-	float INodeMovement.TempLength { get => tempLength; set => tempLength = value; }
-	Action INodeMovement.OnChangeMovePath { get => onMovePathUpdate; set => onMovePathUpdate = value; }
-	Action<float> INodeMovement.OnChangeMoveProgress { get => onMoveProgress; set => onMoveProgress = value; }
-    Action INodeMovement.OnStartMove { get => onStartMove; set => onStartMove = value; }
-    Action INodeMovement.OnEndedMove { get => onEndedMove; set => onEndedMove = value; }
 
 	partial void InitMovement()
 	{
@@ -96,45 +63,6 @@ public partial class UnitObject : INodeMovement
 	{
 		position = transform.position;
 		velocity = Vector2.zero;
-	}
-
-	bool INodeMovement.IsNodeMovableState()
-	{
-		return FsmFlag.HasFlag(FSMFlag.NodeMovement);
-	}
-
-	void INodeMovement.OnMoveStart()
-	{
-		operationMoveTarget = Vector3.zero;
-		moveVelocity = Vector3.zero;
-		smoothTime = 0.5f;
-	}
-	void INodeMovement.OnMoveStop()
-	{
-		moveVelocity = Vector3.zero;
-		smoothTime = 0.5f;
-	}
-	void INodeMovement.SetPositionAndVelocity(in Vector3 position, in Vector3 delteMove, in Vector3 velocity, in float deltaTime)
-	{
-		if (HasOperation)
-		{
-			OperationSetPositionAndVelocity(in position, in deltaTime);
-			return;
-		}
-		movePosition = position;
-		moveVelocity = velocity;
-		if (ThisMovement.HasTampPath)
-		{
-			tempLength -= delteMove.magnitude;
-			if (tempLength < 0) tempLength = 0f;
-		}
-		else
-		{
-			sectionLength -= delteMove.magnitude;
-			if (sectionLength < 0) sectionLength = 0f;
-		}
-
-		UpdateMovementTransform();
 	}
 	void OperationSetPositionAndVelocity(in Vector3 nextPosition, in float deltaTime)
 	{
@@ -181,12 +109,146 @@ public partial class UnitObject : INodeMovement
 			transform.LookAt(movePosition + moveVelocity.normalized);
 		transform.hasChanged = false;
 	}
-	public void OnStayUpdate(in float deltaTime)
+}
+public partial class UnitObject : IMovement
+{
+	public IMovement ThisMovement => this;
+	public INodeMovement ThisNodeMovement => this;
+	public Seeker ThisSeeker => seeker;
+	public RVOController RVO => rvoController;
+	Vector3 IMovement.CurrentPosition
+	{
+		get
+		{
+			if (transform.hasChanged)
+			{
+				transform.hasChanged = false;
+				movePosition = transform.position;
+			}
+			return movePosition;
+		}
+	}
+	Vector3 IMovement.CurrentVelocity => moveVelocity;
+	float IMovement.SmoothTime => smoothTime;
+	float IMovement.MaxSpeed => GetStateValue(StrategyGamePlayData.StatsType.유닛_이동속도);
+	int IMovement.MovementIndex { get => movementIndex; set => movementIndex = value; }
+	Vector3[] IMovement.InitPath { get => initPath; set => initPath = value; }
+	List<Vector3> IMovement.MovePath { get => movePath; set => movePath = value; }
+	List<Vector3> IMovement.TempMovePath { get => tempMovePath; set => tempMovePath = value; }
+	Queue<Vector3> IMovement.FindingPoints { get => findingPoints; set => findingPoints = value; }
+	float IMovement.InitLength { get => initLength; set => initLength = value; }
+	float IMovement.TotalLength { get => totalLength; set => totalLength = value; }
+	float IMovement.SectionLength { get => sectionLength; set => sectionLength = value; }
+	float IMovement.TempLength { get => tempLength; set => tempLength = value; }
+	Action IMovement.OnChangeMovePath { get => onMovePathUpdate; set => onMovePathUpdate = value; }
+	Action<float> IMovement.OnChangeMoveProgress { get => onMoveProgress; set => onMoveProgress = value; }
+	Action IMovement.OnStartMove { get => onStartMove; set => onStartMove = value; }
+	Action IMovement.OnEndedMove { get => onEndedMove; set => onEndedMove = value; }
+}
+public partial class UnitObject : INodeMovement
+{
+	public INodeMovement ParentMovement => operationObject;
+	bool INodeMovement.IsNodeMovableState()
+	{
+		return FsmFlag.HasFlag(FSMFlag.NodeMovement);
+	}
+	void INodeMovement.OnMoveStart()
+	{
+		operationMoveTarget = Vector3.zero;
+		moveVelocity = Vector3.zero;
+		smoothTime = 0.5f;
+	}
+	void INodeMovement.OnMoveStop()
+	{
+		moveVelocity = Vector3.zero;
+		smoothTime = 0.5f;
+	}
+	void INodeMovement.SetPositionAndVelocity(in Vector3 position, in Vector3 delteMove, in Vector3 velocity, in float deltaTime)
+	{
+		if (HasOperation)
+		{
+			OperationSetPositionAndVelocity(in position, in deltaTime);
+			return;
+		}
+		movePosition = position;
+		moveVelocity = velocity;
+		if (ThisMovement.HasTampPath)
+		{
+			tempLength -= delteMove.magnitude;
+			if (tempLength < 0) tempLength = 0f;
+		}
+		else
+		{
+			sectionLength -= delteMove.magnitude;
+			if (sectionLength < 0) sectionLength = 0f;
+		}
+
+		UpdateMovementTransform();
+	}
+	void INodeMovement.OnStayUpdate(in float deltaTime)
 	{
 		if (HasOperation)
 		{
 			Vector3 operationPosition = operationObject.ThisMovement.CurrentPosition;
 			OperationSetPositionAndVelocity(in operationPosition, in deltaTime);
+		}
+		else
+		{
+			movePosition = transform.position;
+			moveVelocity = Vector3.zero;
+		}
+	}
+}
+public partial class UnitObject : INavMovement
+{
+	bool INavMovement.IsNodeMovableState()
+	{
+		return FsmFlag.HasFlag(FSMFlag.NodeMovement);
+	}
+	void INavMovement.OnMoveStart()
+	{
+		operationMoveTarget = Vector3.zero;
+		moveVelocity = Vector3.zero;
+		smoothTime = 0.5f;
+	}
+	void INavMovement.OnMoveStop()
+	{
+		moveVelocity = Vector3.zero;
+		smoothTime = 0.5f;
+	}
+	void INavMovement.SetPositionAndVelocity(in Vector3 position, in Vector3 delteMove, in Vector3 velocity, in float deltaTime)
+	{
+		if (HasOperation)
+		{
+			OperationSetPositionAndVelocity(in position, in deltaTime);
+			return;
+		}
+		movePosition = position;
+		moveVelocity = velocity;
+		if (ThisMovement.HasTampPath)
+		{
+			tempLength -= delteMove.magnitude;
+			if (tempLength < 0) tempLength = 0f;
+		}
+		else
+		{
+			sectionLength -= delteMove.magnitude;
+			if (sectionLength < 0) sectionLength = 0f;
+		}
+
+		UpdateMovementTransform();
+	}
+	void INavMovement.OnStayUpdate(in float deltaTime)
+	{
+		if (HasOperation)
+		{
+			Vector3 operationPosition = operationObject.ThisMovement.CurrentPosition;
+			OperationSetPositionAndVelocity(in operationPosition, in deltaTime);
+		}
+		else
+		{
+			movePosition = transform.position;
+			moveVelocity = Vector3.zero;
 		}
 	}
 }

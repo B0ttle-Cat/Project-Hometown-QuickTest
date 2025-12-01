@@ -16,18 +16,22 @@ public partial class UnitObject : IFSMController<UnitFSMType>
 	[SerializeField]
 	private FSMFlag fsmFlag;
 	public FSMFlag FsmFlag => fsmFlag;
-	public IFSMController<UnitFSMType> FSMController { get; }
-	IFSMInterface<UnitFSMType> IFSMController<UnitFSMType>.FSMInterface { get; set; }
+	public IFSMController<UnitFSMType> FSMController => this;
+	public IFSMInterface<UnitFSMType> FSMInterface { get; set; }
 
 	partial void InitFSM()
 	{
+		if (!TryGetComponent<UnitFiniteStateMachine>(out var fsm))
+		{
+			fsm = gameObject.AddComponent<UnitFiniteStateMachine>();
+		}
+		FSMInterface = fsm;
 		FSMController.InitState(OnStateEnterCallback, OnStateExitCallback, UnitFSMType.Idle, FSMController.GetStateList());
 	}
 	partial void DeinitFSM()
 	{
 		FSMController.DeinitState();
 	}
-
 	private void OnStateEnterCallback(UnitFSMType type)
 	{
 		fsmFlag = type switch
@@ -38,10 +42,12 @@ public partial class UnitObject : IFSMController<UnitFSMType>
 			_ => FSMFlag.None
 		};
 	}
-
 	private void OnStateExitCallback(UnitFSMType type)
 	{
 		fsmFlag = FSMFlag.None;
 	}
-
+	private void OperationObject_OnChangeFSMFlag(OperationFSMType changeValue)
+	{
+		
+	}
 }

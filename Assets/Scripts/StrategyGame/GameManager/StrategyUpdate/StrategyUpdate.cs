@@ -43,7 +43,8 @@ public partial class StrategyUpdate : MonoBehaviour
 		유닛_보급충전,
 		유닛_기본변수갱신,
 		유닛_버프계산,
-		유닛_이동,
+		유닛_노드_이동,
+		유닛_추격_이동,
 		유닛_공격_업데이트,         // 공격 딜레이 계산 및 공격 생성
 		유닛_데미지_계산,          // 충돌된 데이미 계산을 진행
 		유닛_사망_처리,               // HP 없는 유닛을 삭제.
@@ -185,7 +186,8 @@ public partial class StrategyUpdate : MonoBehaviour
 
 			(UpdateLogicSort.작전_기본변수_갱신, new StrategyUpdate_OperationUpdate(this)),
 
-			(UpdateLogicSort.유닛_이동,  new StrategyUpdate_NodeMovement(this)),
+			(UpdateLogicSort.유닛_노드_이동,  new StrategyUpdate_NodeMovement(this)),
+			(UpdateLogicSort.유닛_추격_이동,  new StrategyUpdate_NavMovement(this)),
 			(UpdateLogicSort.유닛_공격_업데이트,  null),
 			(UpdateLogicSort.유닛_데미지_계산,  null),
 			(UpdateLogicSort.유닛_사망_처리,  null),
@@ -281,7 +283,16 @@ public abstract class StrategyUpdateSubClass<T> : IStrategyUpdater where T : Str
 	}
 	protected abstract void Dispose();
 	protected abstract void Start();
-	protected abstract void Update(in float deltaTime);
+	protected virtual void Update(in float deltaTime)
+	{
+		int length = UpdateList.Count;
+        for (int i = 0 ; i < length ; i++)
+        {
+			var item = UpdateList[i];
+			if (item == null) continue;
+			item.Update(in deltaTime);
+		}
+    }
 	public abstract partial class UpdateLogic : IDisposable
 	{
 		protected StrategyUpdateSubClass<T> thisSubClass;
@@ -431,12 +442,6 @@ public partial class StrategyUpdate
 			}
 		}
 
-
-
-		protected override void Update(in float deltaTime)
-		{
-		}
-
 		public class CombatTarget : UpdateLogic
 		{
 			public readonly UnitObject unitObject;
@@ -446,11 +451,9 @@ public partial class StrategyUpdate
 				this.unitObject = unitObject;
 				combatController = unitObject;
 			}
-
 			protected override void OnDispose()
 			{
 			}
-
 			protected override void OnUpdate(in float deltaTime)
 			{
 				if (unitObject == null) return;

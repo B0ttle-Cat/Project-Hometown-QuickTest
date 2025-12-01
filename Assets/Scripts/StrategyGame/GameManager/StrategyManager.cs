@@ -11,6 +11,7 @@ public class StrategyManager : MonoBehaviour
 	public static bool IsReadyScene => Manager != null && Manager.didAwake && Manager.IsGameSceneReady;
 	public static bool IsNotReadyScene => !IsReadyScene;
 	public static bool IsNotReadyManager => !IsReadyManager;
+	public static bool IsDestroy => Manager == null;
 	public static Camera MainCamera => Manager == null ? null : Manager.mainCamera;
 	public static StrategyGameUI GameUI => Manager == null ? null : Manager.gameUI;
 	public static StrategyPopupPanelUI PopupUI => GameUI.PopupPanelUI;
@@ -21,7 +22,7 @@ public class StrategyManager : MonoBehaviour
 	public static StrategyTime Time => Manager == null ? null : Manager.time;
 	public static StrategyUpdate Updater => Manager == null ? null : Manager.updater;
 	public static StrategyMouseSelecter Selecter => Manager == null ? null : Manager.selecter;
-	public static StrategyNodeNetwork NodeNetwork => Manager == null ? null : Manager.nodeNetwork;
+	public static StrategyPathfinding NodeNetwork => Manager == null ? null : Manager.nodeNetwork;
 	public static StrategyViewAndControlModeChanger ViewAndControl => Manager == null ? null : Manager.viewAndControl;
 	public static StrategyFactionRelation FactionRelation => Manager == null? null : Manager.factionRelation;
 	public static KeyPairDisplayName Key2Name => Manager == null ? null : Manager.key2Name;
@@ -44,7 +45,7 @@ public class StrategyManager : MonoBehaviour
 	private StrategyTime time;
 	private StrategyUpdate updater;
 	private StrategyMouseSelecter selecter;
-	private StrategyNodeNetwork nodeNetwork;
+	private StrategyPathfinding nodeNetwork;
 	private StrategyViewAndControlModeChanger viewAndControl;
 	private StrategyFactionRelation factionRelation;
 
@@ -64,7 +65,7 @@ public class StrategyManager : MonoBehaviour
 		statistics = GetComponentInChildren<StrategyStatistics>();
 		updater = GetComponentInChildren<StrategyUpdate>();
 		selecter = GetComponentInChildren<StrategyMouseSelecter>();
-		nodeNetwork = GetComponentInChildren<StrategyNodeNetwork>();
+		nodeNetwork = GetComponentInChildren<StrategyPathfinding>();
 		viewAndControl = GetComponentInChildren<StrategyViewAndControlModeChanger>();
 		factionRelation = GetComponentInChildren<StrategyFactionRelation>();
 	}

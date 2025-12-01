@@ -38,8 +38,8 @@ public partial class OperationObject : MonoBehaviour  // Main
 	{
 		InitOrganization(in unitList);
 		InitMovement();
-		InitFSM();
 		InitNearby(in baseRadius);
+		InitFSM();
 	}
 	partial void InitOrganization(in List<int> unitList);
 	partial void InitMovement();
@@ -79,7 +79,7 @@ public partial class OperationObject // Stats
 	private float ComputeViewRange()
 	{
 		int max = GetAllUnitObj.Count == 0 ? 0 : GetAllUnitObj.Select(i => i.GetStateValue(StatsType.유닛_시야범위)).Max();
-		return (float)max * 0.01f;
+		return (float)max;
 	}
 }
 public partial class OperationObject : IStrategyElement

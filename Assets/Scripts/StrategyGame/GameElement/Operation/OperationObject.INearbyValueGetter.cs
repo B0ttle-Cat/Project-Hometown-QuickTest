@@ -12,7 +12,7 @@ public partial class OperationObject : INearbySearcherValueGetter
 		get => searcherRange;
 		set
 		{
-			if (Mathf.Approximately(searcherRange, value))
+			if (!Mathf.Approximately(searcherRange, value))
 			{
 				searcherRange = value;
 			}

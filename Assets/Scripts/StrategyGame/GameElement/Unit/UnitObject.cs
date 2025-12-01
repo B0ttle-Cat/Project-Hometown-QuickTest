@@ -12,6 +12,8 @@ public partial class UnitObject : MonoBehaviour
 	private UnitData.Skill skill;
 	private UnitData.ConnectSector sector;
 	private CaptureTag captureTag;
+	[SerializeField]
+	private UnitDebugRender debugRender;
 
 	[ShowInInspector, FoldoutGroup("UnitData"), ReadOnly]
 	public UnitData.Profile Profile { get => profile; set => profile = value; }
@@ -89,12 +91,18 @@ public partial class UnitObject : MonoBehaviour
 
 	private void InitOther(UnitProfileObject profileObj)
 	{
+		InitDebugRender();
 		InitProfileObject(profileObj);
 		InitMovement();
 		InitOperationObject();
 		InitVisibility();
 		InitFSM();
 		InitCombat();
+	}
+	private void InitDebugRender()
+	{
+		if (debugRender == null || Faction == null) return;
+		debugRender.SetColor(Faction.FactionColor);
 	}
 	partial void InitProfileObject(UnitProfileObject profileObj);
 	partial void InitMovement();
@@ -111,6 +119,7 @@ public partial class UnitObject : MonoBehaviour
 	partial void DeselectSelf();
 	partial void DeinitFSM();
 	partial void DeinitCombat();
+
 }
 public partial class UnitObject // StateValue
 {

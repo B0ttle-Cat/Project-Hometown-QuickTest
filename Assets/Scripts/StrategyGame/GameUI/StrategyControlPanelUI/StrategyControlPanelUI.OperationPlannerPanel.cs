@@ -78,7 +78,7 @@ shift를 누르고 선택하면 경로를 지정할 수 있습니다.";
 			if (selectable == null || selectable is not SectorObject sector) return;
 
 			bool clearPath = !Keyboard.current.shiftKey.isPressed;
-			selectOperation.ThisMovement.SetMovePath(clearPath, sector);
+			selectOperation.ThisNodeMovement.SetMovePath(clearPath, sector);
 		}
 		void IPanelTarget.AddTarget(IStrategyElement element)
 		{

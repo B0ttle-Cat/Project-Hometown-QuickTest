@@ -19,6 +19,11 @@ public partial class UnitObject : IOperationBelonger
 	{
 		if (operationObject == null) return;
 		this.operationObject = operationObject;
+		SetupOperationBelong();
+	}
+	private void SetupOperationBelong()
+	{
+		if (operationObject == null) return;
 
 		ThisVisibility.OnChangeVisible -= operationObject.ChangeVisibleUnit;
 		ThisVisibility.OnChangeVisible += operationObject.ChangeVisibleUnit;
@@ -33,9 +38,14 @@ public partial class UnitObject : IOperationBelonger
 		{
 			operationObject.ChangeInvisibleUnit(this);
 		}
+
+		operationObject.OnChangeFSMFState -= OperationObject_OnChangeFSMFlag;
+		operationObject.OnChangeFSMFState += OperationObject_OnChangeFSMFlag;
+
+
 		operationOffset = ThisMovement.CurrentPosition - operationObject.ThisMovement.CurrentPosition;
 	}
-	OperationObject IOperationBelonger.GetBelongedOperation()
+    OperationObject IOperationBelonger.GetBelongedOperation()
 	{
 		return operationObject;
 	}
@@ -45,6 +55,8 @@ public partial class UnitObject : IOperationBelonger
 		{
 			ThisVisibility.OnChangeVisible -= operationObject.ChangeVisibleUnit;
 			ThisVisibility.OnChangeInvisible -= operationObject.ChangeInvisibleUnit;
+
+			operationObject.OnChangeFSMFState -= OperationObject_OnChangeFSMFlag;
 			operationObject = null;
 		}
 		operationOffset = Vector3.zero;

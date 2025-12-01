@@ -8,7 +8,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 
 [RequireComponent(typeof(Seeker))]
-public partial class OperationObject : INodeMovement
+public partial class OperationObject : INodeMovement , ITargetableCombatant
 {
 	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
 	private Vector3 movePosition;
@@ -37,9 +37,10 @@ public partial class OperationObject : INodeMovement
     private Action onStartMove;
     private Action onEndedMove;
 
-    public INodeMovement ThisMovement => this;
+    public IMovement ThisMovement => this;
+	public INodeMovement ThisNodeMovement => this;
 	public Seeker ThisSeeker => seeker;
-	Vector3 INodeMovement.CurrentPosition
+	Vector3 IMovement.CurrentPosition
 	{
 		get
 		{
@@ -51,22 +52,23 @@ public partial class OperationObject : INodeMovement
 			return movePosition;
 		}
 	}
-	Vector3 INodeMovement.CurrentVelocity => moveVelocity;
-	float INodeMovement.SmoothTime => smoothTime;
-	float INodeMovement.MaxSpeed => moveSpeed;
-	int INodeMovement.MovementIndex { get => movementIndex; set => movementIndex = value; }
-    Vector3[] INodeMovement.InitPath { get => initPath; set => initPath = value; }
-    List<Vector3> INodeMovement.MovePath { get => movePath; set => movePath = value; }
-	List<Vector3> INodeMovement.TempMovePath { get => tempMovePath; set => tempMovePath = value; }
-	Queue<Vector3> INodeMovement.FindingPoints { get => findingPoints; set => findingPoints = value; }
-	float INodeMovement.InitLength { get => initLength; set => initLength = value; }
-	float INodeMovement.TotalLength { get => totalLength; set => totalLength = value; }
-	float INodeMovement.SectionLength { get => sectionLength; set => sectionLength = value; }
-	float INodeMovement.TempLength { get => tempLength; set => tempLength = value; }
-	Action INodeMovement.OnChangeMovePath { get => onMovePathUpdate; set => onMovePathUpdate = value; }
-	Action<float> INodeMovement.OnChangeMoveProgress { get => onMoveProgress; set => onMoveProgress = value; }
-	Action INodeMovement.OnStartMove { get => onStartMove; set => onStartMove = value; }
-	Action INodeMovement.OnEndedMove { get => onEndedMove; set => onEndedMove = value; }
+	Vector3 IMovement.CurrentVelocity => moveVelocity;
+	float IMovement.SmoothTime => smoothTime;
+	float IMovement.MaxSpeed => moveSpeed;
+	int IMovement.MovementIndex { get => movementIndex; set => movementIndex = value; }
+    Vector3[] IMovement.InitPath { get => initPath; set => initPath = value; }
+    List<Vector3> IMovement.MovePath { get => movePath; set => movePath = value; }
+	List<Vector3> IMovement.TempMovePath { get => tempMovePath; set => tempMovePath = value; }
+	Queue<Vector3> IMovement.FindingPoints { get => findingPoints; set => findingPoints = value; }
+	float IMovement.InitLength { get => initLength; set => initLength = value; }
+	float IMovement.TotalLength { get => totalLength; set => totalLength = value; }
+	float IMovement.SectionLength { get => sectionLength; set => sectionLength = value; }
+	float IMovement.TempLength { get => tempLength; set => tempLength = value; }
+	Action IMovement.OnChangeMovePath { get => onMovePathUpdate; set => onMovePathUpdate = value; }
+	Action<float> IMovement.OnChangeMoveProgress { get => onMoveProgress; set => onMoveProgress = value; }
+	Action IMovement.OnStartMove { get => onStartMove; set => onStartMove = value; }
+	Action IMovement.OnEndedMove { get => onEndedMove; set => onEndedMove = value; }
+	Vector3 ITargetableCombatant.Position => movePosition;
 
 	partial void InitMovement()
 	{
@@ -115,7 +117,7 @@ public partial class OperationObject : INodeMovement
 
 		foreach (var unit in GetAllUnitObj)
 		{
-			unit.ThisMovement.OnMoveStart();
+			unit.ThisNodeMovement.OnMoveStart();
 		}
 	}
 	void INodeMovement.OnMoveStop()
@@ -125,7 +127,7 @@ public partial class OperationObject : INodeMovement
 
 		foreach (var unit in GetAllUnitObj)
 		{
-			unit.ThisMovement.OnMoveStop();
+			unit.ThisNodeMovement.OnMoveStop();
 		}
 	}
 	void INodeMovement.SetPositionAndVelocity(in Vector3 position, in Vector3 delteMove, in Vector3 velocity, in float deltaTime)
@@ -147,7 +149,7 @@ public partial class OperationObject : INodeMovement
 
 		foreach (var unit in GetAllUnitObj)
 		{
-			unit.ThisMovement.SetPositionAndVelocity(in position, in delteMove, in velocity, in deltaTime);
+			unit.ThisNodeMovement.SetPositionAndVelocity(in position, in delteMove, in velocity, in deltaTime);
 		}
 	}
 
@@ -162,7 +164,7 @@ public partial class OperationObject : INodeMovement
 	{
 		foreach (var unit in GetAllUnitObj)
 		{
-			unit.ThisMovement.OnStayUpdate(in deltaTime);
+			unit.ThisNodeMovement.OnStayUpdate(in deltaTime);
 		}
 	}
 }

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using Sirenix.OdinInspector;
+
 using UnityEngine;
 
 public class NearbySearcher : MonoBehaviour, INearbySearcher
@@ -9,6 +11,7 @@ public class NearbySearcher : MonoBehaviour, INearbySearcher
 	private INearbySearcherValueGetter valueGetter;
 	[SerializeField]
 	private float baseRadius;
+	[ShowInInspector]
 	private List<INearbyElement> nearbyElements;
 
 	private List<(INearbyElement element, float sqrDist)> tempList;
@@ -112,5 +115,28 @@ public class NearbySearcher : MonoBehaviour, INearbySearcher
 		}
 
 		tempList.Clear();
+	}
+
+
+	void OnDrawGizmos()
+	{
+		if (baseRadius <= 0f) return;
+
+		Gizmos.color = Color.red;
+		Vector3 center = transform.position;
+
+		float range = Range + BaseRadius;
+
+		float step = 2f * Mathf.PI / 10;
+		// 첫 점
+		Vector3 prev = center + new Vector3(Mathf.Cos(0f) * range, 0f, Mathf.Sin(0f) * range);
+
+		for (int i = 1 ; i <= 10 ; i++)
+		{
+			float angle = i * step;
+			Vector3 curr = center + new Vector3(Mathf.Cos(angle) * range, 0f, Mathf.Sin(angle) * range);
+			Gizmos.DrawLine(prev, curr);
+			prev = curr;
+		}
 	}
 }
