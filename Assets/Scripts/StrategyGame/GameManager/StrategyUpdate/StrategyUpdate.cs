@@ -286,13 +286,13 @@ public abstract class StrategyUpdateSubClass<T> : IStrategyUpdater where T : Str
 	protected virtual void Update(in float deltaTime)
 	{
 		int length = UpdateList.Count;
-        for (int i = 0 ; i < length ; i++)
-        {
+		for (int i = 0 ; i < length ; i++)
+		{
 			var item = UpdateList[i];
 			if (item == null) continue;
 			item.Update(in deltaTime);
 		}
-    }
+	}
 	public abstract partial class UpdateLogic : IDisposable
 	{
 		protected StrategyUpdateSubClass<T> thisSubClass;
@@ -365,7 +365,6 @@ public abstract class StrategyUpdateSubClass<T> : IStrategyUpdater where T : Str
 				electric = 0; electricMax = 0; electricSupply = 0;
 				manpowerIsUpdate = materialIsUpdate = electricIsUpdate = false;
 			}
-
 			public static TempSupplyValue operator +(TempSupplyValue a, TempSupplyValue b)
 			{
 				return new TempSupplyValue(a.elementID)
@@ -412,11 +411,9 @@ public partial class StrategyUpdate
 		public StrategyUpdate_UnitCombatTargetUpdate(StrategyUpdate updater) : base(updater)
 		{
 		}
-
 		protected override void Dispose()
 		{
 		}
-
 		protected override void Start()
 		{
 			StrategyManager.Collector.AddChangeListener<UnitObject>(OnChangeValue, ForeachAll);
@@ -425,7 +422,6 @@ public partial class StrategyUpdate
 				OnChangeValue(element, true);
 			}
 		}
-
 		private void OnChangeValue(IStrategyElement element, bool added)
 		{
 			if (element == null || element is not UnitObject unitObject) return;
@@ -441,7 +437,6 @@ public partial class StrategyUpdate
 				UpdateList.RemoveAt(findIndex);
 			}
 		}
-
 		public class CombatTarget : UpdateLogic
 		{
 			public readonly UnitObject unitObject;
@@ -457,20 +452,13 @@ public partial class StrategyUpdate
 			protected override void OnUpdate(in float deltaTime)
 			{
 				if (unitObject == null) return;
-				if (!combatController.IsCombatState) return;
 
 				combatController.UpdateParameters();
 
 				if (combatController.IsKeepingTargetAllowed()) return;
 
-				if (combatController.SearchingNewTarget(out var newTarget))
-				{
-					combatController.SetCombatTarget(newTarget);
-				}
-				else
-				{
-					combatController.ClearCombatTarget();
-				}
+				combatController.ChangeCombatTarget(combatController.SearchingNewTarget(out var newTarget)
+					? newTarget : null);
 			}
 		}
 	}

@@ -71,15 +71,13 @@ public partial class OperationObject // Stats
 		SearcherRange = ComputeViewRange();
 	}
 
-	private int ComputeMoveSpeed()
+	private float ComputeMoveSpeed()
 	{
-		double average = GetAllUnitObj.Count == 0 ? 0 : GetAllUnitObj.Select(i => i.GetStateValue(StatsType.유닛_이동속도)).Average();
-		return Mathf.RoundToInt((float)average);
+		return GetAllUnitObj.Count == 0 ? 0 : GetAllUnitObj.Select(i => i.GetStateValue(StatsType.유닛_이동속도_c)).Average();
 	}
 	private float ComputeViewRange()
 	{
-		int max = GetAllUnitObj.Count == 0 ? 0 : GetAllUnitObj.Select(i => i.GetStateValue(StatsType.유닛_시야범위)).Max();
-		return (float)max;
+		return GetAllUnitObj.Count == 0 ? 0 : GetAllUnitObj.Select(i => i.GetStateValue(StatsType.유닛_시야범위_c)).Max();
 	}
 }
 public partial class OperationObject : IStrategyElement

@@ -25,7 +25,6 @@ public partial class OperationObject : IFSMController<OperationFSMType>
 		}
 		FSMInterface = fsm;
 		FSMController.InitState(OnStateEnterCallback, OnStateExitCallback, OperationFSMType.Idle, FSMController.GetStateList());
-		OnChangeFSMFState = null;
 	}
 	partial void DeinitFSM()
 	{

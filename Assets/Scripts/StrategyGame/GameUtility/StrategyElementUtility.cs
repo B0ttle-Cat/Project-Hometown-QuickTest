@@ -9,7 +9,7 @@ public static class StrategyElementUtility
 	#region UnitObject
 	public static UnitObject Instantiate(in StrategyStartSetterData.UnitData setterUnitData)
 	{
-		var unitProfile = setterUnitData.unitProfile;
+		var unitProfile = setterUnitData.GetUnitProfile;
 		int factionId = StrategyManager.Collector.FactionNameToID(setterUnitData.factionName);
 		Vector3 position = setterUnitData.position;
 		Quaternion rotation = Quaternion.Euler(setterUnitData.rotation);

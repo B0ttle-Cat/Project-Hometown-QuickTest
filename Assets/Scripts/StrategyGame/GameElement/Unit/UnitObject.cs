@@ -74,7 +74,7 @@ public partial class UnitObject : MonoBehaviour
 	{
 		int factionID = StrategyManager.Collector.FactionNameToID(data.factionName);
 
-		UnitProfileObject profileObj = data.unitProfile;
+		UnitProfileObject profileObj = data.GetUnitProfile;
 
 		profile = new UnitData.Profile(new()
 		{
@@ -115,18 +115,47 @@ public partial class UnitObject : MonoBehaviour
 		DeselectSelf();
 		DeinitFSM();
 		DeinitCombat();
+		DeinitMovement();
 	}
 	partial void DeselectSelf();
 	partial void DeinitFSM();
 	partial void DeinitCombat();
+	partial void DeinitMovement();
 
+
+#if UNITY_EDITOR
+	void OnDrawGizmos()
+	{
+		OnDrawGizmos_Range();
+	}
+#endif
 }
-public partial class UnitObject // StateValue
+public partial class UnitObject : IStateValueGetter
 {
 	private StatsGroup skillBuffGroup;
 	public StatsList MainStatsList => StatsData.GetStatsList();
 	public StatsGroup SkillBuffGroup => skillBuffGroup ??= new StatsGroup();
-	public int GetStateValue(StatsType type) => StrategyManager.IsNotReadyScene ? 0 : MainStatsList.GetValueInt(type) + SkillBuffGroup.GetValueInt(type);
+	public float GetStateValue(StatsType type)
+	{
+		if (StrategyManager.IsNotReadyScene) return 0;
+		float value = MainStatsList.GetValueInt(type) + SkillBuffGroup.GetValueInt(type);
+		value *= type switch
+		{
+			StatsType.유닛_이동속도_c => 0.01f,
+			StatsType.유닛_조준지연시간_c => 0.01f,
+			StatsType.유닛_연속공격지연시간_c => 0.01f,
+			StatsType.유닛_재공격지연시간_c => 0.01f,
+			StatsType.유닛_재장전시간_c => 0.01f,
+			StatsType.유닛_공격범위_종료최소_c => 0.01f,
+			StatsType.유닛_공격범위_시작최소_c => 0.01f,
+			StatsType.유닛_공격범위_시작최대_c => 0.01f,
+			StatsType.유닛_공격범위_종료최대_c => 0.01f,
+			StatsType.유닛_행동범위_c => 0.01f,
+			StatsType.유닛_시야범위_c => 0.01f,
+			_ => 1f
+		};
+		return value;
+	}
 	partial void InitProfileObject(UnitProfileObject profileObj)
 	{
 		if (profileObj == null) return;

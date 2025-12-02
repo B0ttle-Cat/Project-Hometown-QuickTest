@@ -82,6 +82,7 @@ public partial class OperationObject // Organization
 		allUnitID = null;
 		allUnitObj = null;
 		allUnitTr = null;
+		OnChangeUnitList = null;
 	}
 
 	public bool HasUnitType(in UnitKey unitKey)

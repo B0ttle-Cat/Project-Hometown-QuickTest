@@ -25,9 +25,15 @@ public class StrategyManager : MonoBehaviour
 	public static StrategyPathfinding NodeNetwork => Manager == null ? null : Manager.nodeNetwork;
 	public static StrategyViewAndControlModeChanger ViewAndControl => Manager == null ? null : Manager.viewAndControl;
 	public static StrategyFactionRelation FactionRelation => Manager == null? null : Manager.factionRelation;
-	public static KeyPairDisplayName Key2Name => Manager == null ? null : Manager.key2Name;
-	public static KeyPairSprite Key2Sprite => Manager == null ? null : Manager.key2Sprite;
-	public static KeyPairUnitInfo Key2UnitInfo => Manager == null ? null : Manager.key2UnitInfo;
+	public static KeyPairDisplayName Key2Name => Manager == null || Manager.key2Name == null
+		? KeyPairDisplayName.Load(Language.Type.Korean, "_Default")
+		: Manager.key2Name;
+	public static KeyPairSprite Key2Sprite => Manager == null || Manager.key2Sprite == null
+		? KeyPairSprite.Load(Language.Type.Korean, "_Default")
+		: Manager.key2Sprite;
+	public static KeyPairUnitInfo Key2UnitInfo => Manager == null || Manager.key2UnitInfo == null
+		? KeyPairUnitInfo.Load(Language.Type.Korean, "_Default")
+		: Manager.key2UnitInfo;
 
 	public static int PlayerFactionID;
 	public static GameStartingData PreparedData;
@@ -188,9 +194,9 @@ public class StrategyManager : MonoBehaviour
 		Time.Init();
 		ViewAndControl.Init();
 		var preparedData = StrategyManager.PreparedData.GetData();
-		key2Name = KeyPairDisplayName.Load(preparedData.LanguageType, "_Default");
-		key2Sprite = KeyPairSprite.Load(preparedData.LanguageType, "_Default");
-		key2UnitInfo = KeyPairUnitInfo.Load(preparedData.LanguageType, "_Default");
+		key2Name = Key2Name;
+		key2Sprite = Key2Sprite;
+		key2UnitInfo = Key2UnitInfo;
 		#endregion
 
 		#region 이 구역 순서에 주의할 것: 각 항목은 초기화를 위해 이전 항목의 정보를 요구 할 수 있음

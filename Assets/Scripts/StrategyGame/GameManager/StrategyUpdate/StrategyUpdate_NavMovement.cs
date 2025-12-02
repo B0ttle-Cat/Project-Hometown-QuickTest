@@ -23,16 +23,15 @@ public partial class StrategyUpdate
 		private void OnChangeValue(IStrategyElement element, bool added)
 		{
 			if (element is not UnitObject item) return;
-			if (item == null || item is not INavMovement movement) return;
-			if (movement == null) return;
+			if (item == null || item.ThisNavMovement == null) return;
 
 			if (added)
 			{
-				UpdateList.Add(new(movement, this));
+				UpdateList.Add(new(item.ThisNavMovement, this));
 			}
 			else
 			{
-				int findIndex = UpdateList.FindIndex(f => f.thisMovement == movement); 
+				int findIndex = UpdateList.FindIndex(f => f.thisMovement == item.ThisNavMovement); 
 				if(findIndex >=0) UpdateList.RemoveAt(findIndex);
 			}
 		}
@@ -62,7 +61,7 @@ public partial class StrategyUpdate
 					return;
 				}
 
-				if (!thisMovement.IsNodeMovableState()) return;
+				if (!thisMovement.IsMovableState()) return;
 
 				if (thisMovement.EmptyPath)
 				{
@@ -82,8 +81,9 @@ public partial class StrategyUpdate
 			}
 			private void MoveUpdate(in float deltaTime)
 			{
-				if (thisMovement.FindNextMovementTarget(out var nextPoint))
+				if (thisMovement.FindNextMovementTarget())
 				{
+					Vector3 nextPoint = thisMovement.NextMovePosition;
 					nextPoint = thisMovement.NextSmoothMovement(in nextPoint, out var velocity, in deltaTime);
 					Vector3 delteMove = nextPoint - thisMovement.CurrentPosition;
 					thisMovement.SetPositionAndVelocity(in nextPoint, in delteMove, in velocity, in deltaTime);

@@ -224,7 +224,7 @@ public class StrategyStartSetterDataEditor : OdinEditor
 
 	public void DrawUnitHandle(StrategyStartSetterData target, ref StrategyStartSetterData.UnitData unit)
 	{
-		if (!unit.showEdit || unit.unitProfile == null) return;
+		if (!unit.showEdit || unit.GetUnitProfile == null) return;
 
 		// 현재 위치 & 회전
 		Vector3 pos = unit.position;
@@ -249,9 +249,9 @@ public class StrategyStartSetterDataEditor : OdinEditor
 		StrategyStartSetterData.FactionData[] factions,
 		StrategyStartSetterData.OperationData[] operations)
 	{
-		if (target.onShowUnitPreview && unit.unitProfile != null && unit.unitProfile.unitPrefab != null)
+		if (target.onShowUnitPreview && unit.GetUnitProfile != null && unit.GetUnitProfile.unitPrefab != null)
 		{
-			GameObject prefab = unit.unitProfile.unitPrefab;
+			GameObject prefab = unit.GetUnitProfile.unitPrefab;
 			MeshFilter mf = prefab.GetComponentInChildren<MeshFilter>();
 			MeshRenderer mr = prefab.GetComponentInChildren<MeshRenderer>();
 

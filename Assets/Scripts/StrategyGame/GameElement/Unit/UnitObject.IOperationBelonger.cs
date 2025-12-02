@@ -8,9 +8,7 @@ public partial class UnitObject : IOperationBelonger
 	public OperationObject operationObject;
 	public int OperationID => operationObject == null ? -1 : operationObject.OperationID;
 	public bool HasOperation => OperationID >= 0;
-
-	public Vector3 operationOffset;
-
+	public Vector3 OperationOffset { get; set; }
 	partial void InitOperationObject()
 	{
 		operationObject = null;
@@ -39,11 +37,7 @@ public partial class UnitObject : IOperationBelonger
 			operationObject.ChangeInvisibleUnit(this);
 		}
 
-		operationObject.OnChangeFSMFState -= OperationObject_OnChangeFSMFlag;
-		operationObject.OnChangeFSMFState += OperationObject_OnChangeFSMFlag;
-
-
-		operationOffset = ThisMovement.CurrentPosition - operationObject.ThisMovement.CurrentPosition;
+		OperationOffset = ThisMovement.CurrentPosition - operationObject.ThisMovement.CurrentPosition;
 	}
     OperationObject IOperationBelonger.GetBelongedOperation()
 	{
@@ -56,9 +50,8 @@ public partial class UnitObject : IOperationBelonger
 			ThisVisibility.OnChangeVisible -= operationObject.ChangeVisibleUnit;
 			ThisVisibility.OnChangeInvisible -= operationObject.ChangeInvisibleUnit;
 
-			operationObject.OnChangeFSMFState -= OperationObject_OnChangeFSMFlag;
 			operationObject = null;
 		}
-		operationOffset = Vector3.zero;
+		OperationOffset = Vector3.zero;
 	}
 }

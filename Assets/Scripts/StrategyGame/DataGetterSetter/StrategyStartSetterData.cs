@@ -14,7 +14,7 @@ using static StrategyMissionTree;
 public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.Data>
 {
 #if UNITY_EDITOR
-	[ShowInInspector, ToggleGroup("onShowGizmo","GizmoOption", Order = -99)]
+	[ShowInInspector, ToggleGroup("onShowGizmo", "GizmoOption", Order = -99)]
 	public bool onShowGizmo { get; set; } = false;
 	[ShowInInspector, ToggleGroup("onShowGizmo")]
 	public bool onShowSectorLink { get; set; } = true;
@@ -186,6 +186,9 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		[FoldoutGroup("@unitKey")]
 		public UnitKey unitKey;
 		[FoldoutGroup("@unitKey")]
+		[ShowIf("ShowProfileObject"), SerializeField]
+		private UnitProfileObject unitProfile;
+		[FoldoutGroup("@unitKey")]
 		[ValueDropdown("@GetFactionNames($property)")]
 		[InlineButton("Clear_factionName","Clear")]
 		public string factionName;
@@ -198,8 +201,6 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		[LabelText("SectorName")]
 		[InlineButton("Clear_visiteSectorName","Clear")]
 		public string visiteSectorName;
-		[FoldoutGroup("@unitKey")]
-		public UnitProfileObject unitProfile;
 
 		[ToggleGroup("showEdit")]
 		public Vector3 position;
@@ -285,19 +286,27 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 
 			bases.Where(x => x.factionName.Equals(factionName)).Select(x => x.teamName).Prepend("");
 			int length = bases.Length;
-            for (int i = 0 ; i < length ; i++)
-            {
+			for (int i = 0 ; i < length ; i++)
+			{
 				if (!bases[i].factionName.Equals(factionName)) continue;
 				if (string.IsNullOrWhiteSpace(bases[i].teamName)) continue;
 				list.Add(bases[i].teamName);
 			}
 			return list;
 		}
+		private bool ShowProfileObject => unitKey == UnitKey.None;
 #endif
 
 		public readonly string DisplayName()
 		{
 			return unitProfile != null ? unitProfile.displayName : StrategyManager.Key2UnitInfo.GetAsset(unitKey).DisplayName;
+		}
+		public readonly UnitProfileObject GetUnitProfile
+		{
+			get
+			{
+				return (unitKey != UnitKey.None || unitProfile == null) ? StrategyManager.Key2UnitInfo.GetAsset(unitKey).UnitProfileObject : unitProfile;
+			}
 		}
 	}
 	[Serializable]

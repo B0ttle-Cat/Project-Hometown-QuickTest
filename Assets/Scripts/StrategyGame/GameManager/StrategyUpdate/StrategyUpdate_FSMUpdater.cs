@@ -44,7 +44,7 @@ public partial class StrategyUpdate
 					operationUpdate.RemoveAt(findIndex);
 				}
 			}
-			else if (item is UnitFiniteStateMachine unitFsm)
+			if (item is UnitFiniteStateMachine unitFsm)
 			{
 				if (added)
 				{
@@ -73,26 +73,39 @@ public partial class StrategyUpdate
 		}
 		protected override void Update(in float deltaTime)
 		{
-			int length = UpdateList.Count;
-			for (int i = 0 ; i < length ; i++)
+			UpdateUnit(in deltaTime);
+			UpdateOperation(in deltaTime);
+			UpdateOther(in deltaTime);
+
+			void UpdateOther(in float deltaTime)
 			{
-				var item = UpdateList[i];
-				if (item == null) continue;
-				item.Update(deltaTime);
+				int length = UpdateList.Count;
+				for (int i = 0 ; i < length ; i++)
+				{
+					var item = UpdateList[i];
+					if (item == null) continue;
+					item.Update(deltaTime);
+				}
+			}  
+			void UpdateUnit(in float deltaTime)
+			{
+				int length = unitUpdate.Count;
+				for (int i = 0 ; i < length ; i++)
+				{
+					var item = unitUpdate[i];
+					if (item == null) continue;
+					item.Update(deltaTime);
+				}
 			}
-			length = operationUpdate.Count;
-			for (int i = 0 ; i < length ; i++)
+			void UpdateOperation(in float deltaTime)
 			{
-				var item = operationUpdate[i];
-				if (item == null) continue;
-				item.Update(deltaTime);
-			}
-			length = unitUpdate.Count;
-			for (int i = 0 ; i < length ; i++)
-			{
-				var item = unitUpdate[i];
-				if (item == null) continue;
-				item.Update(deltaTime);
+				int length = operationUpdate.Count;
+				for (int i = 0 ; i < length ; i++)
+				{
+					var item = operationUpdate[i];
+					if (item == null) continue;
+					item.Update(deltaTime);
+				}
 			}
 		}
 		public class FSMUpdater : UpdateLogic

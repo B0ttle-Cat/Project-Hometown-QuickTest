@@ -46,43 +46,43 @@ public class UnitFiniteStateMachine : FiniteStateMachine<UnitFSMType>
 		{
 		}
 		#endregion
-		protected bool IsCombat()
-		{
-			var op = unitObject.operationObject;
-			if (op == null)
-			{
-				return NextStateIsChasing();
-			}
-			else
-			{
-				return op.FsmFlag.HasFlag(OperationObject.FSMFlag.Combat);
-			}
-		}
 		protected virtual bool NextStateIsFighting()
 		{
-			return combatController.TargetInAttackRange;
+			return combatController.TargetInStartAttackRange;
 		}
 		protected virtual bool NextStateIsChasing()
 		{
-			return combatController.TargetInActionRange;
+			if (combatController.TargetInActionRange)
+			{
+				return true;
+			}
+			else if(unitObject.HasOperation && unitObject.operationObject.FsmFlag.HasFlag(OperationObject.FSMFlag.Combat))
+			{
+				return true;
+			}
+			return false;
 		}
 	}
 	private class IdleState : UnitState
 	{
 		public IdleState(UnitObject unitObject, UnitFiniteStateMachine fsm, UnitFSMType type) : base(unitObject, fsm, type) {}
-	
+
 		protected override UnitFSMType OnStateUpdate(in float deltaTime)
 		{
-			if (IsCombat())
+			if (NextStateIsChasing())
 			{
-				return UnitFSMType.Chasing;
+				if (NextStateIsFighting())
+				{
+					return UnitFSMType.Fighting;
+				}
+				else return UnitFSMType.Chasing;
 			}
-			return UnitFSMType.Idle;
+			else return UnitFSMType.Idle;
 		}
 	}
 	private class FightingState : UnitState
 	{
-		public FightingState(UnitObject unitObject, UnitFiniteStateMachine fsm, UnitFSMType type) : base(unitObject, fsm, type){}
+		public FightingState(UnitObject unitObject, UnitFiniteStateMachine fsm, UnitFSMType type) : base(unitObject, fsm, type) {}
 	
 		protected override UnitFSMType OnStateUpdate(in float deltaTime)
 		{
@@ -90,26 +90,32 @@ public class UnitFiniteStateMachine : FiniteStateMachine<UnitFSMType>
 			{
 				return UnitFSMType.Fighting;
 			}
-			return UnitFSMType.Chasing;
+			else if (NextStateIsChasing())
+			{
+				return UnitFSMType.Chasing;
+			}
+			else return UnitFSMType.Idle;
+		}
+		protected override bool NextStateIsFighting()
+		{
+			return combatController.TargetInLimitAttackRange;
 		}
 	}
 	private class ChasingState : UnitState
 	{
-		public ChasingState(UnitObject unitObject, UnitFiniteStateMachine fsm, UnitFSMType type) : base(unitObject, fsm, type){}
+		public ChasingState(UnitObject unitObject, UnitFiniteStateMachine fsm, UnitFSMType type) : base(unitObject, fsm, type) {}
 	
 		protected override UnitFSMType OnStateUpdate(in float deltaTime)
 		{
-			if (!IsCombat()) return UnitFSMType.Idle;
-
-			if (NextStateIsFighting())
-			{
-				return UnitFSMType.Fighting;
-			}
 			if (NextStateIsChasing())
 			{
-				return UnitFSMType.Chasing;
+				if (NextStateIsFighting())
+				{
+					return UnitFSMType.Fighting;
+				}
+				else return UnitFSMType.Chasing;
 			}
-			return UnitFSMType.Idle;
+			else return UnitFSMType.Idle;
 		}
 	}
 }

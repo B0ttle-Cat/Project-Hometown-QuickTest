@@ -654,6 +654,7 @@ public partial class StrategyGamePlayData
 	{
 		_ => ""
 	};
+
 	[Serializable]
 	public struct StatsValue
 	{
@@ -773,15 +774,21 @@ public partial class StrategyGamePlayData
 			new StatsValue(StatsType.유닛_공격회피기회),
 			new StatsValue(StatsType.유닛_치명명중기회),
 			new StatsValue(StatsType.유닛_치명회피기회),
-			new StatsValue(StatsType.유닛_재공격지연시간),
+			new StatsValue(StatsType.유닛_재공격지연시간_c),
 			new StatsValue(StatsType.유닛_연속공격횟수),
-			new StatsValue(StatsType.유닛_연속공격지연시간),
+			new StatsValue(StatsType.유닛_연속공격지연시간_c),
+			new StatsValue(StatsType.유닛_탄용량),
+			new StatsValue(StatsType.유닛_잔탄수),
+			new StatsValue(StatsType.유닛_재장전시간_c),
 			new StatsValue(StatsType.유닛_공격소모_전력),
 			new StatsValue(StatsType.유닛_공격소모_물자),
-			new StatsValue(StatsType.유닛_공격범위),
-			new StatsValue(StatsType.유닛_행동범위),
-			new StatsValue(StatsType.유닛_시야범위),
-			new StatsValue(StatsType.유닛_이동속도),
+			new StatsValue(StatsType.유닛_공격범위_종료최소_c),
+			new StatsValue(StatsType.유닛_공격범위_시작최소_c),
+			new StatsValue(StatsType.유닛_공격범위_시작최대_c),
+			new StatsValue(StatsType.유닛_공격범위_종료최대_c),
+			new StatsValue(StatsType.유닛_행동범위_c),
+			new StatsValue(StatsType.유닛_시야범위_c),
+			new StatsValue(StatsType.유닛_이동속도_c),
 			new StatsValue(StatsType.유닛_점령점수),
 			new StatsValue(StatsType.None)
 			);
@@ -838,7 +845,6 @@ public partial class StrategyGamePlayData
 				}
 			}
 		}
-
 		public void SumStats(StatsValue value)
 		{
 			int findindex = values.FindIndex(b=>b.StatsType == value.StatsType);
@@ -1218,4 +1224,9 @@ public partial class StrategyGamePlayData
 			}
 		}
 	}
+	public interface IStateValueGetter
+	{
+		float GetStateValue(StatsType type);
+	}
+
 }

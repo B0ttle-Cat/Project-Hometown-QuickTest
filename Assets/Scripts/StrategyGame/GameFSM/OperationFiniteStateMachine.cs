@@ -9,8 +9,6 @@ public enum OperationFSMType
 [RequireComponent(typeof(OperationObject))]
 public class OperationFiniteStateMachine : FiniteStateMachine<OperationFSMType>
 {
-	private ITargetableCombatant combatTarget;
-
 	public override IState<OperationFSMType>[] GetStateList()
 	{
 		OperationObject operation = GetComponent<OperationObject>();
@@ -58,20 +56,18 @@ public class OperationFiniteStateMachine : FiniteStateMachine<OperationFSMType>
 
 		}
 		#endregion
-		protected virtual bool NextStateIsCombat()
+		protected virtual bool SomeUnitStateIsCombat()
 		{
-			if (nearbySearcher == null) return false;
-			var nearUnits = nearbySearcher.GetNearbyItemsType<UnitObject>();
-			if (nearUnits == null) return false;
-
-			int operationFactionID = operation.FactionID;
-			foreach (var unit in nearUnits)
+			var unitList = operation.GetAllUnitObj;
+			int length = unitList.Count;
+			for (int i = 0 ; i < length ; i++)
 			{
-				if (unit == null) continue;
-				if (unit.FactionID != operationFactionID)
+				var unit = unitList[i];
+				if (unit == null || unit is not IUnitCombatController combat) continue;
+
+				if (combat.IsCombatState)
 				{
-					operationFsm.combatTarget = unit.RootTargetable;
-					if(operationFsm.combatTarget != null) return true;
+					return true;
 				}
 			}
 			return false;
@@ -85,11 +81,37 @@ public class OperationFiniteStateMachine : FiniteStateMachine<OperationFSMType>
 		}
 		protected override OperationFSMType OnStateUpdate(in float deltaTime)
 		{
-			if (NextStateIsCombat())
+			if (SomeUnitStateIsCombat())
 			{
 				return OperationFSMType.Combat;
 			}
 			return OperationFSMType.Idle;
+		}
+
+		protected override bool SomeUnitStateIsCombat()
+		{
+			bool toCombat = base.SomeUnitStateIsCombat();
+			if (toCombat)
+			{
+				OnChangeCombat();
+			}
+			return toCombat;
+		}
+
+		private void OnChangeCombat()
+		{
+			var unitList = operation.GetAllUnitObj;
+			int length = unitList.Count;
+			for (int i = 0 ; i < length ; i++)
+			{
+				var unit = unitList[i];
+				if (unit == null || unit is not IUnitCombatController combat) continue;
+
+				if (!combat.IsRootCombatState)
+				{
+					combat.IsRootCombatState = true;
+				}
+			}
 		}
 	}
 	private class CombatState : OperationState
@@ -99,35 +121,15 @@ public class OperationFiniteStateMachine : FiniteStateMachine<OperationFSMType>
 		}
 		protected override void OnStateEnter()
 		{
-			var unitList = operation.GetAllUnitObj;
-			Vector3 position = operationFsm.combatTarget.Position;
-			int length = unitList == null ? 0 : unitList.Count;
-			for (int i = 0 ; i < length ; i++)
-			{
-				var unit = unitList[i];
-				if (unit == null) continue;
-				if (unit is not IUnitCombatController combat) continue;
-
-				combat.IsCombatState = true;
-				combat.CombatMoveTarget = position;
-			}
+			SetRootTarget();
 		}
 		protected override void OnStateExit()
 		{
-			var unitList = operation.GetAllUnitObj;
-			int length = unitList == null ? 0 : unitList.Count;
-			for (int i = 0 ; i < length ; i++)
-			{
-				var unit = unitList[i];
-				if (unit == null) continue;
-				if (unit is not IUnitCombatController combat) continue;
-
-				combat.IsCombatState = false;
-			}
+			ClearRootTarget();
 		}
 		protected override OperationFSMType OnStateUpdate(in float deltaTime)
 		{
-			if (NextStateIsCombat())
+			if (SomeUnitStateIsCombat())
 			{
 				return OperationFSMType.Combat;
 			}
@@ -135,10 +137,15 @@ public class OperationFiniteStateMachine : FiniteStateMachine<OperationFSMType>
 		}
 		protected override void OnAliveUpdate(in float deltaTime)
 		{
-			if(operationFsm.combatTarget == null) return;
+			SetRootTarget();
+		}
+
+		private void SetRootTarget()
+		{
+			ITargetableCombatant target = FindNearTarget();
+			if (target == null) return;
 
 			var unitList = operation.GetAllUnitObj;
-			Vector3 position = operationFsm.combatTarget.Position;
 			int length = unitList == null ? 0 : unitList.Count;
 			for (int i = 0 ; i < length ; i++)
 			{
@@ -146,8 +153,40 @@ public class OperationFiniteStateMachine : FiniteStateMachine<OperationFSMType>
 				if (unit == null) continue;
 				if (unit is not IUnitCombatController combat) continue;
 
-				combat.IsCombatState = true;
-				combat.CombatMoveTarget = position;
+				combat.IsRootCombatState = true;
+				combat.RootCurrentTarget = target;
+			}
+			ITargetableCombatant FindNearTarget()
+			{
+				if (nearbySearcher == null) return null;
+				var nearUnits = nearbySearcher.GetNearbyItemsType<UnitObject>();
+				if (nearUnits == null) return null;
+
+				int operationFactionID = operation.FactionID;
+				foreach (var unit in nearUnits)
+				{
+					if (unit == null) continue;
+					if (unit is not ITargetableCombatant target) continue;
+					if (target.FactionID != operationFactionID)
+					{
+						return target;
+					}
+				}
+				return null;
+			}
+		}
+		private void ClearRootTarget()
+		{
+			var unitList = operation.GetAllUnitObj;
+			int length = unitList == null ? 0 : unitList.Count;
+			for (int i = 0 ; i < length ; i++)
+			{
+				var unit = unitList[i];
+				if (unit == null) continue;
+				if (unit is not IUnitCombatController combat) continue;
+
+				combat.IsRootCombatState = false;
+				combat.RootCurrentTarget = null;
 			}
 		}
 	}

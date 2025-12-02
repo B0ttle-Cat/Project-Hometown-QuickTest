@@ -25,8 +25,8 @@ public partial class StrategyUpdate
 					for (int i = 0 ; i < length ; i++)
 					{
 						var item = unitList[i];
-						if (item == null || item is not INodeMovement movement || null != movement.ParentMovement) continue;
-						UpdateList.Add(new(movement, this));
+						if (item == null || item.ThisNodeMovement == null || null != item.ParentMovement) continue;
+						UpdateList.Add(new(item.ThisNodeMovement, this));
 					}
 				}
 				if (list is List<OperationObject> opList)
@@ -35,8 +35,8 @@ public partial class StrategyUpdate
 					for (int i = 0 ; i < length ; i++)
 					{
 						var item = opList[i];
-						if (item == null || item is not INodeMovement movement) continue;
-						UpdateList.Add(new(movement, this));
+						if (item == null || item.ThisNodeMovement == null) continue;
+						UpdateList.Add(new(item.ThisNodeMovement, this));
 					}
 				}
 			}
@@ -98,7 +98,7 @@ public partial class StrategyUpdate
 					return;
 				}
 
-				if (!thisMovement.IsNodeMovableState()) return;
+				if (!thisMovement.IsMovableState()) return;
 
 				if (thisMovement.EmptyPath)
 				{
@@ -118,8 +118,9 @@ public partial class StrategyUpdate
 			}
 			private void MoveUpdate(in float deltaTime)
 			{
-				if (thisMovement.FindNextMovementTarget(out var nextPoint))
+				if (thisMovement.FindNextMovementTarget())
 				{
+					Vector3 nextPoint = thisMovement.NextMovePosition;
 					nextPoint = thisMovement.NextSmoothMovement(in nextPoint, out var velocity, in deltaTime);
 					Vector3 delteMove = nextPoint - thisMovement.CurrentPosition;
 					thisMovement.SetPositionAndVelocity(in nextPoint, in delteMove, in velocity, in deltaTime);

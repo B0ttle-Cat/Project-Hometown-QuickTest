@@ -92,6 +92,8 @@ public partial class StrategyPathfinding : MonoBehaviour, IStrategyStartGame
 		thisRecastGraph.collectionSettings.rasterizeColliders = true;
 		thisRecastGraph.collectionSettings.layerMask = groundLayerMask;
 
+		thisRecastGraph.drawGizmos = false;
+
 		// 필요한 기본 설정(필요 최소만 기입)
 		thisRecastGraph.cellSize = 0.15f;
 		thisRecastGraph.tileSizeX = 128;

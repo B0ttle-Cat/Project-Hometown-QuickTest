@@ -13,6 +13,8 @@ public interface IMovement
 	Seeker ThisSeeker { get; }
 	Vector3 CurrentPosition { get; }
 	Vector3 CurrentVelocity { get; }
+	float CurrentRadius { get; }
+	Vector3 NextMovePosition { get; set; }
 	float SmoothTime { get; }
 	float MaxSpeed { get; }
 	int MovementIndex { get; set; }
@@ -25,152 +27,49 @@ public interface IMovement
 	bool EmptyPath => !HasPath && !HasTampPath;
 	float InitLength { get; set; }
 	float TotalLength { get; set; }
-	float SectionLength { get; set; }
 	float TempLength { get; set; }
 	Action OnStartMove { get; set; }
 	Action OnEndedMove { get; set; }
 	Action OnChangeMovePath { get; set; }
 	Action<float> OnChangeMoveProgress { get; set; }
 
-}
-public interface INodeMovement : IMovement
-{
-	INodeMovement ParentMovement => null;
-
-	void SetMovePath(params SectorObject[] waypointSectors) => SetMovePath(true, waypointSectors);
-	void SetMovePath(bool clearPath, params SectorObject[] waypointSectors)
-	{
-		SetMovePath(clearPath, waypointSectors.Select(i => i.transform.position).ToArray());
-	}
-	void SetMovePath(bool clearPath, params Vector3[] waypoints)
-	{
-		if (ThisSeeker == null) return;
-		if (waypoints == null || waypoints.Length == 0) return;
-
-		MovePath ??= new List<Vector3>();
-		FindingPoints ??= new Queue<Vector3>();
-
-		if (clearPath)
-		{
-			ClearMovePath();
-		}
-		bool isWait = FindingPoints.Count > 0;
-		int length = waypoints.Length;
-		for (int i = 0 ; i < length ; i++)
-		{
-			FindingPoints.Enqueue(waypoints[i]);
-		}
-		if (isWait) return;
-
-		StartPath(MovePath.Count == 0 ? CurrentPosition : MovePath[^1]);
-		void StartPath(Vector3 prevPoint)
-		{
-			if (!FindingPoints.TryDequeue(out var nextPoint))
-			{
-				InitPath = MovePath.ToArray();
-				InitLength = TotalLength;
-				OnChangeMovePath?.Invoke();
-				OnChangeMoveProgress?.Invoke(0);
-				return;
-			}
-			ThisSeeker.StartPath(start: prevPoint, nextPoint, (path) =>
-			{
-				if (path.error)
-				{
-					Debug.LogError("Path Error:" + path.errorLog);
-					return;
-				}
-				var abPath = path as ABPath;
-				MovePath.AddRange(abPath.vectorPath);
-				if (TempMovePath != null)
-				{
-					TempMovePath.Clear();
-					TempMovePath = null;
-					TempLength = 0;
-				}
-
-				TotalLength += abPath.GetTotalLength();
-				StartPath(nextPoint);
-			});
-		}
-	}
 	void ClearMovePath()
 	{
 		TempMovePath = new List<Vector3>();
 		TempMovePath.AddRange(MovePath);
-		TempLength = TotalLength + SectionLength;
+		TempLength = TotalLength;
 
 		TotalLength = 0;
-		SectionLength = 0;
 		if (MovePath != null) MovePath.Clear();
 		if (FindingPoints != null) FindingPoints.Clear();
 		if (ThisSeeker != null) ThisSeeker.CancelCurrentPathRequest();
 	}
-
-	bool FindNextMovementTarget(out Vector3 nextTarget)
+	float GetRemainingDistance()
 	{
-		if (EmptyPath)
-		{
-			nextTarget = CurrentPosition;
-			return false;
-		}
-		Vector3 curr = CurrentPosition;
-		List<Vector3> Path = HasTampPath ? TempMovePath : MovePath;
+		List<Vector3> path = HasTampPath ? TempMovePath : MovePath;
+		Vector3 currentPos = CurrentPosition;
 
-		while (Path.Count >= 2)
-		{
-			Vector3 prev = Path[0];
-			Vector3 next = Path[1];
-			Vector3 toNextDir = next - prev;
-			Vector3 toMoveDir = next - curr;
+		if (path == null || path.Count < 2)
+			return 0f;
 
-			float dot = Vector3.Dot(toMoveDir, toNextDir);
-			if (dot <= 0f)
-			{
-				RemoveAtFirst();
-				continue;
-			}
-			float sqrMagnitude = toMoveDir.sqrMagnitude;
-			if (Mathf.Approximately(sqrMagnitude, 0f))
-			{
-				RemoveAtFirst();
-				continue;
-			}
-			break;
-		}
-		if (Path.Count == 0)
-		{
-			nextTarget = CurrentPosition;
-			return false;
-		}
-		if (Path.Count == 1)
-		{
-			nextTarget = Path[0];
-			RemoveAtFirst();
-			return true;
-		}
-		nextTarget = Path[1];
-		return true;
+		float total = 0f;
 
-		void RemoveAtFirst()
-		{
-			if (Path.Count == 0) return;
+		// 1. 현재 위치 → path[1]
+		total += Vector3.Distance(currentPos, path[1]);
 
-			if (Path.Count >= 2)
-			{
-				float distance = Vector3.Distance(Path[0], Path[1]);
-				TotalLength -= distance;
-				SectionLength = distance;
-			}
-			Path.RemoveAt(0);
-			OnChangeMoveProgress?.Invoke(1f - TotalLength / InitLength);
+		// 2. path[1] → path[2] ... → path[last]
+		for (int i = 1 ; i < path.Count - 1 ; i++)
+		{
+			total += Vector3.Distance(path[i], path[i + 1]);
 		}
+
+		return total;
 	}
 	Vector3 NextSmoothMovement(in Vector3 nextTarget, out Vector3 velocity, in float deltaTime)
 	{
 		Vector3 position = CurrentPosition;
 		velocity = CurrentVelocity;
-		float remainingDistance = HasTampPath? TempLength : TotalLength + SectionLength;
+		float remainingDistance = GetRemainingDistance();
 		if (remainingDistance <= 0f || Mathf.Approximately(remainingDistance, 0f))
 		{
 			velocity = Vector3.zero;
@@ -191,7 +90,7 @@ public interface INodeMovement : IMovement
 	void NextConstantSpeedMovement(ref Vector3 nextTarget, out Vector3 velocity, in float deltaTime)
 	{
 		Vector3 position = CurrentPosition;
-		float remainingDistance = HasTampPath? TempLength : TotalLength + SectionLength;
+		float remainingDistance = HasTampPath? TempLength : TotalLength;
 		float maxSpeed = MaxSpeed;
 
 		if (Mathf.Approximately(remainingDistance, 0f) || remainingDistance <= maxSpeed * deltaTime)
@@ -220,22 +119,20 @@ public interface INodeMovement : IMovement
 		OnMoveStop();
 		OnEndedMove?.Invoke();
 	}
-
-	bool IsNodeMovableState();
-
 	void OnMoveStart();
 	void OnMoveStop();
-	void SetPositionAndVelocity(in Vector3 position, in Vector3 delteMove, in Vector3 velocity, in float deltaTime);
-	void OnStayUpdate(in float deltaTime);
 }
-public interface INavMovement : IMovement
+public interface INodeMovement : IMovement
 {
+	INodeMovement ThisNodeMovement => this;
+	INodeMovement ParentMovement => null;
+
 	void SetMovePath(params SectorObject[] waypointSectors) => SetMovePath(true, waypointSectors);
-	void SetMovePath(bool clearPath, params SectorObject[] waypointSectors)
-	{
-		SetMovePath(clearPath, waypointSectors.Select(i => i.transform.position).ToArray());
-	}
-	void SetMovePath(bool clearPath, params Vector3[] waypoints)
+	void SetMovePath(bool clearPath, params SectorObject[] waypointSectors) => SetMovePath(clearPath, waypointSectors.Select(i => i.transform.position).ToArray());
+	void SetMovePath(params Vector3[] waypoints) => SetMovePath(null, true, waypoints);
+	void SetMovePath(Action callback, params Vector3[] waypoints) => SetMovePath(callback, true, waypoints);
+	void SetMovePath(bool clearPath, params Vector3[] waypoints) => SetMovePath(null, clearPath, waypoints);
+	void SetMovePath(Action callback, bool clearPath, params Vector3[] waypoints)
 	{
 		if (ThisSeeker == null) return;
 		if (waypoints == null || waypoints.Length == 0) return;
@@ -288,24 +185,11 @@ public interface INavMovement : IMovement
 			}
 		}
 	}
-	void ClearMovePath()
-	{
-		TempMovePath = new List<Vector3>();
-		TempMovePath.AddRange(MovePath);
-		TempLength = TotalLength + SectionLength;
-
-		TotalLength = 0;
-		SectionLength = 0;
-		if (MovePath != null) MovePath.Clear();
-		if (FindingPoints != null) FindingPoints.Clear();
-		if (ThisSeeker != null) ThisSeeker.CancelCurrentPathRequest();
-	}
-
-	bool FindNextMovementTarget(out Vector3 nextTarget)
+	bool FindNextMovementTarget()
 	{
 		if (EmptyPath)
 		{
-			nextTarget = CurrentPosition;
+			NextMovePosition = CurrentPosition;
 			return false;
 		}
 		Vector3 curr = CurrentPosition;
@@ -334,16 +218,16 @@ public interface INavMovement : IMovement
 		}
 		if (Path.Count == 0)
 		{
-			nextTarget = CurrentPosition;
+			NextMovePosition = CurrentPosition;
 			return false;
 		}
 		if (Path.Count == 1)
 		{
-			nextTarget = Path[0];
+			NextMovePosition = Path[0];
 			RemoveAtFirst();
 			return true;
 		}
-		nextTarget = Path[1];
+		NextMovePosition = Path[1];
 		return true;
 
 		void RemoveAtFirst()
@@ -354,71 +238,142 @@ public interface INavMovement : IMovement
 			{
 				float distance = Vector3.Distance(Path[0], Path[1]);
 				TotalLength -= distance;
-				SectionLength = distance;
 			}
 			Path.RemoveAt(0);
 			OnChangeMoveProgress?.Invoke(1f - TotalLength / InitLength);
 		}
 	}
-	Vector3 NextSmoothMovement(in Vector3 nextTarget, out Vector3 velocity, in float deltaTime)
+	bool IsMovableState();
+	void SetPositionAndVelocity(in Vector3 position, in Vector3 delteMove, in Vector3 velocity, in float deltaTime);
+	void OnStayUpdate(in float deltaTime);
+}
+public interface INavMovement : IMovement
+{
+	INavMovement ThisNavMovement => this;
+	void SetMovePath(params Transform[] waypointTarget) => SetMovePath(true, waypointTarget);
+	void SetMovePath(bool clearPath, params Transform[] waypointTarget) => SetMovePath(clearPath, waypointTarget.Select(i => i.transform.position).ToArray());
+	void SetMovePath(params Vector3[] waypoints) => SetMovePath(null, true, waypoints);
+	void SetMovePath(Action callback, params Vector3[] waypoints) => SetMovePath(callback, true, waypoints);
+	void SetMovePath(bool clearPath, params Vector3[] waypoints) => SetMovePath(null, clearPath, waypoints);
+	void SetMovePath(Action callback, bool clearPath, params Vector3[] waypoints)
 	{
-		Vector3 position = CurrentPosition;
-		velocity = CurrentVelocity;
-		float remainingDistance = HasTampPath? TempLength : TotalLength + SectionLength;
-		if (remainingDistance <= 0f || Mathf.Approximately(remainingDistance, 0f))
-		{
-			velocity = Vector3.zero;
-			return position;
-		}
-		Vector3 diraction = (nextTarget - position).normalized * remainingDistance;
+		if (ThisSeeker == null) return;
+		if (waypoints == null || waypoints.Length == 0) return;
 
-		Vector3 nextPosition = Vector3.SmoothDamp(position, position + diraction, ref velocity, SmoothTime, MaxSpeed, deltaTime);
+		MovePath ??= new List<Vector3>();
+		FindingPoints ??= new Queue<Vector3>();
 
-		float moveDelta = Vector3.Distance(position, nextPosition);
-		if (Vector3.Distance(position, nextPosition) > remainingDistance)
+		if (clearPath)
 		{
-			nextPosition = nextTarget;
-			velocity = Vector3.zero;
+			ClearMovePath();
 		}
-		return nextPosition;
+		bool isWait = FindingPoints.Count > 0;
+		int length = waypoints.Length;
+		for (int i = 0 ; i < length ; i++)
+		{
+			FindingPoints.Enqueue(waypoints[i]);
+		}
+		if (isWait) return;
+
+		StartPath(MovePath.Count == 0 ? CurrentPosition : MovePath[^1]);
+		void StartPath(Vector3 prevPoint)
+		{
+			if (!FindingPoints.TryDequeue(out var nextPoint))
+			{
+				InitPath = MovePath.ToArray();
+				InitLength = TotalLength;
+				OnChangeMovePath?.Invoke();
+				OnChangeMoveProgress?.Invoke(0);
+				callback?.Invoke();
+				return;
+			}
+			StrategyManager.NodeNetwork.FindNavPath(ThisSeeker, prevPoint, nextPoint, FindPath);
+			void FindPath(Path path)
+			{
+				if (path.error)
+				{
+					Debug.LogError("Path Error:" + path.errorLog);
+					return;
+				}
+				var abPath = path as ABPath;
+				MovePath.AddRange(abPath.vectorPath);
+				if (TempMovePath != null)
+				{
+					TempMovePath.Clear();
+					TempMovePath = null;
+					TempLength = 0;
+				}
+
+				TotalLength += abPath.GetTotalLength();
+				StartPath(nextPoint);
+			}
+		}
 	}
-	void NextConstantSpeedMovement(ref Vector3 nextTarget, out Vector3 velocity, in float deltaTime)
+	bool FindNextMovementTarget()
 	{
-		Vector3 position = CurrentPosition;
-		float remainingDistance = HasTampPath? TempLength : TotalLength + SectionLength;
-		float maxSpeed = MaxSpeed;
-
-		if (Mathf.Approximately(remainingDistance, 0f) || remainingDistance <= maxSpeed * deltaTime)
+		if (EmptyPath)
 		{
-			velocity = Vector3.zero;
+			NextMovePosition = CurrentPosition;
+			return false;
 		}
-		Vector3 direction = (nextTarget - position).normalized;
+		Vector3 curr = CurrentPosition;
+		List<Vector3> Path = HasTampPath ? TempMovePath : MovePath;
 
-		velocity = direction * maxSpeed;
-		Vector3 nextPosition = position + velocity * deltaTime;
-
-		if (Vector3.Distance(position, nextTarget) > remainingDistance)
+		if (IsChangeTargetPositionCheck())
 		{
-			nextPosition = nextTarget;
-			velocity = Vector3.zero;
+			return true;
 		}
-		nextTarget = nextPosition;
-	}
-	void MoveStart()
-	{
-		OnMoveStart();
-		OnStartMove?.Invoke();
-	}
-	void MoveStop()
-	{
-		OnMoveStop();
-		OnEndedMove?.Invoke();
-	}
 
-	bool IsNodeMovableState();
+		while (Path.Count >= 2)
+		{
+			Vector3 prev = Path[0];
+			Vector3 next = Path[1];
+			Vector3 toNextDir = next - prev;
+			Vector3 toMoveDir = next - curr;
 
-	void OnMoveStart();
-	void OnMoveStop();
+			float dot = Vector3.Dot(toMoveDir, toNextDir);
+			if (dot <= 0f)
+			{
+				RemoveAtFirst();
+				continue;
+			}
+			float sqrMagnitude = toMoveDir.sqrMagnitude;
+			if (Mathf.Approximately(sqrMagnitude, 0f))
+			{
+				RemoveAtFirst();
+				continue;
+			}
+			break;
+		}
+		if (Path.Count == 0)
+		{
+			NextMovePosition = CurrentPosition;
+			return false;
+		}
+		if (Path.Count == 1)
+		{
+			NextMovePosition = Path[0];
+			RemoveAtFirst();
+			return true;
+		}
+		NextMovePosition = Path[1];
+		return true;
+
+		void RemoveAtFirst()
+		{
+			if (Path.Count == 0) return;
+
+			if (Path.Count >= 2)
+			{
+				float distance = Vector3.Distance(Path[0], Path[1]);
+				TotalLength -= distance;
+			}
+			Path.RemoveAt(0);
+			OnChangeMoveProgress?.Invoke(1f - TotalLength / InitLength);
+		}
+	}
+	bool IsMovableState();
+	bool IsChangeTargetPositionCheck();
 	void SetPositionAndVelocity(in Vector3 position, in Vector3 delteMove, in Vector3 velocity, in float deltaTime);
 	void OnStayUpdate(in float deltaTime);
 }

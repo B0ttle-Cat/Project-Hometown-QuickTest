@@ -6,21 +6,25 @@ public interface IUnitCombatController
 	IStrategyElement ThisElement { get; }
 	int FactionID { get; }
 
-	bool IsCombatState { get; set; }
-	Vector3 CombatMoveTarget { get; set; }
-
 	Vector3 Position { get; }
-	float AttackRange { get; }
+	Vector2 AttackStartRange { get; }
+	Vector2 AttackLimitRange { get; }
 	float ActionRange { get; }
 	float VisionRange { get; }
-	ITargetableCombatant CurrentTarget { get; }
+	bool IsCombatState { get; }
+	ITargetableCombatant CurrentTarget { get; set; }
 	bool HasCurrentTarget => CurrentTarget != null;
-	bool TargetInAttackRange { get; }
+	bool TargetInStartAttackRange { get; }
+	bool TargetInLimitAttackRange { get; }
 	bool TargetInActionRange { get; }
+
+	bool IsRootCombatState { get; set; }
+	ITargetableCombatant RootCurrentTarget { get; set; }
+	bool HasRootCurrentTarget => RootCurrentTarget != null;
+
 
 	void UpdateParameters();
 	bool IsKeepingTargetAllowed();
 	bool SearchingNewTarget(out ITargetableCombatant newTarget);
-	void SetCombatTarget(in ITargetableCombatant newTarget);
-	void ClearCombatTarget();
+	void ChangeCombatTarget(in ITargetableCombatant newTarget);
 }
