@@ -98,6 +98,7 @@ public partial class UnitObject : MonoBehaviour
 		InitVisibility();
 		InitFSM();
 		InitCombat();
+		InitAttack();
 	}
 	private void InitDebugRender()
 	{
@@ -110,19 +111,20 @@ public partial class UnitObject : MonoBehaviour
 	partial void InitOperationObject();
 	partial void InitFSM();
 	partial void InitCombat();
+	partial void InitAttack();
 	public void Deinit()
 	{
 		DeselectSelf();
 		DeinitFSM();
 		DeinitCombat();
 		DeinitMovement();
+		DeinitAttack();
 	}
 	partial void DeselectSelf();
 	partial void DeinitFSM();
 	partial void DeinitCombat();
 	partial void DeinitMovement();
-
-
+	partial void DeinitAttack();
 #if UNITY_EDITOR
 	void OnDrawGizmos()
 	{
@@ -130,32 +132,11 @@ public partial class UnitObject : MonoBehaviour
 	}
 #endif
 }
-public partial class UnitObject : IStateValueGetter
+public partial class UnitObject : IStateValueControl
 {
 	private StatsGroup skillBuffGroup;
 	public StatsList MainStatsList => StatsData.GetStatsList();
 	public StatsGroup SkillBuffGroup => skillBuffGroup ??= new StatsGroup();
-	public float GetStateValue(StatsType type)
-	{
-		if (StrategyManager.IsNotReadyScene) return 0;
-		float value = MainStatsList.GetValueInt(type) + SkillBuffGroup.GetValueInt(type);
-		value *= type switch
-		{
-			StatsType.유닛_이동속도_c => 0.01f,
-			StatsType.유닛_조준지연시간_c => 0.01f,
-			StatsType.유닛_연속공격지연시간_c => 0.01f,
-			StatsType.유닛_재공격지연시간_c => 0.01f,
-			StatsType.유닛_재장전시간_c => 0.01f,
-			StatsType.유닛_공격범위_종료최소_c => 0.01f,
-			StatsType.유닛_공격범위_시작최소_c => 0.01f,
-			StatsType.유닛_공격범위_시작최대_c => 0.01f,
-			StatsType.유닛_공격범위_종료최대_c => 0.01f,
-			StatsType.유닛_행동범위_c => 0.01f,
-			StatsType.유닛_시야범위_c => 0.01f,
-			_ => 1f
-		};
-		return value;
-	}
 	partial void InitProfileObject(UnitProfileObject profileObj)
 	{
 		if (profileObj == null) return;
@@ -186,5 +167,22 @@ public partial class UnitObject : IStateValueGetter
 				CaptureTag = null;
 			}
 		}
+	}
+	public float GetStateValuePercent(StatsType type)
+	{
+		if (StrategyManager.IsNotReadyScene) return 0;
+		float value = MainStatsList.GetValueInt(type) + SkillBuffGroup.GetValueInt(type);
+		return value * 0.01f;
+	}
+	public int GetStateValue(StatsType type)
+	{
+		if (StrategyManager.IsNotReadyScene) return 0;
+		int value = MainStatsList.GetValueInt(type) + SkillBuffGroup.GetValueInt(type);
+		return value;
+	}
+	public void SetValueInMainState(StatsType type, int value)
+	{
+		if (StrategyManager.IsNotReadyScene) return;
+		StatsData.SetValue(type, value);
 	}
 }

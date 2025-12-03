@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3203544414131407364}
   - component: {fileID: 7748264205117504606}
   - component: {fileID: -6848436480592291150}
+  - component: {fileID: 555760416018901747}
   - component: {fileID: 7235125821253552112}
   - component: {fileID: 2455348339527989827}
   - component: {fileID: 2997822074442965579}
@@ -55,7 +56,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Unit
   debugRender: {fileID: 933335122341834021}
   operationObject: {fileID: 0}
-  operationOffset: {x: 0, y: 0, z: 0}
 --- !u!114 &7748264205117504606
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80,6 +80,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21c6d238096f12e4bb413744de3f8fe7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitFiniteStateMachine
+  testPause: 0
+--- !u!114 &555760416018901747
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2460545361625872358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e00d6d9545eae1c438fad25fda56565a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnitAttackFiniteStateMachine
   testPause: 0
 --- !u!114 &7235125821253552112
 MonoBehaviour:

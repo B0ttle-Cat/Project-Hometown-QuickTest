@@ -73,11 +73,11 @@ public partial class OperationObject // Stats
 
 	private float ComputeMoveSpeed()
 	{
-		return GetAllUnitObj.Count == 0 ? 0 : GetAllUnitObj.Select(i => i.GetStateValue(StatsType.유닛_이동속도_c)).Average();
+		return GetAllUnitObj.Count == 0 ? 0 : GetAllUnitObj.Select(i => i.GetStateValuePercent(StatsType.유닛_이동속도_c)).Average();
 	}
 	private float ComputeViewRange()
 	{
-		return GetAllUnitObj.Count == 0 ? 0 : GetAllUnitObj.Select(i => i.GetStateValue(StatsType.유닛_시야범위_c)).Max();
+		return GetAllUnitObj.Count == 0 ? 0 : GetAllUnitObj.Select(i => i.GetStateValuePercent(StatsType.유닛_시야범위_c)).Max();
 	}
 }
 public partial class OperationObject : IStrategyElement

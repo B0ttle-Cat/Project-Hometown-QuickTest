@@ -1,7 +1,7 @@
-﻿public partial class UnitObject : IFSMController<UnitFSMType>
+﻿public partial class UnitObject : IFSMController<UnitMainFSMType>
 {
-	public IFSMController<UnitFSMType> FSMController => this;
-	public IFSMInterface<UnitFSMType> FSMInterface { get; set; }
+	public IFSMController<UnitMainFSMType> FSMController => this;
+	public IFSMInterface<UnitMainFSMType> FSMInterface { get; set; }
 
 	partial void InitFSM()
 	{
@@ -10,17 +10,17 @@
 			fsm = gameObject.AddComponent<UnitFiniteStateMachine>();
 		}
 		FSMInterface = fsm;
-		FSMController.InitState(OnStateEnterCallback, OnStateExitCallback, UnitFSMType.Idle, FSMController.GetStateList());
+		FSMController.InitState(OnStateEnterCallback, OnStateExitCallback, UnitMainFSMType.Idle, FSMController.GetStateList());
 	}
 	partial void DeinitFSM()
 	{
 		FSMController.DeinitState();
 	}
-	private void OnStateEnterCallback(UnitFSMType type)
+	private void OnStateEnterCallback(UnitMainFSMType type)
 	{
 
 	}
-	private void OnStateExitCallback(UnitFSMType type)
+	private void OnStateExitCallback(UnitMainFSMType type)
 	{
 		
 	}

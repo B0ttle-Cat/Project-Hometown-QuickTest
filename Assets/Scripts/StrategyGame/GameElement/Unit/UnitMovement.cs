@@ -16,10 +16,10 @@ using static StrategyGamePlayData;
 [RequireComponent(typeof(RaycastModifier))]
 public partial class UnitMovement : MonoBehaviour
 {
-	private IStateValueGetter StateValueGetter { get; set; }
+	private IStateValueControl StateControl { get; set; }
 	private IOperationBelonger OperationBelonger { get; set; }
 	private IUnitCombatController CcombatController { get; set; }
-	private IFSMController<UnitFSMType> FsmController { get; set; }
+	private IFSMController<UnitMainFSMType> FsmController { get; set; }
 
 	private Vector3 operationMoveTarget;
 	[ShowInInspector, ReadOnly]
@@ -52,7 +52,7 @@ public partial class UnitMovement : MonoBehaviour
 
 	public void Init(UnitObject unitObject)
 	{
-		StateValueGetter = unitObject;
+		StateControl = unitObject;
 		OperationBelonger = unitObject;
 		CcombatController = unitObject;
 		FsmController = unitObject;
@@ -82,8 +82,8 @@ public partial class UnitMovement : MonoBehaviour
 	}
 	private float GetStateValue(StatsType type)
 	{
-		if (StateValueGetter == null) return 0f;
-		return StateValueGetter.GetStateValue(StrategyGamePlayData.StatsType.유닛_이동속도_c);
+		if (StateControl == null) return 0f;
+		return StateControl.GetStateValuePercent(StrategyGamePlayData.StatsType.유닛_이동속도_c);
 	}
 
 	private void InitPositionAndVelocity(out Vector3 position, out Vector3 velocity)
@@ -193,7 +193,7 @@ public partial class UnitMovement : INodeMovement
 	public INodeMovement ParentMovement => OperationBelonger.GetBelongedOperation();
 	bool INodeMovement.IsMovableState()
 	{
-		return FsmController.CurrentStateType == UnitFSMType.Idle;
+		return FsmController.CurrentStateType == UnitMainFSMType.Idle;
 	}
 	void INodeMovement.SetPositionAndVelocity(in Vector3 position, in Vector3 delteMove, in Vector3 velocity, in float deltaTime)
 	{
@@ -234,7 +234,7 @@ public partial class UnitMovement : INavMovement
 	bool INavMovement.IsMovableState()
 	{
 		return CcombatController.CurrentTarget != null
-			&& FsmController.CurrentStateType == UnitFSMType.Chasing;
+			&& FsmController.CurrentStateType == UnitMainFSMType.Chasing;
 	}
 	bool INavMovement.IsChangeTargetPositionCheck()
 	{

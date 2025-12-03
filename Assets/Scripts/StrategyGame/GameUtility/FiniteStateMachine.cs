@@ -12,7 +12,9 @@ public interface IFSMController<T> where T : Enum
 	IFSMInterface<T> FSMInterface { get; set; }
 	IFSMInterface<T> GetFSM()
 	{
-		return FSMInterface ??= gameObject.GetComponent<FiniteStateMachine<T>>();
+		if(FSMInterface == null)
+			return FSMInterface = gameObject.GetComponent<FiniteStateMachine<T>>();
+		return FSMInterface;
 	}
 
 	public T CurrentStateType => GetFSM().CurrentStateType;
@@ -32,6 +34,7 @@ public interface IFSMInterface<T> where T : Enum
 }
 public interface IFSMUpdater
 {
+	bool IsCanStateUpdate() {  return true; }
 	void StateUpdate(in float deltaTime);
 }
 public interface IState<T> where T : Enum
@@ -114,6 +117,7 @@ public abstract class FiniteStateMachine<T> : MonoBehaviour, IFSMInterface<T>, I
 			onStateEnterCallback?.Invoke(nextState);
 		}
 	}
+	public virtual bool IsCanStateUpdate() { return true; }
 	public void StateUpdate(in float deltaTime)
 	{
 		if (currentState == null || stateList == null) return;
@@ -217,3 +221,4 @@ public abstract class FiniteStateMachine<T> : MonoBehaviour, IFSMInterface<T>, I
 		}
 	}
 }
+

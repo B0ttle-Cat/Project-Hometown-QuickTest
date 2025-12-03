@@ -778,7 +778,7 @@ public partial class StrategyGamePlayData
 			new StatsValue(StatsType.유닛_연속공격횟수),
 			new StatsValue(StatsType.유닛_연속공격지연시간_c),
 			new StatsValue(StatsType.유닛_탄용량),
-			new StatsValue(StatsType.유닛_잔탄수),
+			new StatsValue(StatsType.유닛_사용탄수),
 			new StatsValue(StatsType.유닛_재장전시간_c),
 			new StatsValue(StatsType.유닛_공격소모_전력),
 			new StatsValue(StatsType.유닛_공격소모_물자),
@@ -1224,9 +1224,13 @@ public partial class StrategyGamePlayData
 			}
 		}
 	}
-	public interface IStateValueGetter
+	public interface IStateValueControl
 	{
-		float GetStateValue(StatsType type);
+		public StatsList MainStatsList { get; }
+		public StatsGroup SkillBuffGroup { get; }
+		float GetStateValuePercent(StatsType type);
+		int GetStateValue(StatsType type);
+		void SetValueInMainState(StatsType type, int value);
 	}
 
 }

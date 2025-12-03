@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+
+using UnityEngine;
 
 public interface IUnitCombatController
 {
@@ -22,7 +24,7 @@ public interface IUnitCombatController
 	ITargetableCombatant RootCurrentTarget { get; set; }
 	bool HasRootCurrentTarget => RootCurrentTarget != null;
 
-
+	event Action<ITargetableCombatant> OnChangeCurrentCombatTarget;
 	void UpdateParameters();
 	bool IsKeepingTargetAllowed();
 	bool SearchingNewTarget(out ITargetableCombatant newTarget);

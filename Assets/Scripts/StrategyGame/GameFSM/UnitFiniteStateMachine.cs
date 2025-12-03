@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public enum UnitFSMType
+public enum UnitMainFSMType
 {
 	Idle = 0,
 	Fighting,
@@ -8,23 +8,23 @@ public enum UnitFSMType
 }
 
 [RequireComponent(typeof(UnitObject))]
-public class UnitFiniteStateMachine : FiniteStateMachine<UnitFSMType>
+public class UnitFiniteStateMachine : FiniteStateMachine<UnitMainFSMType>
 {
-	public override IState<UnitFSMType>[] GetStateList()
+	public override IState<UnitMainFSMType>[] GetStateList()
 	{
 		UnitObject unitObject = GetComponent<UnitObject>();
-		return new IState<UnitFSMType>[]
+		return new IState<UnitMainFSMType>[]
 		{
-			new IdleState(unitObject, this, UnitFSMType.Idle),
-			new FightingState(unitObject, this, UnitFSMType.Fighting),
-			new ChasingState(unitObject, this, UnitFSMType.Chasing),
+			new IdleState(unitObject, this, UnitMainFSMType.Idle),
+			new FightingState(unitObject, this, UnitMainFSMType.Fighting),
+			new ChasingState(unitObject, this, UnitMainFSMType.Chasing),
 		};
 	}
 	private abstract class UnitState : BaseState
 	{
 		protected readonly UnitObject unitObject;
 		protected readonly IUnitCombatController combatController;
-		protected UnitState(UnitObject unitObject, UnitFiniteStateMachine fsm, UnitFSMType type) : base(fsm, type)
+		protected UnitState(UnitObject unitObject, UnitFiniteStateMachine fsm, UnitMainFSMType type) : base(fsm, type)
 		{
 			this.unitObject = unitObject;
 			combatController = unitObject;
@@ -65,36 +65,36 @@ public class UnitFiniteStateMachine : FiniteStateMachine<UnitFSMType>
 	}
 	private class IdleState : UnitState
 	{
-		public IdleState(UnitObject unitObject, UnitFiniteStateMachine fsm, UnitFSMType type) : base(unitObject, fsm, type) {}
+		public IdleState(UnitObject unitObject, UnitFiniteStateMachine fsm, UnitMainFSMType type) : base(unitObject, fsm, type) {}
 
-		protected override UnitFSMType OnStateUpdate(in float deltaTime)
+		protected override UnitMainFSMType OnStateUpdate(in float deltaTime)
 		{
 			if (NextStateIsChasing())
 			{
 				if (NextStateIsFighting())
 				{
-					return UnitFSMType.Fighting;
+					return UnitMainFSMType.Fighting;
 				}
-				else return UnitFSMType.Chasing;
+				else return UnitMainFSMType.Chasing;
 			}
-			else return UnitFSMType.Idle;
+			else return UnitMainFSMType.Idle;
 		}
 	}
 	private class FightingState : UnitState
 	{
-		public FightingState(UnitObject unitObject, UnitFiniteStateMachine fsm, UnitFSMType type) : base(unitObject, fsm, type) {}
+		public FightingState(UnitObject unitObject, UnitFiniteStateMachine fsm, UnitMainFSMType type) : base(unitObject, fsm, type) {}
 	
-		protected override UnitFSMType OnStateUpdate(in float deltaTime)
+		protected override UnitMainFSMType OnStateUpdate(in float deltaTime)
 		{
 			if (NextStateIsFighting())
 			{
-				return UnitFSMType.Fighting;
+				return UnitMainFSMType.Fighting;
 			}
 			else if (NextStateIsChasing())
 			{
-				return UnitFSMType.Chasing;
+				return UnitMainFSMType.Chasing;
 			}
-			else return UnitFSMType.Idle;
+			else return UnitMainFSMType.Idle;
 		}
 		protected override bool NextStateIsFighting()
 		{
@@ -103,19 +103,19 @@ public class UnitFiniteStateMachine : FiniteStateMachine<UnitFSMType>
 	}
 	private class ChasingState : UnitState
 	{
-		public ChasingState(UnitObject unitObject, UnitFiniteStateMachine fsm, UnitFSMType type) : base(unitObject, fsm, type) {}
+		public ChasingState(UnitObject unitObject, UnitFiniteStateMachine fsm, UnitMainFSMType type) : base(unitObject, fsm, type) {}
 	
-		protected override UnitFSMType OnStateUpdate(in float deltaTime)
+		protected override UnitMainFSMType OnStateUpdate(in float deltaTime)
 		{
 			if (NextStateIsChasing())
 			{
 				if (NextStateIsFighting())
 				{
-					return UnitFSMType.Fighting;
+					return UnitMainFSMType.Fighting;
 				}
-				else return UnitFSMType.Chasing;
+				else return UnitMainFSMType.Chasing;
 			}
-			else return UnitFSMType.Idle;
+			else return UnitMainFSMType.Idle;
 		}
 	}
 }

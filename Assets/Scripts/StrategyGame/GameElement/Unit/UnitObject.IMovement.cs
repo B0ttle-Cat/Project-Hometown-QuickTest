@@ -17,7 +17,11 @@ public partial class UnitObject // Movement
 	}
 	partial void DeinitMovement()
 	{
-		if (unitMovement != null) unitMovement.Deinit();
+		if (unitMovement != null)
+		{
+			unitMovement.Deinit();
+			unitMovement = null;
+		}
 		OnChangeCurrentCombatTarget -= OnNewCombatMovementPath;
 	}
 	private void OnNewCombatMovementPath(ITargetableCombatant target)

@@ -5,7 +5,7 @@ using UnityEngine;
 public partial class UnitObject : IUnitCombatController, INearbyElement, ITargetableCombatant
 {
 	public IUnitCombatController ThisCombatController => this;
-	bool IUnitCombatController.IsCombatState => FSMController.CurrentStateType is UnitFSMType.Chasing or UnitFSMType.Fighting;
+	bool IUnitCombatController.IsCombatState => FSMController.CurrentStateType is UnitMainFSMType.Chasing or UnitMainFSMType.Fighting;
 	bool IUnitCombatController.IsRootCombatState { get => isOperationCombatState; set => isOperationCombatState = value; }
 	private Vector2 combatAttackStartRange;
 	private Vector2 combatAttackLimitRange;
@@ -64,14 +64,14 @@ public partial class UnitObject : IUnitCombatController, INearbyElement, ITarget
 
 	void IUnitCombatController.UpdateParameters()
 	{
-		float combatAttackLimitMinRange = GetStateValue(StrategyGamePlayData.StatsType.유닛_공격범위_종료최소_c);
-		float combatAttackStartMinRange = GetStateValue(StrategyGamePlayData.StatsType.유닛_공격범위_시작최소_c);
-		float combatAttackStartMaxRange = GetStateValue(StrategyGamePlayData.StatsType.유닛_공격범위_시작최대_c);
-		float combatAttackLimitMaxRange = GetStateValue(StrategyGamePlayData.StatsType.유닛_공격범위_종료최대_c);
+		float combatAttackLimitMinRange = GetStateValuePercent(StrategyGamePlayData.StatsType.유닛_공격범위_종료최소_c);
+		float combatAttackStartMinRange = GetStateValuePercent(StrategyGamePlayData.StatsType.유닛_공격범위_시작최소_c);
+		float combatAttackStartMaxRange = GetStateValuePercent(StrategyGamePlayData.StatsType.유닛_공격범위_시작최대_c);
+		float combatAttackLimitMaxRange = GetStateValuePercent(StrategyGamePlayData.StatsType.유닛_공격범위_종료최대_c);
 		combatAttackStartRange = new Vector2(combatAttackStartMinRange, combatAttackStartMaxRange);
 		combatAttackLimitRange = new Vector2(combatAttackLimitMinRange, combatAttackLimitMaxRange);
-		combatActionRange = GetStateValue(StrategyGamePlayData.StatsType.유닛_행동범위_c);
-		combatVisionRange = GetStateValue(StrategyGamePlayData.StatsType.유닛_시야범위_c);
+		combatActionRange = GetStateValuePercent(StrategyGamePlayData.StatsType.유닛_행동범위_c);
+		combatVisionRange = GetStateValuePercent(StrategyGamePlayData.StatsType.유닛_시야범위_c);
 
 		float sqrCombatAttackStartMinRange = combatAttackStartMinRange * combatAttackStartMinRange;
 		float sqrCombatAttackStartMaxRange = combatAttackStartMaxRange * combatAttackStartMaxRange;
@@ -147,7 +147,7 @@ public partial class UnitObject : IUnitCombatController, INearbyElement, ITarget
 
 		currentCombatTarget = null;
 
-		OnChangeCurrentCombatTarget?.Invoke(currentCombatTarget);
+		OnChangeCurrentCombatTarget?.Invoke(null);
 	}
 	void SetCombatTarget(in ITargetableCombatant newTarget)
 	{
