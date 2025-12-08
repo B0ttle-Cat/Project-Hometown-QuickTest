@@ -3321,6 +3321,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Sector_01
       objectReference: {fileID: 0}
+    - target: {fileID: 4300306911235521037, guid: 65b2fe5c02731a74dae76d0e92cc7e7c, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7324596390385222986, guid: 65b2fe5c02731a74dae76d0e92cc7e7c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -5189,10 +5193,10 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 58857479}
   - {fileID: 1555327484}
   - {fileID: 4796101}
   - {fileID: 1234401990}
-  - {fileID: 58857479}
   m_Father: {fileID: 449196672}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -7934,6 +7938,10 @@ PrefabInstance:
     - target: {fileID: 4300306911235521037, guid: 65b2fe5c02731a74dae76d0e92cc7e7c, type: 3}
       propertyPath: m_Name
       value: Sector_02
+      objectReference: {fileID: 0}
+    - target: {fileID: 4300306911235521037, guid: 65b2fe5c02731a74dae76d0e92cc7e7c, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7324596390385222986, guid: 65b2fe5c02731a74dae76d0e92cc7e7c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -11231,6 +11239,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Sector_04
       objectReference: {fileID: 0}
+    - target: {fileID: 4300306911235521037, guid: 65b2fe5c02731a74dae76d0e92cc7e7c, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7324596390385222986, guid: 65b2fe5c02731a74dae76d0e92cc7e7c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 40
@@ -12934,33 +12946,61 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fabc726380168774a834218d2e79af46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileObject
-  state:
+  runtimeData:
+    orderUnitID: 0
+    targetUnitID: 0
+    startPosition: {x: 0, y: 0, z: 0}
+    targetPosition: {x: 0, y: 0, z: 0}
+    position: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0, w: 0}
+    velocity: {x: 0, y: 0, z: 0}
+    lifeTime: 0
+    piercingPoint: 0
+  statsData:
     weaponType: 0
-    moveStartSpeed: 0
+    moveStartSpeed: 10
     isShiftSpeed: 0
-    moveMaxSpeed: 0
+    moveMaxSpeed: 20
     moveSpeedCurve:
       serializedVersion: 2
-      m_Curve: []
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 1
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 1
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    timeFromStartToMaxSpeed: 0
+    timeFromStartToMaxSpeed: 1
     homingEnabled: 0
     homingActivationDelay: 0
-    homingTurnSpeed: 0
-    homingTurnSpeedWhenMaxSpeed: 0
-    homingLimitAngle: 0
-    homingLimitDistance: 0
-    lifeTime: 0
-    destroyDelayAfterHit: 0
-    collisionRadius: 0
-    hitDamageMultiplier: 0
+    homingTurnSpeed: 180
+    homingTurnSpeedWhenMaxSpeed: 180
+    homingLimitAngle: 180
+    homingLimitDistance: Infinity
+    lifeTime: 5
+    destroyDelayAfterHit: 0.1
+    collisionRadius: 0.1
+    hitDamageMultiplier: 1
     hitEffectsFlag: 0
-    hitEffectsTimeMultiplier: 0
+    hitEffectsTimeMultiplier: 1
     piercingEnable: 0
-    piercingMinPoint: 0
-    piercingMaxPoint: 0
+    piercingMinPoint: 1
+    piercingMaxPoint: 1
     piercingFalloffCurve:
       serializedVersion: 2
       m_Curve: []
@@ -13062,7 +13102,6 @@ GameObject:
   - component: {fileID: 1572051159}
   - component: {fileID: 1572051157}
   - component: {fileID: 1572051162}
-  - component: {fileID: 1572051158}
   - component: {fileID: 1572051161}
   - component: {fileID: 1572051160}
   - component: {fileID: 1572051163}
@@ -13116,28 +13155,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StrategyStartSetter
   strategyStartSetterData: {fileID: 11400000, guid: 4e55ac2a9d9dc1547be20cf67642ccf4, type: 2}
---- !u!114 &1572051158
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1572051154}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c43786e0ac819c4b9c26b0675f5e22f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::StrategyGameObjectCollector
-  sectorList:
-    list: []
-  factionList:
-    list: []
-  unitList:
-    list: []
-  operationList:
-    list: []
-  skillList:
-    list: []
 --- !u!114 &1572051159
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16100,6 +16117,10 @@ PrefabInstance:
     - target: {fileID: 4300306911235521037, guid: 65b2fe5c02731a74dae76d0e92cc7e7c, type: 3}
       propertyPath: m_Name
       value: Sector_03
+      objectReference: {fileID: 0}
+    - target: {fileID: 4300306911235521037, guid: 65b2fe5c02731a74dae76d0e92cc7e7c, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7324596390385222986, guid: 65b2fe5c02731a74dae76d0e92cc7e7c, type: 3}
       propertyPath: m_LocalPosition.x

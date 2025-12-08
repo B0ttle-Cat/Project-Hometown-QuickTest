@@ -273,30 +273,31 @@ MonoBehaviour:
     unitDatas:
     - unitKey: 2100
       unitProfile: {fileID: 0}
-      factionName: Faction_00
-      belongedOperation: OP-007
-      visiteSectorName: Sector_00
+      factionID: 0
+      belongedOperation: 0
+      visiteSectorID: 0
       position: {x: 10, y: 0, z: 0}
       rotation: {x: -0, y: 0, z: 0}
       showEdit: 0
     - unitKey: 1100
       unitProfile: {fileID: 0}
-      factionName: Faction_01
-      belongedOperation: 
-      visiteSectorName: 
+      factionID: 0
+      belongedOperation: 0
+      visiteSectorID: 0
       position: {x: 0, y: 0, z: 10}
       rotation: {x: 0, y: 0, z: 0}
       showEdit: 0
+    projectileDatas: []
     operationDatas:
     - teamName: OP-007
-      factionName: Faction_00
-      visiteSectorName: Sector_00
+      factionID: 0
+      visiteSectorID: 0
     captureDatas:
-    - captureSector: Sector_00
-      captureFaction: Faction_00
+    - captureSectorID: 0
+      captureFactionID: 0
       captureProgress: 1
-    - captureSector: Sector_02
-      captureFaction: Faction_01
+    - captureSectorID: 0
+      captureFactionID: 0
       captureProgress: 1
     sectorLinkDatas:
     - sectorA: Sector_00

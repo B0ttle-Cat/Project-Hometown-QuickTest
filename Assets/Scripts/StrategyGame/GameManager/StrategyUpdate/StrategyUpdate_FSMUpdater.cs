@@ -1,107 +1,111 @@
 ﻿using System.Collections.Generic;
 
-using static StrategyUpdate.StrategyUpdate_FSMUpdater;
-public partial class StrategyUpdate
+using static StrategyManagerModule.StrategyUpdate.StrategyUpdate_FSMUpdater;
+
+namespace StrategyManagerModule
 {
-	public class StrategyUpdate_FSMUpdater : StrategyUpdateSubClass<FSMUpdater>
+	public partial class StrategyUpdate
 	{
-		List<FSMUpdater> operationMainFsmList;
-		List<FSMUpdater> unitMainFsmList;
-		List<FSMUpdater> unitAttackFsnList;
-
-		public StrategyUpdate_FSMUpdater(StrategyUpdate updater) : base(updater)
+		public class StrategyUpdate_FSMUpdater : StrategyUpdateSubClass<FSMUpdater>
 		{
-			operationMainFsmList = new List<FSMUpdater>();
-			unitMainFsmList = new List<FSMUpdater>();
+			List<FSMUpdater> operationMainFsmList;
+			List<FSMUpdater> unitMainFsmList;
+			List<FSMUpdater> unitAttackFsnList;
 
-			unitAttackFsnList = new List<FSMUpdater>();
-		}
-		protected override void Dispose()
-		{
-			StrategyManager.Collector.RemoveChangeListener<IFSMUpdater>(OnChangeItem);
-			operationMainFsmList = null;
-			unitMainFsmList = null;
-			unitAttackFsnList = null;
-		}
-		protected override void Start()
-		{
-			StrategyManager.Collector.AddChangeListener<IFSMUpdater>(OnChangeItem, true);
-		}
-		private void OnChangeItem(IFSMUpdater item, bool added)
-		{
-			if (item == null) return;
-
-			if (OnChangeItem_FSMClass<UnitFiniteStateMachine>(unitMainFsmList)) return;
-			else if (OnChangeItem_FSMClass<OperationFiniteStateMachine>(operationMainFsmList)) return;
-			else if (OnChangeItem_FSMClass<UnitAttackFiniteStateMachine>(unitAttackFsnList)) return;
-			else OnChangeItem_OtherMainFSM();
-
-			bool OnChangeItem_FSMClass<T>(List<FSMUpdater> list) where T : class , IFSMUpdater
+			public StrategyUpdate_FSMUpdater(StrategyUpdate updater) : base(updater)
 			{
-				if (item is not T fsmClass) return false;
-				if (added)
-				{
-					list.Add(new FSMUpdater(fsmClass, this));
-				}
-				else
-				{
-					int findIndex = list.FindIndex(f=>f.fsm == item);
-					if (findIndex >= 0) list.RemoveAt(findIndex);
-				}
-				return true;
+				operationMainFsmList = new List<FSMUpdater>();
+				unitMainFsmList = new List<FSMUpdater>();
+
+				unitAttackFsnList = new List<FSMUpdater>();
 			}
-			void OnChangeItem_OtherMainFSM()
+			protected override void Dispose()
 			{
-				if (added)
-				{
-					UpdateList.Add(new FSMUpdater(item, this));
-				}
-				else
-				{
-					int findIndex = UpdateList.FindIndex(f=>f.fsm == item);
-					if (findIndex < 0) return;
-					UpdateList.RemoveAt(findIndex);
-				}
+				StrategyManager.Collector.RemoveChangeListener<IFSMUpdater>(OnChangeItem);
+				operationMainFsmList = null;
+				unitMainFsmList = null;
+				unitAttackFsnList = null;
 			}
-		}
-		protected override void Update(in float deltaTime)
-		{
-			UpdateFSMList(unitMainFsmList, in deltaTime);
-			UpdateFSMList(operationMainFsmList, in deltaTime);
-
-			UpdateFSMList(unitAttackFsnList, in deltaTime);
-
-			UpdateFSMList(UpdateList, in deltaTime);
-
-            static void UpdateFSMList(List<FSMUpdater> list, in float deltaTime)
+			protected override void Start()
 			{
-				int length = list.Count;
-				for (int i = 0 ; i < length ; i++)
+				StrategyManager.Collector.AddChangeListener<IFSMUpdater>(OnChangeItem, true);
+			}
+			private void OnChangeItem(IFSMUpdater item, bool added)
+			{
+				if (item == null) return;
+
+				if (OnChangeItem_FSMClass<UnitFiniteStateMachine>(unitMainFsmList)) return;
+				else if (OnChangeItem_FSMClass<OperationFiniteStateMachine>(operationMainFsmList)) return;
+				else if (OnChangeItem_FSMClass<UnitAttackFiniteStateMachine>(unitAttackFsnList)) return;
+				else OnChangeItem_OtherMainFSM();
+
+				bool OnChangeItem_FSMClass<T>(List<FSMUpdater> list) where T : class, IFSMUpdater
 				{
-					var item = list[i];
-					if (item == null) continue;
-					item.Update(in deltaTime);
+					if (item is not T fsmClass) return false;
+					if (added)
+					{
+						list.Add(new FSMUpdater(fsmClass, this));
+					}
+					else
+					{
+						int findIndex = list.FindIndex(f=>f.fsm == item);
+						if (findIndex >= 0) list.RemoveAt(findIndex);
+					}
+					return true;
+				}
+				void OnChangeItem_OtherMainFSM()
+				{
+					if (added)
+					{
+						UpdateList.Add(new FSMUpdater(item, this));
+					}
+					else
+					{
+						int findIndex = UpdateList.FindIndex(f=>f.fsm == item);
+						if (findIndex < 0) return;
+						UpdateList.RemoveAt(findIndex);
+					}
 				}
 			}
+			protected override void Update(in float deltaTime)
+			{
+				UpdateFSMList(unitMainFsmList, in deltaTime);
+				UpdateFSMList(operationMainFsmList, in deltaTime);
+
+				UpdateFSMList(unitAttackFsnList, in deltaTime);
+
+				UpdateFSMList(UpdateList, in deltaTime);
+
+				static void UpdateFSMList(List<FSMUpdater> list, in float deltaTime)
+				{
+					int length = list.Count;
+					for (int i = 0 ; i < length ; i++)
+					{
+						var item = list[i];
+						if (item == null) continue;
+						item.Update(in deltaTime);
+					}
+				}
+			}
+			public class FSMUpdater : UpdateLogic
+			{
+				public IFSMUpdater fsm;
+				public FSMUpdater(IFSMUpdater fsm, StrategyUpdate_FSMUpdater thisSubClass) : base(thisSubClass)
+				{
+					this.fsm = fsm;
+				}
+
+				protected override void OnDispose()
+				{
+				}
+
+				protected override void OnUpdate(in float deltaTime)
+				{
+					if (fsm == null || !fsm.IsCanStateUpdate()) return;
+					fsm.StateUpdate(in deltaTime);
+				}
+			}
 		}
-		public class FSMUpdater : UpdateLogic
-		{
-			public IFSMUpdater fsm;
-			public FSMUpdater(IFSMUpdater fsm, StrategyUpdate_FSMUpdater thisSubClass) : base(thisSubClass)
-			{
-				this.fsm = fsm;
-			}
 
-			protected override void OnDispose()
-			{
-			}
-
-			protected override void OnUpdate(in float deltaTime)
-			{
-				if (fsm == null || !fsm.IsCanStateUpdate()) return;
-				fsm.StateUpdate(in deltaTime);
-			}
-		}
-	}
-
+	} 
 }

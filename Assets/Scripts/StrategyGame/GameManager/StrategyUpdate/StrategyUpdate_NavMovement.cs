@@ -1,109 +1,112 @@
 ﻿using UnityEngine;
 
-using static StrategyUpdate.StrategyUpdate_NavMovement;
+using static StrategyManagerModule.StrategyUpdate.StrategyUpdate_NavMovement;
 
-public partial class StrategyUpdate
+namespace StrategyManagerModule
 {
-	public class StrategyUpdate_NavMovement : StrategyUpdateSubClass<Movement>
+	public partial class StrategyUpdate
 	{
-		public StrategyUpdate_NavMovement(StrategyUpdate updater) : base(updater)
+		public class StrategyUpdate_NavMovement : StrategyUpdateSubClass<Movement>
 		{
-		}
-
-		protected override void Start()
-		{
-			UpdateList = new();
-
-			StrategyManager.Collector.AddChangeListener<UnitObject>(OnChangeValue, true);
-		}
-		private void OnChangeValue(IStrategyElement element, bool added)
-		{
-			if (element is not UnitObject item) return;
-			if (item == null || item.ThisNavMovement == null) return;
-
-			if (added)
+			public StrategyUpdate_NavMovement(StrategyUpdate updater) : base(updater)
 			{
-				UpdateList.Add(new(item.ThisNavMovement, this));
 			}
-			else
-			{
-				int findIndex = UpdateList.FindIndex(f => f.thisMovement == item.ThisNavMovement); 
-				if(findIndex >=0) UpdateList.RemoveAt(findIndex);
-			}
-		}
-		protected override void Dispose()
-		{
-			StrategyManager.Collector.RemoveChangeListener<UnitObject>(OnChangeValue);
-		}
 
-		public class Movement : UpdateLogic
-		{
-			public INavMovement thisMovement;
-			private bool moveState;
+			protected override void Start()
+			{
+				UpdateList = new();
 
-			public Movement(INavMovement movement, StrategyUpdateSubClass<Movement> thisSubClass) : base(thisSubClass)
-			{
-				thisMovement = movement;
-				moveState = false;
+				StrategyManager.Collector.AddChangeListener<UnitObject>(OnChangeValue, true);
 			}
-			protected override void OnDispose()
+			private void OnChangeValue(IStrategyElement element, bool added)
 			{
-				thisMovement = null;
-			}
-			protected override void OnUpdate(in float deltaTime)
-			{
-				if (thisMovement == null)
+				if (element is not UnitObject item) return;
+				if (item == null || item.ThisNavMovement == null) return;
+
+				if (added)
 				{
-					return;
-				}
-
-				if (!thisMovement.IsMovableState()) return;
-
-				if (thisMovement.EmptyPath)
-				{
-					MoveStop();
-					StayUpdate(in deltaTime);
-					return;
+					UpdateList.Add(new(item.ThisNavMovement, this));
 				}
 				else
 				{
-					MoveStart();
-					MoveUpdate(in deltaTime);
+					int findIndex = UpdateList.FindIndex(f => f.thisMovement == item.ThisNavMovement);
+					if (findIndex >= 0) UpdateList.RemoveAt(findIndex);
 				}
 			}
-			private void StayUpdate(in float deltaTime)
+			protected override void Dispose()
 			{
-				thisMovement.OnStayUpdate(in deltaTime);
+				StrategyManager.Collector.RemoveChangeListener<UnitObject>(OnChangeValue);
 			}
-			private void MoveUpdate(in float deltaTime)
+
+			public class Movement : UpdateLogic
 			{
-				if (thisMovement.FindNextMovementTarget())
+				public INavMovement thisMovement;
+				private bool moveState;
+
+				public Movement(INavMovement movement, StrategyUpdateSubClass<Movement> thisSubClass) : base(thisSubClass)
 				{
-					Vector3 nextPoint = thisMovement.NextMovePosition;
-					nextPoint = thisMovement.NextSmoothMovement(in nextPoint, out var velocity, in deltaTime);
-					Vector3 delteMove = nextPoint - thisMovement.CurrentPosition;
-					thisMovement.SetPositionAndVelocity(in nextPoint, in delteMove, in velocity, in deltaTime);
+					thisMovement = movement;
+					moveState = false;
 				}
-				else
+				protected override void OnDispose()
 				{
-					Vector3 position = thisMovement.CurrentPosition;
-					Vector3 delteMove = Vector3.zero;
-					Vector3 velocity = thisMovement.CurrentVelocity;
-					thisMovement.SetPositionAndVelocity(in position, in delteMove, in velocity, in deltaTime);
+					thisMovement = null;
 				}
-			}
-			private void MoveStart()
-			{
-				if (moveState) return;
-				moveState = true;
-				thisMovement.MoveStart();
-			}
-			private void MoveStop()
-			{
-				if (!moveState) return;
-				moveState = false;
-				thisMovement.MoveStop();
+				protected override void OnUpdate(in float deltaTime)
+				{
+					if (thisMovement == null)
+					{
+						return;
+					}
+
+					if (!thisMovement.IsMovableState()) return;
+
+					if (thisMovement.EmptyPath)
+					{
+						MoveStop();
+						StayUpdate(in deltaTime);
+						return;
+					}
+					else
+					{
+						MoveStart();
+						MoveUpdate(in deltaTime);
+					}
+				}
+				private void StayUpdate(in float deltaTime)
+				{
+					thisMovement.OnStayUpdate(in deltaTime);
+				}
+				private void MoveUpdate(in float deltaTime)
+				{
+					if (thisMovement.FindNextMovementTarget())
+					{
+						Vector3 nextPoint = thisMovement.NextMovePosition;
+						nextPoint = thisMovement.NextSmoothMovement(in nextPoint, out var velocity, in deltaTime);
+						Vector3 delteMove = nextPoint - thisMovement.CurrentPosition;
+						thisMovement.SetPositionAndVelocity(in nextPoint, in delteMove, in velocity, in deltaTime);
+					}
+					else
+					{
+						Vector3 position = thisMovement.CurrentPosition;
+						Vector3 delteMove = Vector3.zero;
+						Vector3 velocity = thisMovement.CurrentVelocity;
+						thisMovement.SetPositionAndVelocity(in position, in delteMove, in velocity, in deltaTime);
+					}
+				}
+				private void MoveStart()
+				{
+					if (moveState) return;
+					moveState = true;
+					thisMovement.MoveStart();
+				}
+				private void MoveStop()
+				{
+					if (!moveState) return;
+					moveState = false;
+					thisMovement.MoveStop();
+				}
 			}
 		}
-	}
+	} 
 }

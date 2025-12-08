@@ -1,81 +1,85 @@
-﻿using static StrategyUpdate.StrategyUpdate_FactionDetectListUpdate;
-public partial class StrategyUpdate
+﻿using static StrategyManagerModule.StrategyUpdate.StrategyUpdate_FactionDetectListUpdate;
+
+namespace StrategyManagerModule
 {
-	public class StrategyUpdate_FactionDetectListUpdate : StrategyUpdateSubClass<DetectListUpdate>
+	public partial class StrategyUpdate
 	{
-		public StrategyUpdate_FactionDetectListUpdate(StrategyUpdate updater) : base(updater)
+		public class StrategyUpdate_FactionDetectListUpdate : StrategyUpdateSubClass<DetectListUpdate>
 		{
-		}
-		protected override void Dispose()
-		{
-			StrategyManager.Collector.RemoveChangeListener<Faction>(OnChangeValue);
-		}
-		protected override void Start()
-		{
-			StrategyManager.Collector.AddChangeListener<Faction>(OnChangeValue, true);
-		}
-
-		private void OnChangeValue(IStrategyElement element, bool added)
-		{
-			if (element == null) return;
-			if (element is Faction faction)
+			public StrategyUpdate_FactionDetectListUpdate(StrategyUpdate updater) : base(updater)
 			{
-				if (added)
+			}
+			protected override void Dispose()
+			{
+				StrategyManager.Collector.RemoveChangeListener<Faction>(OnChangeValue);
+			}
+			protected override void Start()
+			{
+				StrategyManager.Collector.AddChangeListener<Faction>(OnChangeValue, true);
+			}
+
+			private void OnChangeValue(IStrategyElement element, bool added)
+			{
+				if (element == null) return;
+				if (element is Faction faction)
 				{
-					UpdateList.Add(new DetectListUpdate(faction, this));
-				}
-				else
-				{
-					int findIndex = UpdateList.FindIndex(i=>i.thisFactionID == faction.FactionID);
-					if (findIndex < 0) return;
-					UpdateList.RemoveAt(findIndex);
-				}
-			}
-		}
-		protected override void Update(in float deltaTime)
-		{
-			int length = UpdateList == null ? 0 : UpdateList.Count;
-			for (int i = 0 ; i < length ; i++)
-			{
-				var item = UpdateList[i];
-				if (item == null) continue;
-				item.Update(in deltaTime);
-			}
-		}
-		public class DetectListUpdate : UpdateLogic
-		{
-			public readonly Faction faction;
-			public readonly int thisFactionID;
-
-			public DetectListUpdate(Faction faction, StrategyUpdate_FactionDetectListUpdate thisSubClass) : base(thisSubClass)
-			{
-				this.faction = faction;
-				thisFactionID = faction.FactionID;
-			}
-
-			protected override void OnDispose()
-			{
-			}
-
-			protected override void OnUpdate(in float deltaTime)
-			{
-				faction.ClearDetect();
-
-				var allElement =  StrategyManager.Collector.GetAllElementLists();
-                foreach (var item in allElement)
-                {
-					if (item is not INearbySearcherValueGetter searcherValueGetter) return;
-					if (searcherValueGetter.FactionID != thisFactionID) return;
-					var searcher = searcherValueGetter.Searcher;
-					if (searcher == null) return;
-
-					var nearbyItems = searcher.GetNearbyItemsType<INearbyElement>(i => i.FactionID != thisFactionID);
-					foreach (var target in nearbyItems)
+					if (added)
 					{
-						faction.AddDetect(target as IStrategyElement);
+						UpdateList.Add(new DetectListUpdate(faction, this));
+					}
+					else
+					{
+						int findIndex = UpdateList.FindIndex(i=>i.thisFactionID == faction.FactionID);
+						if (findIndex < 0) return;
+						UpdateList.RemoveAt(findIndex);
+					}
+				}
+			}
+			protected override void Update(in float deltaTime)
+			{
+				int length = UpdateList == null ? 0 : UpdateList.Count;
+				for (int i = 0 ; i < length ; i++)
+				{
+					var item = UpdateList[i];
+					if (item == null) continue;
+					item.Update(in deltaTime);
+				}
+			}
+			public class DetectListUpdate : UpdateLogic
+			{
+				public readonly Faction faction;
+				public readonly int thisFactionID;
+
+				public DetectListUpdate(Faction faction, StrategyUpdate_FactionDetectListUpdate thisSubClass) : base(thisSubClass)
+				{
+					this.faction = faction;
+					thisFactionID = faction.FactionID;
+				}
+
+				protected override void OnDispose()
+				{
+				}
+
+				protected override void OnUpdate(in float deltaTime)
+				{
+					faction.ClearDetect();
+
+					var allElement =  StrategyManager.Collector.GetAllElementLists();
+					foreach (var item in allElement)
+					{
+						if (item is not INearbySearcherValueGetter searcherValueGetter) return;
+						if (searcherValueGetter.FactionID != thisFactionID) return;
+						var searcher = searcherValueGetter.Searcher;
+						if (searcher == null) return;
+
+						var nearbyItems = searcher.GetNearbyItemsType<INearbyElement>(i => i.FactionID != thisFactionID);
+						foreach (var target in nearbyItems)
+						{
+							faction.AddDetect(target as IStrategyElement);
+						}
 					}
 				}
 			}
 		}
-	}
+	} 
 }

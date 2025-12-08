@@ -1,5 +1,7 @@
 ﻿using System.Linq;
 
+using StrategyManagerModule;
+
 using UnityEngine;
 
 using static StrategyGamePlayData;
@@ -189,6 +191,7 @@ public class StrategyManager : MonoBehaviour
 
 		#region 각 독립 기능의 초기화.
 		collector ??= new StrategyElementCollector();
+		collector.Dispose();
 		collector.Register<SectorObject>(32)
 				 .Register<Faction>(8)
 				 .Register<UnitObject>(64)
