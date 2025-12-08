@@ -111,7 +111,7 @@ public partial class StrategyStartSetter : MonoBehaviour
 		{
 			var unitData = unitDatas[i];
 			string unitName = unitData.DisplayName();
-			UnitObject unitObject = StrategyElementUtility.Instantiate(in unitData);
+			UnitObject unitObject = StrategyElementFactory.Instantiate(in unitData);
 			if (unitObject == null) continue;
 			collector.AddElement(unitObject);
 			SetOperationBelong(unitObject, in unitData);
@@ -192,7 +192,7 @@ public partial class StrategyStartSetter : MonoBehaviour
         for (int i = 0 ; i < length ; i++)
         {
 			var opData = opDatas[i];
-			OperationObject newOp = StrategyElementUtility.Instantiate(opData);
+			OperationObject newOp = StrategyElementFactory.Instantiate(opData);
 			collector.AddElement(newOp);
 		}
 

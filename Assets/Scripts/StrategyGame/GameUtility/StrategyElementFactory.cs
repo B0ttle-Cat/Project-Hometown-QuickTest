@@ -4,7 +4,7 @@ using UnityEngine;
 
 using static StrategyGamePlayData;
 
-public static class StrategyElementUtility
+public static class StrategyElementFactory
 {
 	#region UnitObject
 	public static UnitObject Instantiate(in StrategyStartSetterData.UnitData setterUnitData)

@@ -16,7 +16,7 @@
 	}
 	bool ISectorController.OnConfirmButton_SpawnTroops(in SpawnTroopsInfo spawnTroopsInfo)
 	{
-		OperationObject operationObject = StrategyElementUtility.Instantiate(this, in spawnTroopsInfo);
+		OperationObject operationObject = StrategyElementFactory.Instantiate(this, in spawnTroopsInfo);
 		return operationObject != null;
 	}
 

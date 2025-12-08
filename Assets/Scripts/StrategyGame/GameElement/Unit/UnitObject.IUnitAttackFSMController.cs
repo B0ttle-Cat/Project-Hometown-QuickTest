@@ -11,9 +11,9 @@ public partial class UnitObject : IUnitAttackFSMController
 {
 	private IUnitAttackState unitAttackState;
 	public IUnitAttackFSMController AttackController => this;
-    public IUnitAttackState AttackState => unitAttackState;
+	public IUnitAttackState AttackState => unitAttackState;
 	IFSMController<UnitAttackFSMType> IFSMController<UnitAttackFSMType>.FSMController => this;
-    IFSMInterface<UnitAttackFSMType> IFSMController<UnitAttackFSMType>.FSMInterface { get => unitAttackState; set { } }
+	IFSMInterface<UnitAttackFSMType> IFSMController<UnitAttackFSMType>.FSMInterface { get => unitAttackState; set { } }
 
 
 	partial void InitAttack()
@@ -29,34 +29,45 @@ public partial class UnitObject : IUnitAttackFSMController
 		AttackState.OnAttackTiming += AttackState_OnAttackTiming;
 
 		AttackState.OnReloadingTiming -= AttackState_OnReloadingTiming;
-        AttackState.OnReloadingTiming += AttackState_OnReloadingTiming;
+		AttackState.OnReloadingTiming += AttackState_OnReloadingTiming;
 
 		ThisCombatController.OnChangeCurrentCombatTarget -= ThisCombatController_OnChangeCurrentCombatTarget;
 		ThisCombatController.OnChangeCurrentCombatTarget += ThisCombatController_OnChangeCurrentCombatTarget;
 	}
 
-    private void AttackState_OnReloadingTiming()
-    {
+	private void AttackState_OnReloadingTiming()
+	{
 		SetValueInMainState(StrategyGamePlayData.StatsType.유닛_사용탄수, 0);
-    }
+	}
 
-    private void AttackState_OnAttackTiming()
-    {
+	private void AttackState_OnAttackTiming()
+	{
 		// TODO:
 		// 공격 발생시 처리
 		// 1. 총알을 생성한다.
 		// 2. 총알에 목표를 지정한다.
 		// 3. 총알이 목표에 도달하면 데미지를 입힌다.
+		// 4. 이떄 데미지 게산을 위해 콜백으로 데미지 계산 함수를 넘긴다.
+		// 5. 데미지 함수의 매개변수로는 공격자, 피격자, 스킬 정보 등이 있다.
+
+		if (this is not IUnitCombatController unitCombat || unitCombat == null) return;
+		ITargetableCombatant target  = unitCombat.CurrentTarget;
+		if (target == null) return;
+
+		StrategyElementUtility
+
+		//UnitAttackProjectileObject projectile = UnitAttackProjectileObject.CreateProjectile(this, target, AttackState.GetCurrentAttackSkillData(), AttackState.GetCurrentAttackPointData());
+
 	}
 
 	private void ThisCombatController_OnChangeCurrentCombatTarget(ITargetableCombatant obj)
-    {
+	{
 		AttackState.SetChangeNewTargetFlag(obj != null);
 	}
 
-    partial void DeinitAttack()
+	partial void DeinitAttack()
 	{
-		if(unitAttackState != null)
+		if (unitAttackState != null)
 		{
 			AttackState.OnAttackTiming -= AttackState_OnAttackTiming;
 			AttackState.OnReloadingTiming -= AttackState_OnReloadingTiming;

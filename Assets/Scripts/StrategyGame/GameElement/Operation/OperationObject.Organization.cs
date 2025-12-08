@@ -176,7 +176,7 @@ public partial class OperationObject // Organization
 				}
 				if (withDestroy)
 				{
-					StrategyElementUtility.Destroy(unit);
+					StrategyElementFactory.Destroy(unit);
 				}
 				tempList[i] = null;
 			}
