@@ -52,7 +52,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 				{
 					var element = list[i];
 					if (element != null && element is IStrategyElement iElement)
-						iElement._OutStrategyCollector();
+						iElement.OutStrategyCollector();
 				}
 				list.Clear();
 			}
@@ -186,7 +186,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 				list.Add(element);
 				element.ThisElement.ID = GetNextUniqueID();
 				UsedUniqueID(element.ThisElement.ID);
-				element._InStrategyCollector();
+				element.InStrategyCollector();
 				Invoke(element, true);
 				return true;
 			}
@@ -198,7 +198,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 			if (list.Remove(element))
 			{
 				RemoveUniqueID(element.ID);
-				element._OutStrategyCollector();
+				element.OutStrategyCollector();
 				Invoke(element, false);
 				return true;
 			}
@@ -312,7 +312,7 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 				{
 					var element = list[i];
 					if (element != null && element is IStrategyElement iElement)
-						iElement._OutStrategyCollector();
+						iElement.OutStrategyCollector();
 				}
 				list.Clear();
 			}
@@ -574,12 +574,12 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 		operationList?.Dispose();
 		skillList?.Dispose();
 
-		sectorList= null;
+		sectorList = null;
 		factionList = null;
 		unitList = null;
 		operationList = null;
 		skillList = null;
-		
+
 		if (otherList != null)
 		{
 			foreach (var item in otherList)
@@ -761,11 +761,11 @@ public partial class StrategyElementCollector : MonoBehaviour, IDisposable
 		}
 	}
 
-    internal void AddChangeListener<T>(object onChangeValue, object foreachAll)
-    {
-        throw new NotImplementedException();
-    }
-    #endregion
+	internal void AddChangeListener<T>(object onChangeValue, object foreachAll)
+	{
+		throw new NotImplementedException();
+	}
+	#endregion
 }
 public partial class StrategyElementCollector // Finder 
 {

@@ -12,11 +12,11 @@
 //		protected override void Start()
 //		{
 //			updateList = new List<ResourcesSupply>();
-//			var list = StrategyManager.Collector.SectorList;
-//			int length = list.Count;
+//			var activeList = StrategyManager.Collector.SectorList;
+//			int length = activeList.Count;
 //			for (int i = 0 ; i < length ; i++)
 //			{
-//				var cb = list[i];
+//				var cb = activeList[i];
 //				updateList.Add(new ResourcesSupply(this, cb));
 //			}
 //		}

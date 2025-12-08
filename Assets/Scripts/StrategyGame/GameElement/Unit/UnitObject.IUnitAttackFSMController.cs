@@ -54,7 +54,8 @@ public partial class UnitObject : IUnitAttackFSMController
 		ITargetableCombatant target  = unitCombat.CurrentTarget;
 		if (target == null) return;
 
-		StrategyElementUtility
+		
+		//StrategyElementFactory
 
 		//UnitAttackProjectileObject projectile = UnitAttackProjectileObject.CreateProjectile(this, target, AttackState.GetCurrentAttackSkillData(), AttackState.GetCurrentAttackPointData());
 

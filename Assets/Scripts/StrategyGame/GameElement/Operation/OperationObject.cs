@@ -83,7 +83,6 @@ public partial class OperationObject // Stats
 public partial class OperationObject : IStrategyElement
 {
 	public IStrategyElement ThisElement => this;
-	bool IStrategyElement.IsInCollector { get; set; }
 	int IStrategyElement.ID { get => operationID; set => operationID = value; }
 	void IStrategyElement.InStrategyCollector()
 	{

@@ -1,4 +1,4 @@
-﻿public partial class StrategyGamePlayData // UnitKey
+﻿public partial class StrategyGamePlayData // ElementKey
 {
 	public enum UnitKey : ushort // 0 ~ 65,535
 	{
