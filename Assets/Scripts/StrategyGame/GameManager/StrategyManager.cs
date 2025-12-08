@@ -34,8 +34,8 @@ public class StrategyManager : MonoBehaviour
 	public static KeyPairSprite Key2Sprite => Manager == null || Manager.key2Sprite == null
 		? KeyPairSprite.Load(Language.Type.Korean, "_Default")
 		: Manager.key2Sprite;
-	public static KeyPairUnitInfo Key2UnitInfo => Manager == null || Manager.key2UnitInfo == null
-		? KeyPairUnitInfo.Load("_Default")
+	public static KeyPairUnit Key2UnitInfo => Manager == null || Manager.key2UnitInfo == null
+		? KeyPairUnit.Load("_Default")
 		: Manager.key2UnitInfo;
 
 	public static int PlayerFactionID;
@@ -61,7 +61,7 @@ public class StrategyManager : MonoBehaviour
 
 	private KeyPairDisplayName key2Name;
 	private KeyPairSprite key2Sprite;
-	private KeyPairUnitInfo key2UnitInfo;
+	private KeyPairUnit key2UnitInfo;
 	private void Awake()
 	{
 		IsGameSceneReady = false;

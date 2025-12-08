@@ -7,7 +7,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
-using static KeyPairUnitInfo;
+using static KeyPairUnit;
 using static StrategyGamePlayData;
 public partial class StrategyControlPanelUI // SpawnTroops
 {
@@ -104,7 +104,7 @@ public partial class StrategyControlPanelUI // SpawnTroops
 			private SectorObject selectSector;
 			private IViewStack viewStack;
 
-			private List<(StrategyGamePlayData.UnitKey, KeyPairUnitInfo.UnitInfo, NumericSliderUI)> numericSliders;
+			private List<(StrategyGamePlayData.UnitKey, KeyPairUnit.UnitInfo, NumericSliderUI)> numericSliders;
 
 			int 세력_병력_최대허용량;
 			int 세력_병력_현재보유량;
@@ -113,7 +113,7 @@ public partial class StrategyControlPanelUI // SpawnTroops
 			{
 				selectSector = sector;
 				this.viewStack = viewStack;
-				numericSliders = new List<(StrategyGamePlayData.UnitKey, KeyPairUnitInfo.UnitInfo, NumericSliderUI)>();
+				numericSliders = new List<(StrategyGamePlayData.UnitKey, KeyPairUnit.UnitInfo, NumericSliderUI)>();
 				ChangeValue(Value);
 			}
 

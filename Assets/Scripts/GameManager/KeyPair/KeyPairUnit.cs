@@ -8,13 +8,13 @@ using UnityEditor;
 using UnityEngine;
 
 using static StrategyGamePlayData;
-[CreateAssetMenu(fileName = "KeyPairUnitInfo", menuName = "Scriptable Objects/KeyPairAssets/KeyPairUnitInfo")]
-public class KeyPairUnitInfo : KeyPairAssets<StrategyGamePlayData.UnitKey, KeyPairUnitInfo.UnitInfo>
+[CreateAssetMenu(fileName = "KeyPairUnit", menuName = "Scriptable Objects/KeyPairAssets/KeyPairUnit")]
+public class KeyPairUnit : KeyPairAssets<StrategyGamePlayData.UnitKey, KeyPairUnit.UnitInfo>
 {
-	public static KeyPairUnitInfo Load(string name)
+	public static KeyPairUnit Load(string name)
 	{
-		string path = $"{nameof(KeyPairUnitInfo)}/{name}";
-		return Resources.Load<KeyPairUnitInfo>(path);
+		string path = $"{nameof(KeyPairUnit)}/{name}";
+		return Resources.Load<KeyPairUnit>(path);
 	}
 
 #if UNITY_EDITOR
