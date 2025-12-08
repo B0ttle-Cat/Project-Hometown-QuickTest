@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 
+using StrategyManagerModule;
+
 using UnityEngine;
 
 using static StrategyGamePlayData;

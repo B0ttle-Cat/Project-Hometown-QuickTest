@@ -2,72 +2,75 @@
 
 using UnityEngine;
 
-[RequireComponent(typeof(KeyPairTarget))]
-public partial class StrategyPopupPanelUI : MonoBehaviour, IGamePanelUI, IStrategyStartGame
+namespace StrategyManagerModule
 {
-	void IGamePanelUI.OpenUI()
+	[RequireComponent(typeof(KeyPairTarget))]
+	public partial class StrategyPopupPanelUI : MonoBehaviour, IGamePanelUI, IStrategyStartGame
 	{
-		gameObject.SetActive(true);
-	}
-	void IGamePanelUI.CloseUI()
-	{
-		gameObject.SetActive(false);
-	}
-
-	void IStrategyStartGame.OnStartGame()
-	{
-		if (this is IGamePanelUI panelUI)
-			panelUI.OpenUI();
-	}
-
-	void IStrategyStartGame.OnStopGame()
-	{
-		if (this is IGamePanelUI panelUI)
-			panelUI.CloseUI();
-	}
-}
-
-public partial class StrategyPopupPanelUI
-{
-	private KeyPairTarget keyPairTarget;
-	public IKeyPairChain KeyPair
-	{
-		get
+		void IGamePanelUI.OpenUI()
 		{
-			if (keyPairTarget == null && !TryGetComponent<KeyPairTarget>(out keyPairTarget))
-			{
-				keyPairTarget = gameObject.AddComponent<KeyPairTarget>();
-			}
-			return keyPairTarget;
+			gameObject.SetActive(true);
+		}
+		void IGamePanelUI.CloseUI()
+		{
+			gameObject.SetActive(false);
+		}
+
+		void IStrategyStartGame.OnStartGame()
+		{
+			if (this is IGamePanelUI panelUI)
+				panelUI.OpenUI();
+		}
+
+		void IStrategyStartGame.OnStopGame()
+		{
+			if (this is IGamePanelUI panelUI)
+				panelUI.CloseUI();
 		}
 	}
 
-	private Dictionary<GameObject, object> uiOrderPair;
-	Dictionary<GameObject, object> OrderPair => uiOrderPair ??= new Dictionary<GameObject, object>();
-	public void ShowTopMessage(object order, string message)
+	public partial class StrategyPopupPanelUI
 	{
-		if(TopMessage(out var ui))
+		private KeyPairTarget keyPairTarget;
+		public IKeyPairChain KeyPair
 		{
-			OrderPair[ui.gameObject] = order;
-			ui.Text = message;
-			ui.OnShow();
-		}
-	}
-	public void HideTopMessage(object order)
-	{
-		if (TopMessage(out var ui))
-		{
-			if (OrderPair.TryGetValue(ui.gameObject, out var _order) && _order == order)
+			get
 			{
-				ui.OnHide();
-				OrderPair.Remove(ui.gameObject);
+				if (keyPairTarget == null && !TryGetComponent<KeyPairTarget>(out keyPairTarget))
+				{
+					keyPairTarget = gameObject.AddComponent<KeyPairTarget>();
+				}
+				return keyPairTarget;
 			}
 		}
-	}
-	private bool TopMessage(out MessageBox messageBox)
-	{
-		KeyPair.FindPairChain<MessageBox>("TopMessage", out messageBox);
-		return messageBox != null;
-	}
 
+		private Dictionary<GameObject, object> uiOrderPair;
+		Dictionary<GameObject, object> OrderPair => uiOrderPair ??= new Dictionary<GameObject, object>();
+		public void ShowTopMessage(object order, string message)
+		{
+			if (TopMessage(out var ui))
+			{
+				OrderPair[ui.gameObject] = order;
+				ui.Text = message;
+				ui.OnShow();
+			}
+		}
+		public void HideTopMessage(object order)
+		{
+			if (TopMessage(out var ui))
+			{
+				if (OrderPair.TryGetValue(ui.gameObject, out var _order) && _order == order)
+				{
+					ui.OnHide();
+					OrderPair.Remove(ui.gameObject);
+				}
+			}
+		}
+		private bool TopMessage(out MessageBox messageBox)
+		{
+			KeyPair.FindPairChain<MessageBox>("TopMessage", out messageBox);
+			return messageBox != null;
+		}
+
+	} 
 }

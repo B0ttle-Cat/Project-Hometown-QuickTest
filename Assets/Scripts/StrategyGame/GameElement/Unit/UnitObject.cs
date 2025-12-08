@@ -1,5 +1,7 @@
 ﻿using Sirenix.OdinInspector;
 
+using StrategyManagerModule;
+
 using UnityEngine;
 
 using static StrategyGamePlayData;

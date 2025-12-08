@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 
+using static StrategyManagerModule.StrategyPathfinding;
 using static StrategyManagerModule.StrategyUpdate.StrategyUpdate_SectorResourcesDistribution;
-using static StrategyPathfinding;
+
 namespace StrategyManagerModule
 {
 	public partial class StrategyUpdate

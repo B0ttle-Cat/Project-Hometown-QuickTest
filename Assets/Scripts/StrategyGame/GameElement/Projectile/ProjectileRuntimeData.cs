@@ -1,5 +1,7 @@
 ﻿using System;
 
+using StrategyManagerModule;
+
 using UnityEngine;
 
 [Serializable]

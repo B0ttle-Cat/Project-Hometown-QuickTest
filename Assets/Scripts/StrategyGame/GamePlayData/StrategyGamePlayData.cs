@@ -6,7 +6,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 
 
-using static StrategyStartSetterData;
+using static StrategyManagerModule.StrategyStartSetterData;
 
 public partial class StrategyGamePlayData
 {

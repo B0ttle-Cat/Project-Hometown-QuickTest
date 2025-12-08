@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 using Sirenix.OdinInspector;
 
+using StrategyManagerModule;
+
 using UnityEngine;
 
 using static StrategyGamePlayData;

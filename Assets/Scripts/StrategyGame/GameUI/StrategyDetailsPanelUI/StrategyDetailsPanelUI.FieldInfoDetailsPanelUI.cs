@@ -3,11 +3,13 @@ using System.Collections.Generic;
 
 using Sirenix.OdinInspector;
 
+using StrategyManagerModule;
+
 using TMPro;
 
 using UnityEngine;
 
-using static StrategyMissionTree;
+using static StrategyManagerModule.StrategyMissionTree;
 
 public partial class StrategyDetailsPanelUI // FieldInfoDetailsPanelUI
 {

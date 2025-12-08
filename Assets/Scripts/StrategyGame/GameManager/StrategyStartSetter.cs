@@ -5,7 +5,7 @@ using Sirenix.OdinInspector;
 
 using UnityEngine;
 
-using static StrategyStartSetterData;
+using static StrategyManagerModule.StrategyStartSetterData;
 
 namespace StrategyManagerModule
 {
