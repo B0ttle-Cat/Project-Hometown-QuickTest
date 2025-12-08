@@ -188,8 +188,7 @@ public class StrategyManager : MonoBehaviour
 		#endregion
 
 		#region 각 독립 기능의 초기화.
-		//Collector.Init();
-		var collector = new StrategyElementCollector();
+		collector ??= new StrategyElementCollector();
 		collector.Register<SectorObject>(32)
 				 .Register<Faction>(8)
 				 .Register<UnitObject>(64)
