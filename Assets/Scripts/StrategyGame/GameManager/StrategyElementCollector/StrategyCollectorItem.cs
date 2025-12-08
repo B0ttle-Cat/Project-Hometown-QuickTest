@@ -38,7 +38,7 @@ namespace StrategyManagerModule
 		private List<T> list;
 		public List<T> Items => list ??= new List<T>();
 
-		private event Action<T, bool> onChange;
+		private event Action<T, bool> onChangeListener;
 		private bool sleepCallback;
 
 		public int Count => Items.Count;
@@ -48,14 +48,14 @@ namespace StrategyManagerModule
 		{
 			list = new List<T>(capacity);
 			sleepCallback = false;
-			onChange = null;
+			onChangeListener = null;
 		}
 
 		public virtual void Dispose()
 		{
 			list?.Clear();
 			list = null;
-			onChange = null;
+			onChangeListener = null;
 		}
 
 		// Add / Remove
@@ -118,21 +118,21 @@ namespace StrategyManagerModule
 		// Event hooks
 		protected void Invoke(T item, bool added)
 		{
-			if (sleepCallback || onChange == null) return;
-			try { onChange.Invoke(item, added); }
+			if (sleepCallback || onChangeListener == null) return;
+			try { onChangeListener.Invoke(item, added); }
 			catch (Exception ex) { Debug.LogException(ex); }
 		}
 
-		public void OnChange(Action<T, bool> handler)
+		public void AddListener(Action<T, bool> listener)
 		{
-			if (handler == null) return;
-			onChange -= handler;
-			onChange += handler;
+			if (listener == null) return;
+			onChangeListener -= listener;
+			onChangeListener += listener;
 		}
-		public void OffChange(Action<T, bool> handler)
+		public void RemoveListener(Action<T, bool> listener)
 		{
-			if (handler == null) return;
-			onChange -= handler;
+			if (listener == null) return;
+			onChangeListener -= listener;
 		}
 
 		// Query helpers
@@ -204,9 +204,9 @@ namespace StrategyManagerModule
 
 		public IEnumerable<Action<T, bool>> GetOnChangeHandlers()
 		{
-			if (onChange == null) yield break;
+			if (onChangeListener == null) yield break;
 
-			foreach (var d in onChange.GetInvocationList())
+			foreach (var d in onChangeListener.GetInvocationList())
 				yield return (Action<T, bool>)d;
 		}
 

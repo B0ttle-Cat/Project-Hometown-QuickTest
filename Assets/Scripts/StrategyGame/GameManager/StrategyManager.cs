@@ -34,7 +34,7 @@ public class StrategyManager : MonoBehaviour
 	public static KeyPairSprite Key2Sprite => Manager == null || Manager.key2Sprite == null
 		? KeyPairSprite.Load(Language.Type.Korean, "_Default")
 		: Manager.key2Sprite;
-	public static KeyPairUnit Key2UnitInfo => Manager == null || Manager.key2UnitInfo == null
+	public static KeyPairUnit Key2Unit => Manager == null || Manager.key2UnitInfo == null
 		? KeyPairUnit.Load("_Default")
 		: Manager.key2UnitInfo;
 
@@ -212,7 +212,7 @@ public class StrategyManager : MonoBehaviour
 		var preparedData = StrategyManager.PreparedData.GetData();
 		key2Name = Key2Name;
 		key2Sprite = Key2Sprite;
-		key2UnitInfo = Key2UnitInfo;
+		key2UnitInfo = Key2Unit;
 		#endregion
 
 		#region 이 구역 순서에 주의할 것: 각 항목은 초기화를 위해 이전 항목의 정보를 요구 할 수 있음

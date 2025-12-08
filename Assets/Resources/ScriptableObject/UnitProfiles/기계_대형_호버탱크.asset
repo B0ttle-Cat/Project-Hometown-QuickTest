@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6dc211c641483a148932ac3d89bb34e7, type: 3}
   m_Name: "\uAE30\uACC4_\uB300\uD615_\uD638\uBC84\uD0F1\uD06C"
   m_EditorClassIdentifier: Assembly-CSharp::UnitProfileObject
-  unitPrefab: {fileID: 414609006758805074, guid: ceca0356e18272341b9f3b06f4e20a0b, type: 3}
+  prefab: {fileID: 414609006758805074, guid: ceca0356e18272341b9f3b06f4e20a0b, type: 3}
   unitKey: 1303
   displayName: "LHT-BP-PR \uB808\uBE44\uC544\uD0C4 \uD638\uBC84 \uD0F1\uD06C"
   weaponType: 0

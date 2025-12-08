@@ -100,7 +100,7 @@ namespace StrategyManagerModule
 
 					foreach (var handler in oldList.GetOnChangeHandlers())
 					{
-						newList.OnChange(handler);
+						newList.AddListener(handler);
 					}
 
 					// 기존 리스트 정리
@@ -204,13 +204,16 @@ namespace StrategyManagerModule
 
 		/// <summary>
 		/// 이벤트 연결: IStrategyElement 타입이면 IStrategyElement 형식의 핸들러를, 일반 타입이면 T 형식 핸들러를 사용
-		/// invokeForExisting 가 true 이 경우 기존 아이템에 대해 onChange 콜백을 즉시 호출한다.
+		/// invokeForExisting 가 true 이 경우 기존 아이템에 대해 onChangeListener 콜백을 즉시 호출한다.
 		/// </summary>
 		public void AddChangeListener<T>(Action<T, bool> onChange, bool invokeForExisting = false) where T : class
 		{
 			var list = GetList<T>();
-			if (list == null) throw new InvalidOperationException($"Type {typeof(T).Name} is not registered.");
-			list.OnChange(onChange);
+			if (list == null) {
+				Register<T>();
+				list = GetList<T>();
+			}
+			list.AddListener(onChange);
 			if (invokeForExisting)
 			{
 				foreach (var item in list.Items.ToList())
@@ -223,7 +226,7 @@ namespace StrategyManagerModule
 		{
 			var list = GetList<T>();
 			if (list == null) return;
-			list.OffChange(onChange);
+			list.RemoveListener(onChange);
 		}
 
 		public void AddAnyChangeListener(Action<object, bool> onChange, bool invokeForExisting = false)

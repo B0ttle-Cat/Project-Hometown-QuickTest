@@ -14,7 +14,8 @@ public class KeyPairUnit : KeyPairAssets<StrategyGamePlayData.UnitKey, KeyPairUn
 	public static KeyPairUnit Load(string name)
 	{
 		string path = $"{nameof(KeyPairUnit)}/{name}";
-		return Resources.Load<KeyPairUnit>(path);
+		var load = Resources.Load<KeyPairUnit>(path);
+		return load;
 	}
 
 #if UNITY_EDITOR

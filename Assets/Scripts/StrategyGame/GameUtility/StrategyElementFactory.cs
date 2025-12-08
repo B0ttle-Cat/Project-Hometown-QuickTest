@@ -20,7 +20,7 @@ public static class StrategyElementFactory
 	}
 	public static UnitObject Instantiate(UnitKey unitKey, int factionID = -1, Vector3? position = null, Quaternion? rotation = null)
 	{
-		if (StrategyManager.Key2UnitInfo.TryGetAsset(unitKey, out var info))
+		if (StrategyManager.Key2Unit.TryGetAsset(unitKey, out var info))
 		{
 			return Instantiate(info.UnitProfileObject, factionID, position, rotation);
 		}

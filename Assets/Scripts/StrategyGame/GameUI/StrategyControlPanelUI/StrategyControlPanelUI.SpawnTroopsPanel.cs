@@ -207,7 +207,7 @@ public partial class StrategyControlPanelUI // SpawnTroops
 						var unitKey = unitKeyList[i];
 						int findIndex = numericSliders.FindIndex((item) => item.Item1==unitKey);
 						if (findIndex >= 0) continue;
-						var info = StrategyManager.Key2UnitInfo.GetAsset(unitKey);
+						var info = StrategyManager.Key2Unit.GetAsset(unitKey);
 						KeyPair.FindPairChainAndCopy<NumericSliderUI>("SliderSample", parent, out NumericSliderUI sliderUI);
 						sliderUI.gameObject.SetActive(true);
 						numericSliders.Add((unitKey, info, sliderUI));

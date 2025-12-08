@@ -11,6 +11,8 @@ namespace StrategyManagerModule
 	{
 		private readonly Dictionary<GameObject, IElementStore> stores = new();
 
+		private readonly Dictionary<Type, Action<GameObject, bool>> onChangeEventWithType;
+
 		// 글로벌 추가/삭제 이벤트
 		private event Action<GameObject, bool> onAnyElementChanged;
 		public StrategyPoolingCollector Register<T>(GameObject prefabObject, int capacity = 32) where T : class, IStrategyPoolingElement => Register(typeof(T), prefabObject, capacity);
@@ -49,6 +51,7 @@ namespace StrategyManagerModule
 
 			var store = stores[prefabObject] as PoolingElementStore<T>;
 			var item = store.PoolList.Acquire(factory);
+			item.PrefabReference = prefabObject;
 			onAnyElementChanged?.Invoke(item.gameObject, true);
 			return item;
 		}
@@ -73,13 +76,72 @@ namespace StrategyManagerModule
 			foreach (var s in stores.Values)
 				yield return s.GetRawList();
 		}
+		public void AddChangeListener<T>(GameObject prefab, Action<T, bool> onChange, bool invokeForExisting = false) where T : class, IStrategyPoolingElement
+		{
+			if (onChange == null) return;
+			if (prefab != null && stores.TryGetValue(prefab, out var findStore))
+			{
+				if (findStore is PoolElementList<T> findList && findList != null)
+				{
+					AddListener(findList);
+				}
+			}
+			else
+			{
+				foreach (var pair in stores)
+				{
+					var store = pair.Value;
 
-		public void AddAnyChangeListener(Action<object, bool> listener)
+					if (store is not PoolElementList<T> es) continue;
+					AddListener(es);
+				}
+			}
+
+			void AddListener(PoolElementList<T> list)
+			{
+				list.AddListener(onChange);
+				if (!invokeForExisting) return;
+
+				int count = list.Count;
+				for (int i = 0 ; i < count ; i++)
+				{
+					onChange(list[i], true);
+				}
+			}
+		}
+		public void RemoveChangeListener<T>(GameObject prefab, Action<T, bool> onChange) where T : class, IStrategyPoolingElement
+		{
+			if (onChange == null) return;
+			if (prefab != null && stores.TryGetValue(prefab, out var findStore))
+			{
+				if (findStore is PoolElementList<T> findList && findList != null)
+				{
+					RemoveListener(findList);
+				}
+			}
+			else
+			{
+				foreach (var pair in stores)
+				{
+					var store = pair.Value;
+
+					if (store is not PoolElementList<T> es) continue;
+					RemoveListener(es);
+				}
+			}
+
+			void RemoveListener(PoolElementList<T> list)
+			{
+				list.RemoveListener(onChange);
+			}
+		}
+
+		public void AddAnyChangeListener(Action<GameObject, bool> listener)
 		{
 			onAnyElementChanged -= listener;
 			onAnyElementChanged += listener;
 		}
-		public void RemoveAnyChangeListener(Action<object, bool> listener)
+		public void RemoveAnyChangeListener(Action<GameObject, bool> listener)
 		{
 			onAnyElementChanged -= listener;
 		}

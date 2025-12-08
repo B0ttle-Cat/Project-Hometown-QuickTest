@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6dc211c641483a148932ac3d89bb34e7, type: 3}
   m_Name: "\uAE30\uACC4_\uCD08\uB300\uD615_\uC774\uB3D9\uC2DD\uAD70\uC218\uACF5\uC7A5"
   m_EditorClassIdentifier: Assembly-CSharp::UnitProfileObject
-  unitPrefab: {fileID: 2412714360648279035, guid: c24ad0c1779da7e4d8874d4dad393a64, type: 3}
+  prefab: {fileID: 2412714360648279035, guid: c24ad0c1779da7e4d8874d4dad393a64, type: 3}
   unitKey: 1420
   displayName: "XFW-SS-NM \uD5E4\uD30C\uC774\uC2A4\uD1A0\uC2A4 \uC774\uB3D9\uC2DD
     \uAD70\uC218\uACF5\uC7A5"

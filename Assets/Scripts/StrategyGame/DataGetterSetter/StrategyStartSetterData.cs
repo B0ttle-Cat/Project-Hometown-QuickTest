@@ -212,7 +212,7 @@ namespace StrategyManagerModule
 			public Vector3 rotation;
 
 #if UNITY_EDITOR
-			[ToggleGroup("showEdit","Transform")]
+			[ToggleGroup("showEdit","EditTransform")]
 			public bool showEdit;
 			private void Clear_factionName()
 			{
@@ -334,13 +334,16 @@ namespace StrategyManagerModule
 
 			public readonly string DisplayName()
 			{
-				return unitProfile != null ? unitProfile.displayName : StrategyManager.Key2UnitInfo.GetAsset(unitKey).DisplayName;
+				return unitProfile != null ? unitProfile.displayName : StrategyManager.Key2Unit.GetAsset(unitKey).DisplayName;
 			}
 			public readonly UnitProfileObject GetUnitProfile
 			{
 				get
 				{
-					return (unitKey != UnitKey.None || unitProfile == null) ? StrategyManager.Key2UnitInfo.GetAsset(unitKey).UnitProfileObject : unitProfile;
+					return (unitKey != UnitKey.None || unitProfile == null)
+						? 
+						StrategyManager.Key2Unit.GetAsset(unitKey).UnitProfileObject 
+						: unitProfile;
 				}
 			}
 		}

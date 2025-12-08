@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6dc211c641483a148932ac3d89bb34e7, type: 3}
   m_Name: "\uC778\uB958_\uBCD1\uC0AC_\uC5ED\uC7A5\uBCF4\uBCD1"
   m_EditorClassIdentifier: Assembly-CSharp::UnitProfileObject
-  unitPrefab: {fileID: 2955553336258791319, guid: ac5d965af1d42ee4e8cb9a7c2ef2e745, type: 3}
+  prefab: {fileID: 2955553336258791319, guid: ac5d965af1d42ee4e8cb9a7c2ef2e745, type: 3}
   unitKey: 2113
   displayName: "\uC5ED\uC7A5\uBCF4\uBCD1"
   weaponType: 0

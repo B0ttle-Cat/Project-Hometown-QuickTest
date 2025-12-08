@@ -252,38 +252,40 @@ namespace StrategyManagerModule
 			StrategyStartSetterData.FactionData[] factions,
 			StrategyStartSetterData.OperationData[] operations)
 		{
-			if (target.onShowUnitPreview && unit.GetUnitProfile != null && unit.GetUnitProfile.prefab != null)
+			if (!target.onShowUnitPreview) return;
+			var profile = unit.GetUnitProfile;
+			if (profile == null) return;
+			if (profile.prefab == null) return;
+
+			GameObject prefab = unit.GetUnitProfile.prefab;
+			MeshFilter mf = prefab.GetComponentInChildren<MeshFilter>();
+			MeshRenderer mr = prefab.GetComponentInChildren<MeshRenderer>();
+
+			if (mf != null && mr != null)
 			{
-				GameObject prefab = unit.GetUnitProfile.prefab;
-				MeshFilter mf = prefab.GetComponentInChildren<MeshFilter>();
-				MeshRenderer mr = prefab.GetComponentInChildren<MeshRenderer>();
+				Mesh mesh = mf.sharedMesh;
+				Material mat = mr.sharedMaterial;
 
-				if (mf != null && mr != null)
+				if (mesh != null && mat != null)
 				{
-					Mesh mesh = mf.sharedMesh;
-					Material mat = mr.sharedMaterial;
-
-					if (mesh != null && mat != null)
-					{
-						Matrix4x4 matrix = Matrix4x4.TRS(unit.position, Quaternion.Euler(unit.rotation), prefab.transform.localScale);
-						Graphics.DrawMesh(mesh, matrix, mat, 0);
-					}
+					Matrix4x4 matrix = Matrix4x4.TRS(unit.position, Quaternion.Euler(unit.rotation), prefab.transform.localScale);
+					Graphics.DrawMesh(mesh, matrix, mat, 0);
 				}
-
-				string label = $"{index:00} :: {unit.unitKey}";
-				Color factionColor = Color.black;
-				if (unit.factionID >= 0)
-				{
-					var faction = factions[unit.factionID];
-					factionColor = faction.factionColor;
-				}
-				if (unit.belongedOperation >= 0)
-				{
-					var operation = operations[unit.belongedOperation];
-					label = $"{index:00}: {unit.unitKey}\n{operation.teamName}";
-				}
-				DrawLabel(unit.position + Vector3.down, label, factionColor);
 			}
+
+			string label = $"{index:00} :: {unit.unitKey}";
+			Color factionColor = Color.black;
+			if (unit.factionID >= 0)
+			{
+				var faction = factions[unit.factionID];
+				factionColor = faction.factionColor;
+			}
+			if (unit.belongedOperation >= 0)
+			{
+				var operation = operations[unit.belongedOperation];
+				label = $"{index:00}: {unit.unitKey}\n{operation.teamName}";
+			}
+			DrawLabel(unit.position + Vector3.down, label, factionColor);
 		}
 	}
 #endif

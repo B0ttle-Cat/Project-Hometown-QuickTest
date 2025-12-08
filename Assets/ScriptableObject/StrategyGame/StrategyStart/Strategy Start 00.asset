@@ -281,7 +281,7 @@ MonoBehaviour:
       showEdit: 0
     - unitKey: 1100
       unitProfile: {fileID: 0}
-      factionID: 0
+      factionID: 1
       belongedOperation: 0
       visiteSectorID: 0
       position: {x: 0, y: 0, z: 10}
@@ -296,8 +296,8 @@ MonoBehaviour:
     - captureSectorID: 0
       captureFactionID: 0
       captureProgress: 1
-    - captureSectorID: 0
-      captureFactionID: 0
+    - captureSectorID: 2
+      captureFactionID: 1
       captureProgress: 1
     sectorLinkDatas:
     - sectorA: Sector_00
@@ -334,5 +334,5 @@ MonoBehaviour:
       waypoint: []
     factionRelations:
     - factionA: Faction_00
-      relationType: 0
+      relationType: 2
       factionB: Faction_01

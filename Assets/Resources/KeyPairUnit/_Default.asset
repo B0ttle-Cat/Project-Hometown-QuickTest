@@ -9,12 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01138e3740eb94e45849d76ac51ac1b8, type: 3}
+  m_Script: {fileID: 11500000, guid: 139bfa627dd99054cbc36567229e920a, type: 3}
   m_Name: _Default
   m_EditorClassIdentifier: Assembly-CSharp::KeyPairUnitName
   chains:
-  - {fileID: 11400000, guid: 8d3fdc4034f2ce948aa0abbfd60c7275, type: 2}
   - {fileID: 11400000, guid: 22176084616cb6740b5d47dfacc076bb, type: 2}
+  - {fileID: 11400000, guid: 8d3fdc4034f2ce948aa0abbfd60c7275, type: 2}
   - {fileID: 11400000, guid: 1c5c47247f7a8a84983c1092875aeb3b, type: 2}
   prefix: 
   suffix: 
