@@ -4,6 +4,7 @@ using StrategyManagerModule;
 
 using UnityEngine;
 
+[RequireComponent(typeof(ProjectileMovement))]
 public partial class ProjectileObject : MonoBehaviour
 {
 	[SerializeField, InlineProperty, HideLabel]

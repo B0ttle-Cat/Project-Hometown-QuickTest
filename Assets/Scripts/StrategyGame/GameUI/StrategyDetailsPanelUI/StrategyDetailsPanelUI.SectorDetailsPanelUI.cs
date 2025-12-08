@@ -639,7 +639,7 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 			{
 				if (facilitiesSlots.Count == 0)
 				{
-					KeyPair.FindPairChain("Facilities List", out var slotParent);
+					KeyPair.FindPairChain("Facilities PoolList", out var slotParent);
 
 					for (int i = 0 ; i < slotSize ; i++)
 					{

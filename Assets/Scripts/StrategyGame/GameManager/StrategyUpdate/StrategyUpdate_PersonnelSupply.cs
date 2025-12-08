@@ -11,7 +11,7 @@
 
 //		protected override void Start()
 //		{
-//			updateList = new List<ResourcesSupply>();
+//			updateList = new PoolList<ResourcesSupply>();
 //			var activeList = StrategyManager.Collector.SectorList;
 //			int length = activeList.Count;
 //			for (int i = 0 ; i < length ; i++)
