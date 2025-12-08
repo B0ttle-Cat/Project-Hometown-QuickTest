@@ -1,9 +1,10 @@
 ﻿public partial class StrategyGamePlayData // WeaponType & ProtectionType
 {
-    public enum WeaponType : byte
+	public enum WeaponType : byte
 	{
+		None = 1,     // 무기 없음
 		일반 = 0,     // 상성표: 무효 |<< (--) (- ) (  ) (+ ) (++) >>|유효
-					  // 대미지%	  |<< (20) (50) (100) (200) (300) >>|
+					// 대미지%	  |<< (20) (50) (100) (200) (300) >>|
 		관통,         // 경장갑(  ) | 중장갑(+ ) | 역장(- ) | 건물(  )
 		폭발,         // 경장갑(+ ) | 중장갑(  ) | 역장(- ) | 건물(  )
 

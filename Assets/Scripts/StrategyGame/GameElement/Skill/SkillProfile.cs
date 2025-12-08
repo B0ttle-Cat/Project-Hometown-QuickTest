@@ -22,9 +22,9 @@ public class SkillProfile : ScriptableObject
 		Debug.Log("SkillProfile Execute");
 		if (skillPrefab != null)
 		{
-			Vector3 startPos = StrategyManager.Collector.FindUnit(context.CasterUnitID).transform.position;
+			Vector3 startPos = StrategyManager.Collector.Find<UnitObject>(context.CasterUnitID).transform.position;
 			Vector3 targetPos = context.TargetUnitID >= 0
-				? StrategyManager.Collector.FindUnit(context.TargetUnitID).transform.position
+				? StrategyManager.Collector.Find<UnitObject>(context.TargetUnitID).transform.position
 				: context.TargetPos;
 
 			Vector3 spawnPos = startPos;

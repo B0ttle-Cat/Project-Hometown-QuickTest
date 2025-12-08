@@ -35,7 +35,7 @@ public partial class UnitObject : MonoBehaviour
 	[ShowInInspector, FoldoutGroup("UnitData"), ReadOnly]
 	public Faction Faction
 	{
-		get => StrategyManager.IsNotReadyScene ? null : StrategyManager.Collector.FindFaction(FactionID);
+		get => StrategyManager.IsNotReadyScene ? null : StrategyManager.Collector.Find<Faction>(FactionID);
 	}
 
 	public void Init(string displayName = "", int factionID = -1)
@@ -64,7 +64,6 @@ public partial class UnitObject : MonoBehaviour
 			displayName = data.displayName,
 			unitID = unitElementID,
 			factionID = factionID,
-			weaponType = data.weaponType,
 			protectType = data.protectType,
 		});
 		sector = new UnitData.ConnectSector(new());
@@ -72,8 +71,6 @@ public partial class UnitObject : MonoBehaviour
 	}
 	public void Init(in StrategyStartSetterData.UnitData data) // UnitData
 	{
-		int factionID = StrategyManager.Collector.FactionNameToID(data.factionName);
-
 		UnitProfileObject profileObj = data.GetUnitProfile;
 
 		profile = new UnitData.Profile(new()
@@ -81,11 +78,10 @@ public partial class UnitObject : MonoBehaviour
 			unitKey = profileObj.unitKey,
 			displayName = profileObj.displayName,
 			unitID = unitElementID,
-			factionID = factionID,
-			weaponType = profileObj.weaponType,
+			factionID = data.factionID,
 			protectType = profileObj.protectType,
 		});
-		sector = new UnitData.ConnectSector(new(data.visiteSectorName));
+		sector = new UnitData.ConnectSector(new(data.visiteSectorID));
 		InitOther(profileObj);
 	}
 

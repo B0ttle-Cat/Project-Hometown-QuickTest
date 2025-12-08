@@ -10,7 +10,7 @@ public static class StrategyElementFactory
 	public static UnitObject Instantiate(in StrategyStartSetterData.UnitData setterUnitData)
 	{
 		var unitProfile = setterUnitData.GetUnitProfile;
-		int factionId = StrategyManager.Collector.FactionNameToID(setterUnitData.factionName);
+		int factionId = setterUnitData.factionID;
 		Vector3 position = setterUnitData.position;
 		Quaternion rotation = Quaternion.Euler(setterUnitData.rotation);
 
@@ -27,7 +27,7 @@ public static class StrategyElementFactory
 	public static UnitObject Instantiate(UnitProfileObject profile, int factionID = -1, Vector3? position = null, Quaternion? rotation = null)
 	{
 		if (profile == null) return null;
-		var prefab = profile.unitPrefab;
+		var prefab = profile.prefab;
 		if (prefab == null) return null;
 
 		var newObject = GameObject.Instantiate(prefab, position ?? Vector3.zero, rotation ?? Quaternion.identity);
@@ -38,11 +38,11 @@ public static class StrategyElementFactory
 			return null;
 		}
 
-		StrategyManager.Collector.AddElement<UnitObject>(unitObject);
+		StrategyManager.Collector.Add<UnitObject>(unitObject);
 		unitObject.Init(profile, factionID);
 		newObject.name = $"{profile.displayName}_{unitObject.UnitID:00}";
 
-		if (StrategyManager.Collector.TryFindFaction(factionID, out var faction))
+		if (StrategyManager.Collector.TryFind<Faction>(factionID, out var faction))
 		{
 			faction.API_UnitCounter(profile.유닛_인력);
 		}
@@ -52,23 +52,23 @@ public static class StrategyElementFactory
 	{
 		if (unitObject == null) return;
 		
-		if (StrategyManager.Collector.TryFindFaction(unitObject.FactionID, out var faction))
+		if (StrategyManager.Collector.TryFind<Faction>(unitObject.FactionID, out var faction))
 		{
 			faction.API_UnitCounter(-unitObject.StatsData.GetValue(StatsType.유닛_인력));
 		}
 		unitObject.Deinit();
-		StrategyManager.Collector.RemoveElement<UnitObject>(unitObject);
+		StrategyManager.Collector.Remove<UnitObject>(unitObject);
 		GameObject.Destroy(unitObject.gameObject);
 	}
 	#endregion
 	#region OperationObject 
 	public static OperationObject Instantiate(in StrategyStartSetterData.OperationData setterOperationData)
 	{
-		int factionID = StrategyManager.Collector.FactionNameToID(setterOperationData.factionName);
+		int factionID = setterOperationData.factionID;
 		string teamName = setterOperationData.teamName;
-		string visiteSectorName = setterOperationData.visiteSectorName;
+		int visiteSectorID = setterOperationData.visiteSectorID;
 
-		var sector = StrategyManager.Collector.FindSector(visiteSectorName);
+		var sector = StrategyManager.Collector.Find<SectorObject>(visiteSectorID);
 		if (sector == null) return null;
 		return Instantiate(sector, new SpawnTroopsInfo(factionID, null), teamName);
 	}
@@ -84,7 +84,7 @@ public static class StrategyElementFactory
 		var newObject = new GameObject();
 		var newOperation = newObject.AddComponent<OperationObject>();
 
-		StrategyManager.Collector.AddElement<OperationObject>(newOperation);
+		StrategyManager.Collector.Add<OperationObject>(newOperation);
 		newObject.name = $"OperationObject_{newOperation.OperationID}";
 		newObject.transform.position = sectorCenter;
 		if (string.IsNullOrWhiteSpace(teamName))
@@ -117,7 +117,7 @@ public static class StrategyElementFactory
 		if (operation == null) return;
 
 		operation.DeInit();
-		StrategyManager.Collector.RemoveElement<OperationObject>(operation);
+		StrategyManager.Collector.Remove<OperationObject>(operation);
 		GameObject.Destroy(operation.gameObject);
 	}
 	#endregion

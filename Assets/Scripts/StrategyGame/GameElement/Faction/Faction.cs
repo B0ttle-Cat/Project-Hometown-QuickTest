@@ -65,11 +65,11 @@ public partial class Faction : IEquatable<Faction>, IDisposable
 
 	public static bool TryFindFaction(string factionName, out Faction find)
 	{
-		return StrategyManager.Collector.TryFindElement<Faction>(f => f.factionName == factionName, out find);
+		return StrategyManager.Collector.TryFind<Faction>(f => f.factionName == factionName, out find);
 	}
 	public static bool FindFaction(int factionID, out Faction find)
 	{
-		return StrategyManager.Collector.TryFindElement<Faction>(f => f.factionID == factionID, out find);
+		return StrategyManager.Collector.TryFind<Faction>(f => f.factionID == factionID, out find);
 	}
 	public override bool Equals(object obj)
 	{
@@ -94,7 +94,7 @@ public partial class Faction : IEquatable<Faction>, IDisposable
 		return !(left == right);
 	}
 }
-public partial class Faction : IStrategyElement
+public partial class Faction : IStrategyElement, IStrategyStartGame
 {
 	public IStrategyElement ThisElement => this;
 	public bool IsInCollector { get; set; }

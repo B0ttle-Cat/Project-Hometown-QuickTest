@@ -1,4 +1,4 @@
-﻿public partial class UnitObject : IStrategyElement
+﻿public partial class UnitObject : IStrategyElement, IStrategyStartGame
 {
 	int unitElementID;
 	public IStrategyElement ThisElement => this;

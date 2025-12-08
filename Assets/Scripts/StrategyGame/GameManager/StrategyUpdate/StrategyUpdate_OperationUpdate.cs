@@ -9,7 +9,7 @@
 		protected override void Start()
 		{
 			UpdateList = new();
-			var iList = StrategyManager.Collector.OperationList;
+			var iList = StrategyManager.Collector.GetList<OperationObject>();
 			foreach (var item in iList)
 			{
 				if (item == null) continue;

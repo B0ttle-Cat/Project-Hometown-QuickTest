@@ -147,7 +147,7 @@ public partial class StrategyControlPanelUI // SpawnTroops
 					// 편제 허용량 초과
 					return;
 				}
-				if (!StrategyManager.Collector.TryFindFaction(Value.FactionID, out Faction faction))
+				if (!StrategyManager.Collector.TryFind(Value.FactionID, out Faction faction))
 				{
 					// 유효하지 않은 세력
 					return;

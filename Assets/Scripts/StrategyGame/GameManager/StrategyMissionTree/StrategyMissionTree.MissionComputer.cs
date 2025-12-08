@@ -145,7 +145,7 @@ public partial class StrategyMissionTree // MissionCompute
 			int computeCount = 0;
 			if (targets == null || targets.Length == 0) return computeCount;
 
-			StrategyManager.Collector.ForEachUnit(unit =>
+			StrategyManager.Collector.GetList<UnitObject>().ForEach(unit =>
 			{
 				if (targets.Contains(unit.UnitName))
 				{
@@ -199,7 +199,7 @@ public partial class StrategyMissionTree // MissionCompute
 		private int ComputeCount(in ItemStruct itemStruct)
 		{
 			int computeCount = 0;
-			StrategyManager.Collector.ForEachSector(cb =>
+			StrategyManager.Collector.GetList<SectorObject>().ForEach(cb =>
 			{
 				if(cb.CaptureFactionID == StrategyManager.PlayerFactionID)
 				{
@@ -256,7 +256,7 @@ public partial class StrategyMissionTree // MissionCompute
 		{
 			var targetList = itemStruct.targets.ToList();
 			int computeCount = 0;
-			StrategyManager.Collector.ForEachSector(cb =>
+			StrategyManager.Collector.GetList<SectorObject>().ForEach(cb =>
 			{
 				if (cb.CaptureFactionID == StrategyManager.PlayerFactionID 
 					&& targetList.Remove(cb.SectorName))

@@ -63,7 +63,7 @@ public partial class OperationObject // Organization
 		for (int i = 0 ; i < length ; i++)
 		{
 			int unitID = unitList[i];
-			if (!StrategyManager.Collector.TryFindUnit(unitID, out var unitObj)) continue;
+			if (!StrategyManager.Collector.TryFind<UnitObject>(unitID, out var unitObj)) continue;
 
 			if (AddUnitObject(unitObj, false))
 			{

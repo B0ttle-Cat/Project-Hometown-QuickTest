@@ -11,11 +11,7 @@ public partial class StrategyUpdate
 		}
 		protected override void Start()
 		{
-			StrategyManager.Collector.AddChangeListener<UnitObject>(OnChangeValue, ForeachAll);
-			void ForeachAll(IStrategyElement element)
-			{
-				OnChangeValue(element, true);
-			}
+			StrategyManager.Collector.AddChangeListener<UnitObject>(OnChangeValue, true);
 		}
 		private void OnChangeValue(IStrategyElement element, bool added)
 		{

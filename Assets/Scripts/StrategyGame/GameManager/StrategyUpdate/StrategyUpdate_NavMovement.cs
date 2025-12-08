@@ -14,11 +14,7 @@ public partial class StrategyUpdate
 		{
 			UpdateList = new();
 
-			StrategyManager.Collector.AddChangeListener<UnitObject>(OnChangeValue, ForeachAll);
-		}
-		private void ForeachAll(IStrategyElement element)
-		{
-			OnChangeValue(element, true);
+			StrategyManager.Collector.AddChangeListener<UnitObject>(OnChangeValue, true);
 		}
 		private void OnChangeValue(IStrategyElement element, bool added)
 		{

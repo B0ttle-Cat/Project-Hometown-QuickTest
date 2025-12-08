@@ -12,7 +12,7 @@ public partial class SkillObject : MonoBehaviour
 	public int SkillID { get => skillID; set => skillID = value; }
 	public UnitObject CasterUnit
 	{
-		get => StrategyManager.Collector.FindUnit(casterUnitID);
+		get => StrategyManager.Collector.Find<UnitObject>(casterUnitID);
 		set => casterUnitID = value == null ? -1 : value.UnitID;
 	}
 
@@ -22,7 +22,7 @@ public partial class SkillObject : MonoBehaviour
 	private int skillInstanceID;
 }
 
-public partial class SkillObject : IStrategyElement
+public partial class SkillObject : IStrategyElement, IStrategyStartGame
 {
 	public bool IsInCollector { get; set; }
 

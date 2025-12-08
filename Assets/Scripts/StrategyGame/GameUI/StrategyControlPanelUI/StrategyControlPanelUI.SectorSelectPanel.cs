@@ -196,7 +196,7 @@ public partial class StrategyControlPanelUI // SectorSelectPanel
 					iconList[i] = null;
 				}
 			}
-			private void SetIconList(Transform parent, GameObject sample, StrategyGamePlayData.EffectsFlag effectFlag)
+			private void SetIconList(Transform parent, GameObject sample, StrategyGamePlayData.StatusEffectsFlag effectFlag)
 			{
 				if (iconList == null) iconList = new GameObject[32];
 				int effectFlagValue = (int)effectFlag;
@@ -208,7 +208,7 @@ public partial class StrategyControlPanelUI // SectorSelectPanel
 						GameObject activeIcon = iconList[i];
 						if (activeIcon == null)
 						{
-							StrategyGamePlayData.EffectsFlag flag = (StrategyGamePlayData.EffectsFlag)flagToCheck;
+							StrategyGamePlayData.StatusEffectsFlag flag = (StrategyGamePlayData.StatusEffectsFlag)flagToCheck;
 							activeIcon = GameObject.Instantiate(sample, parent);
 							Image iconImage = activeIcon.GetComponentInChildren<Image>();
 							iconImage.sprite = StrategyManager.Key2Sprite[$"Icon_status_effect_{flag}"] ?? iconImage.sprite;

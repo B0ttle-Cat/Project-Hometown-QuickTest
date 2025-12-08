@@ -48,7 +48,7 @@ public class StrategyStartSetterDataEditor : OdinEditor
 		{
 			foreach (var capture in captureDatas)
 			{
-				DrawCapture(capture, factionDatas);
+				DrawCapture(capture, sectorDatas, factionDatas);
 			}
 		}
 		if (networkDatas != null)
@@ -72,22 +72,23 @@ public class StrategyStartSetterDataEditor : OdinEditor
 	private void DrawSectorLabel(StrategyStartSetterData.SectorData sector)
 	{
 		// 실제 씬 오브젝트 찾기 (씬에 존재한다고 가정)
-		var obj = GameObject.Find(sector.profileData.sectorName);
+		var obj = GameObject.Find("Map/"+sector.profileData.sectorName);
 		if (obj == null)
 			return;
 		DrawLabel(obj.transform.position, sector.profileData.sectorName, Color.black);
 	}
-	private void DrawCapture(StrategyStartSetterData.CaptureData captureData, StrategyStartSetterData.FactionData[] factionDatas)
+	private void DrawCapture(StrategyStartSetterData.CaptureData captureData, StrategyStartSetterData.SectorData[] sectorDatas, StrategyStartSetterData.FactionData[] factionDatas)
 	{
 		// 실제 씬 오브젝트 찾기 (씬에 존재한다고 가정)
-		var obj = GameObject.Find(captureData.captureSector);
+		string sectorName = sectorDatas[captureData.captureSectorID].profileData.sectorName;
+		var obj = GameObject.Find("Map/"+sectorName);
 		if (obj == null) return;
 		// 점령 세력 색상 추출
-		var faction = factionDatas.FirstOrDefault(f => f.factionName == captureData.captureFaction);
+		var faction = factionDatas[captureData.captureFactionID];
 		Color color = faction.factionColor;
 		if (color == default) return;
 
-		DrawLabel(obj.transform.position, Vector3.down, $"Capture: {captureData.captureFaction} {(int)(captureData.captureProgress * 100)}%", color);
+		DrawLabel(obj.transform.position, Vector3.down, $"Capture: {faction.factionName} {(int)(captureData.captureProgress * 100)}%", color);
 	}
 	private void DrawNetworkLink(StrategyStartSetterData target, StrategyStartSetterData.SectorLinkData net, StrategyStartSetterData.Data data)
 	{
@@ -98,8 +99,8 @@ public class StrategyStartSetterDataEditor : OdinEditor
 		var sectorB = data.sectorDatas.FirstOrDefault(s => s.profileData.sectorName == net.sectorB);
 
 		// 실제 씬 오브젝트 찾기 (씬에 존재한다고 가정)
-		var objA = GameObject.Find(sectorA.profileData.sectorName);
-		var objB = GameObject.Find(sectorB.profileData.sectorName);
+		var objA = GameObject.Find("Map/"+sectorA.profileData.sectorName);
+		var objB = GameObject.Find("Map/"+sectorB.profileData.sectorName);
 
 		if (objA == null || objB == null)
 			return;
@@ -249,9 +250,9 @@ public class StrategyStartSetterDataEditor : OdinEditor
 		StrategyStartSetterData.FactionData[] factions,
 		StrategyStartSetterData.OperationData[] operations)
 	{
-		if (target.onShowUnitPreview && unit.GetUnitProfile != null && unit.GetUnitProfile.unitPrefab != null)
+		if (target.onShowUnitPreview && unit.GetUnitProfile != null && unit.GetUnitProfile.prefab != null)
 		{
-			GameObject prefab = unit.GetUnitProfile.unitPrefab;
+			GameObject prefab = unit.GetUnitProfile.prefab;
 			MeshFilter mf = prefab.GetComponentInChildren<MeshFilter>();
 			MeshRenderer mr = prefab.GetComponentInChildren<MeshRenderer>();
 
@@ -269,17 +270,15 @@ public class StrategyStartSetterDataEditor : OdinEditor
 
 			string label = $"{index:00} :: {unit.unitKey}";
 			Color factionColor = Color.black;
-			if (!string.IsNullOrWhiteSpace(unit.factionName))
+			if (unit.factionID>=0)
 			{
-				string unitFactionName = unit.factionName;
-				var faction = factions.Where(f => f.factionName.Equals(unitFactionName)).FirstOrDefault();
+				var faction = factions[unit.factionID];
 				factionColor = faction.factionColor;
 			}
-			if (!string.IsNullOrWhiteSpace(unit.belongedOperation))
+			if (unit.belongedOperation>=0)
 			{
-				string operationName = unit.belongedOperation;
-				var operation = operations.Where(f => f.teamName.Equals(operationName)).FirstOrDefault();
-				label = $"{index:00}: {unit.unitKey}\n{operationName}";
+				var operation = operations[unit.belongedOperation];
+				label = $"{index:00}: {unit.unitKey}\n{operation.teamName}";
 			}
 			DrawLabel(unit.position + Vector3.down, label, factionColor);
 		}

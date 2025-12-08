@@ -19,13 +19,13 @@ public partial class StrategyUpdate
         protected override void Dispose()
         {
 			captureTagList = null;
-			StrategyManager.Collector.RemoveOtherChangeListener<CaptureTag>(OnChangeCaptureTag);
+			StrategyManager.Collector.RemoveChangeListener<CaptureTag>(OnChangeCaptureTag);
 		}
 
         protected override void Start()
 		{
 			UpdateList = new List<CaptureUpdate>();
-			var list = StrategyManager.Collector.SectorList;
+			var list = StrategyManager.Collector.GetList<SectorObject>();
 			int length = list.Count;
 			for (int i = 0 ; i < length ; i++)
 			{
@@ -34,11 +34,7 @@ public partial class StrategyUpdate
 				UpdateList.Add(new CaptureUpdate(this,cb));
 			}
 
-			StrategyManager.Collector.AddOtherChangeListener<CaptureTag>(OnChangeCaptureTag, AllForeach);
-			void AllForeach(CaptureTag item)
-			{
-				OnChangeCaptureTag(item, true);
-			}
+			StrategyManager.Collector.AddChangeListener<CaptureTag>(OnChangeCaptureTag, true);
 		}
         private void OnChangeCaptureTag(CaptureTag item, bool added)
         {
@@ -241,9 +237,10 @@ public partial class StrategyUpdate
 				// => 우의 세력의 점수를 올린다.
 
 
-				Faction ownerFaction = StrategyManager.Collector.FindFaction( ownerFactionID);
-				Faction dominantFaction = StrategyManager.Collector.FindFaction( dominantFactionID);
-				Faction topFaction = StrategyManager.Collector.FindFaction(topPointFactionID);
+				var factionList = StrategyManager.Collector.GetList<Faction>();
+				Faction ownerFaction = factionList.Find( ownerFactionID);
+				Faction dominantFaction = factionList.Find( dominantFactionID);
+				Faction topFaction = factionList.Find(topPointFactionID);
 				if (ownerFaction == null) ownerFactionID = -1;
 				if (dominantFaction == null) dominantFactionID = -1;
 				if (topFaction == null) topPointFactionID = -1;
@@ -322,7 +319,7 @@ public partial class StrategyUpdate
 
 				float Delta(int faction, in float deltaTime)
 				{
-					Faction deltaFaction = StrategyManager.Collector.FindFaction(faction);
+					Faction deltaFaction = StrategyManager.Collector.Find<Faction>(faction);
 					float captureSpeed = deltaFaction == null ? 1 : Mathf.Max(deltaFaction.FactionStats.GetValue(StrategyGamePlayData.StatsType.세력_점령속도비율).Value, 0.1f);
 					float delta = (captureSpeed / captureTime) * deltaTime;
 					return delta;
@@ -346,7 +343,7 @@ public partial class StrategyUpdate
 
 			public void ColorUpdate(int colorFaction, float colorProgress)
 			{
-				if(StrategyManager.Collector.TryFindFaction(colorFaction, out var faction))
+				if(StrategyManager.Collector.TryFind<Faction>(colorFaction, out var faction))
 				{
 					sectorColor.UpdateColor(faction, colorProgress);
 				}

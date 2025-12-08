@@ -40,6 +40,8 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		[TitleGroup("MainData")]
 		public UnitData[] unitDatas;
 		[TitleGroup("MainData")]
+		public ProjectileData[] projectileDatas;
+		[TitleGroup("MainData")]
 		public OperationData[] operationDatas;
 		[TitleGroup("OtherData"), TableList]
 		public CaptureData[] captureDatas;
@@ -68,17 +70,17 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		[FoldoutGroup("@factionName")]
 		public Sprite factionIcon;
 
-		[FoldoutGroup("@factionName/Stats")] public int maxOperationPoint;
-		[FoldoutGroup("@factionName/Stats")] public int requireOperationPoint;
-		[FoldoutGroup("@factionName/Stats")] public int currentOperationPoint;
+		[FoldoutGroup("@factionName/StatsData")] public int maxOperationPoint;
+		[FoldoutGroup("@factionName/StatsData")] public int requireOperationPoint;
+		[FoldoutGroup("@factionName/StatsData")] public int currentOperationPoint;
 		[Space]
-		[FoldoutGroup("@factionName/Stats")] public int maxMaterialPoint;
-		[FoldoutGroup("@factionName/Stats")] public int currentMaterialPoint;
+		[FoldoutGroup("@factionName/StatsData")] public int maxMaterialPoint;
+		[FoldoutGroup("@factionName/StatsData")] public int currentMaterialPoint;
 		[Space]
-		[FoldoutGroup("@factionName/Stats")] public int maxElectricPoint;
-		[FoldoutGroup("@factionName/Stats")] public int currentElectricPoint;
+		[FoldoutGroup("@factionName/StatsData")] public int maxElectricPoint;
+		[FoldoutGroup("@factionName/StatsData")] public int currentElectricPoint;
 		[Space]
-		[FoldoutGroup("@factionName/Stats")] public int captureSpeed;
+		[FoldoutGroup("@factionName/StatsData")] public int captureSpeed;
 
 		[FoldoutGroup("@factionName")] public GameObject defaultUnitPrefab;
 
@@ -191,16 +193,16 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		[FoldoutGroup("@unitKey")]
 		[ValueDropdown("@GetFactionNames($property)")]
 		[InlineButton("Clear_factionName","Clear")]
-		public string factionName;
+		public int factionID;
 		[FoldoutGroup("@unitKey")]
 		[ValueDropdown("@GetOperationNames($property)")]
 		[InlineButton("Clear_belongedOperation","Clear")]
-		public string belongedOperation;
+		public int belongedOperation;
 		[FoldoutGroup("@unitKey")]
 		[ValueDropdown("@GetSectorNames($property)")]
 		[LabelText("SectorName")]
 		[InlineButton("Clear_visiteSectorName","Clear")]
-		public string visiteSectorName;
+		public int visiteSectorID;
 
 		[ToggleGroup("showEdit")]
 		public Vector3 position;
@@ -212,60 +214,90 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		public bool showEdit;
 		private void Clear_factionName()
 		{
-			factionName = "";
+			factionID = -1;
 		}
 		private void Clear_visiteSectorName()
 		{
-			visiteSectorName = "";
+			visiteSectorID = -1;
 		}
 		private void Clear_belongedOperation()
 		{
-			belongedOperation = "";
+			belongedOperation = -1;
 		}
-		private static IEnumerable<string> GetFactionNames(InspectorProperty property)
+		private static ValueDropdownList<int> GetFactionNames(InspectorProperty property)
 		{
+			ValueDropdownList<int> list = new ValueDropdownList<int>();
+
 			// 루트까지 올라감
 			var root = property.Tree.WeakTargets.FirstOrDefault() as StrategyStartSetterData;
 			if (root == null)
-				return new[] { "(No Parent Data)" };
+			{
+				list.Add("(No Parent Info)", -1);
+				return list;
+			}
 
 			var bases = root.data.factionDatas;
 			if (bases == null || bases.Length == 0)
-				return new[] { "(No Data)" };
+			{
+				list.Add("(No Info)", -1);
+				return list;
+			}
 
-			return bases.Select(x => x.factionName).Prepend("");
+			var items = bases.Select(x => x.factionName).ToList();
+			list.Add("", -1);
+			for (int i = 0 ; i < items.Count ; i++)
+			{
+				list.Add(items[i], i);
+			}
+
+			return list;
 		}
-		private static IEnumerable<string> GetSectorNames(InspectorProperty property)
+		private static ValueDropdownList<int> GetSectorNames(InspectorProperty property)
 		{
+			ValueDropdownList<int> list = new ValueDropdownList<int>();
+
 			// 루트까지 올라감
 			var root = property.Tree.WeakTargets.FirstOrDefault() as StrategyStartSetterData;
 			if (root == null)
-				return new[] { "(No Parent Data)" };
+			{
+				list.Add("(No Parent Info)", -1);
+				return list;
+			}
 
 			var bases = root.data.sectorDatas;
 			if (bases == null || bases.Length == 0)
-				return new[] { "(No Data)" };
+			{
+				list.Add("(No Info)", -1);
+				return list;
+			}
 
-			return bases.Select(x => x.profileData.sectorName).Prepend("");
+			var items = bases.Select(x => x.profileData.sectorName).ToList();
+			list.Add("", -1);
+			for (int i = 0 ; i < items.Count ; i++)
+			{
+				list.Add(items[i], i);
+			}
+
+			return list;
 		}
-		private static ValueDropdownList<string> GetOperationNames(InspectorProperty property)
+		private static ValueDropdownList<int> GetOperationNames(InspectorProperty property)
 		{
-			string factionName="";
-			ValueDropdownList<string> list = new ValueDropdownList<string>();
+			int factionID = -1;
+			ValueDropdownList<int> list = new ValueDropdownList<int>();
 
 			if (property.Parent != null && property.ParentValueProperty.ValueEntry != null)
 			{
 				var parent = property.ParentValueProperty.ValueEntry.WeakSmartValue;
 				if (parent != null && parent is UnitData unitData)
 				{
-					if (string.IsNullOrWhiteSpace(unitData.factionName))
+					if (unitData.factionID == -1)
 					{
-						list.Add("FactionName Is Empty", "");
+						list.Add("FactionName Is Empty", -1);
 						return list;
 					}
 					else
 					{
-						factionName = unitData.factionName;
+						factionID = unitData.factionID;
 					}
 				}
 			}
@@ -274,23 +306,24 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 			var root = property.Tree.WeakTargets.FirstOrDefault() as StrategyStartSetterData;
 			if (root == null)
 			{
-				list.Add("No Parent Data", "");
+				list.Add("No Parent Info", -1);
 				return list;
 			}
 			var bases = root.data.operationDatas;
 			if (bases == null || bases.Length == 0)
 			{
-				list.Add("No Data", "");
+				list.Add("No Info", -1);
 				return list;
 			}
 
-			bases.Where(x => x.factionName.Equals(factionName)).Select(x => x.teamName).Prepend("");
+			bases.Where(x => x.factionID.Equals(factionID)).Select(x => x.teamName);
 			int length = bases.Length;
+			list.Add("", -1);
 			for (int i = 0 ; i < length ; i++)
 			{
-				if (!bases[i].factionName.Equals(factionName)) continue;
+				if (!bases[i].factionID.Equals(factionID)) continue;
 				if (string.IsNullOrWhiteSpace(bases[i].teamName)) continue;
-				list.Add(bases[i].teamName);
+				list.Add(bases[i].teamName, i);
 			}
 			return list;
 		}
@@ -310,54 +343,107 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 		}
 	}
 	[Serializable]
+	public struct ProjectileData
+	{
+		public ProjectileKey projectilKey;
+		public int count;
+		public Info[] infos;
+		public readonly Info this[int index] => infos[index];
+		[Serializable]
+		public struct Info {
+			public int orderInSetterIndex;
+			public int targetInSetterIndex;
+			public Vector3 startPosition;
+			public Vector3 targetPosition;
+
+			public Vector3 position;
+			public Quaternion rotation;
+			public Vector3 velocity;
+			
+			public float lifeTime;
+			public int piercingPoint;
+		}
+	}
+
+	[Serializable]
 	public struct OperationData
 	{
 		[FoldoutGroup("@teamName")]
 		public string teamName;
 		[FoldoutGroup("@teamName")]
 		[ValueDropdown("@GetFactionNames($property)")]
-		[InlineButton("Clear_factionName","Clear")]
-		public string factionName;
+		[InlineButton("Clear_faction","Clear")]
+		public int factionID;
 
 		[FoldoutGroup("@teamName")]
 		[ValueDropdown("@GetSectorNames($property)")]
 		[LabelText("SectorName")]
 		[InlineButton("Clear_visiteSectorName","Clear")]
-		public string visiteSectorName;
+		public int visiteSectorID;
 #if UNITY_EDITOR
-		private void Clear_factionName()
+		private void Clear_faction()
 		{
-			factionName = "";
+			factionID = -1;
 		}
 		private void Clear_visiteSectorName()
 		{
-			visiteSectorName = "";
+			visiteSectorID = -1;
 		}
-		private static IEnumerable<string> GetFactionNames(InspectorProperty property)
+		private static ValueDropdownList<int> GetFactionNames(InspectorProperty property)
 		{
+			ValueDropdownList<int> list = new ValueDropdownList<int>();
+
 			// 루트까지 올라감
 			var root = property.Tree.WeakTargets.FirstOrDefault() as StrategyStartSetterData;
 			if (root == null)
-				return new[] { "(No Parent Data)" };
+			{
+				list.Add("(No Parent Info)", -1);
+				return list;
+			}
 
 			var bases = root.data.factionDatas;
 			if (bases == null || bases.Length == 0)
-				return new[] { "(No Data)" };
+			{
+				list.Add("(No Info)", -1);
+				return list;
+			}
 
-			return bases.Select(x => x.factionName).Prepend("");
+			var items = bases.Select(x => x.factionName).ToList();
+			list.Add("", -1);
+			for (int i = 0 ; i < items.Count ; i++)
+			{
+				list.Add(items[i], i);
+			}
+
+			return list;
 		}
-		private static IEnumerable<string> GetSectorNames(InspectorProperty property)
+		private static ValueDropdownList<int> GetSectorNames(InspectorProperty property)
 		{
+			ValueDropdownList<int> list = new ValueDropdownList<int>();
+
 			// 루트까지 올라감
 			var root = property.Tree.WeakTargets.FirstOrDefault() as StrategyStartSetterData;
 			if (root == null)
-				return new[] { "(No Parent Data)" };
+			{
+				list.Add("(No Parent Info)", -1);
+				return list;
+			}
 
 			var bases = root.data.sectorDatas;
 			if (bases == null || bases.Length == 0)
-				return new[] { "(No Data)" };
+			{
+				list.Add("(No Info)", -1);
+				return list;
+			}
 
-			return bases.Select(x => x.profileData.sectorName).Prepend("");
+			var items = bases.Select(x => x.profileData.sectorName).ToList();
+			list.Add("", -1);
+			for (int i = 0 ; i < items.Count ; i++)
+			{
+				list.Add(items[i], i);
+			}
+
+			return list;
 		}
 #endif
 
@@ -366,9 +452,9 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 	public struct CaptureData
 	{
 		[ValueDropdown("@GetSectorNames($property)")]
-		public string captureSector;
-		[ValueDropdown("@GetCaptureFactionNames($property)")]
-		public string captureFaction;
+		public int captureSectorID;
+		[ValueDropdown("@GetFactionNames($property)")]
+		public int captureFactionID;
 		[Range(0f,1f)]
 		public float captureProgress;
 		public struct CaptureProgress
@@ -377,32 +463,61 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 			public bool isFixed;
 		}
 #if UNITY_EDITOR
-		private static IEnumerable<string> GetSectorNames(InspectorProperty property)
+		private static ValueDropdownList<int> GetSectorNames(InspectorProperty property)
 		{
+			ValueDropdownList<int> list = new ValueDropdownList<int>();
+
 			// 루트까지 올라감
 			var root = property.Tree.WeakTargets.FirstOrDefault() as StrategyStartSetterData;
 			if (root == null)
-				return new[] { "(No Parent Data)" };
+			{
+				list.Add("(No Parent Info)", -1);
+				return list;
+			}
 
 			var bases = root.data.sectorDatas;
 			if (bases == null || bases.Length == 0)
-				return new[] { "(No Data)" };
+			{
+				list.Add("(No Info)", -1);
+				return list;
+			}
 
-			return bases.Select(x => x.profileData.sectorName).Prepend("");
+			var items = bases.Select(x => x.profileData.sectorName).ToList();
+			list.Add("", -1);
+			for (int i = 0 ; i < items.Count ; i++)
+			{
+				list.Add(items[i], i);
+			}
+
+			return list;
 		}
-		// Odin의 PropertyContext를 통해 상위 오브젝트 접근
-		private static IEnumerable<string> GetCaptureFactionNames(InspectorProperty property)
+		private static ValueDropdownList<int> GetFactionNames(InspectorProperty property)
 		{
+			ValueDropdownList<int> list = new ValueDropdownList<int>();
+
 			// 루트까지 올라감
 			var root = property.Tree.WeakTargets.FirstOrDefault() as StrategyStartSetterData;
 			if (root == null)
-				return new[] { "(No Parent Data)" };
+			{
+				list.Add("(No Parent Info)", -1);
+				return list;
+			}
 
 			var bases = root.data.factionDatas;
 			if (bases == null || bases.Length == 0)
-				return new[] { "(No Data)" };
+			{
+				list.Add("(No Info)", -1);
+				return list;
+			}
 
-			return bases.Select(x => x.factionName).Prepend("");
+			var items = bases.Select(x => x.factionName).ToList();
+			list.Add("", -1);
+			for (int i = 0 ; i < items.Count ; i++)
+			{
+				list.Add(items[i], i);
+			}
+
+			return list;
 		}
 #endif
 	}
@@ -421,19 +536,33 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 #if UNITY_EDITOR
 		[ShowInInspector]
 		public bool onShowEditPoint { get; set; }
-		private static IEnumerable<string> GetSectorNames(InspectorProperty property)
+		private static ValueDropdownList<int> GetSectorNames(InspectorProperty property)
 		{
+			ValueDropdownList<int> list = new ValueDropdownList<int>();
+
 			// 루트까지 올라감
 			var root = property.Tree.WeakTargets.FirstOrDefault() as StrategyStartSetterData;
 			if (root == null)
-				return new[] { "(No Parent Data)" };
+			{
+				list.Add("(No Parent Info)", -1);
+				return list;
+			}
 
 			var bases = root.data.sectorDatas;
 			if (bases == null || bases.Length == 0)
-				return new[] { "(No Data)" };
-			var test = new string[1] { ""};
+			{
+				list.Add("(No Info)", -1);
+				return list;
+			}
 
-			return bases.Select(x => x.profileData.sectorName).Prepend("");
+			var items = bases.Select(x => x.profileData.sectorName).ToList();
+			list.Add("", -1);
+			for (int i = 0 ; i < items.Count ; i++)
+			{
+				list.Add(items[i], i);
+			}
+
+			return list;
 		}
 #endif
 		public SectorLinkData ReverseDir
@@ -533,18 +662,33 @@ public class StrategyStartSetterData : DataGetterSetter<StrategyStartSetterData.
 
 
 #if UNITY_EDITOR
-		private static IEnumerable<string> GetFactionNames(InspectorProperty property)
+		private static ValueDropdownList<int> GetFactionNames(InspectorProperty property)
 		{
+			ValueDropdownList<int> list = new ValueDropdownList<int>();
+
 			// 루트까지 올라감
 			var root = property.Tree.WeakTargets.FirstOrDefault() as StrategyStartSetterData;
 			if (root == null)
-				return new[] { "(No Parent Data)" };
+			{
+				list.Add("(No Parent Info)", -1);
+				return list;
+			}
 
 			var bases = root.data.factionDatas;
 			if (bases == null || bases.Length == 0)
-				return new[] { "(No Data)" };
+			{
+				list.Add("(No Info)", -1);
+				return list;
+			}
 
-			return bases.Select(x => x.factionName).Prepend("");
+			var items = bases.Select(x => x.factionName).ToList();
+			list.Add("", -1);
+			for (int i = 0 ; i < items.Count ; i++)
+			{
+				list.Add(items[i], i);
+			}
+
+			return list;
 		}
 		private static ValueDropdownList<int> GetRelationType()
 		{

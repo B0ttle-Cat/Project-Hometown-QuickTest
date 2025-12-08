@@ -14,8 +14,8 @@ using Object = UnityEngine.Object;
 [CreateAssetMenu(fileName = "UnitProfileObject", menuName = "Scriptable Objects/StrategyGame/UnitProfileObject")]
 public class UnitProfileObject : ScriptableObject
 {
-	[InlineButton("CreatePrefab","New",ShowIf = "@unitPrefab == null")]
-	public GameObject unitPrefab;
+	[InlineButton("CreatePrefab","New",ShowIf = "@prefab == null")]
+	public GameObject prefab;
 	[InlineButton("PushData"), InlineButton("PullData")]
 	public UnitKey unitKey;
 	public string displayName;
@@ -25,9 +25,9 @@ public class UnitProfileObject : ScriptableObject
 		string basePath = "Assets/Resources/Prefabs/UnitObject/_UnitObject.prefab";
 		string newPrefabPath = $"Assets/Resources/Prefabs/UnitObject/{unitKey}.prefab";
 
-		// 이미 unitPrefab 이 존재한다면, 그걸 원본으로 사용
-		GameObject basePrefab = unitPrefab != null
-			? PrefabUtility.GetCorrespondingObjectFromOriginalSource(unitPrefab)
+		// 이미 prefab 이 존재한다면, 그걸 원본으로 사용
+		GameObject basePrefab = prefab != null
+			? PrefabUtility.GetCorrespondingObjectFromOriginalSource(prefab)
 			: AssetDatabase.LoadAssetAtPath<GameObject>(basePath);
 
 		if (basePrefab == null)
@@ -36,8 +36,8 @@ public class UnitProfileObject : ScriptableObject
 			return;
 		}
 
-		// unitPrefab이 이미 있고 이름이 같은 경우 생성 중단
-		if (unitPrefab != null && unitPrefab.name == unitKey.ToString())
+		// prefab이 이미 있고 이름이 같은 경우 생성 중단
+		if (prefab != null && prefab.name == unitKey.ToString())
 		{
 			Debug.Log($"Prefab '{unitKey}' already exists. Creation skipped.");
 			return;
@@ -51,7 +51,7 @@ public class UnitProfileObject : ScriptableObject
 		GameObject variant = PrefabUtility.SaveAsPrefabAsset(instance, newPrefabPath);
 		if (variant != null)
 		{
-			unitPrefab = variant;
+			prefab = variant;
 			EditorUtility.SetDirty(this);
 			Debug.Log($"Created prefab variant: {newPrefabPath}");
 		}
@@ -66,8 +66,8 @@ public class UnitProfileObject : ScriptableObject
 
 	private void PullData()
 	{
-		if (unitPrefab == null) return;
-		if (Enum.TryParse(typeof(UnitKey), unitPrefab.name, out var tryKey))
+		if (prefab == null) return;
+		if (Enum.TryParse(typeof(UnitKey), prefab.name, out var tryKey))
 		{
 			unitKey = (UnitKey)tryKey;
 		}
@@ -75,11 +75,10 @@ public class UnitProfileObject : ScriptableObject
 		{
 			unitKey = UnitKey.None;
 		}
-		if (unitPrefab.TryGetComponent<UnitObject>(out var unit))
+		if (prefab.TryGetComponent<UnitObject>(out var unit))
 		{
 			var profileData = unit.ProfileData;
 			displayName = profileData.displayName;
-			weaponType = profileData.weaponType;
 			protectType = profileData.protectType;
 
 			var statsData = unit.StatsData;
@@ -135,13 +134,12 @@ public class UnitProfileObject : ScriptableObject
 	}
 	private void PushData()
 	{
-		if (unitPrefab == null) return;
-		if (unitPrefab.TryGetComponent<UnitObject>(out var unit))
+		if (prefab == null) return;
+		if (prefab.TryGetComponent<UnitObject>(out var unit))
 		{
 			var profileData = unit.ProfileData;
 			profileData.unitKey = unitKey;
 			profileData.displayName = displayName;
-			profileData.weaponType = weaponType;
 			profileData.protectType = protectType;
 			unit.Profile.SetData(profileData);
 
@@ -195,14 +193,14 @@ public class UnitProfileObject : ScriptableObject
 			statsData.SetValue(StatsType.유닛_행동범위_c, 유닛_행동범위);
 			statsData.SetValue(StatsType.유닛_시야범위_c, 유닛_시야범위);
 			unit.Stats.SetData(statsData);
-			//UnityEditor.PrefabUtility.SavePrefabAsset(unitPrefab);
+			//UnityEditor.PrefabUtility.SavePrefabAsset(prefab);
 		}
 	}
 #endif
 	public WeaponType weaponType;
 	public ProtectionType protectType;
 
-	[Header("Stats")]
+	[Header("StatsData")]
 	public int 유닛_인력;
 	public int 유닛_물자;
 	public int 유닛_전력;

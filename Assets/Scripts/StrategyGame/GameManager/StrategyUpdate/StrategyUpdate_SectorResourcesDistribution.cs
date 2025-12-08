@@ -17,7 +17,7 @@ public partial class StrategyUpdate
 		protected override void Start()
 		{
 			UpdateList = new List<Distribution>();
-			var sectorList = StrategyManager.Collector.SectorList;
+			var sectorList = StrategyManager.Collector.GetList<SectorObject>();
 			int length = sectorList.Count;
 			for (int i = 0 ; i < length ; i++)
 			{

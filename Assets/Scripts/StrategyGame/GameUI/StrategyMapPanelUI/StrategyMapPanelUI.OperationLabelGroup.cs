@@ -70,16 +70,7 @@ public partial class StrategyMapPanelUI // OperationLabelGroup
 
 		protected override void OnShow()
 		{
-			StrategyManager.Collector.AddChangeListener<OperationObject>(OnChangeList, out List<OperationObject> operationList);
-			if (operationList == null || operationList.Count == 0) return;
-
-			int length = operationList.Count;
-			for (int i = 0 ; i < length ; i++)
-			{
-				var operation = operationList[i];
-				if (operation == null) continue;
-				OnChangeList(operation, true);
-			}
+			StrategyManager.Collector.AddChangeListener<OperationObject>(OnChangeList,true);
 		}
 		private void OnChangeList(IStrategyElement element, bool isAdded)
 		{

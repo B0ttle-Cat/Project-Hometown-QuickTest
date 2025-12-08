@@ -213,4 +213,10 @@
 		Facilities_라,
 		Facilities_마,
 	}
+
+
+	public enum ProjectileKey
+	{
+
+	}
 }

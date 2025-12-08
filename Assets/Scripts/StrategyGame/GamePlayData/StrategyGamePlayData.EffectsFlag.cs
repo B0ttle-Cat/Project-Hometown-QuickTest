@@ -1,9 +1,9 @@
 ﻿using System;
 
-public partial class StrategyGamePlayData // EffectsFlag
+public partial class StrategyGamePlayData // StatusEffectsFlag
 {
     [Flags]
-	public enum EffectsFlag : int
+	public enum StatusEffectsFlag : int
 	{
 		None        = 0,
 		감전        = 1 << 1,

@@ -46,7 +46,7 @@ public static class FactionAPI
 	{
 		if (faction == null || faction.IsNotAlive()) return;
 
-		var sectorList = StrategyManager.Collector.SectorList;
+		var sectorList = StrategyManager.Collector.GetList<SectorObject>();
 		var values = sectorList.Where(i => i.CaptureFaction == faction).Select(i => i.GetElectric().value).ToArray();
 	}
 
@@ -54,7 +54,7 @@ public static class FactionAPI
 	{
 		if (faction == null || faction.IsNotAlive()) return;
 
-		var sectorList = StrategyManager.Collector.SectorList;
+		var sectorList = StrategyManager.Collector.GetList<SectorObject>();
 		var values = sectorList.Where(i => i.CaptureFaction == faction).Select(i => i.GetElectric().value).ToArray();
 
 		StatsValue totalValue = faction.FactionStats.GetValue(StatsType.세력_전력_현재);
@@ -367,7 +367,8 @@ public static class FactionAPI
 
 		result.AddRange(faction.AvailableUnitKeyList);
 
-		var factionSectorList = StrategyManager.Collector.FindElementList<SectorObject>(FindSector);
+		var factionSectorList = StrategyManager.Collector.GetList<SectorObject>().Where(FindSector);
+
 		bool FindSector(SectorObject sector)
 		{
 			if (sector == null) return false;

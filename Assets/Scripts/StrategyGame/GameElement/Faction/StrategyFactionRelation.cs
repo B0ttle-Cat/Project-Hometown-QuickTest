@@ -27,10 +27,12 @@ public class StrategyFactionRelation : MonoBehaviour
 		private FactionRelationType AB_Relation;
 		public FactionRelation(StrategyElementCollector collector, in StrategyStartSetterData.FactionRelation data)
 		{
-			var A_Faction = collector.FindFaction(data.factionA);
+			string findAName = data.factionA;
+			string findBName = data.factionB;
+			var A_Faction = collector.Find<Faction>(f => f.FactionName == findAName);
 			A_FactionID = A_Faction.FactionID;
 
-			var B_Faction = collector.FindFaction(data.factionB);
+			var B_Faction = collector.Find<Faction>(f => f.FactionName ==findBName);
 			B_FactionID = B_Faction.FactionID;
 
 			AB_Relation = (FactionRelationType)data.relationType;

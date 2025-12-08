@@ -32,7 +32,7 @@ public class StrategyManager : MonoBehaviour
 		? KeyPairSprite.Load(Language.Type.Korean, "_Default")
 		: Manager.key2Sprite;
 	public static KeyPairUnitInfo Key2UnitInfo => Manager == null || Manager.key2UnitInfo == null
-		? KeyPairUnitInfo.Load(Language.Type.Korean, "_Default")
+		? KeyPairUnitInfo.Load("_Default")
 		: Manager.key2UnitInfo;
 
 	public static int PlayerFactionID;
@@ -66,7 +66,7 @@ public class StrategyManager : MonoBehaviour
 		mainCamera = mainCamera == null ? Camera.main : mainCamera;
 		gameUI = FindAnyObjectByType<StrategyGameUI>();
 		gamePlayTempData = KeyValueData.Empty;
-		collector = GetComponentInChildren<StrategyElementCollector>();
+		collector = new StrategyElementCollector();
 		mission = GetComponentInChildren<StrategyMissionTree>();
 		statistics = GetComponentInChildren<StrategyStatistics>();
 		updater = GetComponentInChildren<StrategyUpdate>();
@@ -188,7 +188,14 @@ public class StrategyManager : MonoBehaviour
 		#endregion
 
 		#region 각 독립 기능의 초기화.
-		Collector.Init();
+		//Collector.Init();
+		var collector = new StrategyElementCollector();
+		collector.Register<SectorObject>(32)
+				 .Register<Faction>(8)
+				 .Register<UnitObject>(64)
+				 .Register<OperationObject>(64)
+				 .Register<SkillObject>(64);
+
 		Mission.Init();
 		Statistics.Init();
 		Time.Init();

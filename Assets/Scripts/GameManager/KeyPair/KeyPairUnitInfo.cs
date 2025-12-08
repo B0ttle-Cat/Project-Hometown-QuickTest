@@ -11,10 +11,9 @@ using static StrategyGamePlayData;
 [CreateAssetMenu(fileName = "KeyPairUnitInfo", menuName = "Scriptable Objects/KeyPairAssets/KeyPairUnitInfo")]
 public class KeyPairUnitInfo : KeyPairAssets<StrategyGamePlayData.UnitKey, KeyPairUnitInfo.UnitInfo>
 {
-	public static KeyPairUnitInfo Load(Language.Type type, string name)
+	public static KeyPairUnitInfo Load(string name)
 	{
-		string path = $"{nameof(KeyPairUnitInfo)}/{type.ToString()}/{name}";
-		Debug.Log(path);
+		string path = $"{nameof(KeyPairUnitInfo)}/{name}";
 		return Resources.Load<KeyPairUnitInfo>(path);
 	}
 

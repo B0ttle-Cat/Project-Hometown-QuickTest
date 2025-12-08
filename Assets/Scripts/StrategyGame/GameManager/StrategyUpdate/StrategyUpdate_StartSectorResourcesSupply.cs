@@ -15,7 +15,7 @@ public partial class StrategyUpdate
 		protected override void Start()
 		{
 			updateList = new List<ResourcesSupply>();
-			var list = StrategyManager.Collector.SectorList;
+			BaseList<SectorObject> list = StrategyManager.Collector.GetList<SectorObject>();
 			int length = list.Count;
 			for (int i = 0 ; i < length ; i++)
 			{

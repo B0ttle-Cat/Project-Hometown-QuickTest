@@ -96,7 +96,7 @@ public partial class SectorObject : MonoBehaviour
 	{
 		SectorData.Capture.Data initData = new ()
 		{
-			captureFactionID = StrategyManager.Collector.TryFindFaction(data.captureFaction, out var find) ? find.FactionID : -1,
+			captureFactionID = StrategyManager.Collector.TryFind<Faction>(data.captureFactionID, out var find) ? find.FactionID : -1,
 			captureProgress = data.captureProgress,
 
 			captureTime = capture == null ? 0 :  CaptureData.captureTime,
@@ -170,7 +170,7 @@ public partial class SectorObject // Getter
 		SetStatsListInGroup($"{StatsGroupName_StatusEffect}{effectKey}", statsList);
 	}
 	public string SectorName => ProfileData.sectorName;
-	public Faction CaptureFaction => StrategyManager.Collector.FindFaction(CaptureFactionID);
+	public Faction CaptureFaction => StrategyManager.Collector.Find<Faction>(CaptureFactionID);
 	public int CaptureFactionID => CaptureData.captureFactionID;
 	public float CaptureProgress => CaptureData.captureProgress;
 
@@ -242,7 +242,7 @@ public partial class SectorObject // Getter
 		CurrStatsList.SetValue(StatsType.거점_전력_현재, value);
 	}
 }
-public partial class SectorObject : IStrategyElement
+public partial class SectorObject : IStrategyElement, IStrategyStartGame
 {
 	public IStrategyElement ThisElement => this;
 	public bool IsInCollector { get; set; }

@@ -12,19 +12,15 @@ public partial class StrategyUpdate
 		}
 		protected override void Dispose()
 		{
-			StrategyManager.Collector.RemoveChangeAnyListener(OnChangeElement);
+			StrategyManager.Collector.RemoveAnyChangeListener(OnChangeElement);
 			serchTargets.Clear();
 			serchTargets = null;
 		}
 		protected override void Start()
 		{
-			StrategyManager.Collector.AddChangeAnyListener(OnChangeElement, ForeachAll);
-			void ForeachAll(IStrategyElement element)
-			{
-				OnChangeElement(element, true);
-			}
+			StrategyManager.Collector.AddAnyChangeListener(OnChangeElement, true);
 		}
-		private void OnChangeElement(IStrategyElement element, bool added)
+		private void OnChangeElement(object element, bool added)
 		{
 			if (element == null) return;
 			else if (element is INearbySearcherValueGetter valueGetter)

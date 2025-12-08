@@ -58,7 +58,7 @@ public partial class OperationObject : MonoBehaviour  // Main
 	partial void DeinitFSM();
 	partial void DeInitNearby();
 }
-public partial class OperationObject // Stats
+public partial class OperationObject // StatsData
 {
 	int computeFrame = -1;
 	public void ComputeOperationValue()
@@ -80,7 +80,7 @@ public partial class OperationObject // Stats
 		return GetAllUnitObj.Count == 0 ? 0 : GetAllUnitObj.Select(i => i.GetStateValuePercent(StatsType.유닛_시야범위_c)).Max();
 	}
 }
-public partial class OperationObject : IStrategyElement
+public partial class OperationObject : IStrategyElement, IStrategyStartGame
 {
 	public IStrategyElement ThisElement => this;
 	int IStrategyElement.ID { get => operationID; set => operationID = value; }

@@ -12,12 +12,7 @@ public partial class StrategyUpdate
 		}
 		protected override void Start()
 		{
-			StrategyManager.Collector.AddChangeListener<Faction>(OnChangeValue, ForeachAll);
-			void ForeachAll(IStrategyElement element)
-			{
-				if (element == null) return;
-				OnChangeValue(element, true);
-			}
+			StrategyManager.Collector.AddChangeListener<Faction>(OnChangeValue, true);
 		}
 
 		private void OnChangeValue(IStrategyElement element, bool added)
@@ -66,8 +61,9 @@ public partial class StrategyUpdate
 			{
 				faction.ClearDetect();
 
-				StrategyManager.Collector.ForEachAll(item =>
-				{
+				var allElement =  StrategyManager.Collector.GetAllElementLists();
+                foreach (var item in allElement)
+                {
 					if (item is not INearbySearcherValueGetter searcherValueGetter) return;
 					if (searcherValueGetter.FactionID != thisFactionID) return;
 					var searcher = searcherValueGetter.Searcher;
@@ -78,7 +74,7 @@ public partial class StrategyUpdate
 					{
 						faction.AddDetect(target as IStrategyElement);
 					}
-				});
+				}
 			}
 		}
 	}

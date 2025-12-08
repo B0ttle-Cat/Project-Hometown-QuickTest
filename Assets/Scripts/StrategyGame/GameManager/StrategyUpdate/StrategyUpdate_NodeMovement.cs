@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 
 using UnityEngine;
 
@@ -16,10 +15,10 @@ public partial class StrategyUpdate
 		protected override void Start()
 		{
 			UpdateList = new();
-			var iList = StrategyManager.Collector.GetAllElementIList();
+			var iList = StrategyManager.Collector.GetAllElementLists();
 			foreach (IList list in iList)
 			{
-				if (list is List<UnitObject> unitList)
+				if (list is ElementList<UnitObject> unitList)
 				{
 					int length = list.Count;
 					for (int i = 0 ; i < length ; i++)
@@ -29,7 +28,7 @@ public partial class StrategyUpdate
 						UpdateList.Add(new(item.ThisNodeMovement, this));
 					}
 				}
-				if (list is List<OperationObject> opList)
+				if (list is ElementList<OperationObject> opList)
 				{
 					int length = list.Count;
 					for (int i = 0 ; i < length ; i++)

@@ -18,18 +18,14 @@ public partial class StrategyUpdate
 		}
 		protected override void Dispose()
 		{
-			StrategyManager.Collector.RemoveOtherChangeListener<IFSMUpdater>(OnChangeItem);
+			StrategyManager.Collector.RemoveChangeListener<IFSMUpdater>(OnChangeItem);
 			operationMainFsmList = null;
 			unitMainFsmList = null;
 			unitAttackFsnList = null;
 		}
 		protected override void Start()
 		{
-			StrategyManager.Collector.AddOtherChangeListener<IFSMUpdater>(OnChangeItem, ForeachAll);
-			void ForeachAll(IFSMUpdater item)
-			{
-				OnChangeItem(item, true);
-			}
+			StrategyManager.Collector.AddChangeListener<IFSMUpdater>(OnChangeItem, true);
 		}
 		private void OnChangeItem(IFSMUpdater item, bool added)
 		{

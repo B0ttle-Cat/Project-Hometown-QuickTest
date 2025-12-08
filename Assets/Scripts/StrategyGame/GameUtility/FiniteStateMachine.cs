@@ -45,7 +45,7 @@ public interface IState<T> where T : Enum
 	public T StateUpdate(in float deltaTime);
 }
 
-public abstract class FiniteStateMachine<T> : MonoBehaviour, IFSMInterface<T>, IFSMUpdater where T : Enum
+public abstract class FiniteStateMachine<T> : MonoBehaviour, IFSMInterface<T>, IFSMUpdater , IStrategyStartGame where T : Enum
 {
 	private IState<T> currentState;
 	[ShowInInspector]
@@ -57,19 +57,14 @@ public abstract class FiniteStateMachine<T> : MonoBehaviour, IFSMInterface<T>, I
 	public Dictionary<T, IState<T>> stateList;
 	private Action<T> onStateEnterCallback;
 	private Action<T> onStateExitCallback;
-	protected virtual async void Awake()
+
+	void IStrategyStartGame.OnStartGame()
 	{
-		while (StrategyManager.IsNotReadyManager)
-		{
-			await Awaitable.NextFrameAsync();
-			if (destroyCancellationToken.IsCancellationRequested) return;
-		}
-		StrategyManager.Collector.AddOther<IFSMUpdater>(this);
+		StrategyManager.Collector.Add<IFSMUpdater>(this);
 	}
-	protected virtual void OnDestroy()
+	void IStrategyStartGame.OnStopGame()
 	{
-		if (StrategyManager.IsDestroy) return;
-		StrategyManager.Collector.RemoveOther<IFSMUpdater>(this);
+		StrategyManager.Collector.Remove<IFSMUpdater>(this);
 	}
 	public void InitState(Action<T> onStateEnterCallback, Action<T> onStateExitCallback, T initState, params IState<T>[] state)
 	{
@@ -130,7 +125,9 @@ public abstract class FiniteStateMachine<T> : MonoBehaviour, IFSMInterface<T>, I
 			ForceChangeImmediate(nextState);
 		}
 	}
-	public abstract class BaseState : IState<T>, IDisposable
+
+
+    public abstract class BaseState : IState<T>, IDisposable
 	{
 		private readonly FiniteStateMachine<T> fsm;
 		private readonly T type;

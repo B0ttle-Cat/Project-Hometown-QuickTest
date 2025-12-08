@@ -3,10 +3,10 @@
 //using UnityEngine;
 
 //[CreateAssetMenu(fileName = "FactionSetterData", menuName = "Scriptable Objects/FactionSetterData")]
-//public class FactionSetterData : DataGetterSetter<FactionSetterData.Data>
+//public class FactionSetterData : DataGetterSetter<FactionSetterData.Info>
 //{
 //	[Serializable]
-//	public struct Data
+//	public struct Info
 //	{
 //		public int elementID;
 //		public string factionName;
@@ -18,13 +18,13 @@
 //		public GameObject defaultUnitPrefab;
 //	}
 
-//	public Data capture;
+//	public Info capture;
 
-//	public override void SetValue(Data capture)
+//	public override void SetValue(Info capture)
 //	{			
 //	}
 
-//	public override Data ReadonlyData()
+//	public override Info ReadonlyData()
 //	{
 //		return capture;
 //	}

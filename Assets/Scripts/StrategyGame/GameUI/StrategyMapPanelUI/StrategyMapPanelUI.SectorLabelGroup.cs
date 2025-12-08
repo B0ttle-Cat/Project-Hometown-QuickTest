@@ -75,16 +75,7 @@ public partial class StrategyMapPanelUI // SectorLabelGroup
 
 		protected override void OnShow()
 		{
-			StrategyManager.Collector.AddChangeListener<SectorObject>(OnChangeList, out List<SectorObject> sectorList);
-			if (sectorList == null || sectorList.Count == 0) return;
-
-			int length = sectorList.Count;
-			for (int i = 0 ; i < length ; i++)
-			{
-				var sector = sectorList[i];
-				if (sector == null) continue;
-				OnChangeList(sector, true);
-			}
+			StrategyManager.Collector.AddChangeListener<SectorObject>(OnChangeList, true);
 		}
 		private void OnChangeList(IStrategyElement element, bool isAdded)
 		{

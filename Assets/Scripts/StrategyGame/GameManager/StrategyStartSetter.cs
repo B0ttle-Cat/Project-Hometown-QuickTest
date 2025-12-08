@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 using Sirenix.OdinInspector;
 
@@ -11,7 +12,7 @@ public partial class StrategyStartSetter : MonoBehaviour
 	private StrategyManager thisManager;
 	private StrategyElementCollector collector;
 
-	[SerializeField, InlineEditor, HideLabel, Title("Start Map Data")]
+	[SerializeField, InlineEditor, HideLabel, Title("Start Map Info")]
 	private StrategyStartSetterData strategyStartSetterData;
 
 	internal bool StartSetterIsValid()
@@ -55,6 +56,7 @@ public partial class StrategyStartSetter : MonoBehaviour
 		ref readonly var data = ref strategyStartSetterData.ReadonlyData();
 		var factions = data.factionDatas;
 		int length = factions.Length;
+		var list = collector.GetList<Faction>();
 		for (int i = 0 ; i < length ; i++)
 		{
 			var factionData = factions[i];
@@ -63,7 +65,7 @@ public partial class StrategyStartSetter : MonoBehaviour
 				StrategyManager.PlayerFactionID = i;
 			}
 			Faction faction = new Faction(factionData);
-			collector.AddElement<Faction>(faction);
+			list.Add(faction);
 		}
 	}
 	internal void OnStartSetter_FactionRelation(StrategyFactionRelation factionRelation)
@@ -81,6 +83,8 @@ public partial class StrategyStartSetter : MonoBehaviour
 
 		int cbLength = allSector.Length;
 		int dataLength = sectors.Length;
+
+		var list = collector.GetList<SectorObject>();
 		for (int i = 0 ; i < cbLength ; i++)
 		{
 			SectorObject sector = allSector[i];
@@ -95,7 +99,7 @@ public partial class StrategyStartSetter : MonoBehaviour
 					break;
 				}
 			}
-			collector.AddElement(sector);
+			list.Add(sector);
 		}
 	}
 	internal async Awaitable OnStartSetter_Unit()
@@ -113,27 +117,13 @@ public partial class StrategyStartSetter : MonoBehaviour
 			string unitName = unitData.DisplayName();
 			UnitObject unitObject = StrategyElementFactory.Instantiate(in unitData);
 			if (unitObject == null) continue;
-			collector.AddElement(unitObject);
+			collector.Add(unitObject);
 			SetOperationBelong(unitObject, in unitData);
 		}
 
-		int includeLength = includeSceneUnits.Count;
-		for (int i = 0 ; i < includeLength ; i++)
-		{
-			var unit = includeSceneUnits[i];
-			if (collector.FindUnit(unit.UnitID) == null)
-			{
-				collector.AddElement(unit);
-				unit.Init(name);
-			}
-		}
 		void SetOperationBelong(UnitObject unitObject, in UnitData unitData)
 		{
-			string operationName = unitData.belongedOperation;
-			if (string.IsNullOrWhiteSpace(operationName)) return;
-			int factionID = collector.FactionNameToID(unitData.factionName);
-			if (factionID < 0) return;
-			var operation = collector.FindOperation(factionID, operationName);
+			var operation = collector.Find<OperationObject>(unitData.belongedOperation);
 			if (operation == null) return;
 
 			operation.AddUnitObject(unitObject);
@@ -144,7 +134,7 @@ public partial class StrategyStartSetter : MonoBehaviour
 		ref readonly var data = ref strategyStartSetterData.ReadonlyData();
 		var occData = data.captureDatas;
 
-		collector.ForEachSector(SetCapture);
+		collector.GetList<SectorObject>().ForEach(SetCapture);
 
 		void SetCapture(SectorObject sector)
 		{
@@ -152,7 +142,7 @@ public partial class StrategyStartSetter : MonoBehaviour
 			for (int i = 0 ; i < length ; i++)
 			{
 				var _data = occData[i];
-				if (_data.captureSector == sector.SectorName)
+				if (_data.captureSectorID == sector.SectorID)
 				{
 					sector.Init(_data);
 					return;
@@ -160,8 +150,8 @@ public partial class StrategyStartSetter : MonoBehaviour
 			}
 			sector.Init(new StrategyStartSetterData.CaptureData()
 			{
-				 captureSector = "",
-				 captureFaction = "",
+				 captureSectorID = -1,
+				 captureFactionID = -1,
 				 captureProgress = 0
 			});
 		}
@@ -170,7 +160,7 @@ public partial class StrategyStartSetter : MonoBehaviour
     {
 		var data = strategyStartSetterData.ReadonlyData();
 		var networkDatas = data.sectorLinkDatas;
-		var sectors = collector.SectorList;
+		var sectors = collector.GetList<SectorObject>().ToList();
         await network.Init(sectors,networkDatas);
 	}
     internal void OnStartSetter_Mission(StrategyMissionTree mission)
@@ -189,21 +179,13 @@ public partial class StrategyStartSetter : MonoBehaviour
 		var data = strategyStartSetterData.ReadonlyData();
 		var opDatas = data.operationDatas;
 		int length = opDatas.Length;
-        for (int i = 0 ; i < length ; i++)
+
+		var opList = collector.GetList<OperationObject>();
+		for (int i = 0 ; i < length ; i++)
         {
 			var opData = opDatas[i];
 			OperationObject newOp = StrategyElementFactory.Instantiate(opData);
-			collector.AddElement(newOp);
-		}
-
-		int includeLength = includeSceneOperations.Count;
-		for (int i = 0 ; i < includeLength ; i++)
-		{
-			var op = includeSceneOperations[i];
-			if (collector.FindUnit(op.OperationID) == null)
-			{
-				collector.AddElement(op);
-			}
+			opList.Add(newOp);
 		}
 	}
 }

@@ -1,23 +1,18 @@
 ﻿using UnityEngine;
 
-public class CaptureTag : MonoBehaviour
+public class CaptureTag : MonoBehaviour , IStrategyStartGame
 {
 	[Header("Info")]
 	public int factionID;
 	public int pointValue;
 
-    private async void Awake()
-    {
-		while(StrategyManager.IsNotReadyManager)
-		{
-			await Awaitable.NextFrameAsync();
-			if (destroyCancellationToken.IsCancellationRequested) return;
-		}
-		StrategyManager.Collector.AddOther(this);
+    void IStrategyStartGame.OnStartGame()
+	{
+		StrategyManager.Collector.Add(this);
 	}
-    private void OnDestroy()
-    {
-		if (StrategyManager.IsDestroy) return; 
-		StrategyManager.Collector.RemoveOther(this);
+
+    void IStrategyStartGame.OnStopGame()
+	{
+		StrategyManager.Collector.Remove(this);
 	}
 }

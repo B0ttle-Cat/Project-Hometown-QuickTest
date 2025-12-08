@@ -110,7 +110,6 @@ public abstract class KeyPairAssets<TKey,TValue> : ScriptableObject
 		value = default;
 		return false;
 	}
-
 	protected void AddAsset(TKey key, TValue value)
 	{
 		int newSize = KeyPairTargetList.Length + 1;
