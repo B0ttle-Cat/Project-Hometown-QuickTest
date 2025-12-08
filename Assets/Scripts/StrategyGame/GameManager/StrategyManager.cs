@@ -18,8 +18,8 @@ public class StrategyManager : MonoBehaviour
 	public static StrategyGameUI GameUI => Manager == null ? null : Manager.gameUI;
 	public static StrategyPopupPanelUI PopupUI => GameUI.PopupPanelUI;
 	public static KeyValueData GamePlayTempData => Manager == null ? null : Manager.gamePlayTempData;
-	
 	public static StrategyElementCollector Collector => Manager == null ? null : Manager.collector;
+	public static StrategyPoolingCollector Pooling => Manager == null ? null : Manager.pooling;
 	public static StrategyMissionTree Mission => Manager == null ? null : Manager.mission;
 	public static StrategyStatistics Statistics => Manager == null ? null : Manager.statistics;
 	public static StrategyTime Time => Manager == null ? null : Manager.time;
@@ -49,6 +49,7 @@ public class StrategyManager : MonoBehaviour
 	private StrategyGameUI gameUI;
 	private KeyValueData gamePlayTempData;
 	private StrategyElementCollector collector;
+	private StrategyPoolingCollector pooling;
 	private StrategyMissionTree mission;
 	private StrategyStatistics statistics;
 	private StrategyTime time;
@@ -70,6 +71,7 @@ public class StrategyManager : MonoBehaviour
 		gameUI = FindAnyObjectByType<StrategyGameUI>();
 		gamePlayTempData = KeyValueData.Empty;
 		collector = new StrategyElementCollector();
+		pooling = new StrategyPoolingCollector();
 		mission = GetComponentInChildren<StrategyMissionTree>();
 		statistics = GetComponentInChildren<StrategyStatistics>();
 		updater = GetComponentInChildren<StrategyUpdate>();
@@ -198,6 +200,10 @@ public class StrategyManager : MonoBehaviour
 				 .Register<UnitObject>(64)
 				 .Register<OperationObject>(64)
 				 .Register<SkillObject>(64);
+
+		pooling ??= new StrategyPoolingCollector();
+		pooling.Dispose();
+		//pooling.Register<ProjectileObject>();
 
 		Mission.Init();
 		Statistics.Init();

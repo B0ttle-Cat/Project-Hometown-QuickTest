@@ -28,19 +28,28 @@ public partial class ProjectileObject : MonoBehaviour
 		StatsData = new ProjectileStatsData(profile);
 	}
 }
-//public partial class ProjectileObject : IStrategyPoolingElement
-//{
-//    public IStrategyPoolingElement ThisElement => this;
-//	public GameObject PrefabReference { get ; set ; }
+public partial class ProjectileObject : IStrategyPoolingElement
+{
+    public IStrategyPoolingElement ThisElement => this;
+	public GameObject PrefabReference { get ; set ; }
+    IStrategyElement IStrategyElement.ThisElement { get; }
+    int IStrategyElement.ID { get; set; }
 
+    void IStrategyElement.InStrategyCollector()
+    {
+    }
+    void IStrategyElement.OutStrategyCollector()
+    {
+    }
 
-//	void IStrategyPoolingElement.InStrategyCollector()
-//    {
-//    }
-//    void IStrategyPoolingElement.OutStrategyCollector()
-//    {
-//    }
-//}
+	void IStrategyStartGame.OnStartGame()
+	{
+	}
+
+	void IStrategyStartGame.OnStopGame()
+	{
+	}
+}
 public partial class ProjectileObject : IProjectileMovement
 {
 	public IProjectileMovement ThisMovement { get; private set; }
