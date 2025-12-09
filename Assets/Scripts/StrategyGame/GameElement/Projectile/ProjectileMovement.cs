@@ -9,6 +9,7 @@ public interface IProjectileMovement
 	int TargetElementID { get; }
 	Vector3 StartPosition { get; }
 	Vector3 TargetPosition { get; }
+	Vector3 PrevPosition { get; }
 	Vector3 CurrentPosition { get; }
 	float MoveSpeed { get; }
 	Vector3 MoveDiraction { get; }
@@ -22,6 +23,7 @@ public class ProjectileMovement : MonoBehaviour, IProjectileMovement
 	[SerializeField] protected ITargetableCombatant target;
 	[SerializeField] protected Vector3 startPosition;
 	[SerializeField] protected Vector3 targetPosition;
+	[SerializeField] protected Vector3 prevPosition;
 	[SerializeField] protected Vector3 currentPosition;
 	[SerializeField] protected float moveSpeed;
 	[SerializeField] protected Vector3 moveDiraction;
@@ -30,6 +32,7 @@ public class ProjectileMovement : MonoBehaviour, IProjectileMovement
 	int IProjectileMovement.TargetElementID => target.ThisElement.ID;
 	Vector3 IProjectileMovement.StartPosition => startPosition;
 	Vector3 IProjectileMovement.TargetPosition => targetPosition;
+	Vector3 IProjectileMovement.PrevPosition => prevPosition;
 	Vector3 IProjectileMovement.CurrentPosition => currentPosition;
 	float IProjectileMovement.MoveSpeed => moveSpeed;
 	Vector3 IProjectileMovement.MoveDiraction => moveDiraction;
@@ -109,7 +112,7 @@ public class ProjectileMovement : MonoBehaviour, IProjectileMovement
 
 		startPosition = order.AttackStartPosition;
 		targetPosition = target.HitTargetPosition + cepOffsetXZ;
-		transform.position = currentPosition = startPosition;
+		transform.position = prevPosition = currentPosition = startPosition;
 
 		moveDiraction = (startPosition - targetPosition).normalized;
 		moveSpeed = moveStartSpeed;
@@ -210,6 +213,7 @@ public class ProjectileMovement : MonoBehaviour, IProjectileMovement
 	}
 	protected virtual void UpdateTransform(in float deltaTime)
 	{
+		prevPosition = currentPosition;
 		currentPosition += deltaTime * moveSpeed * moveDiraction;
 		transform.SetPositionAndRotation(currentPosition, Quaternion.LookRotation(moveDiraction));
 	}
