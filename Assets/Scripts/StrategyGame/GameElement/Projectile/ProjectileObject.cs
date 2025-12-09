@@ -9,7 +9,6 @@ public partial class ProjectileObject : MonoBehaviour
 {
 	[SerializeField, InlineProperty, HideLabel]
 	private ProjectileRuntimeData runtimeData;
-
 	[SerializeField, InlineProperty, HideLabel]
     private ProjectileStatsData statsData;
 	public ProjectileRuntimeData RuntimeData { get => runtimeData; private set => runtimeData = value; }
@@ -21,9 +20,9 @@ public partial class ProjectileObject : MonoBehaviour
 	}
 	public void Init(StrategyStartSetterData.ProjectileData.Info setterData)
     {
-		runtimeData = new ProjectileRuntimeData(setterData);
+		RuntimeData = new ProjectileRuntimeData(setterData);
 	}
-    public void Init(ProjectilProfileObject profile)
+    public void Init(ProjectileProfileObject profile)
 	{
 		StatsData = new ProjectileStatsData(profile);
 	}

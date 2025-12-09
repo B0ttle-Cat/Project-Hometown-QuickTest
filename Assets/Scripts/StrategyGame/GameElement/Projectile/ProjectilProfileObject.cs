@@ -8,20 +8,21 @@ using static StrategyGamePlayData;
 
 using Object = UnityEngine.Object;
 
-[CreateAssetMenu(fileName = "ProjectilProfileObject", menuName = "Scriptable Objects/StrategyGame/ProjectilProfileObject")]
-public class ProjectilProfileObject : ScriptableObject
+[CreateAssetMenu(fileName = "ProjectileProfileObject", menuName = "Scriptable Objects/StrategyGame/ProjectileProfileObject")]
+public class ProjectileProfileObject : ScriptableObject
 {
 	[InlineButton("CreatePrefab","New",ShowIf = "@prefab == null")]
 	public GameObject prefab;
+	public string displayName;
 
 	[InlineButton("PushData"), InlineButton("PullData")]
-	public ProjectileKey projectilKey;
+	public ProjectileKey projectileKey;
 
 #if UNITY_EDITOR
 	private void CreatePrefab()
 	{
 		string basePath = "Assets/Resources/Prefabs/ProjectilObject/_ProjectilObject.prefab";
-		string newPrefabPath = $"Assets/Resources/Prefabs/ProjectilObject/{projectilKey}.prefab";
+		string newPrefabPath = $"Assets/Resources/Prefabs/ProjectilObject/{projectileKey}.prefab";
 
 		GameObject basePrefab = prefab != null
 			? PrefabUtility.GetCorrespondingObjectFromOriginalSource(prefab)
@@ -33,14 +34,14 @@ public class ProjectilProfileObject : ScriptableObject
 			return;
 		}
 
-		if (prefab != null && prefab.name == projectilKey.ToString())
+		if (prefab != null && prefab.name == projectileKey.ToString())
 		{
-			Debug.Log($"Prefab '{projectilKey}' already exists. Creation skipped.");
+			Debug.Log($"Prefab '{projectileKey}' already exists. Creation skipped.");
 			return;
 		}
 
 		GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(basePrefab);
-		instance.name = projectilKey.ToString();
+		instance.name = projectileKey.ToString();
 
 		GameObject variant = PrefabUtility.SaveAsPrefabAsset(instance, newPrefabPath);
 		if (variant != null)
@@ -99,13 +100,11 @@ public class ProjectilProfileObject : ScriptableObject
 		hitEffectsTimeMultiplier = st.HitEffectsTimeMultiplier;
 
 		piercingEnable = st.PiercingEnable;
-		piercingMinPoint = st.PiercingMinPoint;
-		piercingMaxPoint = st.PiercingMaxPoint;
+		piercingMinMaxCount = st.PiercingMinMaxPoint;
 		piercingFalloffCurve = st.PiercingFalloffCurve;
 
 		explosionEnabled = st.ExplosionEnabled;
-		explosionMinRadius = st.ExplosionMinRadius;
-		explosionMaxRadius = st.ExplosionMaxRadius;
+		explosionMinMaxRadius = st.ExplosionMinMaxRadius;
 		explosionFalloffCurve = st.ExplosionFalloffCurve;
 
 		EditorUtility.SetDirty(this);
@@ -136,38 +135,37 @@ public class ProjectilProfileObject : ScriptableObject
 
 	[BoxGroup("Movement")]
 	[LabelText("이동 시작 속도"), SerializeField]
-	private float moveStartSpeed = 10f;
+	private float moveStartSpeed;
 	[ToggleGroup("isShiftSpeed", GroupID = "Movement/T", ToggleGroupTitle = "가속 여부"), SerializeField]
-	private bool isShiftSpeed = false;
+	private bool isShiftSpeed;
 	[ToggleGroup("isShiftSpeed",GroupID = "Movement/T"), LabelText("최대 속도"), SerializeField]
-	private float moveMaxSpeed = 20f;
+	private float moveMaxSpeed;
 	[ToggleGroup("isShiftSpeed",GroupID = "Movement/T"), LabelText("속도 커브"), SerializeField]
 	private AnimationCurve moveSpeedCurve = AnimationCurve.Linear(0,0,1,1);
 	[ToggleGroup("isShiftSpeed",GroupID = "Movement/T"), LabelText("최대 속도 도달 시간"), SerializeField]
-	private float timeFromStartToMaxSpeed = 1f;
+	private float timeFromStartToMaxSpeed;
 
 	[ToggleGroup("homingEnabled", GroupID = "Movement/H", ToggleGroupTitle ="유도 여부"), SerializeField]
-	private bool homingEnabled = false;
+	private bool homingEnabled;
 	[ToggleGroup("homingEnabled", GroupID = "Movement/H"), LabelText("유도 활성 지연"), SerializeField]
-	private float homingActivationDelay = 0f;
+	private float homingActivationDelay;
 	[ToggleGroup("homingEnabled", GroupID = "Movement/H"), LabelText("유도 회전 속도"), SerializeField]
-	private float homingTurnSpeed = 180f;
+	private float homingTurnSpeed;
 	[ToggleGroup("homingEnabled", GroupID = "Movement/H"), LabelText("MaxSpeed 일때 회전 속도"), ShowIf("isShiftSpeed"), SerializeField]
-	private float homingTurnSpeedWhenMaxSpeed = 180f;
-
+	private float homingTurnSpeedWhenMaxSpeed;
 	[ToggleGroup("homingEnabled", GroupID = "Movement/H"), LabelText("유도 한계 각도"), SerializeField]
 	[Range(0f,180f)]
-	private float homingLimitAngle = 180;
+	private float homingLimitAngle;
 	[ToggleGroup("homingEnabled", GroupID = "Movement/H"), LabelText("유도 한계 거리"), SerializeField]
-	private float homingLimitDistance = float.PositiveInfinity;
+	private float homingLimitDistance;
 
 	[BoxGroup("LifeCycle"), LabelText("생존 시간"), SerializeField]
-	private float lifeTime = 5f;
+	private float lifeTime;
 	[BoxGroup("LifeCycle"), LabelText("명중 후 삭제 지연"), SerializeField]
-	private float destroyDelayAfterHit = 0.1f;
+	private float destroyDelayAfterHit;
 
 	[BoxGroup("Collision"), LabelText("충돌 반경"), SerializeField]
-	private float collisionRadius = 0.1f;
+	private float collisionRadius;
 
 	[BoxGroup("Hit"), LabelText("명중시 피해 배율"), SerializeField]
 	private float hitDamageMultiplier = 1f;
@@ -182,22 +180,44 @@ public class ProjectilProfileObject : ScriptableObject
 
 	[ToggleGroup("piercingEnable", GroupID = "Hit/P", ToggleGroupTitle ="관통 사용 여부"), SerializeField]
 	private bool piercingEnable = false;
-	[ToggleGroup("piercingEnable", GroupID = "Hit/P"), LabelText("관통 최소 점수"), SerializeField]
-	private int piercingMinPoint = 1;
-	[ToggleGroup("piercingEnable", GroupID = "Hit/P"), LabelText("관통 최대 점수"), SerializeField]
-	private int piercingMaxPoint = 1;
+	[ToggleGroup("piercingEnable", GroupID = "Hit/P"), LabelText("관통 최소/최대 회수"), SerializeField]
+	private Vector2Int piercingMinMaxCount;
 	[ToggleGroup("piercingEnable", GroupID = "Hit/P"), LabelText("관통 효과 감쇠 커브"), SerializeField]
 	private AnimationCurve piercingFalloffCurve;
+#if UNITY_EDITOR
+	[HorizontalGroup("Hit/P/Test"), ShowInInspector, LabelText("Test 관통 횟수"), OnValueChanged("TestPiercingFalloffMultiplier")]
+	[PropertyRange("testMinTestpiercingCount","testMaxTestpiercingCount")]
+	private int testpiercingPoint;
+	private float testMinTestpiercingCount => 0;
+	private float testMaxTestpiercingCount => Mathf.Max(piercingMinMaxCount.x, piercingMinMaxCount.y);
+	[HorizontalGroup("Hit/P/Test"), ShowInInspector, LabelText("Result"),ReadOnly]
+	private float testPiercingFalloffMultiplier;
+	private void TestPiercingFalloffMultiplier()
+	{
+		testPiercingFalloffMultiplier = PiercingFalloffMultiplier(testpiercingPoint);
+	}
+#endif
+
 
 	[ToggleGroup("explosionEnabled", GroupID = "Hit/E", ToggleGroupTitle ="폭발 사용 여부"), SerializeField]
 	private bool explosionEnabled = false;
-	[ToggleGroup("explosionEnabled", GroupID = "Hit/E"), LabelText("폭발 최소 반경"), SerializeField]
-	private float explosionMinRadius = 0f;
-	[ToggleGroup("explosionEnabled", GroupID = "Hit/E"), LabelText("폭발 최대 반경"), SerializeField]
-	private float explosionMaxRadius = 0f;
+	[ToggleGroup("explosionEnabled", GroupID = "Hit/E"), LabelText("폭발 최소/최대 반경"), SerializeField]
+	private Vector2 explosionMinMaxRadius;
 	[ToggleGroup("explosionEnabled", GroupID = "Hit/E"),  LabelText("폭발 효과 감쇠 커브"), SerializeField]
 	private AnimationCurve explosionFalloffCurve;
-
+#if UNITY_EDITOR
+	[HorizontalGroup("Hit/E/Test"), ShowInInspector, LabelText("Test 폭발 거리"), OnValueChanged("TestExplosionFalloffMultiplier")]
+	[PropertyRange("testMintExplosionDistance","testMaxtExplosionDistance")]
+	private float testExplosionDistance;
+	private float testMintExplosionDistance => 0;
+	private float testMaxtExplosionDistance => Mathf.Max(explosionMinMaxRadius.x, explosionMinMaxRadius.y);
+	[HorizontalGroup("Hit/E/Test"), ShowInInspector, LabelText("Result"),ReadOnly]
+	private float testExplosionFalloffMultiplier;
+	private void TestExplosionFalloffMultiplier()
+	{
+		testExplosionFalloffMultiplier = ExplosionFalloffMultiplier(testExplosionDistance);
+	}
+#endif
 
 	public WeaponType WeaponType => weaponType;
 
@@ -221,12 +241,80 @@ public class ProjectilProfileObject : ScriptableObject
 	public float HitEffectsTimeMultiplier => hitEffectsTimeMultiplier;
 
 	public bool PiercingEnable => piercingEnable;
-	public int PiercingMinPoint => piercingMinPoint;
-	public int PiercingMaxPoint => piercingMaxPoint;
+	public Vector2Int PiercingMinMaxPoint => piercingMinMaxCount;
 	public AnimationCurve PiercingFalloffCurve => piercingFalloffCurve;
+	public float PiercingFalloffMultiplier(int currentCount)
+	{
+		if (!PiercingEnable) return 1f;
+		Vector2Int minMax = PiercingMinMaxPoint;
+		float min = Mathf.Min(minMax.x, minMax.y);
+		float max = Mathf.Max(minMax.x, minMax.y);
+		float point = (float)currentCount;
+		if (Mathf.Approximately(min, max))
+		{
+			return 1f;
+		}
+		float rate = (point - min) / (max - min);
+		return PiercingFalloffCurve.Evaluate(rate);
+	}
 
 	public bool ExplosionEnabled => explosionEnabled;
-	public float ExplosionMinRadius => explosionMinRadius;
-	public float ExplosionMaxRadius => explosionMaxRadius;
+	public Vector2 ExplosionMinMaxRadius => explosionMinMaxRadius;
 	public AnimationCurve ExplosionFalloffCurve => explosionFalloffCurve;
+	public float ExplosionFalloffMultiplier(float currentDistance)
+	{
+		if (!ExplosionEnabled) return 1f;
+		Vector2 minMax = ExplosionMinMaxRadius;
+		float min = Mathf.Min(minMax.x, minMax.y);
+		float max = Mathf.Max(minMax.x, minMax.y);
+		float point = currentDistance;
+		if (Mathf.Approximately(min, max))
+		{
+			return 1f;
+		}
+		float rate = (point - min) / (max - min);
+		return ExplosionFalloffCurve.Evaluate(rate);
+	}
+#if UNITY_EDITOR
+	private void Reset()
+	{
+		SetTestStatsValue();
+	}
+	[Button]
+	private void SetTestStatsValue()
+	{
+		weaponType = WeaponType.일반;
+
+		moveStartSpeed = 10f;
+		isShiftSpeed = false;
+		moveMaxSpeed = 20f;
+		moveSpeedCurve = AnimationCurve.Linear(0, 0, 1, 1);
+		timeFromStartToMaxSpeed = 2f;
+
+		homingEnabled = false;
+		homingActivationDelay = 0.0f;
+		homingTurnSpeed = 180f;
+		homingTurnSpeedWhenMaxSpeed = 180f;
+		homingLimitAngle = 180f;
+		homingLimitDistance = float.PositiveInfinity;
+
+		lifeTime = 10f;
+		destroyDelayAfterHit = 0.1f;
+
+		collisionRadius = 0.1f;
+
+		hitDamageMultiplier = 1f;
+		hitEffectsFlag = StatusEffectsFlag.None;
+		hitEffectsTimeMultiplier = 1f;
+
+		piercingEnable = false;
+		piercingMinMaxCount = new Vector2Int(1, 1);
+		piercingFalloffCurve = AnimationCurve.Linear(0, 1, 1, 0);
+
+		explosionEnabled = false;
+		explosionMinMaxRadius = new Vector2(1f, 5f);
+		explosionFalloffCurve = AnimationCurve.Linear(0, 1, 1, 0);
+	}
+
+#endif
 }

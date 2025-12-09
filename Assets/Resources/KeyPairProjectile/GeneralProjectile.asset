@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f985a3301dfbf92439fff362b78059ec, type: 3}
+  m_Name: GeneralProjectile
+  m_EditorClassIdentifier: Assembly-CSharp::KeyPairProjectile
+  chains: []
+  prefix: 
+  suffix: 
+  KeyPairTargetList:
+  - key: 1000
+  - key: 1001
+  - key: 1002
+  - key: 1100
+  - key: 1101
+  - key: 1102
+  - key: 1150
+  - key: 1151
+  - key: 1152
+  - key: 1200
+  - key: 1201
+  - key: 1202
+  - key: 1250
+  - key: 1251
+  - key: 1252
+  - key: 1300
+  - key: 1301
+  - key: 1302

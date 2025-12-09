@@ -11,7 +11,7 @@ using static StrategyGamePlayData.UnitData.Skill;
 
 using Object = UnityEngine.Object;
 
-[CreateAssetMenu(fileName = "UnitProfileObject", menuName = "Scriptable Objects/StrategyGame/UnitProfileObject")]
+[CreateAssetMenu(fileName = "ProjectileProfileObject", menuName = "Scriptable Objects/StrategyGame/ProjectileProfileObject")]
 public class UnitProfileObject : ScriptableObject
 {
 	[InlineButton("CreatePrefab","New",ShowIf = "@prefab == null")]

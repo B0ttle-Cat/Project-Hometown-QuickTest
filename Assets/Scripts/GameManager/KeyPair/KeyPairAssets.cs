@@ -116,6 +116,10 @@ public abstract class KeyPairAssets<TKey,TValue> : ScriptableObject
 		Array.Resize(ref KeyPairTargetList, newSize);
 		KeyPairTargetList[^1] = new KeyPairAssetsStruct(key,value);
 	}
+	protected void Clear() 
+	{
+		KeyPairTargetList = Array.Empty<KeyPairAssetsStruct>();
+	}
 }
 public abstract class KeyPairAssets<TValue> : KeyPairAssets<string, TValue>
 {

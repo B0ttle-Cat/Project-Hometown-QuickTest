@@ -22,6 +22,11 @@ public class KeyPairUnit : KeyPairAssets<StrategyGamePlayData.UnitKey, KeyPairUn
 	#region SetMachineNames
 
 	[ButtonGroup(order: -5)]
+	void ListClear()
+	{
+		Clear();
+	}
+	[ButtonGroup]
 	void SetMachineNames()
 	{
 		foreach (var item in MachineUnitNames)
@@ -130,8 +135,8 @@ public class KeyPairUnit : KeyPairAssets<StrategyGamePlayData.UnitKey, KeyPairUn
 	};
 	#endregion
 
-	[ButtonGroup("SetupUnitProfiles", order: -4)]
-	private void SetupUnitProfiles()
+	[ButtonGroup("SetupProfiles", order: -4)]
+	private void SetupProfiles()
 	{
 		if (KeyPairTargetList == null || KeyPairTargetList.Length == 0)
 		{
@@ -174,7 +179,7 @@ public class KeyPairUnit : KeyPairAssets<StrategyGamePlayData.UnitKey, KeyPairUn
 
 				AssetDatabase.CreateAsset(profile, assetPath);
 				AssetDatabase.SaveAssets();
-				Debug.Log($"[SetupUnitProfiles] Created new UnitProfileObject: {assetPath}");
+				Debug.Log($"[SetupUnitProfiles] Created new ProjectileProfileObject: {assetPath}");
 			}
 
 			info = new UnitInfo(key, name, profile);

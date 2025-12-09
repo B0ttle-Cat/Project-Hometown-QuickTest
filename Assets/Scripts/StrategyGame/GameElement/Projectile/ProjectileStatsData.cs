@@ -63,26 +63,22 @@ public record ProjectileStatsData // ProfileStats
 
 	[ToggleGroup("piercingEnable", GroupID = "Hit/P", ToggleGroupTitle ="관통 사용 여부"), SerializeField]
 	private bool piercingEnable = false;
-	[ToggleGroup("piercingEnable", GroupID = "Hit/P"), LabelText("관통 최소 점수"), SerializeField]
-	private int piercingMinPoint = 1;
-	[ToggleGroup("piercingEnable", GroupID = "Hit/P"), LabelText("관통 최대 점수"), SerializeField]
-	private int piercingMaxPoint = 1;
+	[ToggleGroup("piercingEnable", GroupID = "Hit/P"), LabelText("관통 최소/최대 점수"), SerializeField]
+	private Vector2Int piercingMinMaxPoint;
 	[ToggleGroup("piercingEnable", GroupID = "Hit/P"), LabelText("관통 효과 감쇠 커브"), SerializeField]
 	private AnimationCurve piercingFalloffCurve;
 
 	[ToggleGroup("explosionEnabled", GroupID = "Hit/E", ToggleGroupTitle ="폭발 사용 여부"), SerializeField]
 	private bool explosionEnabled = false;
-	[ToggleGroup("explosionEnabled", GroupID = "Hit/E"), LabelText("폭발 최소 반경"), SerializeField]
-	private float explosionMinRadius = 0f;
-	[ToggleGroup("explosionEnabled", GroupID = "Hit/E"), LabelText("폭발 최대 반경"), SerializeField]
-	private float explosionMaxRadius = 0f;
+	[ToggleGroup("explosionEnabled", GroupID = "Hit/E"), LabelText("폭발 최소/최대 반경"), SerializeField]
+	private Vector2 explosionMinMaxRadius;
 	[ToggleGroup("explosionEnabled", GroupID = "Hit/E"),  LabelText("폭발 효과 감쇠 커브"), SerializeField]
 	private AnimationCurve explosionFalloffCurve;
 
 	public ProjectileStatsData()
 	{
 	}
-	public ProjectileStatsData(ProjectilProfileObject profile)
+	public ProjectileStatsData(ProjectileProfileObject profile)
     {
 		weaponType = profile.WeaponType;
 		moveStartSpeed = profile.MoveStartSpeed;
@@ -100,12 +96,10 @@ public record ProjectileStatsData // ProfileStats
 		hitEffectsFlag = profile.HitEffectsFlag;
 		hitEffectsTimeMultiplier = profile.HitEffectsTimeMultiplier;
 		piercingEnable = profile.PiercingEnable;
-		piercingMinPoint = profile.PiercingMinPoint;
-		piercingMaxPoint = profile.PiercingMaxPoint;
+		piercingMinMaxPoint = profile.PiercingMinMaxPoint;
 		piercingFalloffCurve = profile.PiercingFalloffCurve;
 		explosionEnabled = profile.ExplosionEnabled;
-		explosionMinRadius = profile.ExplosionMinRadius;
-		explosionMaxRadius = profile.ExplosionMaxRadius;
+		explosionMinMaxRadius = profile.ExplosionMinMaxRadius;
 		explosionFalloffCurve = profile.ExplosionFalloffCurve;
 	}
 	public ProjectileStatsData Copy()
@@ -128,12 +122,10 @@ public record ProjectileStatsData // ProfileStats
 			hitEffectsFlag = this.hitEffectsFlag,
 			hitEffectsTimeMultiplier = this.hitEffectsTimeMultiplier,
 			piercingEnable = this.piercingEnable,
-			piercingMinPoint = this.piercingMinPoint,
-			piercingMaxPoint = this.piercingMaxPoint,
+			piercingMinMaxPoint = this.piercingMinMaxPoint,
 			piercingFalloffCurve = this.piercingFalloffCurve,
 			explosionEnabled = this.explosionEnabled,
-			explosionMinRadius = this.explosionMinRadius,
-			explosionMaxRadius = this.explosionMaxRadius,
+			explosionMinMaxRadius = this.explosionMinMaxRadius,
 			explosionFalloffCurve = this.explosionFalloffCurve
 		};
 	}
@@ -155,12 +147,10 @@ public record ProjectileStatsData // ProfileStats
 	public StatusEffectsFlag HitEffectsFlag => hitEffectsFlag;
 	public float HitEffectsTimeMultiplier => hitEffectsTimeMultiplier;
 	public bool PiercingEnable => piercingEnable;
-	public int PiercingMinPoint => piercingMinPoint;
-	public int PiercingMaxPoint => piercingMaxPoint;
+	public Vector2Int PiercingMinMaxPoint => piercingMinMaxPoint;
 	public AnimationCurve PiercingFalloffCurve => piercingFalloffCurve;
 	public bool ExplosionEnabled => explosionEnabled;
-	public float ExplosionMinRadius => explosionMinRadius;
-	public float ExplosionMaxRadius => explosionMaxRadius;
+	public Vector2 ExplosionMinMaxRadius => explosionMinMaxRadius;
 	public AnimationCurve ExplosionFalloffCurve => explosionFalloffCurve;
 
 	#endregion
