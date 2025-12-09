@@ -5193,10 +5193,10 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 58857479}
   - {fileID: 4796101}
   - {fileID: 1555327484}
   - {fileID: 1234401990}
-  - {fileID: 58857479}
   m_Father: {fileID: 449196672}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -16752,6 +16752,14 @@ PrefabInstance:
     - target: {fileID: 690911111885271451, guid: 4fed18c935bf71d4a96946003a360ace, type: 3}
       propertyPath: m_Name
       value: _ProjectileObject
+      objectReference: {fileID: 0}
+    - target: {fileID: 2472412321012481619, guid: 4fed18c935bf71d4a96946003a360ace, type: 3}
+      propertyPath: statsData.piercingEnable
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2472412321012481619, guid: 4fed18c935bf71d4a96946003a360ace, type: 3}
+      propertyPath: statsData.explosionEnabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4352377263228712090, guid: 4fed18c935bf71d4a96946003a360ace, type: 3}
       propertyPath: m_LocalPosition.x

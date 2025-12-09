@@ -218,15 +218,12 @@ public class ProjectileMovement : MonoBehaviour, IProjectileMovement
 		if (cepRadius <= 0f)
 			return Vector3.zero;
 
-		// CEP 확률을 0~1 로
-		float p = Mathf.Clamp01(cepProbability / 100f);
-
 		// Rayleigh 분포 기반 scaling factor
 		// r_p = σ * sqrt( -2 ln(1-p) )
 		// 여기서 cepRadius = r_p
 		//
 		// → σ = cepRadius / sqrt(-2 ln(1-p))
-		float denom = Mathf.Sqrt(-2f * Mathf.Log(1f - p));
+		float denom = Mathf.Sqrt(-2f * Mathf.Log(1f - cepProbability));
 		if (denom < 1e-6f)
 			return Vector3.zero;
 
