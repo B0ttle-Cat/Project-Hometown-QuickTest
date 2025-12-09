@@ -69,7 +69,8 @@ public partial class OperationObject : IMovement , ITargetableCombatant
 	Action IMovement.OnStartMove { get => onStartMove; set => onStartMove = value; }
 	Action IMovement.OnEndedMove { get => onEndedMove; set => onEndedMove = value; }
 	Vector3 ITargetableCombatant.Position => movePosition;
-    partial void InitMovement()
+	Vector3 ITargetableCombatant.HitTargetPosition => movePosition + Vector3.up;
+	partial void InitMovement()
 	{
 		initPath = new Vector3[0];
 		movePath = new List<Vector3>();

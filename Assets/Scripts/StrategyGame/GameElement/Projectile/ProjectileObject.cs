@@ -4,7 +4,6 @@ using StrategyManagerModule;
 
 using UnityEngine;
 
-[RequireComponent(typeof(ProjectileMovement))]
 public partial class ProjectileObject : MonoBehaviour
 {
 	[SerializeField, InlineProperty, HideLabel]
@@ -16,7 +15,8 @@ public partial class ProjectileObject : MonoBehaviour
 
 	public void Init()
 	{
-		ThisMovement = GetComponent<ProjectileMovement>();
+		runtimeData = null;
+		statsData = null;
 	}
 	public void Init(StrategyStartSetterData.ProjectileData.Info setterData)
     {
@@ -25,41 +25,64 @@ public partial class ProjectileObject : MonoBehaviour
     public void Init(ProjectileProfileObject profile)
 	{
 		StatsData = new ProjectileStatsData(profile);
+		InitOther();
 	}
+	
+	private void InitOther()
+	{
+		InitMovement();
+	}
+	partial void InitMovement();
+
+	private void DeInit()
+	{
+		DeinitMovment();
+	}
+	partial void DeinitMovment();
 }
 public partial class ProjectileObject : IStrategyPoolingElement
 {
-    public IStrategyPoolingElement ThisElement => this;
-	public GameObject PrefabReference { get ; set ; }
-    IStrategyElement IStrategyElement.ThisElement { get; }
+	IStrategyElement IStrategyElement.ThisElement => this;
     int IStrategyElement.ID { get; set; }
-
+	GameObject IStrategyPoolingElement.PrefabReference { get ; set ; }
     void IStrategyElement.InStrategyCollector()
     {
     }
     void IStrategyElement.OutStrategyCollector()
     {
     }
-
 	void IStrategyStartGame.OnStartGame()
 	{
 	}
-
 	void IStrategyStartGame.OnStopGame()
 	{
 	}
 }
+
+[RequireComponent(typeof(ProjectileMovement))]
 public partial class ProjectileObject : IProjectileMovement
 {
-	public IProjectileMovement ThisMovement { get; private set; }
-
-    public int OrderElementID => ThisMovement.OrderElementID;
-
+	private ProjectileMovement movement;
+	public IProjectileMovement ThisMovement => movement;
+	public int OrderElementID => ThisMovement.OrderElementID;
     public int TargetElementID => ThisMovement.TargetElementID;
-
     public Vector3 StartPosition => ThisMovement.StartPosition;
-
     public Vector3 TargetPosition => ThisMovement.TargetPosition;
+    public Vector3 CurrentPosition => ThisMovement.CurrentPosition;
+    public float MoveSpeed => ThisMovement.MoveSpeed;
+    public Vector3 MoveDiraction => ThisMovement.MoveDiraction;
 
-    public void SetTarget(int orderID, int targetID)=> ThisMovement.SetTarget(orderID, targetID);
+	partial void InitMovement()
+	{
+		movement = GetComponent<ProjectileMovement>();
+		movement.Init(StatsData);
+	}
+
+	partial void DeinitMovment()
+	{
+		movement.Deinit();
+		movement = null;
+	}
+	void IProjectileMovement.MovmentUpdate(in float deltaTime)=>ThisMovement.MovmentUpdate(deltaTime);
+    void IProjectileMovement.SetTarget(IUnitCombatController order, ITargetableCombatant target)=> ThisMovement.SetTarget(order, target);
 }

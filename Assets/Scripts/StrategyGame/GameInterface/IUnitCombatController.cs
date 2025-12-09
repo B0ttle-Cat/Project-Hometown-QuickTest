@@ -8,7 +8,9 @@ public interface IUnitCombatController
 	IStrategyElement ThisElement { get; }
 	int FactionID { get; }
 
+	Transform transform { get; }
 	Vector3 Position { get; }
+	Vector3 AttackStartPosition { get; }
 	Vector2 AttackStartRange { get; }
 	Vector2 AttackLimitRange { get; }
 	float ActionRange { get; }

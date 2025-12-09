@@ -7,6 +7,7 @@ public interface ITargetableCombatant
 	public Transform transform { get; }
 	public int FactionID { get; }
 	public Vector3 Position { get; }
+	public Vector3 HitTargetPosition { get; }
 }
 
 

@@ -1,5 +1,7 @@
 ﻿using System;
 
+using Sirenix.OdinInspector;
+
 using StrategyManagerModule;
 
 using UnityEngine;
@@ -7,17 +9,18 @@ using UnityEngine;
 [Serializable]
 public record ProjectileRuntimeData // RuntimeData
 {
-	[SerializeField] private int orderUnitID;
-	[SerializeField] private int targetUnitID;
-	[SerializeField] private Vector3 startPosition;
-	[SerializeField] private Vector3 targetPosition;
+	[TitleGroup("Projectile Runtime Data")]
+	[SerializeField,BoxGroup("Projectile Runtime Data/Targeting")] private int orderUnitID;
+	[SerializeField,BoxGroup("Projectile Runtime Data/Targeting")] private int targetUnitID;
+	[SerializeField,BoxGroup("Projectile Runtime Data/Targeting")] private Vector3 startPosition;
+	[SerializeField,BoxGroup("Projectile Runtime Data/Targeting")] private Vector3 targetPosition;
 
-	[SerializeField] private Vector3 position;
-	[SerializeField] private Quaternion rotation;
-	[SerializeField] private Vector3 velocity;
+	[SerializeField,BoxGroup("Projectile Runtime Data/Transform")] private Vector3 position;
+	[SerializeField,BoxGroup("Projectile Runtime Data/Transform")] private Quaternion rotation;
+	[SerializeField,BoxGroup("Projectile Runtime Data/Transform")] private Vector3 velocity;
 
-	[SerializeField] private float lifeTime;
-	[SerializeField] private int piercingPoint;
+	[SerializeField,BoxGroup("Projectile Runtime Data/Runtime Stats")] private float lifeTime;
+	[SerializeField,BoxGroup("Projectile Runtime Data/Runtime Stats")] private int piercingCount;
 	public ProjectileRuntimeData(StrategyStartSetterData.ProjectileData.Info setterInfo)
 	{
 		orderUnitID = setterInfo.orderInSetterIndex;
@@ -28,7 +31,7 @@ public record ProjectileRuntimeData // RuntimeData
 		rotation = Quaternion.identity;
 		velocity = Vector3.zero;
 		lifeTime = 0f;
-		piercingPoint = 0;
+		piercingCount = 0;
 	}
 	public int OrderUnitID => orderUnitID;
 	public int TargetUnitID => targetUnitID;
@@ -40,6 +43,6 @@ public record ProjectileRuntimeData // RuntimeData
 	public Vector3 Velocity => velocity;
 
 	public float LifeTime => lifeTime;
-	public int PiercingPoint => piercingPoint;
+	public int PiercingPoint => piercingCount;
 
 }

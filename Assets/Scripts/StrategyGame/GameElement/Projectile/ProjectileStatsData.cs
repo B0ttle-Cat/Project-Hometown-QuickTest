@@ -35,12 +35,22 @@ public record ProjectileStatsData // ProfileStats
 	private float homingTurnSpeed = 180f;
 	[ToggleGroup("homingEnabled", GroupID = "Movement/H"), LabelText("MaxSpeed 일때 회전 속도"), ShowIf("isShiftSpeed"), SerializeField]
 	private float homingTurnSpeedWhenMaxSpeed = 180f;
-
 	[ToggleGroup("homingEnabled", GroupID = "Movement/H"), LabelText("유도 한계 각도"), SerializeField]
 	[Range(0f,180f)]
 	private float homingLimitAngle = 180;
 	[ToggleGroup("homingEnabled", GroupID = "Movement/H"), LabelText("유도 한계 거리"), SerializeField]
 	private float homingLimitDistance = float.PositiveInfinity;
+
+	[ToggleGroup("cepEnabled", GroupID = "Movement/C", ToggleGroupTitle ="공산오차 적용 여부"), SerializeField]
+	private bool cepEnabled;
+	[ToggleGroup("cepEnabled", GroupID = "Movement/C"), LabelText("공산오차 반경"), SerializeField]
+	private float cepRadius;
+	[ToggleGroup("cepEnabled", GroupID = "Movement/C"), LabelText("반경 내 들어갈 확률"), SerializeField]
+	private float cepProbability; // 0~100
+	[ToggleGroup("cepEnabled", GroupID = "Movement/C"), LabelText("재계산 여부"), SerializeField]
+	private bool cepReapply;
+	[ToggleGroup("cepEnabled", GroupID = "Movement/C"), LabelText("재계산 간격"), SerializeField, ShowIf("cepReapply")]
+	private Vector2 cepReapplyMinMaxTime;
 
 	[BoxGroup("LifeCycle"), LabelText("생존 시간"), SerializeField]
 	private float lifeTime = 5f;
@@ -80,11 +90,14 @@ public record ProjectileStatsData // ProfileStats
 	}
 	public ProjectileStatsData(ProjectileProfileObject profile)
     {
+		if (profile == null) return;
 		weaponType = profile.WeaponType;
 		moveStartSpeed = profile.MoveStartSpeed;
 		isShiftSpeed = profile.IsShiftSpeed;
 		moveMaxSpeed = profile.MoveMaxSpeed;
+		isShiftSpeed = profile.IsShiftSpeed;
 		moveSpeedCurve = profile.MoveSpeedCurve;
+		explosionEnabled = profile.ExplosionEnabled;
 		timeFromStartToMaxSpeed = profile.TimeFromStartToMaxSpeed;
 		homingEnabled = profile.HomingEnabled;
 		homingTurnSpeed = profile.HomingTurnSpeed;
@@ -95,12 +108,12 @@ public record ProjectileStatsData // ProfileStats
 		hitDamageMultiplier = profile.HitDamageMultiplier;
 		hitEffectsFlag = profile.HitEffectsFlag;
 		hitEffectsTimeMultiplier = profile.HitEffectsTimeMultiplier;
-		piercingEnable = profile.PiercingEnable;
+		piercingEnable = profile.PiercingEnable;	
 		piercingMinMaxPoint = profile.PiercingMinMaxPoint;
 		piercingFalloffCurve = profile.PiercingFalloffCurve;
-		explosionEnabled = profile.ExplosionEnabled;
 		explosionMinMaxRadius = profile.ExplosionMinMaxRadius;
 		explosionFalloffCurve = profile.ExplosionFalloffCurve;
+
 	}
 	public ProjectileStatsData Copy()
 	{
@@ -139,7 +152,15 @@ public record ProjectileStatsData // ProfileStats
 	public float TimeFromStartToMaxSpeed => timeFromStartToMaxSpeed;
 	public bool HomingEnabled => homingEnabled;
 	public float HomingTurnSpeed => homingTurnSpeed;
+	public float HomingTurnSpeedWhenMaxSpeed => homingTurnSpeedWhenMaxSpeed;
 	public float HomingActivationDelay => homingActivationDelay;
+	public float HomingLimitAngle => homingLimitAngle;
+	public float HomingLimitDistance => homingLimitDistance;
+	public bool CepEnabled => cepEnabled;
+	public float CepRadius => cepRadius;
+	public float CepProbability => cepProbability;
+	public bool CepReapply => cepReapply;
+	public Vector2 CepReapplyMinMaxTime => cepReapplyMinMaxTime;
 	public float LifeTime => lifeTime;
 	public float DestroyDelayAfterHit => destroyDelayAfterHit;
 	public float CollisionRadius => collisionRadius;

@@ -49,7 +49,8 @@ public partial class UnitObject : IUnitCombatController, INearbyElement, ITarget
 	float INearbyElement.Radius => ThisMovement.CurrentRadius;
 	Vector3 ITargetableCombatant.Position => ThisMovement.CurrentPosition;
 	Vector3 IUnitCombatController.Position => ThisMovement.CurrentPosition;
-
+	Vector3 IUnitCombatController.AttackStartPosition => ThisMovement.CurrentPosition + Vector3.up;
+	Vector3 ITargetableCombatant.HitTargetPosition => ThisMovement.CurrentPosition + Vector3.up;
 	Vector2 IUnitCombatController.AttackStartRange => combatAttackStartRange;
 	Vector2 IUnitCombatController.AttackLimitRange => combatAttackLimitRange;
 	float IUnitCombatController.ActionRange => combatActionRange;

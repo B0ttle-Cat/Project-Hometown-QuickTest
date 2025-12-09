@@ -88,7 +88,10 @@ public class ProjectileProfileObject : ScriptableObject
 
 		homingEnabled = st.HomingEnabled;
 		homingTurnSpeed = st.HomingTurnSpeed;
+		homingTurnSpeedWhenMaxSpeed = st.HomingTurnSpeedWhenMaxSpeed;
 		homingActivationDelay = st.HomingActivationDelay;
+		homingLimitAngle = st.HomingLimitAngle;
+		homingLimitDistance = st.HomingLimitDistance;
 
 		lifeTime = st.LifeTime;
 		destroyDelayAfterHit = st.DestroyDelayAfterHit;
