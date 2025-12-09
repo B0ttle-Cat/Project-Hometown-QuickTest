@@ -9,11 +9,12 @@ public partial class ProjectileObject : IProjectileMovement
 	public int TargetElementID => ThisMovement.TargetElementID;
 	public Vector3 StartPosition => ThisMovement.StartPosition;
 	public Vector3 TargetPosition => ThisMovement.TargetPosition;
+    public Vector3 PrevPosition => ThisMovement.PrevPosition;
 	public Vector3 CurrentPosition => ThisMovement.CurrentPosition;
 	public float MoveSpeed => ThisMovement.MoveSpeed;
 	public Vector3 MoveDiraction => ThisMovement.MoveDiraction;
 
-	partial void InitMovement()
+    partial void InitMovement()
 	{
 		movement = GetComponent<ProjectileMovement>();
 		movement.Init(StatsData);
