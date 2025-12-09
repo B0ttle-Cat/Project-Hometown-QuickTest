@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Sirenix.OdinInspector;
+
+using UnityEngine;
 
 public interface IProjectileMovement
 {
@@ -16,14 +18,13 @@ public interface IProjectileMovement
 
 public class ProjectileMovement : MonoBehaviour, IProjectileMovement
 {
-	protected IUnitCombatController order;
-	protected ITargetableCombatant target;
-	protected Vector3 startPosition;
-	protected Vector3 targetPosition;
-
-	protected Vector3 currentPosition;
-	protected float moveSpeed;
-	protected Vector3 moveDiraction;
+	[SerializeField] protected IUnitCombatController order;
+	[SerializeField] protected ITargetableCombatant target;
+	[SerializeField] protected Vector3 startPosition;
+	[SerializeField] protected Vector3 targetPosition;
+	[SerializeField] protected Vector3 currentPosition;
+	[SerializeField] protected float moveSpeed;
+	[SerializeField] protected Vector3 moveDiraction;
 	IProjectileMovement IProjectileMovement.ThisMovement => this;
 	int IProjectileMovement.OrderElementID => order.ThisElement.ID;
 	int IProjectileMovement.TargetElementID => target.ThisElement.ID;
@@ -32,24 +33,23 @@ public class ProjectileMovement : MonoBehaviour, IProjectileMovement
 	Vector3 IProjectileMovement.CurrentPosition => currentPosition;
 	float IProjectileMovement.MoveSpeed => moveSpeed;
 	Vector3 IProjectileMovement.MoveDiraction => moveDiraction;
-
-	protected float moveStartSpeed = 10f;
-	protected bool isShiftSpeed = false;
-	protected float moveMaxSpeed = 20f;
-	protected AnimationCurve moveSpeedCurve = AnimationCurve.Linear(0,0,1,1);
-	protected float timeFromStartToMaxSpeed = 1f;
-	protected bool homingEnabled = false;
-	protected float homingActivationDelay = 0f;
-	protected float homingTurnSpeed = 180f;
-	protected float homingTurnSpeedWhenMaxSpeed = 180f;
-	protected float homingLimitAngle = 180;
-	protected float homingLimitDistance = float.PositiveInfinity;
-	protected bool cepEnabled = false;
-	protected float cepRadius = 0f;
-	protected float cepProbability = 50f;
-	protected bool cepReapply = false;
-	protected Vector2 cepReapplyMinMaxTime = new Vector2(0.5f, 1.5f);
-
+	
+	[FoldoutGroup("Raw Stats Value"),SerializeField] protected float moveStartSpeed = 10f;
+	[FoldoutGroup("Raw Stats Value"),SerializeField] protected bool isShiftSpeed = false;
+	[FoldoutGroup("Raw Stats Value"),SerializeField] protected float moveMaxSpeed = 20f;
+	[FoldoutGroup("Raw Stats Value"),SerializeField] protected AnimationCurve moveSpeedCurve = AnimationCurve.Linear(0,0,1,1);
+	[FoldoutGroup("Raw Stats Value"),SerializeField] protected float timeFromStartToMaxSpeed = 1f;
+	[FoldoutGroup("Raw Stats Value"),SerializeField] protected bool homingEnabled = false;
+	[FoldoutGroup("Raw Stats Value"),SerializeField] protected float homingActivationDelay = 0f;
+	[FoldoutGroup("Raw Stats Value"),SerializeField] protected float homingTurnSpeed = 180f;
+	[FoldoutGroup("Raw Stats Value"),SerializeField] protected float homingTurnSpeedWhenMaxSpeed = 180f;
+	[FoldoutGroup("Raw Stats Value"),SerializeField] protected float homingLimitAngle = 180;
+	[FoldoutGroup("Raw Stats Value"),SerializeField] protected float homingLimitDistance = float.PositiveInfinity;
+	[FoldoutGroup("Raw Stats Value"),SerializeField] protected bool cepEnabled = false;
+	[FoldoutGroup("Raw Stats Value"),SerializeField] protected float cepRadius = 0f;
+	[FoldoutGroup("Raw Stats Value"),SerializeField] protected float cepProbability = 50f;
+	[FoldoutGroup("Raw Stats Value"),SerializeField] protected bool cepReapply = false;
+	[FoldoutGroup("Raw Stats Value"),SerializeField] protected Vector2 cepReapplyMinMaxTime = new Vector2(0.5f, 1.5f);
 
 	protected float updateTime;
 	protected float homingLimitAngleCosine;
