@@ -112,8 +112,6 @@ public record ProjectileStatsData // ProfileStats
 		cepEnabled = statsData.CepEnabled;
 		cepRadius = statsData.CepRadius;
 		cepProbability = statsData.CepProbability;
-		cepReapply = statsData.CepReapply;
-		cepReapplyMinMaxTime = statsData.CepReapplyMinMaxTime;
 
 		lifeTime = statsData.LifeTime;
 		destroyDelayAfterHit = statsData.DestroyDelayAfterHit;
@@ -239,11 +237,13 @@ public record ProjectileStatsData // ProfileStats
 	public float HomingActivationDelay => homingActivationDelay;
 	public float HomingLimitAngle => homingLimitAngle;
 	public float HomingLimitDistance => homingLimitDistance;
+
+	public float HomingLimitAngleCosine => Mathf.Cos(homingLimitAngle * Mathf.Deg2Rad);
+	public float HomingLimitSqrDistance => float.IsPositiveInfinity(homingLimitDistance) ? float.PositiveInfinity : homingLimitDistance * homingLimitDistance;
+
 	public bool CepEnabled => cepEnabled;
 	public float CepRadius => cepRadius;
 	public float CepProbability => cepProbability;
-	public bool CepReapply => cepReapply;
-	public Vector2 CepReapplyMinMaxTime => cepReapplyMinMaxTime;
 	public float LifeTime => lifeTime;
 	public float DestroyDelayAfterHit => destroyDelayAfterHit;
 	public float CollisionRadius => collisionRadius;

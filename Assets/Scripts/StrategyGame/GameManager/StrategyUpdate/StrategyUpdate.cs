@@ -48,6 +48,10 @@ namespace StrategyManagerModule
 			유닛_데미지_계산,          // 충돌된 데이미 계산을 진행
 			유닛_사망_처리,               // HP 없는 유닛을 삭제.
 
+			투사체_위치이동,
+			투사체_충돌확인,
+
+
 			작전_기본변수_갱신,
 
 			UI,
@@ -187,6 +191,10 @@ namespace StrategyManagerModule
 
 			(UpdateLogicSort.유닛_노드_이동,  new StrategyUpdate_NodeMovement(this)),
 			(UpdateLogicSort.유닛_추격_이동,  new StrategyUpdate_NavMovement(this)),
+
+			(UpdateLogicSort.투사체_위치이동,  new StrategyUpdate_ProjectileMovement(this)),
+			//(UpdateLogicSort.투사체_충돌확인,  new StrategyUpdate_ProjectileHitCheck(this)),
+
 			(UpdateLogicSort.유닛_공격_업데이트,  null),
 			(UpdateLogicSort.유닛_데미지_계산,  null),
 			(UpdateLogicSort.유닛_사망_처리,  null),

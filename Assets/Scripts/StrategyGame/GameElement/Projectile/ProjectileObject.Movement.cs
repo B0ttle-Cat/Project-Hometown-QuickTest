@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using StrategyManagerModule;
+
+using UnityEngine;
 
 [RequireComponent(typeof(ProjectileMovement))]
 public partial class ProjectileObject : IProjectileMovement
@@ -13,6 +15,7 @@ public partial class ProjectileObject : IProjectileMovement
 	public Vector3 CurrentPosition => ThisMovement.CurrentPosition;
 	public float MoveSpeed => ThisMovement.MoveSpeed;
 	public Vector3 MoveDiraction => ThisMovement.MoveDiraction;
+    public StrategyUpdate.StrategyUpdate_ProjectileMovement.PureMovementData MovementData { get => ThisMovement.MovementData; set => ThisMovement.MovementData = value; }
 
     partial void InitMovement()
 	{
@@ -26,4 +29,9 @@ public partial class ProjectileObject : IProjectileMovement
 	}
 	void IProjectileMovement.MovmentUpdate(in float deltaTime) => ThisMovement.MovmentUpdate(deltaTime);
 	void IProjectileMovement.SetTarget(IUnitCombatController order, ITargetableCombatant target) => ThisMovement.SetTarget(order, target);
+
+    public void ApplyPositionFromMovementData()
+    {
+        ThisMovement.ApplyPositionFromMovementData();
+    }
 }

@@ -11,8 +11,7 @@ namespace StrategyManagerModule
 	{
 		private readonly Dictionary<GameObject, IElementStore> stores = new();
 
-		private readonly Dictionary<Type, Action<GameObject, bool>> onChangeEventWithType;
-
+		private readonly Dictionary<Type, Action<GameObject, bool>> onChangeEventWithType = new Dictionary<Type, Action<GameObject, bool>>();
 		// 글로벌 추가/삭제 이벤트
 		private event Action<GameObject, bool> onAnyElementChanged;
 		public StrategyPoolingCollector Register<T>(GameObject prefabObject, int capacity = 32) where T : class, IStrategyPoolingElement => Register(typeof(T), prefabObject, capacity);
@@ -52,7 +51,13 @@ namespace StrategyManagerModule
 			var store = stores[prefabObject] as PoolingElementStore<T>;
 			var item = store.PoolList.Acquire(factory);
 			item.PrefabReference = prefabObject;
+			
 			onAnyElementChanged?.Invoke(item.gameObject, true);
+			if (onChangeEventWithType.TryGetValue(typeof(T), out var eventWithType))
+			{
+				eventWithType?.Invoke(item.gameObject, true);
+			}
+
 			return item;
 		}
 
@@ -62,13 +67,21 @@ namespace StrategyManagerModule
 
 			if (stores.TryGetValue(item.PrefabReference, out var store))
 			{
-				return (store as PoolingElementStore<T>).PoolList.Remove(item);
+				if((store as PoolingElementStore<T>).PoolList.Remove(item))
+				{
+					onAnyElementChanged?.Invoke(item.gameObject, false);
+					if (onChangeEventWithType.TryGetValue(typeof(T), out var eventWithType))
+					{
+						eventWithType?.Invoke(item.gameObject, false);
+					}
+					return true;
+				}
 			}
 			else
 			{
 				Debug.LogWarning($"풀에 등록되지 않은 프리팹 {item.gameObject.name}의 객체를 반환 시도했습니다.");
-				return false;
 			}
+			return false;
 		}
 
 		public IEnumerable<IList> GetAllRawLists()
@@ -135,7 +148,6 @@ namespace StrategyManagerModule
 				list.RemoveListener(onChange);
 			}
 		}
-
 		public void AddAnyChangeListener(Action<GameObject, bool> listener)
 		{
 			onAnyElementChanged -= listener;
@@ -145,6 +157,45 @@ namespace StrategyManagerModule
 		{
 			onAnyElementChanged -= listener;
 		}
+		public void AddChangeListener<T>(Action<GameObject, bool> listener, bool invokeForExisting = false) where T : class, IStrategyPoolingElement
+		{
+			if (listener == null) return;
+
+			if(onChangeEventWithType.TryGetValue(typeof(T), out var existingEvent))
+			{
+				existingEvent -= listener;
+				existingEvent += listener;
+				onChangeEventWithType[typeof(T)] = existingEvent;
+			}
+			else
+			{
+				onChangeEventWithType[typeof(T)] = listener;
+			}
+
+			if (invokeForExisting)
+			{
+				foreach (var pair in stores)
+				{
+					var store = pair.Value;
+					if (store is not PoolElementList<T> es) continue;
+					int count = es.Count;
+					for (int i = 0 ; i < count ; i++)
+					{
+						listener(es[i].gameObject, true);
+					}
+				}
+			}
+
+		}
+		public void RemoveChangeListener<T>(Action<GameObject, bool> listener)
+		{
+			if (onChangeEventWithType.TryGetValue(typeof(T), out var existingEvent))
+			{
+				existingEvent -= listener;
+				onChangeEventWithType[typeof(T)] = existingEvent;
+			}
+		}
+
 		public void Dispose()
 		{
 			foreach (var store in stores.Values)

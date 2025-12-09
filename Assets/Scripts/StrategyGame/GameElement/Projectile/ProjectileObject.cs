@@ -58,14 +58,3 @@ public partial class ProjectileObject : IStrategyPoolingElement
 	{
 	}
 }
-
-public partial class ProjectileObject // Projectile Hit Listener
-{
-	public void OnCollisionEnter(Collision collision)
-	{
-		if (collision.gameObject.TryGetComponent(out ITargetableCombatant target))
-		{
-			// Handle hit logic
-		}
-	}
-}

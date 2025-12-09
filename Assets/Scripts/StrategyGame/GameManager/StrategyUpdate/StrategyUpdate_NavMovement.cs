@@ -108,5 +108,5 @@ namespace StrategyManagerModule
 				}
 			}
 		}
-	} 
+	}
 }
