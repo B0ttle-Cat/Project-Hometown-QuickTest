@@ -15,7 +15,7 @@ MonoBehaviour:
   prefab: {fileID: 4178508497320446683, guid: 399bd487718c2484ebfb8df8247bb21b, type: 3}
   unitKey: 1301
   displayName: "LWR-AP-XL \uBCFC\uCF00\uC774\uB178 \uB85C\uCF13\uD3EC \uB85C\uBD07"
-  weaponType: 0
+  projectileKey: 1002
   protectType: 0
   "\uC720\uB2DB_\uC778\uB825": 1
   "\uC720\uB2DB_\uBB3C\uC790": 1

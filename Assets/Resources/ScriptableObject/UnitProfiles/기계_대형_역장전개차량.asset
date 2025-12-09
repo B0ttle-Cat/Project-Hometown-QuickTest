@@ -15,7 +15,7 @@ MonoBehaviour:
   prefab: {fileID: 8066639118684067047, guid: 4ad20e9d92315c54e9eac58740f35f05, type: 3}
   unitKey: 1311
   displayName: "LSD-DS-SR \uBC30\uB9AC\uC5B4 \uC5ED\uC7A5 \uC804\uAC1C \uCC28\uB7C9"
-  weaponType: 0
+  projectileKey: 1002
   protectType: 0
   "\uC720\uB2DB_\uC778\uB825": 1
   "\uC720\uB2DB_\uBB3C\uC790": 1

@@ -15,7 +15,7 @@ MonoBehaviour:
   prefab: {fileID: 4880366889746405901, guid: bfcf201e485eab74bbd14dc1ff9fc99d, type: 3}
   unitKey: 1222
   displayName: "MCW-SP-NM \uB808\uC774\uBE10 \uC9C0\uD718 \uD1B5\uC81C \uB85C\uBD07"
-  weaponType: 0
+  projectileKey: 1001
   protectType: 0
   "\uC720\uB2DB_\uC778\uB825": 1
   "\uC720\uB2DB_\uBB3C\uC790": 1

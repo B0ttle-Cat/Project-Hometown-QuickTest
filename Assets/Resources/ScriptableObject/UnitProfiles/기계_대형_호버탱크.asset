@@ -15,7 +15,7 @@ MonoBehaviour:
   prefab: {fileID: 414609006758805074, guid: ceca0356e18272341b9f3b06f4e20a0b, type: 3}
   unitKey: 1303
   displayName: "LHT-BP-PR \uB808\uBE44\uC544\uD0C4 \uD638\uBC84 \uD0F1\uD06C"
-  weaponType: 0
+  projectileKey: 1002
   protectType: 0
   "\uC720\uB2DB_\uC778\uB825": 1
   "\uC720\uB2DB_\uBB3C\uC790": 1

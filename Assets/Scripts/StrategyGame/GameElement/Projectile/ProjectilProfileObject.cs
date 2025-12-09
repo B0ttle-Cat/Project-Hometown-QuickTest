@@ -21,8 +21,8 @@ public class ProjectileProfileObject : ScriptableObject
 #if UNITY_EDITOR
 	private void CreatePrefab()
 	{
-		string basePath = "Assets/Resources/Prefabs/ProjectilObject/_ProjectilObject.prefab";
-		string newPrefabPath = $"Assets/Resources/Prefabs/ProjectilObject/{projectileKey}.prefab";
+		string basePath = "Assets/Resources/Prefabs/ProjectileObject/_ProjectileObject.prefab";
+		string newPrefabPath = $"Assets/Resources/Prefabs/ProjectileObject/{projectileKey}.prefab";
 
 		GameObject basePrefab = prefab != null
 			? PrefabUtility.GetCorrespondingObjectFromOriginalSource(prefab)

@@ -15,7 +15,7 @@ MonoBehaviour:
   prefab: {fileID: 8561327786990430564, guid: 659747839d1b8fb4aa0edd1e776aa9c8, type: 3}
   unitKey: 1401
   displayName: "XBR-AP-XXM \uC138\uB77C\uD504 \uBBF8\uC0AC\uC77C \uD56D\uACF5\uBAA8\uD568"
-  weaponType: 0
+  projectileKey: 1002
   protectType: 0
   "\uC720\uB2DB_\uC778\uB825": 1
   "\uC720\uB2DB_\uBB3C\uC790": 1

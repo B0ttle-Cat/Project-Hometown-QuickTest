@@ -17,20 +17,92 @@ MonoBehaviour:
   suffix: 
   KeyPairTargetList:
   - key: 1000
+    asset:
+      projectileKey: 1000
+      displayName: "\uC77C\uBC18\uD0C4_\uC18C\uD615"
+      projectileProfileObject: {fileID: 11400000, guid: 2340c803f2f9b064ea242aa268eb9f1a, type: 2}
   - key: 1001
+    asset:
+      projectileKey: 1001
+      displayName: "\uC77C\uBC18\uD0C4_\uC911\uD615"
+      projectileProfileObject: {fileID: 11400000, guid: 737c8783d8c61cd4a964dede69f48071, type: 2}
   - key: 1002
+    asset:
+      projectileKey: 1002
+      displayName: "\uC77C\uBC18\uD0C4_\uB300\uD615"
+      projectileProfileObject: {fileID: 11400000, guid: b3719914c5c74f546ac8524ac01ee9c6, type: 2}
   - key: 1100
+    asset:
+      projectileKey: 1100
+      displayName: "\uAD00\uD1B5\uD0C4_\uC18C\uD615"
+      projectileProfileObject: {fileID: 11400000, guid: 47322e79d2f7af649b80ce7ce21b99a2, type: 2}
   - key: 1101
+    asset:
+      projectileKey: 1101
+      displayName: "\uAD00\uD1B5\uD0C4_\uC911\uD615"
+      projectileProfileObject: {fileID: 11400000, guid: e9c74ee1c49cbf04cbbce3d8c623ac2c, type: 2}
   - key: 1102
+    asset:
+      projectileKey: 1102
+      displayName: "\uAD00\uD1B5\uD0C4_\uB300\uD615"
+      projectileProfileObject: {fileID: 11400000, guid: 21fd2fc32eeb5f841acaad38b38b2eb6, type: 2}
   - key: 1150
+    asset:
+      projectileKey: 1150
+      displayName: "\uAD00\uD1B5\uD2B9\uD654\uD0C4_\uC18C\uD615"
+      projectileProfileObject: {fileID: 11400000, guid: c11e9569b588a584fa662f1e33ac2906, type: 2}
   - key: 1151
+    asset:
+      projectileKey: 1151
+      displayName: "\uAD00\uD1B5\uD2B9\uD654\uD0C4_\uC911\uD615"
+      projectileProfileObject: {fileID: 11400000, guid: ae0481ad818475340a47c31efd90c707, type: 2}
   - key: 1152
+    asset:
+      projectileKey: 1152
+      displayName: "\uAD00\uD1B5\uD2B9\uD654\uD0C4_\uB300\uD615"
+      projectileProfileObject: {fileID: 11400000, guid: e3920fb539bd14b48868f5b9db874b34, type: 2}
   - key: 1200
+    asset:
+      projectileKey: 1200
+      displayName: "\uD3ED\uBC1C\uD0C4_\uC18C\uD615"
+      projectileProfileObject: {fileID: 11400000, guid: 0f4766a6928f34146b2df3d9140177c5, type: 2}
   - key: 1201
+    asset:
+      projectileKey: 1201
+      displayName: "\uD3ED\uBC1C\uD0C4_\uC911\uD615"
+      projectileProfileObject: {fileID: 11400000, guid: 0c2188c14dcd5c645b17f987172d77b7, type: 2}
   - key: 1202
+    asset:
+      projectileKey: 1202
+      displayName: "\uD3ED\uBC1C\uD0C4_\uB300\uD615"
+      projectileProfileObject: {fileID: 11400000, guid: c31409d438e9e2c48b69fa13367d6a29, type: 2}
   - key: 1250
+    asset:
+      projectileKey: 1250
+      displayName: "\uD3ED\uBC1C\uD2B9\uD654\uD0C4_\uC18C\uD615"
+      projectileProfileObject: {fileID: 11400000, guid: c4900991fd07a7c4693e4fdc734e054a, type: 2}
   - key: 1251
+    asset:
+      projectileKey: 1251
+      displayName: "\uD3ED\uBC1C\uD2B9\uD654\uD0C4_\uC911\uD615"
+      projectileProfileObject: {fileID: 11400000, guid: 39edd412b8a0e214284a776716f21ca0, type: 2}
   - key: 1252
+    asset:
+      projectileKey: 1252
+      displayName: "\uD3ED\uBC1C\uD2B9\uD654\uD0C4_\uB300\uD615"
+      projectileProfileObject: {fileID: 11400000, guid: f7ab190047fe1914dbdb97f47b78e32f, type: 2}
   - key: 1300
+    asset:
+      projectileKey: 1300
+      displayName: "\uC5D0\uB108\uC9C0\uD0C4_\uC18C\uD615"
+      projectileProfileObject: {fileID: 11400000, guid: 69cd726ce91295944bc38059f757be44, type: 2}
   - key: 1301
+    asset:
+      projectileKey: 1301
+      displayName: "\uC5D0\uB108\uC9C0\uD0C4_\uC911\uD615"
+      projectileProfileObject: {fileID: 11400000, guid: c252b0e467d7a5740a3fb94e522569c1, type: 2}
   - key: 1302
+    asset:
+      projectileKey: 1302
+      displayName: "\uC5D0\uB108\uC9C0\uD0C4_\uB300\uD615"
+      projectileProfileObject: {fileID: 11400000, guid: bfbccb0872930214ea37a7b1275653f9, type: 2}

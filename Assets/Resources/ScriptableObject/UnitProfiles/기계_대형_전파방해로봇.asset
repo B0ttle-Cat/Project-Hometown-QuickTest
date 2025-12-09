@@ -15,7 +15,7 @@ MonoBehaviour:
   prefab: {fileID: 3278662761782550335, guid: 392ffa1dee26b5f4fb1176c527f9022e, type: 3}
   unitKey: 1320
   displayName: "LRD-SP-EL \uC635\uC2DC\uB514\uC5B8 \uC2E0\uD638\uCC28\uB2E8 \uB85C\uBD07"
-  weaponType: 0
+  projectileKey: 1002
   protectType: 0
   "\uC720\uB2DB_\uC778\uB825": 1
   "\uC720\uB2DB_\uBB3C\uC790": 1

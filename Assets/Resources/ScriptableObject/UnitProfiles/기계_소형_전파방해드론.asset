@@ -15,7 +15,7 @@ MonoBehaviour:
   prefab: {fileID: 1495000901161681217, guid: 37e4d22debde25547ab62891dfcfde96, type: 3}
   unitKey: 1120
   displayName: "SED-SS-EL \uC804\uD30C\uAD50\uB780\uB4DC\uB860"
-  weaponType: 0
+  projectileKey: 1000
   protectType: 0
   "\uC720\uB2DB_\uC778\uB825": 1
   "\uC720\uB2DB_\uBB3C\uC790": 1

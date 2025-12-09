@@ -15,7 +15,7 @@ MonoBehaviour:
   prefab: {fileID: 1214450579978470823, guid: 0e9a3f84f31d52f448c699bdfd143d97, type: 3}
   unitKey: 1201
   displayName: "MRD-AP-XL \uD638\uB137 \uB85C\uCF13 \uB4DC\uB860"
-  weaponType: 0
+  projectileKey: 1001
   protectType: 0
   "\uC720\uB2DB_\uC778\uB825": 1
   "\uC720\uB2DB_\uBB3C\uC790": 1

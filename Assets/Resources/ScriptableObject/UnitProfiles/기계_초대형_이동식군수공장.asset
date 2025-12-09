@@ -16,7 +16,7 @@ MonoBehaviour:
   unitKey: 1420
   displayName: "XFW-SS-NM \uD5E4\uD30C\uC774\uC2A4\uD1A0\uC2A4 \uC774\uB3D9\uC2DD
     \uAD70\uC218\uACF5\uC7A5"
-  weaponType: 0
+  projectileKey: 1002
   protectType: 0
   "\uC720\uB2DB_\uC778\uB825": 1
   "\uC720\uB2DB_\uBB3C\uC790": 1

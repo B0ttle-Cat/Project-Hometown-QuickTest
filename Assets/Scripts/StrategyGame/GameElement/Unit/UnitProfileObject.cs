@@ -197,62 +197,62 @@ public class UnitProfileObject : ScriptableObject
 		}
 	}
 #endif
-	public WeaponType weaponType;
+
+	public ProjectileKey projectileKey;
 	public ProtectionType protectType;
 
-	[Header("StatsData")]
-	public int 유닛_인력;
-	public int 유닛_물자;
-	public int 유닛_전력;
+	[FoldoutGroup("StatsData")] public int 유닛_인력;
+	[FoldoutGroup("StatsData")] public int 유닛_물자;
+	[FoldoutGroup("StatsData")] public int 유닛_전력;
 	[Space]
-	public int 유닛_최대내구도;
-	public int 유닛_현재내구도;
+	[FoldoutGroup("StatsData")] public int 유닛_최대내구도;
+	[FoldoutGroup("StatsData")] public int 유닛_현재내구도;
 
-	public int 유닛_공격력;
-	public int 유닛_방어력;
-	public int 유닛_치유력;
-	public int 유닛_회복력;
-	public int 유닛_이동속도;
-	public int 유닛_점령점수;
+	[FoldoutGroup("StatsData")] public int 유닛_공격력;
+	[FoldoutGroup("StatsData")] public int 유닛_방어력;
+	[FoldoutGroup("StatsData")] public int 유닛_치유력;
+	[FoldoutGroup("StatsData")] public int 유닛_회복력;
+	[FoldoutGroup("StatsData")] public int 유닛_이동속도;
+	[FoldoutGroup("StatsData")] public int 유닛_점령점수;
 
-	public int 유닛_치명공격력;
-	public int 유닛_치명공격백분율;
-	public int 유닛_치명방어력;
-
-	[Space]
-	public int 유닛_관통레벨;
-	public int 유닛_장갑레벨;
-	public int 유닛_EMP저항레벨;
-
-	public int 유닛_상태이상적용레벨;
-	public int 유닛_상태이상저항레벨;
+	[FoldoutGroup("StatsData")] public int 유닛_치명공격력;
+	[FoldoutGroup("StatsData")] public int 유닛_치명공격백분율;
+	[FoldoutGroup("StatsData")] public int 유닛_치명방어력;
 
 	[Space]
-	public int 유닛_공격명중기회;
-	public int 유닛_공격회피기회;
-	public int 유닛_치명명중기회;
-	public int 유닛_치명회피기회;
-	[Space]
-	public int 유닛_명중피격수;
-	public int 유닛_연속공격횟수;
-	public int 유닛_조준지연시간;
-	public int 유닛_연속공격지연시간;
-	public int 유닛_재공격지연시간;
-	[Space]
-	public int 유닛_탄용량;
-	public int 유닛_잔탄수;
-	public int 유닛_재장전시간;
+	[FoldoutGroup("StatsData")] public int 유닛_관통레벨;
+	[FoldoutGroup("StatsData")] public int 유닛_장갑레벨;
+	[FoldoutGroup("StatsData")] public int 유닛_EMP저항레벨;
+
+	[FoldoutGroup("StatsData")] public int 유닛_상태이상적용레벨;
+	[FoldoutGroup("StatsData")] public int 유닛_상태이상저항레벨;
 
 	[Space]
-	public int 유닛_공격소모_물자;
-	public int 유닛_공격소모_전력;
+	[FoldoutGroup("StatsData")] public int 유닛_공격명중기회;
+	[FoldoutGroup("StatsData")] public int 유닛_공격회피기회;
+	[FoldoutGroup("StatsData")] public int 유닛_치명명중기회;
+	[FoldoutGroup("StatsData")] public int 유닛_치명회피기회;
 	[Space]
-	public int 유닛_공격범위_종료최소;
-	public int 유닛_공격범위_시작최소;
-	public int 유닛_공격범위_시작최대;
-	public int 유닛_공격범위_종료최대;
-	public int 유닛_행동범위;
-	public int 유닛_시야범위;
+	[FoldoutGroup("StatsData")] public int 유닛_명중피격수;
+	[FoldoutGroup("StatsData")] public int 유닛_연속공격횟수;
+	[FoldoutGroup("StatsData")] public int 유닛_조준지연시간;
+	[FoldoutGroup("StatsData")] public int 유닛_연속공격지연시간;
+	[FoldoutGroup("StatsData")] public int 유닛_재공격지연시간;
+	[Space]
+	[FoldoutGroup("StatsData")] public int 유닛_탄용량;
+	[FoldoutGroup("StatsData")] public int 유닛_잔탄수;
+	[FoldoutGroup("StatsData")] public int 유닛_재장전시간;
+
+	[Space]
+	[FoldoutGroup("StatsData")] public int 유닛_공격소모_물자;
+	[FoldoutGroup("StatsData")] public int 유닛_공격소모_전력;
+	[Space]
+	[FoldoutGroup("StatsData")] public int 유닛_공격범위_종료최소;
+	[FoldoutGroup("StatsData")] public int 유닛_공격범위_시작최소;
+	[FoldoutGroup("StatsData")] public int 유닛_공격범위_시작최대;
+	[FoldoutGroup("StatsData")] public int 유닛_공격범위_종료최대;
+	[FoldoutGroup("StatsData")] public int 유닛_행동범위;
+	[FoldoutGroup("StatsData")] public int 유닛_시야범위;
 
 	[Space]
 	public SkillData[] personalSkills;

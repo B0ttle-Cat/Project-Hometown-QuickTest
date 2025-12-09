@@ -15,7 +15,7 @@ MonoBehaviour:
   prefab: {fileID: 6231059344873705177, guid: db6bf588f78b8674c9dac52cb6ae8f0a, type: 3}
   unitKey: 1220
   displayName: "MWF-BP-XL \uBC84\uD314\uB85C \uD654\uC5FC \uB85C\uBD07"
-  weaponType: 0
+  projectileKey: 1001
   protectType: 0
   "\uC720\uB2DB_\uC778\uB825": 1
   "\uC720\uB2DB_\uBB3C\uC790": 1

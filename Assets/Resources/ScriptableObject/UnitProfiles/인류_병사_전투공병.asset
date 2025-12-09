@@ -15,7 +15,7 @@ MonoBehaviour:
   prefab: {fileID: 8339279883170994938, guid: 16e33b6518a3f2f4aafa87491b72818a, type: 3}
   unitKey: 2112
   displayName: "\uC804\uD22C\uACF5\uBCD1"
-  weaponType: 0
+  projectileKey: 1000
   protectType: 0
   "\uC720\uB2DB_\uC778\uB825": 1
   "\uC720\uB2DB_\uBB3C\uC790": 1

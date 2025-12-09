@@ -15,7 +15,7 @@ MonoBehaviour:
   prefab: {fileID: 1898820785669656653, guid: d9925145b5718944f93ddf6a1d3f161d, type: 3}
   unitKey: 1200
   displayName: "MGD-AP-PL \uD558\uC774\uC5D0\uB098 \uC804\uD22C \uB4DC\uB860"
-  weaponType: 0
+  projectileKey: 1001
   protectType: 0
   "\uC720\uB2DB_\uC778\uB825": 1
   "\uC720\uB2DB_\uBB3C\uC790": 1

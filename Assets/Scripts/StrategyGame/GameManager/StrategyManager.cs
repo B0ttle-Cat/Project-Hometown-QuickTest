@@ -37,6 +37,9 @@ public class StrategyManager : MonoBehaviour
 	public static KeyPairUnit Key2Unit => Manager == null || Manager.key2UnitInfo == null
 		? KeyPairUnit.Load("_Default")
 		: Manager.key2UnitInfo;
+	public static KeyPairProjectile Key2Projectile => Manager == null || Manager.key2Projectile == null
+		? KeyPairProjectile.Load("_Default")
+		: Manager.key2Projectile;
 
 	public static int PlayerFactionID;
 	public static GameStartingData PreparedData;
@@ -62,6 +65,7 @@ public class StrategyManager : MonoBehaviour
 	private KeyPairDisplayName key2Name;
 	private KeyPairSprite key2Sprite;
 	private KeyPairUnit key2UnitInfo;
+	private KeyPairProjectile key2Projectile;
 	private void Awake()
 	{
 		IsGameSceneReady = false;
@@ -213,6 +217,7 @@ public class StrategyManager : MonoBehaviour
 		key2Name = Key2Name;
 		key2Sprite = Key2Sprite;
 		key2UnitInfo = Key2Unit;
+		key2Projectile = Key2Projectile;
 		#endregion
 
 		#region 이 구역 순서에 주의할 것: 각 항목은 초기화를 위해 이전 항목의 정보를 요구 할 수 있음

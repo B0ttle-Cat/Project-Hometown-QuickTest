@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using Sirenix.OdinInspector;
 
@@ -135,6 +136,7 @@ public class KeyPairProjectile : KeyPairAssets<StrategyGamePlayData.ProjectileKe
 		Debug.Log($"[{name}] SetupUnitProfiles completed. Updated {updatedCount} entries.");
 	}
 #endif
+	[Serializable]
 	public struct ProjectileInfo
 	{
 		[ShowIf("@projectileProfileObject == null"), SerializeField]

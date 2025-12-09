@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e6356fc84c9372429e8073e8c1d4628, type: 3}
   m_Name: "\uAD00\uD1B5\uD2B9\uD654\uD0C4_\uB300\uD615"
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileProfileObject
-  prefab: {fileID: 0}
+  prefab: {fileID: 5765176490026813482, guid: 78f3fcade3e5dd94d80b4ffb92a88c10, type: 3}
   displayName: "\uAD00\uD1B5\uD2B9\uD654\uD0C4_\uB300\uD615"
   projectileKey: 1152
   weaponType: 0

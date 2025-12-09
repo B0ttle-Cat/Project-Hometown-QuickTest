@@ -15,7 +15,7 @@ MonoBehaviour:
   prefab: {fileID: 8969575216338730481, guid: da6e3f7ae62978c47be806c7b93f6888, type: 3}
   unitKey: 1205
   displayName: "MTK-AP-PL \uC2A4\uCF5C\uD53C\uC628 \uB300\uC804\uCC28 \uB85C\uBD07"
-  weaponType: 0
+  projectileKey: 1001
   protectType: 0
   "\uC720\uB2DB_\uC778\uB825": 1
   "\uC720\uB2DB_\uBB3C\uC790": 1

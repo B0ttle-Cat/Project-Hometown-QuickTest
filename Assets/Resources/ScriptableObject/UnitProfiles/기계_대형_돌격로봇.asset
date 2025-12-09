@@ -15,7 +15,7 @@ MonoBehaviour:
   prefab: {fileID: 8513324187259115080, guid: 742143a9672263c409a15cb0e8eca088, type: 3}
   unitKey: 1304
   displayName: "LWR-BP-XR \uD06C\uB7EC\uC154 \uB3CC\uACA9 \uB85C\uBD07"
-  weaponType: 0
+  projectileKey: 1002
   protectType: 0
   "\uC720\uB2DB_\uC778\uB825": 1
   "\uC720\uB2DB_\uBB3C\uC790": 1

@@ -15,7 +15,7 @@ MonoBehaviour:
   prefab: {fileID: 4968492531762148979, guid: 19aa6e8b3054d0d4a987e6298a2ce488, type: 3}
   unitKey: 1402
   displayName: "XBT-AS-PR \uD0C0\uB974\uD0C0\uB85C\uC2A4 \uC800\uACA9 \uC790\uC8FC\uD3EC"
-  weaponType: 0
+  projectileKey: 1002
   protectType: 0
   "\uC720\uB2DB_\uC778\uB825": 1
   "\uC720\uB2DB_\uBB3C\uC790": 1
