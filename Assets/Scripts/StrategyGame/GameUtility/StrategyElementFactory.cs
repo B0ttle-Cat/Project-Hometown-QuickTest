@@ -53,7 +53,7 @@ public static class StrategyElementFactory
 	public static void Destroy(UnitObject unitObject)
 	{
 		if (unitObject == null) return;
-		
+
 		if (StrategyManager.Collector.TryFind<Faction>(unitObject.FactionID, out var faction))
 		{
 			faction.API_UnitCounter(-unitObject.StatsData.GetValue(StatsType.유닛_인력));
@@ -122,5 +122,57 @@ public static class StrategyElementFactory
 		StrategyManager.Collector.Remove<OperationObject>(operation);
 		GameObject.Destroy(operation.gameObject);
 	}
+	#endregion
+	#region Projectile Object
+
+	public static async Awaitable<ProjectileObject[]> Instantiate(StrategyStartSetterData.ProjectileData setterData)
+	{
+		var projectilKey = setterData.projectilKey;
+		int newCount = setterData.count;
+		if (newCount == 0) return null;
+
+		var newProjectiles = await Instantiate(projectilKey, newCount);
+
+		for (int i = 0 ; i < newCount ; i++)
+		{
+			newProjectiles[i].Init(setterData[i]);
+		}
+		return newProjectiles;
+	}
+	public static async Awaitable<ProjectileObject[]> Instantiate(ProjectileKey projectileKey, int newCount = 1)
+	{
+		if (StrategyManager.Key2Projectile.TryGetAsset(projectileKey, out var info))
+		{
+			return await Instantiate(info.ProjectileProfileObject, newCount);
+		}
+		return null;
+	}
+
+	public static async Awaitable<ProjectileObject[]> Instantiate(ProjectileProfileObject profile, int newCount = 1)
+	{
+		GameObject prefab = profile.prefab;
+		ProjectileObject projectilePrefab = prefab.GetComponent<ProjectileObject>();
+
+		ProjectileObject[] newProjectiles = await StrategyManager.Pooling.Acquires<ProjectileObject>(prefab,newCount, NewInstantiateProjectile);
+
+		for (int i = 0 ; i < newCount ; i++)
+		{
+			newProjectiles[i].Init(profile);
+		}
+		return newProjectiles;
+
+		async Awaitable<ProjectileObject[]> NewInstantiateProjectile(int instantCount)
+		{
+			return await GameObject.InstantiateAsync<ProjectileObject>(projectilePrefab, instantCount);
+		}
+	}
+	public static void Destroy(ProjectileObject projectile)
+	{
+		if (projectile == null) return;
+
+		projectile.DeInit();
+		StrategyManager.Pooling.Release(projectile);
+	}
+
 	#endregion
 }

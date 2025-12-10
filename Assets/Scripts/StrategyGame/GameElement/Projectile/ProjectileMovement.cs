@@ -1,26 +1,11 @@
-﻿using Unity.Collections;
+﻿using System;
+
+using Unity.Collections;
+using Unity.Mathematics;
 
 using UnityEngine;
 
-using static StrategyManagerModule.StrategyUpdate.StrategyUpdate_ProjectileMovement;
-
-public interface IProjectileMovement
-{
-	IProjectileMovement ThisMovement { get; }
-	int OrderElementID { get; }
-	int TargetElementID { get; }
-	Vector3 StartPosition { get; }
-	Vector3 TargetPosition { get; }
-	Vector3 PrevPosition { get; }
-	Vector3 CurrentPosition { get; }
-	float MoveSpeed { get; }
-	Vector3 MoveDiraction { get; }
-	public void SetTarget(IUnitCombatController order, ITargetableCombatant target);
-	public void ApplyJobResult(in PureMovementData pureMovementData);
-	public bool PureUpdateFlag { get; }
-	public void InitPureMovementData(out PureMovementData pureMovementData);
-	public void UpdatePureMovementData(ref PureMovementData pureMovementData);
-}
+using Random = UnityEngine.Random;
 
 public class ProjectileMovement : MonoBehaviour, IProjectileMovement
 {
@@ -34,7 +19,63 @@ public class ProjectileMovement : MonoBehaviour, IProjectileMovement
 	[SerializeField] protected Vector3 moveDiraction;
 
 	private bool PureUpdateFlag;
-	bool IProjectileMovement.PureUpdateFlag => PureUpdateFlag;
+	public struct MovementJobData : IDisposable
+	{
+		// transform / motion
+		public float3 Position;
+		public float3 PrevPosition;
+		public float3 TargetPosition;
+		public float3 MoveDirection;
+		public float MoveSpeed;
+
+		// delta
+		public float DeltaTime;
+		public float UpdateTime; // original code had lifeTime decreased each frame
+
+		// speed shift (curve)
+		public bool IsShiftSpeed; // 0/1
+		public float MoveStartSpeed;
+		public float MoveMaxSpeed;
+		public float TimeFromStartToMaxSpeed;
+
+		// homing
+		public bool HomingEnabled; // 0/1
+		public float HomingTurnSpeed;
+		public float HomingTurnSpeedWhenMaxSpeed;
+		public float HomingLimitAngleCosine; // precomputed cosine
+		public float HomingLimitSqrDistance;
+
+		// Cep Offset
+		public float3 CepOffset;
+
+		// Random
+		public uint RandomState;
+
+		// Per-instance sampled animation curve table (owned by Mono)
+		// IMPORTANT: Mono must Alloc/Dispose this; Job only reads it.
+		public NativeArray<float> MoveSpeedCurveTable;
+
+		public void Dispose()
+		{
+			MoveSpeedCurveTable.Dispose();
+		}
+
+		// Helper to sample MoveSpeedCurveTable (normalized t in [0,1])
+		public float SampleSpeedCurve(float normalizedT)
+		{
+			if (!MoveSpeedCurveTable.IsCreated || MoveSpeedCurveTable.Length == 0) return 1f;
+			float t = math.clamp(normalizedT, 0f, 1f);
+			int len = MoveSpeedCurveTable.Length;
+			float idxF = t * (len - 1);
+			int idx = (int)math.floor(idxF);
+			int idx1 = math.min(idx + 1, len - 1);
+			float a = MoveSpeedCurveTable[idx];
+			float b = MoveSpeedCurveTable[idx1];
+			float frac = idxF - idx;
+			return math.lerp(a, b, frac);
+		}
+	}
+	bool IProjectileMovement.RawDataUpdateFlag => PureUpdateFlag;
 	IProjectileMovement IProjectileMovement.ThisMovement => this;
 	int IProjectileMovement.OrderElementID => order.ThisElement.ID;
 	int IProjectileMovement.TargetElementID => target.ThisElement.ID;
@@ -72,14 +113,14 @@ public class ProjectileMovement : MonoBehaviour, IProjectileMovement
 		PureUpdateFlag = true;
 	}
 	protected virtual void OnSetTarget() { }
-	public void InitPureMovementData(out PureMovementData pureMovementData)
+	public void InitPureMovementData(out MovementJobData pureMovementData)
 	{
 		startPosition = order.AttackStartPosition;
 		targetPosition = target.HitTargetPosition;
 
 		Vector3 cepOffset = projectileStats.CepEnabled ? GenerateCEPOffset(projectileStats.CepRadius, projectileStats.CepProbability) : Vector3.zero;
 
-		pureMovementData = new PureMovementData
+		pureMovementData = new MovementJobData
 		{
 			Position = startPosition,
 			PrevPosition = startPosition,
@@ -103,7 +144,7 @@ public class ProjectileMovement : MonoBehaviour, IProjectileMovement
 
 			CepOffset = cepOffset,
 
-			RandomState = (uint)Random.value,
+			RandomState = (uint)Random.value*10000,
 		};
 
 		PureUpdateFlag = false;
@@ -121,7 +162,7 @@ public class ProjectileMovement : MonoBehaviour, IProjectileMovement
 			return curveTable;
 		}
 	}
-	public void ApplyJobResult(in PureMovementData pureMovementData)
+	public void ApplyJobResult(in MovementJobData pureMovementData)
 	{
 		prevPosition = pureMovementData.PrevPosition;
 		currentPosition = pureMovementData.Position;
@@ -129,7 +170,7 @@ public class ProjectileMovement : MonoBehaviour, IProjectileMovement
 		moveDiraction = pureMovementData.MoveDirection;
 	}
 
-	public void UpdatePureMovementData(ref PureMovementData pureMovementData)
+	public void UpdatePureMovementData(ref MovementJobData pureMovementData)
 	{
 		if (target == null) return;
 		pureMovementData.TargetPosition = target.HitTargetPosition;

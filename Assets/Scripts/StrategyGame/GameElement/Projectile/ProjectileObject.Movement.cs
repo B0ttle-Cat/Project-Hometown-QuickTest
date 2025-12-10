@@ -1,6 +1,4 @@
-﻿using StrategyManagerModule;
-
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(ProjectileMovement))]
 public partial class ProjectileObject : IProjectileMovement
@@ -15,7 +13,7 @@ public partial class ProjectileObject : IProjectileMovement
 	public Vector3 CurrentPosition => ThisMovement.CurrentPosition;
 	public float MoveSpeed => ThisMovement.MoveSpeed;
 	public Vector3 MoveDiraction => ThisMovement.MoveDiraction;
-    public StrategyUpdate.StrategyUpdate_ProjectileMovement.PureMovementData MovementData { get => ThisMovement.MovementData; set => ThisMovement.MovementData = value; }
+    public bool RawDataUpdateFlag => ThisMovement.RawDataUpdateFlag;
 
     partial void InitMovement()
 	{
@@ -27,11 +25,24 @@ public partial class ProjectileObject : IProjectileMovement
 		movement.Deinit();
 		movement = null;
 	}
-	void IProjectileMovement.MovmentUpdate(in float deltaTime) => ThisMovement.MovmentUpdate(deltaTime);
-	void IProjectileMovement.SetTarget(IUnitCombatController order, ITargetableCombatant target) => ThisMovement.SetTarget(order, target);
 
-    public void ApplyPositionFromMovementData()
+    public void SetTarget(IUnitCombatController order, ITargetableCombatant target)
     {
-        ThisMovement.ApplyPositionFromMovementData();
+        ThisMovement.SetTarget(order, target);
+    }
+
+    public void ApplyJobResult(in ProjectileMovement.MovementJobData movementJobData)
+    {
+        ThisMovement.ApplyJobResult(movementJobData);
+    }
+
+    public void InitPureMovementData(out ProjectileMovement.MovementJobData movementJobData)
+    {
+        ThisMovement.InitPureMovementData(out movementJobData);
+    }
+
+    public void UpdatePureMovementData(ref ProjectileMovement.MovementJobData movementJobData)
+    {
+        ThisMovement.UpdatePureMovementData(ref movementJobData);
     }
 }

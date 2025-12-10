@@ -10,8 +10,11 @@ public interface IStrategyElement : IStrategyStartGame
 	void InStrategyCollector();
 	void OutStrategyCollector();
 }
-public interface IStrategyPoolingElement : IStrategyElement
+public interface IStrategyMonoElement : IStrategyElement
 {
 	GameObject gameObject { get; }
+}
+public interface IStrategyPoolingElement : IStrategyMonoElement
+{
 	GameObject PrefabReference { get; set; }
 }

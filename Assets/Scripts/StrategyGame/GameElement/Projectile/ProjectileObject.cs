@@ -25,20 +25,41 @@ public partial class ProjectileObject : MonoBehaviour
 	public void Init(ProjectileProfileObject profile)
 	{
 		StatsData = new ProjectileStatsData(profile);
-		InitOther();
+		if(RuntimeData == null)
+		{
+			RuntimeData = new ProjectileRuntimeData(profile);
+		}
 	}
 
-	private void InitOther()
+
+	public void InitOther()
 	{
+		InitLifetime();
 		InitMovement();
 	}
+	partial void InitLifetime();
 	partial void InitMovement();
-
-	private void DeInit()
+	public void DeInit()
 	{
 		DeinitMovment();
+
+		runtimeData = null;
+		statsData = null;
 	}
 	partial void DeinitMovment();
+}
+public partial class ProjectileObject : IStrategyPoolingElement
+{
+	ProjectileLifetime objectLifetime;
+	partial void InitLifetime()
+	{
+		if(objectLifetime == null || !TryGetComponent<ProjectileLifetime>(out objectLifetime))
+		{
+			objectLifetime = gameObject.AddComponent<ProjectileLifetime>();
+		}
+		objectLifetime.ResetTime(RuntimeData.LifeTime);
+	}
+
 }
 public partial class ProjectileObject : IStrategyPoolingElement
 {
@@ -57,4 +78,20 @@ public partial class ProjectileObject : IStrategyPoolingElement
 	void IStrategyStartGame.OnStopGame()
 	{
 	}
+}
+public partial class ProjectileObject : IProjectileHitReporting
+{
+    void IProjectileHitReporting.HitOtherObject(GameObject gameObject)
+    {
+    }
+
+    void IProjectileHitReporting.HitTargetable(ITargetableCombatant targetable)
+    {
+
+	}
+	void IProjectileHitReporting.HitOtherElement(IStrategyElement hit)
+	{
+
+	}
+
 }

@@ -120,6 +120,12 @@ public abstract class KeyPairAssets<TKey,TValue> : ScriptableObject
 	{
 		KeyPairTargetList = Array.Empty<KeyPairAssetsStruct>();
 	}
+
+
+	protected static string BaseResourcesPath()
+	{
+		return "KeyPairAssets";
+	}
 }
 public abstract class KeyPairAssets<TValue> : KeyPairAssets<string, TValue>
 {

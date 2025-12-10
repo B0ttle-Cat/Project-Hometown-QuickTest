@@ -904,11 +904,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8492593299620564370, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
       propertyPath: m_Padding.z
-      value: 107.708435
+      value: 91.04167
       objectReference: {fileID: 0}
     - target: {fileID: 8725691786621138088, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
       propertyPath: m_Padding.x
-      value: 107.708435
+      value: 91.04167
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5193,10 +5193,10 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 58857479}
   - {fileID: 4796101}
   - {fileID: 1555327484}
   - {fileID: 1234401990}
+  - {fileID: 58857479}
   m_Father: {fileID: 449196672}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -12902,23 +12902,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1537743632}
   m_CullTransparentMesh: 1
---- !u!1 &1551463417 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 690911111885271451, guid: 4fed18c935bf71d4a96946003a360ace, type: 3}
-  m_PrefabInstance: {fileID: 6611432013286108628}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1551463421
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1551463417}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c75124846937804e9697ebf4a56ad57, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ProjectileHit
 --- !u!1 &1555327483
 GameObject:
   m_ObjectHideFlags: 0
@@ -13758,11 +13741,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8492593299620564370, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
       propertyPath: m_Padding.z
-      value: 107.708435
+      value: 91.04167
       objectReference: {fileID: 0}
     - target: {fileID: 8725691786621138088, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
       propertyPath: m_Padding.x
-      value: 107.708435
+      value: 91.04167
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -14328,11 +14311,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8492593299620564370, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
       propertyPath: m_Padding.z
-      value: 107.708435
+      value: 91.04167
       objectReference: {fileID: 0}
     - target: {fileID: 8725691786621138088, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
       propertyPath: m_Padding.x
-      value: 107.708435
+      value: 91.04167
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -16742,11 +16725,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8492593299620564370, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
       propertyPath: m_Padding.z
-      value: 107.708435
+      value: 91.04167
       objectReference: {fileID: 0}
     - target: {fileID: 8725691786621138088, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
       propertyPath: m_Padding.x
-      value: 107.708435
+      value: 91.04167
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -16769,14 +16752,6 @@ PrefabInstance:
     - target: {fileID: 690911111885271451, guid: 4fed18c935bf71d4a96946003a360ace, type: 3}
       propertyPath: m_Name
       value: _ProjectileObject
-      objectReference: {fileID: 0}
-    - target: {fileID: 2472412321012481619, guid: 4fed18c935bf71d4a96946003a360ace, type: 3}
-      propertyPath: statsData.piercingEnable
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2472412321012481619, guid: 4fed18c935bf71d4a96946003a360ace, type: 3}
-      propertyPath: statsData.explosionEnabled
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4352377263228712090, guid: 4fed18c935bf71d4a96946003a360ace, type: 3}
       propertyPath: m_LocalPosition.x
@@ -16821,10 +16796,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 690911111885271451, guid: 4fed18c935bf71d4a96946003a360ace, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1551463421}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4fed18c935bf71d4a96946003a360ace, type: 3}
 --- !u!1001 &7533463526043797607
 PrefabInstance:

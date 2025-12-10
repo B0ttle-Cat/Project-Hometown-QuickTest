@@ -21,6 +21,20 @@ public record ProjectileRuntimeData // RuntimeData
 
 	[SerializeField,BoxGroup("Projectile Runtime Data/Runtime Stats")] private float lifeTime;
 	[SerializeField,BoxGroup("Projectile Runtime Data/Runtime Stats")] private int piercingCount;
+	public ProjectileRuntimeData(ProjectileProfileObject profile)
+	{
+		if (profile == null || profile.statsData == null) return;
+
+		orderUnitID = -1;
+		targetUnitID = -1;
+		startPosition = Vector3.positiveInfinity;
+		targetPosition = Vector3.positiveInfinity;
+		position = Vector3.positiveInfinity;
+		rotation = Quaternion.identity;
+		velocity = Vector3.zero;
+		lifeTime = profile.statsData.LifeTime;
+		piercingCount = 0;
+	}
 	public ProjectileRuntimeData(StrategyStartSetterData.ProjectileData.Info setterInfo)
 	{
 		orderUnitID = setterInfo.orderInSetterIndex;

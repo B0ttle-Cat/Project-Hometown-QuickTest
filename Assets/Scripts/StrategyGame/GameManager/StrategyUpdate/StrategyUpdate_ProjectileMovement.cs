@@ -1,11 +1,11 @@
-﻿using System;
-
-using Unity.Burst;
+﻿using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 
 using UnityEngine;
+
+using static ProjectileMovement;
 
 namespace StrategyManagerModule
 {
@@ -13,67 +13,10 @@ namespace StrategyManagerModule
 	{
         public class StrategyUpdate_ProjectileMovement : StrategyUpdateSubClass<StrategyUpdate_ProjectileMovement.Movement>
 		{
-			public struct PureMovementData : IDisposable
-			{
-				// transform / motion
-				public float3 Position;
-				public float3 PrevPosition;
-				public float3 TargetPosition;
-				public float3 MoveDirection;
-				public float MoveSpeed;
-
-				// delta
-				public float DeltaTime;
-				public float UpdateTime; // original code had updateTime decreased each frame
-
-				// speed shift (curve)
-				public bool IsShiftSpeed; // 0/1
-				public float MoveStartSpeed;
-				public float MoveMaxSpeed;
-				public float TimeFromStartToMaxSpeed;
-
-				// homing
-				public bool HomingEnabled; // 0/1
-				public float HomingTurnSpeed;
-				public float HomingTurnSpeedWhenMaxSpeed;
-				public float HomingLimitAngleCosine; // precomputed cosine
-				public float HomingLimitSqrDistance;
-
-				// Cep Offset
-				public float3 CepOffset;
-
-				// Random
-				public uint RandomState;
-
-				// Per-instance sampled animation curve table (owned by Mono)
-				// IMPORTANT: Mono must Alloc/Dispose this; Job only reads it.
-				public NativeArray<float> MoveSpeedCurveTable;
-
-                public void Dispose()
-				{
-					MoveSpeedCurveTable.Dispose();
-				}
-
-                // Helper to sample MoveSpeedCurveTable (normalized t in [0,1])
-                public float SampleSpeedCurve(float normalizedT)
-				{
-					if (!MoveSpeedCurveTable.IsCreated || MoveSpeedCurveTable.Length == 0) return 1f;
-					float t = math.clamp(normalizedT, 0f, 1f);
-					int len = MoveSpeedCurveTable.Length;
-					float idxF = t * (len - 1);
-					int idx = (int)math.floor(idxF);
-					int idx1 = math.min(idx + 1, len - 1);
-					float a = MoveSpeedCurveTable[idx];
-					float b = MoveSpeedCurveTable[idx1];
-					float frac = idxF - idx;
-					return math.lerp(a, b, frac);
-				}
-			}
-
 			[BurstCompile]
 			public struct ProjectileMovementJob : IJobParallelFor
 			{
-				public NativeArray<PureMovementData> Movements;
+				public NativeArray<MovementJobData> Movements;
 				public void Execute(int index)
 				{
 					var m = Movements[index];
@@ -94,7 +37,7 @@ namespace StrategyManagerModule
 
 					Movements[index] = m;
 				}
-				private static void UpdateMoveSpeed(ref PureMovementData m)
+				private static void UpdateMoveSpeed(ref MovementJobData m)
 				{
 					if (!m.IsShiftSpeed) return;
 
@@ -114,7 +57,7 @@ namespace StrategyManagerModule
 					}
 				}
 
-				private static void UpdateHoming(ref PureMovementData m, float dt)
+				private static void UpdateHoming(ref MovementJobData m, float dt)
 				{
 					if (!m.HomingEnabled) return;
 
@@ -141,7 +84,7 @@ namespace StrategyManagerModule
 					float maxRadiansDelta = math.radians(turnSpeed) * dt;
 					m.MoveDirection = RotateTowards(m.MoveDirection, newDir, maxRadiansDelta);
 				}
-				private static void ApplyMovement(ref PureMovementData m, float dt)
+				private static void ApplyMovement(ref MovementJobData m, float dt)
 				{
 					m.PrevPosition = m.Position;
 					m.Position += m.MoveDirection * m.MoveSpeed * dt;
@@ -190,33 +133,33 @@ namespace StrategyManagerModule
 			public class Movement : UpdateLogic
 			{
 				public IProjectileMovement thisMovement;
-				public PureMovementData pureMovementData;
+				public MovementJobData movementJobData;
 
 				public Movement(IProjectileMovement movement, StrategyUpdateSubClass<Movement> thisSubClass) : base(thisSubClass)
 				{
 					thisMovement = movement;
-					thisMovement.InitPureMovementData(out pureMovementData);
+					thisMovement.InitPureMovementData(out movementJobData);
 				}
 				protected override void OnDispose()
 				{
 					thisMovement = null;
-					pureMovementData.Dispose();
+					movementJobData.Dispose();
 				}
 				protected override void OnUpdate(in float deltaTime)
 				{
-					if (thisMovement.PureUpdateFlag)
+					if (thisMovement.RawDataUpdateFlag)
 					{
-						pureMovementData.Dispose();
-						thisMovement.InitPureMovementData(out pureMovementData);
+						movementJobData.Dispose();
+						thisMovement.InitPureMovementData(out movementJobData);
 					}
 					else
 					{
-						thisMovement.ApplyJobResult(in pureMovementData);
+						thisMovement.ApplyJobResult(in movementJobData);
 					}
 				}
 				public void PureUpdate()
 				{
-					thisMovement.UpdatePureMovementData(ref pureMovementData);
+					thisMovement.UpdatePureMovementData(ref movementJobData);
 				}
 			}
 
@@ -226,7 +169,7 @@ namespace StrategyManagerModule
 				if (length == 0) return;
 
 				// Create native array for job (TempJob)
-				var movements = new NativeArray<PureMovementData>(length, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
+				var movements = new NativeArray<MovementJobData>(length, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
 
 
 				// Mono -> Native: read once per instance
@@ -243,7 +186,7 @@ namespace StrategyManagerModule
 					// ensure curve sampling is prepared by the Mono object (we assume Mono did this on Init/SetTarget)
 					// but check defensively:
 					entry.PureUpdate();
-					var pd = entry.pureMovementData;
+					var pd = entry.movementJobData;
 					pd.DeltaTime = deltaTime;
 
 					movements[i] = pd;
@@ -266,7 +209,7 @@ namespace StrategyManagerModule
 					{
 						continue;
 					}
-					entry.pureMovementData = movements[i];
+					entry.movementJobData = movements[i];
 					entry.Update(in deltaTime);
 				}
 				movements.Dispose();

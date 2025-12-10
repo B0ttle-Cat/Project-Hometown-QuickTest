@@ -187,20 +187,20 @@ namespace StrategyManagerModule
 		[Serializable]
 		public struct UnitData
 		{
-			[FoldoutGroup("@projectileKey")]
+			[FoldoutGroup("@unitKey")]
 			public UnitKey unitKey;
-			[FoldoutGroup("@projectileKey")]
+			[FoldoutGroup(groupName: "@unitKey")]
 			[ShowIf("ShowProfileObject"), SerializeField]
 			private UnitProfileObject unitProfile;
-			[FoldoutGroup("@projectileKey")]
+			[FoldoutGroup("@unitKey")]
 			[ValueDropdown("@GetFactionNames($property)")]
 			[InlineButton("Clear_factionName","Clear")]
 			public int factionID;
-			[FoldoutGroup("@projectileKey")]
+			[FoldoutGroup("@unitKey")]
 			[ValueDropdown("@GetOperationNames($property)")]
 			[InlineButton("Clear_belongedOperation","Clear")]
 			public int belongedOperation;
-			[FoldoutGroup("@projectileKey")]
+			[FoldoutGroup("@unitKey")]
 			[ValueDropdown("@GetSectorNames($property)")]
 			[LabelText("SectorName")]
 			[InlineButton("Clear_visiteSectorName","Clear")]
@@ -351,7 +351,7 @@ namespace StrategyManagerModule
 		public struct ProjectileData
 		{
 			public ProjectileKey projectilKey;
-			public int count;
+			public int count => infos == null ? 0 : infos.Length;
 			public Info[] infos;
 			public readonly Info this[int index] => infos[index];
 			[Serializable]

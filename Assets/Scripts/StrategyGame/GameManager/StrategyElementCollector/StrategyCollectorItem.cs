@@ -347,7 +347,7 @@ namespace StrategyManagerModule
 		public override void Dispose()
 		{
 			base.Dispose();
-			if(recycled != null)
+			if (recycled != null)
 			{
 				recycled.Clear();
 				recycled = null;
@@ -372,6 +372,32 @@ namespace StrategyManagerModule
 				Add(item);
 				return item;
 			}
+		}
+		public async Awaitable<T[]> Acquires(int count, Func<int, Awaitable<T[]>> factory)
+		{
+			T[] result = new T[count];
+			while (count > 0)
+			{
+				if (recycled.Count > 0)
+				{
+					var item = recycled.Pop();
+					result[count - 1] = item;
+					count--;
+				}
+				else
+				{
+					var newArray = await factory(count);
+					int length = newArray.Length;
+                    for (int i = 0 ; i < length ; i++)
+                    {
+						result[i] = newArray[i];
+					}
+                    count = 0;
+				}
+
+			}
+
+			return result;
 		}
 
 		/// <summary>

@@ -13,7 +13,7 @@ public class KeyPairUnit : KeyPairAssets<StrategyGamePlayData.UnitKey, KeyPairUn
 {
 	public static KeyPairUnit Load(string name)
 	{
-		string path = $"{nameof(KeyPairUnit)}/{name}";
+		string path = $"{BaseResourcesPath()}/{nameof(KeyPairUnit)}/{name}";
 		var load = Resources.Load<KeyPairUnit>(path);
 		return load;
 	}

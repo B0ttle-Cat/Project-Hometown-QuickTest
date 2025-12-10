@@ -14,7 +14,7 @@ public class KeyPairProjectile : KeyPairAssets<StrategyGamePlayData.ProjectileKe
 {
 	public static KeyPairProjectile Load(string name)
 	{
-		string path = $"{nameof(KeyPairProjectile)}/{name}";
+		string path = $"{BaseResourcesPath()}/{nameof(KeyPairProjectile)}/{name}";
 		var load = Resources.Load<KeyPairProjectile>(path);
 		return load;
 	}

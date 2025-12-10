@@ -43,6 +43,30 @@ namespace StrategyManagerModule
 			return null;
 		}
 
+
+		public async Awaitable<T[]> Acquires<T>(GameObject prefabObject, int count, Func<int, Awaitable<T[]>> factory) where T : class, IStrategyPoolingElement
+		{
+			if (!stores.TryGetValue(prefabObject, out var s))
+				Register<T>(prefabObject);
+
+			var store = stores[prefabObject] as PoolingElementStore<T>;
+			T[] items = await store.PoolList.Acquires(count, factory);
+
+            for (int i = 0 ; i < count ; i++)
+            {
+                var item = items[i];
+				item.PrefabReference = prefabObject;
+
+				onAnyElementChanged?.Invoke(item.gameObject, true);
+				if (onChangeEventWithType.TryGetValue(typeof(T), out var eventWithType))
+				{
+					eventWithType?.Invoke(item.gameObject, true);
+				}
+            }
+
+			return items;
+		}
+
 		public T Acquire<T>(GameObject prefabObject, Func<T> factory) where T : class, IStrategyPoolingElement
 		{
 			if (!stores.TryGetValue(prefabObject, out var s))
