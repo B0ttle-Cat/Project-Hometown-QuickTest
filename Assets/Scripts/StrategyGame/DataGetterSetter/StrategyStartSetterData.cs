@@ -189,9 +189,6 @@ namespace StrategyManagerModule
 		{
 			[FoldoutGroup("@unitKey")]
 			public UnitKey unitKey;
-			[FoldoutGroup(groupName: "@unitKey")]
-			[ShowIf("ShowProfileObject"), SerializeField]
-			private UnitProfileObject unitProfile;
 			[FoldoutGroup("@unitKey")]
 			[ValueDropdown("@GetFactionNames($property)")]
 			[InlineButton("Clear_factionName","Clear")]
@@ -334,17 +331,7 @@ namespace StrategyManagerModule
 
 			public readonly string DisplayName()
 			{
-				return unitProfile != null ? unitProfile.displayName : StrategyManager.Key2Unit.GetAsset(unitKey).DisplayName;
-			}
-			public readonly UnitProfileObject GetUnitProfile
-			{
-				get
-				{
-					return (unitKey != UnitKey.None || unitProfile == null)
-						? 
-						StrategyManager.Key2Unit.GetAsset(unitKey).UnitProfileObject 
-						: unitProfile;
-				}
+				return StrategyManager.Key2Unit.GetAsset(unitKey).DisplayName;
 			}
 		}
 		[Serializable]

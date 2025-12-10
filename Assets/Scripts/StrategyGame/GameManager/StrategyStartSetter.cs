@@ -5,8 +5,6 @@ using Sirenix.OdinInspector;
 
 using UnityEngine;
 
-using static StrategyManagerModule.StrategyStartSetterData;
-
 namespace StrategyManagerModule
 {
 
@@ -117,19 +115,9 @@ namespace StrategyManagerModule
 			for (int i = 0 ; i < dataLength ; i++)
 			{
 				var unitData = unitDatas[i];
-				string unitName = unitData.DisplayName();
 				UnitObject unitObject = StrategyElementFactory.Instantiate(in unitData);
 				if (unitObject == null) continue;
 				collector.Add(unitObject);
-				SetOperationBelong(unitObject, in unitData);
-			}
-
-			void SetOperationBelong(UnitObject unitObject, in UnitData unitData)
-			{
-				var operation = collector.Find<OperationObject>(unitData.belongedOperation);
-				if (operation == null) return;
-
-				operation.AddUnitObject(unitObject);
 			}
 		}
 		internal void OnStartSetter_Capture()

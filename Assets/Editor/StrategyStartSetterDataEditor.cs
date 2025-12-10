@@ -227,7 +227,7 @@ namespace StrategyManagerModule
 
 		public void DrawUnitHandle(StrategyStartSetterData target, ref StrategyStartSetterData.UnitData unit)
 		{
-			if (!unit.showEdit || unit.GetUnitProfile == null) return;
+			if (!unit.showEdit || unit.unitKey == StrategyGamePlayData.UnitKey.None) return;
 
 			// 현재 위치 & 회전
 			Vector3 pos = unit.position;
@@ -253,11 +253,11 @@ namespace StrategyManagerModule
 			StrategyStartSetterData.OperationData[] operations)
 		{
 			if (!target.onShowUnitPreview) return;
-			var profile = unit.GetUnitProfile;
+			var profile = StrategyManager.Key2Unit.GetAsset(unit.unitKey).UnitProfileObject;
 			if (profile == null) return;
 			if (profile.prefab == null) return;
 
-			GameObject prefab = unit.GetUnitProfile.prefab;
+			GameObject prefab = profile.prefab;
 			MeshFilter mf = prefab.GetComponentInChildren<MeshFilter>();
 			MeshRenderer mr = prefab.GetComponentInChildren<MeshRenderer>();
 

@@ -40,57 +40,64 @@ public partial class UnitObject : MonoBehaviour
 		get => StrategyManager.IsNotReadyScene ? null : StrategyManager.Collector.Find<Faction>(FactionID);
 	}
 
-	public void Init(string displayName = "", int factionID = -1)
+	public void Init(UnitProfileObject data, int factionID = -1)
 	{
-		factionID = (factionID == -1 && profile != null) ? FactionID : factionID;
 
 		profile = new UnitData.Profile(new UnitData.Profile.Data()
 		{
 			unitKey = UnitKey.None,
-			displayName = displayName,
-			unitID = unitElementID,
-			factionID = factionID,
-			weaponType = WeaponType.일반,
-			protectType = ProtectionType.일반,
-		});
-		sector = new UnitData.ConnectSector(new());
-		InitOther(null);
-	}
-	public void Init(UnitProfileObject data, int factionID = -1)
-	{
-		factionID = (factionID == -1 && profile != null) ? FactionID : factionID;
-
-		profile = new UnitData.Profile(new UnitData.Profile.Data()
-		{
-			unitKey = data.unitKey,
 			displayName = data.displayName,
 			unitID = unitElementID,
 			factionID = factionID,
+			projectileKey = data.projectileKey,
 			protectType = data.protectType,
 		});
-		sector = new UnitData.ConnectSector(new());
-		InitOther(data);
+		InitProfileObject(data);
 	}
 	public void Init(in StrategyStartSetterData.UnitData data) // UnitData
 	{
-		UnitProfileObject profileObj = data.GetUnitProfile;
-
-		profile = new UnitData.Profile(new()
+		//UnitProfileObject profileObj = data.GetUnitProfile;
+		if (profile == null)
 		{
-			unitKey = profileObj.unitKey,
-			displayName = profileObj.displayName,
-			unitID = unitElementID,
-			factionID = data.factionID,
-			protectType = profileObj.protectType,
-		});
+			if (StrategyManager.Key2Unit.TryGetAsset(data.unitKey, out var info) && info.UnitProfileObject != null)
+			{
+
+				profile = new UnitData.Profile(new()
+				{
+					unitKey = data.unitKey,
+					displayName = info.UnitProfileObject.displayName,
+					unitID = unitElementID,
+					factionID = data.factionID,
+					projectileKey = info.UnitProfileObject.projectileKey,
+					protectType = info.UnitProfileObject.protectType,
+				});
+			}
+			else
+			{
+				profile = new UnitData.Profile(new()
+				{
+					unitKey = data.unitKey,
+					displayName = "",
+					unitID = unitElementID,
+					factionID = -1,
+					projectileKey = ProjectileKey.None,
+					protectType = ProtectionType.일반,
+				});
+			}
+		}
+		else
+		{
+			ref UnitData.Profile.Data refData = ref profile.RefData();
+			refData.factionID = data.factionID;
+		}
+
 		sector = new UnitData.ConnectSector(new(data.visiteSectorID));
-		InitOther(profileObj);
 	}
 
-	private void InitOther(UnitProfileObject profileObj)
+
+	public void InitOther()
 	{
 		InitDebugRender();
-		InitProfileObject(profileObj);
 		InitMovement();
 		InitOperationObject();
 		InitVisibility();

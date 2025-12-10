@@ -9,24 +9,38 @@ using static StrategyGamePlayData;
 public static class StrategyElementFactory
 {
 	#region UnitObject
-	public static UnitObject Instantiate(in StrategyStartSetterData.UnitData setterUnitData)
+	public static UnitObject Instantiate(in StrategyStartSetterData.UnitData setterData, bool enterThis = true)
 	{
-		var unitProfile = setterUnitData.GetUnitProfile;
-		int factionId = setterUnitData.factionID;
-		Vector3 position = setterUnitData.position;
-		Quaternion rotation = Quaternion.Euler(setterUnitData.rotation);
+		var unitKey = setterData.unitKey;
+		int factionId = setterData.factionID;
+		Vector3 position = setterData.position;
+		Quaternion rotation = Quaternion.Euler(setterData.rotation);
 
-		return Instantiate(factionID: factionId, profile: unitProfile, position: position, rotation: rotation);
+		UnitObject newUnit = Instantiate(unitKey, factionId, position, rotation, false);
+		newUnit.Init(setterData);
+		SetOperationBelong(setterData.belongedOperation);
+		if (enterThis) newUnit.InitOther();
+
+		return newUnit;
+
+		void SetOperationBelong(int belongedOperation)
+		{
+			var operation = StrategyManager.Collector.Find<OperationObject>(belongedOperation);
+			if (operation == null) return;
+
+			operation.AddUnitObject(newUnit);
+		}
 	}
-	public static UnitObject Instantiate(UnitKey unitKey, int factionID = -1, Vector3? position = null, Quaternion? rotation = null)
+	public static UnitObject Instantiate(UnitKey unitKey, int factionID = -1, Vector3? position = null, Quaternion? rotation = null,  bool enterThis = true)
 	{
 		if (StrategyManager.Key2Unit.TryGetAsset(unitKey, out var info))
 		{
-			return Instantiate(info.UnitProfileObject, factionID, position, rotation);
+			UnitObject newUnit = Instantiate(info.UnitProfileObject, factionID, position, rotation, false);
+			if (enterThis) newUnit.InitOther();
 		}
 		return null;
 	}
-	public static UnitObject Instantiate(UnitProfileObject profile, int factionID = -1, Vector3? position = null, Quaternion? rotation = null)
+	public static UnitObject Instantiate(UnitProfileObject profile, int factionID = -1, Vector3? position = null, Quaternion? rotation = null,  bool enterThis = true)
 	{
 		if (profile == null) return null;
 		var prefab = profile.prefab;
@@ -42,6 +56,7 @@ public static class StrategyElementFactory
 
 		StrategyManager.Collector.Add<UnitObject>(unitObject);
 		unitObject.Init(profile, factionID);
+		if (enterThis) unitObject.InitOther();
 		newObject.name = $"{profile.displayName}_{unitObject.UnitID:00}";
 
 		if (StrategyManager.Collector.TryFind<Faction>(factionID, out var faction))
