@@ -193,7 +193,7 @@ namespace StrategyManagerModule
 			(UpdateLogicSort.유닛_추격_이동,  new StrategyUpdate_NavMovement(this)),
 
 			(UpdateLogicSort.투사체_위치이동,  new StrategyUpdate_ProjectileMovement(this)),
-			//(UpdateLogicSort.투사체_충돌확인,  new StrategyUpdate_ProjectileHitCheck(this)),
+			(UpdateLogicSort.투사체_충돌확인,  new StrategyUpdate_ProjectileHitCheck(this)),
 
 			(UpdateLogicSort.유닛_공격_업데이트,  null),
 			(UpdateLogicSort.유닛_데미지_계산,  null),

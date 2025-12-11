@@ -3,10 +3,14 @@ using System.Collections.Generic;
 
 using Unity.Burst;
 using Unity.Collections;
+using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
+using Unity.Physics;
 
 using UnityEngine;
+
+
 
 // ProjectileMovement.ProjectileKey와 ProjectileMovement.ProjectileConstantData를 사용
 using static ProjectileMovement;
@@ -42,7 +46,7 @@ namespace StrategyManagerModule
 
 				// Job에 상수 데이터 HashMap을 읽기 전용으로 전달
 				[ReadOnly] public NativeHashMap<int, MovmentConstantData> ConstantDataMap;
-				[ReadOnly] public NativeHashMap<int, CurveInfo> CurveInfoMap; 
+				[ReadOnly] public NativeHashMap<int, CurveInfo> CurveInfoMap;
 				[ReadOnly] public NativeArray<float> CurveDataArray;
 				public void Execute(int index)
 				{
@@ -201,7 +205,7 @@ namespace StrategyManagerModule
 					// 2. HashMap 초기화 (총 키 개수만큼 용량 확보)
 					constantDataMap = new NativeHashMap<int, MovmentConstantData>(totalKeys, Allocator.Persistent);
 					curveInfoMap = new NativeHashMap<int, CurveInfo>(totalKeys, Allocator.Persistent);
-					
+
 					// Curve Data 누적 및 Map 채우기
 					foreach (ProjectileKey key in allKeys)
 					{
@@ -249,7 +253,7 @@ namespace StrategyManagerModule
 
 			private void OnChangeValue(GameObject element, bool added)
 			{
-				if (!element.TryGetComponent<ProjectileObject>(out var component)) return;
+				if (element == null || !element.TryGetComponent<ProjectileObject>(out var component)) return;
 
 				if (added)
 				{
@@ -321,7 +325,7 @@ namespace StrategyManagerModule
 					if (ThisMovement.ResetJobDataFlag)
 					{
 						ThisMovement.InitMovementJobData(out movementJobData);
-						if(thisSubClass is StrategyUpdate_ProjectileMovement parent)
+						if (thisSubClass is StrategyUpdate_ProjectileMovement parent)
 							parent.RegisterNewProjectileData(movementJobData.ProjectileKey);
 					}
 					else
@@ -373,7 +377,7 @@ namespace StrategyManagerModule
 				{
 					Movements = movements,
 					ConstantDataMap = constantDataMap,
-                    CurveInfoMap = curveInfoMap,
+					CurveInfoMap = curveInfoMap,
 					CurveDataArray = curveDataList.AsArray()
 				};
 

@@ -53,7 +53,7 @@ public partial class ProjectileObject : MonoBehaviour
 		transform.localScale = Vector3.one * statsData.CollisionRadius;
 	}
 }
-public partial class ProjectileObject : IStrategyPoolingElement
+public partial class ProjectileObject // Init Lifetime
 {
 	ProjectileLifetime objectLifetime;
 	partial void InitLifetime()
