@@ -12,19 +12,17 @@ public partial class ProjectileObject : MonoBehaviour
 	private ProjectileStatsData statsData;
 	public ProjectileRuntimeData RuntimeData { get => runtimeData; private set => runtimeData = value; }
 	public ProjectileStatsData StatsData { get => statsData; private set => statsData = value; }
-
-	public void Init()
-	{
-		runtimeData = null;
-		statsData = null;
-	}
+	
 	public void Init(StrategyStartSetterData.ProjectileData.Info setterData)
 	{
 		RuntimeData = new ProjectileRuntimeData(setterData);
 	}
 	public void Init(ProjectileProfileObject profile)
 	{
-		StatsData = new ProjectileStatsData(profile);
+		if (StatsData == null)
+		{
+			StatsData = new ProjectileStatsData(profile);
+		}
 		if(RuntimeData == null)
 		{
 			RuntimeData = new ProjectileRuntimeData(profile);
@@ -34,19 +32,26 @@ public partial class ProjectileObject : MonoBehaviour
 
 	public void InitOther()
 	{
+		InitScale();
 		InitLifetime();
 		InitMovement();
 	}
 	partial void InitLifetime();
 	partial void InitMovement();
+	partial void InitHitReporting();
 	public void DeInit()
 	{
 		DeinitMovment();
-
 		runtimeData = null;
-		statsData = null;
 	}
 	partial void DeinitMovment();
+	partial void DeinitHitReporting();
+
+
+	private void InitScale()
+	{
+		transform.localScale = Vector3.one * statsData.CollisionRadius;
+	}
 }
 public partial class ProjectileObject : IStrategyPoolingElement
 {
@@ -68,9 +73,13 @@ public partial class ProjectileObject : IStrategyPoolingElement
 	GameObject IStrategyPoolingElement.PrefabReference { get; set; }
 	void IStrategyElement.InStrategyCollector()
 	{
+		runtimeData = null;
+		statsData = null;
 	}
 	void IStrategyElement.OutStrategyCollector()
 	{
+		runtimeData = null;
+		statsData = null;
 	}
 	void IStrategyStartGame.OnStartGame()
 	{
@@ -81,7 +90,17 @@ public partial class ProjectileObject : IStrategyPoolingElement
 }
 public partial class ProjectileObject : IProjectileHitReporting
 {
-    void IProjectileHitReporting.HitOtherObject(GameObject gameObject)
+	partial void InitHitReporting()
+	{
+
+	}
+	partial void DeinitHitReporting()
+	{
+
+	}
+
+
+	void IProjectileHitReporting.HitOtherObject(GameObject gameObject)
     {
     }
 

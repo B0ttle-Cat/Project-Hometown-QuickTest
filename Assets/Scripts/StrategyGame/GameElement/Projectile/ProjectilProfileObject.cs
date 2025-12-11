@@ -113,6 +113,7 @@ public class ProjectileProfileObject : ScriptableObject
 	private void SetTestStatsValue()
 	{
 		statsData = new ProjectileStatsData(
+			projectileKey: projectileKey,
 			weaponType : WeaponType.일반,
 			moveStartSpeed : 10f,
 			isShiftSpeed : false,
@@ -130,7 +131,7 @@ public class ProjectileProfileObject : ScriptableObject
 			cepProbability : 0.9f,
 			cepReapply : false,
 			cepReapplyMinMaxTime : new Vector2(1f, 3f),
-			lifeTime : 10f,
+			lifeTime : 1f,
 			destroyDelayAfterHit : 0.1f,
 			collisionRadius : 0.1f,
 			hitDamageMultiplier : 1f,

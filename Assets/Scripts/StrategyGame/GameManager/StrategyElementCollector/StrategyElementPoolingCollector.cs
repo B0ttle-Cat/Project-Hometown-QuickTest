@@ -19,20 +19,20 @@ namespace StrategyManagerModule
 		{
 			// 이미 있으면 스킵
 			if (IsRegistered(prefabObject)) return this;
-			IElementStore store;
-			if (typeof(IStrategyPoolingElement).IsAssignableFrom(type))
-			{
-				var ctorList = Activator.CreateInstance(
-				typeof(PoolElementList<>).MakeGenericType(type), capacity);
-				var storeType = typeof(PoolingElementStore<>).MakeGenericType(type);
-				store = Activator.CreateInstance(storeType, ctorList) as IElementStore;
 
-				stores[prefabObject] = store;
-			}
-			else
-			{
+			if (!typeof(IStrategyPoolingElement).IsAssignableFrom(type))
 				throw new NotSupportedException($"{type.FullName} 타입은 IStrategyPoolingElement 인터페이스를 구현하지 않았습니다.");
-			}
+
+			// PoolElementList<T> 생성
+			Type listType = typeof(PoolElementList<>).MakeGenericType(type);
+			object list = Activator.CreateInstance(listType, capacity);
+
+			// PoolingElementStore<T> 생성
+			Type storeType = typeof(PoolingElementStore<>).MakeGenericType(type);
+			IElementStore store = Activator.CreateInstance(storeType, prefabObject, list) as IElementStore;
+
+			stores[prefabObject] = store;
+
 			return this;
 		}
 		private bool IsRegistered(GameObject prefabObject) => stores.ContainsKey(prefabObject);
@@ -43,7 +43,14 @@ namespace StrategyManagerModule
 			return null;
 		}
 
+		public void ReadyPoolCount<T>(GameObject prefabObject, int count, Func<int, Awaitable<T[]>> factory) where T : class, IStrategyPoolingElement
+		{
+			if (!stores.TryGetValue(prefabObject, out var s))
+				Register<T>(prefabObject);
 
+			var store = stores[prefabObject] as PoolingElementStore<T>;
+			 store.PoolList.ReadyPoolCount(count, factory);
+		}
 		public async Awaitable<T[]> Acquires<T>(GameObject prefabObject, int count, Func<int, Awaitable<T[]>> factory) where T : class, IStrategyPoolingElement
 		{
 			if (!stores.TryGetValue(prefabObject, out var s))
@@ -66,7 +73,6 @@ namespace StrategyManagerModule
 
 			return items;
 		}
-
 		public T Acquire<T>(GameObject prefabObject, Func<T> factory) where T : class, IStrategyPoolingElement
 		{
 			if (!stores.TryGetValue(prefabObject, out var s))
@@ -84,7 +90,6 @@ namespace StrategyManagerModule
 
 			return item;
 		}
-
 		public bool Release<T>(T item) where T : class, IStrategyPoolingElement
 		{
 			if (item == null || item.PrefabReference == null) return false;
@@ -231,5 +236,5 @@ namespace StrategyManagerModule
 			}
 			stores.Clear();
 		}
-	}
+    }
 }

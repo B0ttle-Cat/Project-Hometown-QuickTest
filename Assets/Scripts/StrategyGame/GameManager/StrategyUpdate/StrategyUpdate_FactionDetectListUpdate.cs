@@ -65,21 +65,26 @@ namespace StrategyManagerModule
 					faction.ClearDetect();
 
 					var allElement =  StrategyManager.Collector.GetAllElementLists();
-					foreach (var item in allElement)
+					foreach (var items in allElement)
 					{
-						if (item is not INearbySearcherValueGetter searcherValueGetter) return;
-						if (searcherValueGetter.FactionID != thisFactionID) return;
-						var searcher = searcherValueGetter.Searcher;
-						if (searcher == null) return;
-
-						var nearbyItems = searcher.GetNearbyItemsType<INearbyElement>(i => i.FactionID != thisFactionID);
-						foreach (var target in nearbyItems)
+						int length = items.Count;
+						for (int i = 0 ; i < length ; i++)
 						{
-							faction.AddDetect(target as IStrategyElement);
+							var item = items[i];
+							if (item is not INearbySearcherValueGetter searcherValueGetter) break; // 내가 원하는 타입이 아니기 때문이 이번 List를 버린다.
+							if (searcherValueGetter.FactionID != thisFactionID) continue;
+							var searcher = searcherValueGetter.Searcher;
+							if (searcher == null) continue;
+
+							var nearbyItems = searcher.GetNearbyItemsType<INearbyElement>(i => i.FactionID != thisFactionID);
+							foreach (var target in nearbyItems)
+							{
+								faction.AddDetect(target as IStrategyElement);
+							}
 						}
 					}
 				}
 			}
 		}
-	} 
+	}
 }

@@ -31,16 +31,15 @@ public static class StrategyElementFactory
 			operation.AddUnitObject(newUnit);
 		}
 	}
-	public static UnitObject Instantiate(UnitKey unitKey, int factionID = -1, Vector3? position = null, Quaternion? rotation = null,  bool enterThis = true)
+	public static UnitObject Instantiate(UnitKey unitKey, int factionID = -1, Vector3? position = null, Quaternion? rotation = null, bool enterThis = true)
 	{
 		if (StrategyManager.Key2Unit.TryGetAsset(unitKey, out var info))
 		{
-			UnitObject newUnit = Instantiate(info.UnitProfileObject, factionID, position, rotation, false);
-			if (enterThis) newUnit.InitOther();
+			return Instantiate(info.UnitProfileObject, factionID, position, rotation, enterThis);
 		}
 		return null;
 	}
-	public static UnitObject Instantiate(UnitProfileObject profile, int factionID = -1, Vector3? position = null, Quaternion? rotation = null,  bool enterThis = true)
+	public static UnitObject Instantiate(UnitProfileObject profile, int factionID = -1, Vector3? position = null, Quaternion? rotation = null, bool enterThis = true)
 	{
 		if (profile == null) return null;
 		var prefab = profile.prefab;
@@ -139,31 +138,52 @@ public static class StrategyElementFactory
 	}
 	#endregion
 	#region Projectile Object
+	public static void ReadyPoolCount(ProjectileKey projectileKey, int newCount)
+	{
 
-	public static async Awaitable<ProjectileObject[]> Instantiate(StrategyStartSetterData.ProjectileData setterData)
+		if (StrategyManager.Key2Projectile.TryGetAsset(projectileKey, out var info))
+		{
+			GameObject prefab = info.ProjectileProfileObject.prefab;
+			ProjectileObject projectilePrefab = prefab.GetComponent<ProjectileObject>();
+
+			StrategyManager.Pooling.ReadyPoolCount<ProjectileObject>(prefab, newCount, NewInstantiateProjectile);
+		
+			async Awaitable<ProjectileObject[]> NewInstantiateProjectile(int instantCount)
+			{
+				return await GameObject.InstantiateAsync<ProjectileObject>(projectilePrefab, instantCount);
+			}
+		}
+	}
+
+
+	public static async Awaitable<ProjectileObject[]> Instantiate(StrategyStartSetterData.ProjectileData setterData, bool enterThis = true)
 	{
 		var projectilKey = setterData.projectilKey;
 		int newCount = setterData.count;
 		if (newCount == 0) return null;
 
-		var newProjectiles = await Instantiate(projectilKey, newCount);
+		var newProjectiles = await Instantiate(projectilKey, newCount, false);
 
 		for (int i = 0 ; i < newCount ; i++)
 		{
 			newProjectiles[i].Init(setterData[i]);
+			if (enterThis)
+			{
+				newProjectiles[i].InitOther();
+			}
 		}
 		return newProjectiles;
 	}
-	public static async Awaitable<ProjectileObject[]> Instantiate(ProjectileKey projectileKey, int newCount = 1)
+	public static async Awaitable<ProjectileObject[]> Instantiate(ProjectileKey projectileKey, int newCount = 1, bool enterThis = true)
 	{
 		if (StrategyManager.Key2Projectile.TryGetAsset(projectileKey, out var info))
 		{
-			return await Instantiate(info.ProjectileProfileObject, newCount);
+			return await Instantiate(info.ProjectileProfileObject, newCount, enterThis);
 		}
 		return null;
 	}
 
-	public static async Awaitable<ProjectileObject[]> Instantiate(ProjectileProfileObject profile, int newCount = 1)
+	public static async Awaitable<ProjectileObject[]> Instantiate(ProjectileProfileObject profile, int newCount = 1, bool enterThis = true)
 	{
 		GameObject prefab = profile.prefab;
 		ProjectileObject projectilePrefab = prefab.GetComponent<ProjectileObject>();
@@ -173,7 +193,12 @@ public static class StrategyElementFactory
 		for (int i = 0 ; i < newCount ; i++)
 		{
 			newProjectiles[i].Init(profile);
+			if (enterThis)
+			{
+				newProjectiles[i].InitOther();
+			}
 		}
+
 		return newProjectiles;
 
 		async Awaitable<ProjectileObject[]> NewInstantiateProjectile(int instantCount)

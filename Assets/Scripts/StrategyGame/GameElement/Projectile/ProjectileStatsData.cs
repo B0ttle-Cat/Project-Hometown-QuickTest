@@ -2,8 +2,11 @@
 
 using Sirenix.OdinInspector;
 
+using Unity.Collections;
+
 using UnityEngine;
 
+using static ProjectileMovement;
 using static StrategyGamePlayData;
 
 
@@ -11,6 +14,9 @@ using static StrategyGamePlayData;
 public record ProjectileStatsData // ProfileStats
 {
 	#region ProfileState
+	[SerializeField,HideIf("@true")]
+	private ProjectileKey projectileKey;
+
 	[Title("StatsData")]
 	[LabelText("공격 속성"), SerializeField]
 	private WeaponType weaponType;
@@ -94,6 +100,8 @@ public record ProjectileStatsData // ProfileStats
 		var statsData = profile.statsData;
 		if (statsData == null) return;
 
+		projectileKey = statsData.ProjectileKey;
+
 		weaponType = statsData.WeaponType;
 
 		moveStartSpeed = statsData.MoveStartSpeed;
@@ -131,16 +139,18 @@ public record ProjectileStatsData // ProfileStats
 		explosionFalloffCurve = statsData.ExplosionFalloffCurve;
 	}
 
-	public ProjectileStatsData(WeaponType weaponType = WeaponType.일반,
+	public ProjectileStatsData(ProjectileKey projectileKey = ProjectileKey.None, WeaponType weaponType = WeaponType.일반,
 		float moveStartSpeed = 10f, bool isShiftSpeed = false, float moveMaxSpeed = 20f, AnimationCurve moveSpeedCurve = null, float timeFromStartToMaxSpeed = 2f,
 		bool homingEnabled = false, float homingActivationDelay = 0f, float homingTurnSpeed = 180f, float homingTurnSpeedWhenMaxSpeed = 180f, float homingLimitAngle = 180f, float homingLimitDistance = float.PositiveInfinity,
 		bool cepEnabled = false, float cepRadius = 3f, float cepProbability = 0.9f, bool cepReapply = false, Vector2 cepReapplyMinMaxTime = default,
-		float lifeTime = 10f, float destroyDelayAfterHit = 0.1f,
+		float lifeTime = 1f, float destroyDelayAfterHit = 0.1f,
 		float collisionRadius = 0.1f,
 		float hitDamageMultiplier = 1f, StatusEffectsFlag hitEffectsFlag = StatusEffectsFlag.None, float hitEffectsTimeMultiplier = 1f,
 		bool piercingEnable = false, Vector2Int piercingMinMaxCount = default, AnimationCurve piercingFalloffCurve = null,
 		bool explosionEnabled = false, Vector2 explosionMinMaxRadius = default, AnimationCurve explosionFalloffCurve = null)
 	{
+		this.projectileKey = projectileKey;
+
 		this.weaponType = weaponType;
 
 		this.moveStartSpeed = moveStartSpeed;
@@ -183,6 +193,8 @@ public record ProjectileStatsData // ProfileStats
 	{
 		return new ProjectileStatsData()
 		{
+			projectileKey = this.projectileKey,
+
 			weaponType = this.weaponType,
 
 			moveStartSpeed = this.moveStartSpeed,
@@ -224,7 +236,7 @@ public record ProjectileStatsData // ProfileStats
 	}
 
 
-
+	public ProjectileKey ProjectileKey => projectileKey;
 	public WeaponType WeaponType => weaponType;
 	public float MoveStartSpeed => moveStartSpeed;
 	public bool IsShiftSpeed => isShiftSpeed;
@@ -285,5 +297,44 @@ public record ProjectileStatsData // ProfileStats
 		return ExplosionFalloffCurve.Evaluate(rate);
 	}
 
+
+	public MovmentConstantData GetMovementConstantData()
+	{
+		return new MovmentConstantData
+		{
+			IsShiftSpeed = this.isShiftSpeed,
+			MoveStartSpeed = this.moveStartSpeed,
+			MoveMaxSpeed = this.moveMaxSpeed,
+			TimeFromStartToMaxSpeed = this.timeFromStartToMaxSpeed,
+
+			HomingEnabled = this.homingEnabled,
+			HomingTurnSpeed = this.homingTurnSpeed,
+			HomingTurnSpeedWhenMaxSpeed = this.homingTurnSpeedWhenMaxSpeed,
+
+			// 미리 계산된 코사인/제곱 거리를 사용합니다.
+			HomingLimitAngleCosine = this.HomingLimitAngleCosine,
+			HomingLimitSqrDistance = this.HomingLimitSqrDistance
+		};
+	}
+
+
+	public static float[] PrepareAnimationCurve(AnimationCurve curve, int resolution = 128)
+	{
+		var curveTable = new float[resolution];
+
+		for (int i = 0 ; i < resolution ; i++)
+		{
+			float t = (float)i / (resolution - 1);
+			curveTable[i] = curve.Evaluate(t);
+		}
+
+		return curveTable;
+	}
+	public NativeArray<float> GetMovementCurveData(int resolution, Allocator allocator)
+	{
+		// PrepareAnimationCurve를 사용하여 float[]를 얻고 NativeArray로 변환
+		float[] array = PrepareAnimationCurve(this.moveSpeedCurve, resolution);
+		return new NativeArray<float>(array, allocator);
+	}
 	#endregion
 }

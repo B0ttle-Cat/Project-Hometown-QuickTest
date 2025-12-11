@@ -396,8 +396,40 @@ namespace StrategyManagerModule
 				}
 
 			}
+			count = result.Length;
+            for (int i = 0 ; i < count ; i++)
+            {
+				var item = result[i];
+				item.gameObject.SetActive(true);
+				Add(item);
+			}
 
-			return result;
+
+            return result;
+		}
+		public async void ReadyPoolCount(int count, Func<int, Awaitable<T[]>> factory)
+		{
+			if (recycled.Count >= count) return;
+			count -= recycled.Count;
+			var newArray = await factory(count);
+
+            for (int i = 0 ; i < count ; i++)
+            {
+				var item = newArray[i];
+				item.gameObject.SetActive(false);
+				recycled.Push(item); // 풀에 반환
+			}
+		}
+
+		public override bool Add(T item)
+		{
+			if (item == null) return false;
+			if (Items.Contains(item)) return false;
+
+			Items.Add(item);
+			item.InStrategyCollector();
+			Invoke(item, true);
+			return true;
 		}
 
 		/// <summary>
@@ -410,6 +442,8 @@ namespace StrategyManagerModule
 			{
 				item.gameObject.SetActive(false);
 				recycled.Push(item); // 풀에 반환
+				item.OutStrategyCollector();
+				Invoke(item, false);
 				return true;
 			}
 			return false;
@@ -420,7 +454,7 @@ namespace StrategyManagerModule
 			recycled.Clear();
 		}
 
-		public int RecycledCount => recycled.Count;
+        public int RecycledCount => recycled.Count;
 	}
 
 	/// <summary>

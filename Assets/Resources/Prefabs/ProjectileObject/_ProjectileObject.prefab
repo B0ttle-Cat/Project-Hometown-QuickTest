@@ -98,7 +98,7 @@ MonoBehaviour:
     cepProbability: 0
     cepReapply: 0
     cepReapplyMinMaxTime: {x: 0, y: 0}
-    lifeTime: 5
+    lifeTime: 1
     destroyDelayAfterHit: 0.1
     collisionRadius: 0.1
     hitDamageMultiplier: 1

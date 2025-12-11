@@ -13,10 +13,11 @@ public interface IProjectileMovement
 	Vector3 CurrentPosition { get; }
 	float MoveSpeed { get; }
 	Vector3 MoveDiraction { get; }
+	//(ProjectileKey Key, MovmentConstantData Data) GetConstantData();
 	public void SetTarget(IUnitCombatController order, ITargetableCombatant target);
 	public void ApplyJobResult(in MovementJobData movementJobData);
-	public bool RawDataUpdateFlag { get; }
-	public void InitPureMovementData(out MovementJobData movementJobData);
-	public void UpdatePureMovementData(ref MovementJobData movementJobData);
+	public bool ResetJobDataFlag { get; }
+	public void InitMovementJobData(out MovementJobData movementJobData);
+	public void UpdateMovementJobData(ref MovementJobData movementJobData);
 }
 

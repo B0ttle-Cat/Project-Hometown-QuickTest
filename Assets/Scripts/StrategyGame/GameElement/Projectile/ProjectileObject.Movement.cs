@@ -13,17 +13,28 @@ public partial class ProjectileObject : IProjectileMovement
 	public Vector3 CurrentPosition => ThisMovement.CurrentPosition;
 	public float MoveSpeed => ThisMovement.MoveSpeed;
 	public Vector3 MoveDiraction => ThisMovement.MoveDiraction;
-    public bool RawDataUpdateFlag => ThisMovement.RawDataUpdateFlag;
+    public bool ResetJobDataFlag => ThisMovement.ResetJobDataFlag;
 
     partial void InitMovement()
 	{
 		movement = GetComponent<ProjectileMovement>();
-		movement.Init(StatsData);
+		movement.Init(StatsData, OnTransformUpdate);
 	}
 	partial void DeinitMovment()
 	{
 		movement.Deinit();
 		movement = null;
+	}
+
+    void OnTransformUpdate()
+    {
+        RuntimeData.StartPosition = StartPosition;
+        RuntimeData.TargetPosition = TargetPosition;
+        RuntimeData.OrderUnitID = OrderElementID;
+        RuntimeData.TargetUnitID = TargetElementID;
+        RuntimeData.Position = transform.position;
+        RuntimeData.Rotation = transform.rotation;
+        RuntimeData.Velocity = MoveDiraction * MoveSpeed;
 	}
 
     public void SetTarget(IUnitCombatController order, ITargetableCombatant target)
@@ -36,13 +47,13 @@ public partial class ProjectileObject : IProjectileMovement
         ThisMovement.ApplyJobResult(movementJobData);
     }
 
-    public void InitPureMovementData(out ProjectileMovement.MovementJobData movementJobData)
+    public void InitMovementJobData(out ProjectileMovement.MovementJobData movementJobData)
     {
-        ThisMovement.InitPureMovementData(out movementJobData);
+        ThisMovement.InitMovementJobData(out movementJobData);
     }
 
-    public void UpdatePureMovementData(ref ProjectileMovement.MovementJobData movementJobData)
+    public void UpdateMovementJobData(ref ProjectileMovement.MovementJobData movementJobData)
     {
-        ThisMovement.UpdatePureMovementData(ref movementJobData);
+        ThisMovement.UpdateMovementJobData(ref movementJobData);
     }
 }

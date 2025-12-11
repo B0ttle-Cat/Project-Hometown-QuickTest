@@ -272,7 +272,6 @@ MonoBehaviour:
         facilitiesPoint: 0
     unitDatas:
     - unitKey: 2100
-      unitProfile: {fileID: 0}
       factionID: 0
       belongedOperation: 0
       visiteSectorID: 0
@@ -280,18 +279,17 @@ MonoBehaviour:
       rotation: {x: -0, y: 0, z: 0}
       showEdit: 0
     - unitKey: 1100
-      unitProfile: {fileID: 0}
       factionID: 1
-      belongedOperation: 0
+      belongedOperation: -1
       visiteSectorID: 0
       position: {x: 0, y: 0, z: 10}
       rotation: {x: 0, y: 0, z: 0}
       showEdit: 0
-    projectileDatas: []
     operationDatas:
     - teamName: OP-007
       factionID: 0
       visiteSectorID: 0
+    projectileDatas: []
     captureDatas:
     - captureSectorID: 0
       captureFactionID: 0

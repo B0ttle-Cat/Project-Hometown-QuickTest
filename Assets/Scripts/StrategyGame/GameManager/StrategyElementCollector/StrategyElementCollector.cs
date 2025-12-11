@@ -48,27 +48,37 @@ namespace StrategyManagerModule
 		public StrategyElementCollector Register<T>(int capacity = 32) where T : class => Register(typeof(T), capacity);
 		private StrategyElementCollector Register(Type type, int capacity = 32)
 		{
-			// 이미 있으면 스킵
-			if (IsRegistered(type)) return this;
-			IElementStore store;
-			if (typeof(IStrategyElement).IsAssignableFrom(type))
-			{
-				var ctorList = Activator.CreateInstance(
-				typeof(ElementList<>).MakeGenericType(type), capacity);
-				var storeType = typeof(ElementStore<>).MakeGenericType(type);
-				store = Activator.CreateInstance(storeType, ctorList) as IElementStore;
-			}
-			else
-			{
-				var baseList = Activator.CreateInstance(
-				typeof(BaseList<>).MakeGenericType(type), capacity);
-				var storeType = typeof(ElementStore<>).MakeGenericType(type);
-				store = Activator.CreateInstance(storeType, baseList) as IElementStore;
-			}
+			// 이미 등록된 타입이면 스킵
+			if (IsRegistered(type))
+				return this;
 
+
+			// ----------------------------------------------------------
+			// 1) 타입별로 사용할 리스트 타입을 결정한다.
+			//    IStrategyElement 를 구현했다면 ElementList<T> 를,
+			//    아니라면 BaseList<T> 를 사용한다.
+			// ----------------------------------------------------------
+			Type listType = typeof(IStrategyElement).IsAssignableFrom(type) 
+				? listType = typeof(ElementList<>).MakeGenericType(type)
+				: listType = typeof(BaseList<>).MakeGenericType(type);
+
+			// 리스트 인스턴스 생성 (capacity 전달)
+			object listInstance = Activator.CreateInstance(listType, capacity);
+
+			// ----------------------------------------------------------
+			// 2) ElementStore<T> 생성
+			//    ElementStore<T> 생성자의 시그니처는
+			//        (IList<T> list)
+			//    형태라고 가정하고 리스트 인스턴스를 넘긴다.
+			// ----------------------------------------------------------
+			Type storeType = typeof(ElementStore<>).MakeGenericType(type);
+			IElementStore store = Activator.CreateInstance(storeType, listInstance) as IElementStore;
+
+			// 스토어 등록
 			stores[type] = store;
 			return this;
 		}
+
 		/// <summary>명시적 스토어 등록(외부에서 커스텀 리스트/스토어 주입 가능)</summary>
 		public StrategyElementCollector Register<T>(IElementStore<T> newStore) where T : class
 		{
@@ -145,19 +155,19 @@ namespace StrategyManagerModule
 		{
 			foreach (var store in stores.Values)
 			{
-				// IElementStore<T>인지 확인
-				if (store is IElementStore es)
-				{
-					var list = es.GetRawList();
+				var interfaces = store.GetType().GetInterfaces();
 
-					// list가 ElementList<T>인지 확인
-					if (list is ElementList<IStrategyElement> || list.GetType().IsSubclassOf(typeof(ElementList<>)))
+				foreach (var itf in interfaces)
+				{
+					if (itf.IsGenericType &&
+						itf.GetGenericTypeDefinition() == typeof(IElementStore<>))
 					{
-						yield return list;
+						var es = (IElementStore)store;
+						yield return es.GetRawList();
+						break;
 					}
 				}
 			}
-
 		}
 
 		/// <summary>추가/제거용 API</summary>
@@ -209,7 +219,8 @@ namespace StrategyManagerModule
 		public void AddChangeListener<T>(Action<T, bool> onChange, bool invokeForExisting = false) where T : class
 		{
 			var list = GetList<T>();
-			if (list == null) {
+			if (list == null)
+			{
 				Register<T>();
 				list = GetList<T>();
 			}

@@ -12,7 +12,7 @@ public abstract class KeyPairAssets<TKey,TValue> : ScriptableObject
 	[Serializable]
 	protected struct KeyPairAssetsStruct
 	{
-		[HorizontalGroup, HideLabel, SuffixLabel("Key", overlay: true)]
+		[HorizontalGroup, HideLabel, SuffixLabel("ProjectileKey", overlay: true)]
 		public TKey key;
 		//[HorizontalGroup, HideLabel, SuffixLabel("KeyValue Target", overlay: true)]
 		[HideIf("@true")]
@@ -36,12 +36,12 @@ public abstract class KeyPairAssets<TKey,TValue> : ScriptableObject
         }
     }
 
-	[TitleGroup("Key KeyValue")]
-	[HorizontalGroup("Key KeyValue/H")]
+	[TitleGroup("ProjectileKey KeyValue")]
+	[HorizontalGroup("ProjectileKey KeyValue/H")]
 	[SerializeField]
 	protected string prefix;
-	[TitleGroup("Key KeyValue")]
-	[HorizontalGroup("Key KeyValue/H")]
+	[TitleGroup("ProjectileKey KeyValue")]
+	[HorizontalGroup("ProjectileKey KeyValue/H")]
 	[SerializeField]
 	protected string suffix;
 

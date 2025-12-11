@@ -25,38 +25,36 @@ public record ProjectileRuntimeData // RuntimeData
 	{
 		if (profile == null || profile.statsData == null) return;
 
-		orderUnitID = -1;
-		targetUnitID = -1;
-		startPosition = Vector3.positiveInfinity;
-		targetPosition = Vector3.positiveInfinity;
-		position = Vector3.positiveInfinity;
-		rotation = Quaternion.identity;
-		velocity = Vector3.zero;
-		lifeTime = profile.statsData.LifeTime;
-		piercingCount = 0;
+		OrderUnitID = -1;
+		TargetUnitID = -1;
+		StartPosition = Vector3.positiveInfinity;
+		TargetPosition = Vector3.positiveInfinity;
+		Position = Vector3.positiveInfinity;
+		Rotation = Quaternion.identity;
+		Velocity = Vector3.zero;
+		LifeTime = profile.statsData.LifeTime;
+		PiercingCount = 0;
 	}
 	public ProjectileRuntimeData(StrategyStartSetterData.ProjectileData.Info setterInfo)
 	{
-		orderUnitID = setterInfo.orderInSetterIndex;
-		targetUnitID = setterInfo.targetInSetterIndex;
-		startPosition = setterInfo.startPosition;
-		targetPosition = setterInfo.targetPosition;
-		position = startPosition;
-		rotation = Quaternion.identity;
-		velocity = Vector3.zero;
-		lifeTime = 0f;
-		piercingCount = 0;
+		OrderUnitID = setterInfo.orderInSetterIndex;
+		TargetUnitID = setterInfo.targetInSetterIndex;
+		StartPosition = setterInfo.startPosition;
+		TargetPosition = setterInfo.targetPosition;
+		Position = StartPosition;
+		Rotation = Quaternion.identity;
+		Velocity = Vector3.zero;
+		LifeTime = 0f;
+		PiercingCount = 0;
 	}
-	public int OrderUnitID => orderUnitID;
-	public int TargetUnitID => targetUnitID;
-	public Vector3 StartPosition => startPosition;
-	public Vector3 TargetPosition => targetPosition;
 
-	public Vector3 Position => position;
-	public Quaternion Rotation => rotation;
-	public Vector3 Velocity => velocity;
-
-	public float LifeTime => lifeTime;
-	public int PiercingPoint => piercingCount;
-
+    public int OrderUnitID { get => orderUnitID; set => orderUnitID = value; }
+    public int TargetUnitID { get => targetUnitID; set => targetUnitID = value; }
+    public Vector3 StartPosition { get => startPosition; set => startPosition = value; }
+    public Vector3 TargetPosition { get => targetPosition; set => targetPosition = value; }
+    public Vector3 Position { get => position; set => position = value; }
+    public Quaternion Rotation { get => rotation; set => rotation = value; }
+    public Vector3 Velocity { get => velocity; set => velocity = value; }
+    public float LifeTime { get => lifeTime; set => lifeTime = value; }
+    public int PiercingCount { get => piercingCount; set => piercingCount = value; }
 }

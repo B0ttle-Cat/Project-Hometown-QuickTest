@@ -7,7 +7,8 @@ using static StrategyGamePlayData;
 public interface IUnitAttackState : IFSMInterface<UnitAttackFSMType>
 {
 	IUnitAttackState ThisAttackState { get; }
-	public event Action OnAttackTiming;
+	public event Action<int,int, float> OnAttackReady;
+	public event Action<int> OnAttackTiming;
 	public event Action OnReloadingTiming;
 	public void SetChangeNewTargetFlag(bool changeFlag);
 }
@@ -39,16 +40,19 @@ public partial class UnitAttackFiniteStateMachine : FiniteStateMachine<UnitAttac
 		{
 			new IdleStatte(this, UnitAttackFSMType.Idle),
 			new AimingState(this, UnitAttackFSMType.Aiming),
-			new AttackingState(this, UnitAttackFSMType.Attacking, OnAttack),
+			new AttackingState(this, UnitAttackFSMType.Attacking, OnReady, OnAttack),
 			new Reloading(this, UnitAttackFSMType.Reloading, OnReloading),
 			new ReattackingState(this, UnitAttackFSMType.Reattacking),
 		};
 		return states;
 	}
-
-	private void OnAttack()
+	private void OnReady(int continuousAttackCount,int simultaneousAttackCount, float continuousAttackDelay)
 	{
-		OnAttackTiming?.Invoke();
+		OnAttackReady?.Invoke(continuousAttackCount, simultaneousAttackCount, continuousAttackDelay);
+	}
+	private void OnAttack(int count)
+	{
+		OnAttackTiming?.Invoke(count);
 	}
 	private void OnReloading()
 	{
@@ -103,8 +107,9 @@ public partial class UnitAttackFiniteStateMachine : FiniteStateMachine<UnitAttac
 		{
 			if (MainFSMController.CurrentStateType == UnitMainFSMType.Fighting && attackState.changeNewTargetFlag)
 			{
-				float ammoRemaining = StateControl.GetStateValue(StatsType.유닛_사용탄수);
-				return ammoRemaining > 0 ? UnitAttackFSMType.Aiming : UnitAttackFSMType.Reloading;
+				int ammoMaxCount = StateControl.GetStateValue(StatsType.유닛_탄용량);
+				int ammoUsedCount = StateControl.GetStateValue(StatsType.유닛_사용탄수);
+				return ammoUsedCount >= ammoMaxCount ? UnitAttackFSMType.Reloading : UnitAttackFSMType.Aiming;
 			}
 			return ThisType;
 		}
@@ -141,23 +146,32 @@ public partial class UnitAttackFiniteStateMachine : FiniteStateMachine<UnitAttac
 	}
 	public class AttackingState : AttackState
 	{
-		private readonly Action onAttack;
-		int comboRemainingCount;
-		float comboDelayTime;
+		private readonly Action<int,int,float> onReady;
+		private readonly Action<int> onAttack;
+		int continuousAttackCount;
+		int simultaneousAttackCount;
+		float continuousAttackDelay;
 
 		int ammoMaxCount;
 		int ammoUsedCount;
-		public AttackingState(UnitAttackFiniteStateMachine attackState, UnitAttackFSMType type, Action onAttack) : base(attackState, type)
+		public AttackingState(UnitAttackFiniteStateMachine attackState, UnitAttackFSMType type, Action<int, int, float> onReady, Action<int> onAttack) : base(attackState, type)
 		{
+			this.onReady = onReady;
 			this.onAttack = onAttack;
 		}
 		protected override void OnStateEnter()
 		{
-			comboRemainingCount = StateControl.GetStateValue(StatsType.유닛_연속공격횟수);
-			comboDelayTime = StateControl.GetStateValue(StatsType.유닛_연속공격지연시간_c);
-
+			continuousAttackCount = StateControl.GetStateValue(StatsType.유닛_연속공격횟수);
+			simultaneousAttackCount = StateControl.GetStateValue(StatsType.유닛_동시공격개수);
+			continuousAttackDelay = StateControl.GetStateValuePercent(StatsType.유닛_연속공격지연시간_c);
 			ammoMaxCount = StateControl.GetStateValue(StatsType.유닛_탄용량);
 			ammoUsedCount = StateControl.GetStateValue(StatsType.유닛_사용탄수);
+
+			if (continuousAttackCount < 1) continuousAttackCount = 1;
+			if (simultaneousAttackCount < 1) simultaneousAttackCount = 1;
+			if (continuousAttackDelay < 0.01) continuousAttackDelay = 0.01f;
+
+			onReady?.Invoke(continuousAttackCount, simultaneousAttackCount, continuousAttackDelay);
 		}
 		protected override void OnStateExit()
 		{
@@ -169,20 +183,20 @@ public partial class UnitAttackFiniteStateMachine : FiniteStateMachine<UnitAttac
 				return UnitAttackFSMType.Idle;
 			}
 
-			if (ammoUsedCount < ammoMaxCount && comboRemainingCount > 0)
+			if (ammoUsedCount < ammoMaxCount && continuousAttackCount > 0)
 			{
-				comboDelayTime -= deltaTime;
-				if (comboDelayTime <= 0)
+				continuousAttackDelay -= deltaTime;
+				if (continuousAttackDelay <= 0)
 				{
 					OnAttack();
 				}
 			}
 
-			if (ammoUsedCount <= 0)
+			if (ammoUsedCount >= ammoMaxCount)
 			{
 				return UnitAttackFSMType.Reloading;
 			}
-			else if (comboRemainingCount <= 0)
+			else if (continuousAttackCount <= 0)
 			{
 				return UnitAttackFSMType.Reattacking;
 			}
@@ -192,16 +206,16 @@ public partial class UnitAttackFiniteStateMachine : FiniteStateMachine<UnitAttac
 		{
 			try
 			{
-				onAttack?.Invoke();
-				--comboRemainingCount;
+				onAttack?.Invoke(simultaneousAttackCount);
+				--continuousAttackCount;
 				++ammoUsedCount;
-				comboDelayTime += StateControl.GetStateValue(StatsType.유닛_연속공격지연시간_c);
+				continuousAttackDelay += StateControl.GetStateValuePercent(StatsType.유닛_연속공격지연시간_c);
 				ammoMaxCount = StateControl.GetStateValue(StatsType.유닛_탄용량);
 			}
 			catch
 			{
-				comboRemainingCount = 0;
-				comboDelayTime = 0;
+				continuousAttackCount = 0;
+				continuousAttackDelay = 0;
 				ammoMaxCount = 0;
 				ammoUsedCount = 0;
 			}
@@ -259,7 +273,7 @@ public partial class UnitAttackFiniteStateMachine : FiniteStateMachine<UnitAttac
 			if (reloadingTime <= 0)
 			{
 				OnReloading();
-				if(attackState.didAiming)
+				if (attackState.didAiming)
 				{
 					return UnitAttackFSMType.Reattacking;
 				}
@@ -279,9 +293,9 @@ public partial class UnitAttackFiniteStateMachine : FiniteStateMachine<UnitAttac
 public partial class UnitAttackFiniteStateMachine : IUnitAttackState
 {
 	public IUnitAttackState ThisAttackState => this;
-	public event Action OnAttackTiming;
+	public event Action<int,int,float > OnAttackReady;
+	public event Action<int> OnAttackTiming;
 	public event Action OnReloadingTiming;
-
 	private bool changeNewTargetFlag;
 	private bool didAiming;
 	public void SetChangeNewTargetFlag(bool changeFlag)
@@ -289,9 +303,17 @@ public partial class UnitAttackFiniteStateMachine : IUnitAttackState
 		changeNewTargetFlag = changeFlag;
 	}
 	public override bool IsCanStateUpdate()
-    {
+	{
 		if (MainFSMController == null) return false;
-		return MainFSMController.CurrentStateType == UnitMainFSMType.Fighting;
+		else if(MainFSMController.CurrentStateType == UnitMainFSMType.Fighting)
+		{
+			return true;
+		}
+		else if (ThisAttackState.CurrentStateType != UnitAttackFSMType.Idle)
+		{
+			return true;
+		}
+		return false;
 	}
 }
 

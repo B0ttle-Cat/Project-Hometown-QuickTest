@@ -118,7 +118,7 @@ public class UnitProfileObject : ScriptableObject
 			유닛_재공격지연시간 = statsData.GetValue(StatsType.유닛_재공격지연시간_c);
 
 			유닛_탄용량 = statsData.GetValue(StatsType.유닛_탄용량);
-			유닛_잔탄수 = statsData.GetValue(StatsType.유닛_사용탄수);
+			유닛_사용탄수 = statsData.GetValue(StatsType.유닛_사용탄수);
 			유닛_재장전시간 = statsData.GetValue(StatsType.유닛_재장전시간_c);
 
 			유닛_공격소모_물자 = statsData.GetValue(StatsType.유닛_공격소모_물자);
@@ -180,7 +180,7 @@ public class UnitProfileObject : ScriptableObject
 			statsData.SetValue(StatsType.유닛_재공격지연시간_c, 유닛_재공격지연시간);
 
 			statsData.SetValue(StatsType.유닛_탄용량, 유닛_탄용량);
-			statsData.SetValue(StatsType.유닛_사용탄수, 유닛_잔탄수);
+			statsData.SetValue(StatsType.유닛_사용탄수, 유닛_사용탄수);
 			statsData.SetValue(StatsType.유닛_재장전시간_c, 유닛_재장전시간);
 
 			statsData.SetValue(StatsType.유닛_공격소모_물자, 유닛_공격소모_물자);
@@ -240,7 +240,7 @@ public class UnitProfileObject : ScriptableObject
 	[FoldoutGroup("StatsData")] public int 유닛_재공격지연시간;
 	[Space]
 	[FoldoutGroup("StatsData")] public int 유닛_탄용량;
-	[FoldoutGroup("StatsData")] public int 유닛_잔탄수;
+	[FoldoutGroup("StatsData")] public int 유닛_사용탄수;
 	[FoldoutGroup("StatsData")] public int 유닛_재장전시간;
 
 	[Space]
@@ -292,7 +292,7 @@ public class UnitProfileObject : ScriptableObject
 			new (StatsType.유닛_재공격지연시간_c, 유닛_재공격지연시간),
 
 			new(StatsType.유닛_탄용량    , 유닛_탄용량    ),
-			new(StatsType.유닛_사용탄수    , 유닛_잔탄수    ),
+			new(StatsType.유닛_사용탄수    , 유닛_사용탄수    ),
 			new(StatsType.유닛_재장전시간_c, 유닛_재장전시간),
 
 			new (StatsType.유닛_공격소모_물자, 유닛_공격소모_물자),
@@ -347,7 +347,7 @@ public class UnitProfileObject : ScriptableObject
 		유닛_재공격지연시간 = 0_50;
 
 		유닛_탄용량 = 8;
-		유닛_잔탄수 = 8;
+		유닛_사용탄수 = 0;
 		유닛_재장전시간 = 3_00;
 
 		유닛_공격소모_물자 = 1;

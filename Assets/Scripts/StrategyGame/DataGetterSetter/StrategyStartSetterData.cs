@@ -42,9 +42,10 @@ namespace StrategyManagerModule
 			[TitleGroup("MainData")]
 			public UnitData[] unitDatas;
 			[TitleGroup("MainData")]
-			public ProjectileData[] projectileDatas;
-			[TitleGroup("MainData")]
 			public OperationData[] operationDatas;
+			[TitleGroup("PoolingData")]
+			public ProjectileData[] projectileDatas;
+
 			[TitleGroup("OtherData"), TableList]
 			public CaptureData[] captureDatas;
 			[TitleGroup("OtherData")]
@@ -192,10 +193,12 @@ namespace StrategyManagerModule
 			[FoldoutGroup("@unitKey")]
 			[ValueDropdown("@GetFactionNames($property)")]
 			[InlineButton("Clear_factionName","Clear")]
+			[OnValueChanged("OnValueChanged_factionID")]
 			public int factionID;
 			[FoldoutGroup("@unitKey")]
 			[ValueDropdown("@GetOperationNames($property)")]
 			[InlineButton("Clear_belongedOperation","Clear")]
+			[ShowIf("@ShowOperationSelect($property)")]
 			public int belongedOperation;
 			[FoldoutGroup("@unitKey")]
 			[ValueDropdown("@GetSectorNames($property)")]
@@ -305,13 +308,13 @@ namespace StrategyManagerModule
 				var root = property.Tree.WeakTargets.FirstOrDefault() as StrategyStartSetterData;
 				if (root == null)
 				{
-					list.Add("No Parent Info", -1);
+					list.Add("(No Parent Info)", -1);
 					return list;
 				}
 				var bases = root.data.operationDatas;
 				if (bases == null || bases.Length == 0)
 				{
-					list.Add("No Info", -1);
+					list.Add("(No Info)", -1);
 					return list;
 				}
 
@@ -326,7 +329,53 @@ namespace StrategyManagerModule
 				}
 				return list;
 			}
-			private bool ShowProfileObject => unitKey == UnitKey.None;
+			private bool ShowOperationSelect(InspectorProperty property)
+			{
+				int factionID = -1;
+
+				if (property.Parent != null && property.ParentValueProperty.ValueEntry != null)
+				{
+					var parent = property.ParentValueProperty.ValueEntry.WeakSmartValue;
+					if (parent != null && parent is UnitData unitData)
+					{
+						if (unitData.factionID == -1)
+						{
+							return false;
+						}
+						else
+						{
+							factionID = unitData.factionID;
+						}
+					}
+				}
+
+				// 루트까지 올라감
+				var root = property.Tree.WeakTargets.FirstOrDefault() as StrategyStartSetterData;
+				if (root == null)
+				{
+					return false;
+				}
+				var bases = root.data.operationDatas;
+				if (bases == null || bases.Length == 0)
+				{
+					return false;
+				}
+
+				bases.Where(x => x.factionID.Equals(factionID)).Select(x => x.teamName);
+				int length = bases.Length;
+				for (int i = 0 ; i < length ; i++)
+				{
+					if (!bases[i].factionID.Equals(factionID)) continue;
+					if (string.IsNullOrWhiteSpace(bases[i].teamName)) continue;
+					return true;
+				}
+				return false;
+			}
+			private bool ShowProfileObject => unitKey == UnitKey.None;		   
+			private void OnValueChanged_factionID()
+			{
+				belongedOperation = -1;
+			}
 #endif
 
 			public readonly string DisplayName()
@@ -344,9 +393,15 @@ namespace StrategyManagerModule
 			[Serializable]
 			public struct Info
 			{
+				[HorizontalGroup("Idx")]
+				[ValueDropdown("@GetFactionNames($property)"), LabelText("Order")]
 				public int orderInSetterIndex;
+				[HorizontalGroup("Idx")]
+				[ValueDropdown("@GetFactionNames($property)"), LabelText("Target")]
 				public int targetInSetterIndex;
+				[HorizontalGroup("Pos"), LabelText("Start")]
 				public Vector3 startPosition;
+				[HorizontalGroup("Pos"), LabelText("Target")]
 				public Vector3 targetPosition;
 
 				public Vector3 position;
@@ -354,7 +409,37 @@ namespace StrategyManagerModule
 				public Vector3 velocity;
 
 				public float lifeTime;
-				public int piercingPoint;
+				public int piercingCount;
+#if UNITY_EDITOR
+				private static ValueDropdownList<int> GetFactionNames(InspectorProperty property)
+				{
+					ValueDropdownList<int> list = new ValueDropdownList<int>();
+
+					// 루트까지 올라감
+					var root = property.Tree.WeakTargets.FirstOrDefault() as StrategyStartSetterData;
+					if (root == null)
+					{
+						list.Add("(No Parent Info)", -1);
+						return list;
+					}
+
+					var bases = root.data.factionDatas;
+					if (bases == null || bases.Length == 0)
+					{
+						list.Add("(No Info)", -1);
+						return list;
+					}
+
+					var items = bases.Select(x => x.factionName).ToList();
+					list.Add("", -1);
+					for (int i = 0 ; i < items.Count ; i++)
+					{
+						list.Add(items[i], i);
+					}
+
+					return list;
+				}
+#endif
 			}
 		}
 
