@@ -16,9 +16,9 @@ using static StrategyGamePlayData;
 [RequireComponent(typeof(RaycastModifier))]
 public partial class UnitMovement : MonoBehaviour
 {
-	private IStateValueControl StateControl { get; set; }
+	private IStatsValueControl StateControl { get; set; }
 	private IOperationBelonger OperationBelonger { get; set; }
-	private IUnitCombatController CcombatController { get; set; }
+	private ICombatHandler CcombatController { get; set; }
 	private IFSMController<UnitMainFSMType> FsmController { get; set; }
 
 	private Vector3 operationMoveTarget;
@@ -83,7 +83,7 @@ public partial class UnitMovement : MonoBehaviour
 	private float GetStateValue(StatsType type)
 	{
 		if (StateControl == null) return 0f;
-		return StateControl.GetStateValuePercent(StrategyGamePlayData.StatsType.유닛_이동속도_c);
+		return StateControl.GetStatsValuePercent(StrategyGamePlayData.StatsType.유닛_이동속도_c);
 	}
 
 	private void InitPositionAndVelocity(out Vector3 position, out Vector3 velocity)

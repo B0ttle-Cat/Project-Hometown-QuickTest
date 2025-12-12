@@ -41,11 +41,11 @@ public record ProjectileRuntimeData // RuntimeData
 		TargetUnitID = setterInfo.targetInSetterIndex;
 		StartPosition = setterInfo.startPosition;
 		TargetPosition = setterInfo.targetPosition;
-		Position = StartPosition;
-		Rotation = Quaternion.identity;
-		Velocity = Vector3.zero;
-		LifeTime = 0f;
-		PiercingCount = 0;
+		Position = setterInfo.position;
+		Rotation = setterInfo.rotation;
+		Velocity = setterInfo.velocity;
+		LifeTime = setterInfo.lifeTime;
+		PiercingCount = setterInfo.piercingCount;
 	}
 
     public int OrderUnitID { get => orderUnitID; set => orderUnitID = value; }

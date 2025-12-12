@@ -96,12 +96,13 @@ public class UnitProfileObject : ScriptableObject
 			유닛_점령점수 = statsData.GetValue(StatsType.유닛_점령점수);
 
 			유닛_치명공격력 = statsData.GetValue(StatsType.유닛_치명공격력);
-			유닛_치명공격백분율 = statsData.GetValue(StatsType.유닛_치명공격백분율);
+			유닛_치명피해율 = statsData.GetValue(StatsType.유닛_치명피해율);
 			유닛_치명방어력 = statsData.GetValue(StatsType.유닛_치명방어력);
 
 			유닛_관통레벨 = statsData.GetValue(StatsType.유닛_관통레벨);
 			유닛_장갑레벨 = statsData.GetValue(StatsType.유닛_장갑레벨);
-			유닛_EMP저항레벨 = statsData.GetValue(StatsType.유닛_EMP저항레벨);
+			유닛_EMP충격레벨 = statsData.GetValue(StatsType.유닛_EMP충격레벨); 
+			유닛_EMP방호레벨 = statsData.GetValue(StatsType.유닛_EMP방호레벨);
 
 			유닛_상태이상적용레벨 = statsData.GetValue(StatsType.유닛_상태이상적용레벨);
 			유닛_상태이상저항레벨 = statsData.GetValue(StatsType.유닛_상태이상저항레벨);
@@ -158,12 +159,14 @@ public class UnitProfileObject : ScriptableObject
 			statsData.SetValue(StatsType.유닛_점령점수, 유닛_점령점수);
 
 			statsData.SetValue(StatsType.유닛_치명공격력, 유닛_치명공격력);
-			statsData.SetValue(StatsType.유닛_치명공격백분율, 유닛_치명공격백분율);
+			statsData.SetValue(StatsType.유닛_치명피해율, 유닛_치명피해율);
 			statsData.SetValue(StatsType.유닛_치명방어력, 유닛_치명방어력);
 
 			statsData.SetValue(StatsType.유닛_관통레벨, 유닛_관통레벨);
 			statsData.SetValue(StatsType.유닛_장갑레벨, 유닛_장갑레벨);
-			statsData.SetValue(StatsType.유닛_EMP저항레벨, 유닛_EMP저항레벨);
+
+			statsData.SetValue(StatsType.유닛_EMP충격레벨, 유닛_EMP충격레벨);
+			statsData.SetValue(StatsType.유닛_EMP방호레벨, 유닛_EMP방호레벨);
 
 			statsData.SetValue(StatsType.유닛_상태이상적용레벨, 유닛_상태이상적용레벨);
 			statsData.SetValue(StatsType.유닛_상태이상저항레벨, 유닛_상태이상저항레벨);
@@ -216,13 +219,15 @@ public class UnitProfileObject : ScriptableObject
 	[FoldoutGroup("StatsData")] public int 유닛_점령점수;
 
 	[FoldoutGroup("StatsData")] public int 유닛_치명공격력;
-	[FoldoutGroup("StatsData")] public int 유닛_치명공격백분율;
+	[FoldoutGroup("StatsData")] public int 유닛_치명피해율;
 	[FoldoutGroup("StatsData")] public int 유닛_치명방어력;
 
 	[Space]
 	[FoldoutGroup("StatsData")] public int 유닛_관통레벨;
 	[FoldoutGroup("StatsData")] public int 유닛_장갑레벨;
-	[FoldoutGroup("StatsData")] public int 유닛_EMP저항레벨;
+
+	[FoldoutGroup("StatsData")] public int 유닛_EMP충격레벨;
+	[FoldoutGroup("StatsData")] public int 유닛_EMP방호레벨;
 
 	[FoldoutGroup("StatsData")] public int 유닛_상태이상적용레벨;
 	[FoldoutGroup("StatsData")] public int 유닛_상태이상저항레벨;
@@ -273,12 +278,13 @@ public class UnitProfileObject : ScriptableObject
 			new (StatsType.유닛_이동속도_c, 유닛_이동속도),
 			new (StatsType.유닛_점령점수, 유닛_점령점수),
 			new (StatsType.유닛_치명공격력, 유닛_치명공격력),
-			new (StatsType.유닛_치명공격백분율, 유닛_치명공격백분율),
+			new (StatsType.유닛_치명피해율, 유닛_치명피해율),
 			new (StatsType.유닛_치명방어력, 유닛_치명방어력),
 
 			new (StatsType.유닛_관통레벨, 유닛_관통레벨),
 			new (StatsType.유닛_장갑레벨, 유닛_장갑레벨),
-			new (StatsType.유닛_EMP저항레벨, 유닛_EMP저항레벨),
+			new (StatsType.유닛_EMP충격레벨, 유닛_EMP충격레벨),
+			new (StatsType.유닛_EMP방호레벨, 유닛_EMP방호레벨),
 
 			new (StatsType.유닛_공격명중기회, 유닛_공격명중기회),
 			new (StatsType.유닛_공격회피기회, 유닛_공격회피기회),
@@ -325,12 +331,13 @@ public class UnitProfileObject : ScriptableObject
 		유닛_점령점수 = 1;
 
 		유닛_치명공격력 = 30;
-		유닛_치명공격백분율 = 200;
+		유닛_치명피해율 = 200;
 		유닛_치명방어력 = 10;
 
 		유닛_관통레벨 = 1;
 		유닛_장갑레벨 = 1;
-		유닛_EMP저항레벨 = 1;
+		유닛_EMP충격레벨 = 1;
+		유닛_EMP방호레벨 = 1;
 
 		유닛_상태이상적용레벨 = 1;
 		유닛_상태이상저항레벨 = 1;

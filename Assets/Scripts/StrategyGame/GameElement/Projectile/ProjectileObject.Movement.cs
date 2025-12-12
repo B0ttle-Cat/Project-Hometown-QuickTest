@@ -37,11 +37,6 @@ public partial class ProjectileObject : IProjectileMovement
         RuntimeData.Velocity = MoveDiraction * MoveSpeed;
 	}
 
-    public void SetTarget(IUnitCombatController order, ITargetableCombatant target)
-    {
-        ThisMovement.SetTarget(order, target);
-    }
-
     public void ApplyJobResult(in ProjectileMovement.MovementJobData movementJobData)
     {
         ThisMovement.ApplyJobResult(movementJobData);

@@ -23,7 +23,7 @@ public class UnitFiniteStateMachine : FiniteStateMachine<UnitMainFSMType>
 	private abstract class UnitState : BaseState
 	{
 		protected readonly UnitObject unitObject;
-		protected readonly IUnitCombatController combatController;
+		protected readonly ICombatHandler combatController;
 		protected UnitState(UnitObject unitObject, UnitFiniteStateMachine fsm, UnitMainFSMType type) : base(fsm, type)
 		{
 			this.unitObject = unitObject;

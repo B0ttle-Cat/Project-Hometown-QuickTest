@@ -131,7 +131,7 @@ public record ProjectileStatsData // ProfileStats
 		hitEffectsTimeMultiplier = statsData.HitEffectsTimeMultiplier;
 
 		piercingEnable = statsData.PiercingEnable;
-		piercingMinMaxCount = statsData.PiercingMinMaxPoint;
+		piercingMinMaxCount = statsData.PiercingMinMaxCount;
 		piercingFalloffCurve = statsData.PiercingFalloffCurve;
 
 		explosionEnabled = statsData.ExplosionEnabled;
@@ -263,7 +263,7 @@ public record ProjectileStatsData // ProfileStats
 	public StatusEffectsFlag HitEffectsFlag => hitEffectsFlag;
 	public float HitEffectsTimeMultiplier => hitEffectsTimeMultiplier;
 	public bool PiercingEnable => piercingEnable;
-	public Vector2Int PiercingMinMaxPoint => piercingMinMaxCount;
+	public Vector2Int PiercingMinMaxCount => piercingMinMaxCount;
 	public AnimationCurve PiercingFalloffCurve => piercingFalloffCurve;
 	public bool ExplosionEnabled => explosionEnabled;
 	public Vector2 ExplosionMinMaxRadius => explosionMinMaxRadius;
@@ -271,7 +271,7 @@ public record ProjectileStatsData // ProfileStats
 	public float PiercingFalloffMultiplier(int currentCount)
 	{
 		if (!PiercingEnable) return 1f;
-		Vector2Int minMax = PiercingMinMaxPoint;
+		Vector2Int minMax = PiercingMinMaxCount;
 		float min = Mathf.Min(minMax.x, minMax.y);
 		float max = Mathf.Max(minMax.x, minMax.y);
 		float point = (float)currentCount;

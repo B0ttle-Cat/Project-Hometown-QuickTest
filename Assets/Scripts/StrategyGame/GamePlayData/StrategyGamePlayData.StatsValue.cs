@@ -137,37 +137,54 @@ public partial class StrategyGamePlayData // StatsValue
 		}
 		public static StatsList Empty => new StatsList(new StatsValue(StatsType.None));
 		public static StatsList UnitStatsList => new StatsList(
-		new StatsValue(StatsType.유닛_인력),
-			new StatsValue(StatsType.유닛_최대내구도),
-			new StatsValue(StatsType.유닛_현재내구도),
-			new StatsValue(StatsType.유닛_공격력),
-			new StatsValue(StatsType.유닛_방어력),
-			new StatsValue(StatsType.유닛_치유력),
-			new StatsValue(StatsType.유닛_회복력),
-			new StatsValue(StatsType.유닛_관통레벨),
-			new StatsValue(StatsType.유닛_장갑레벨),
-			new StatsValue(StatsType.유닛_EMP저항레벨),
-			new StatsValue(StatsType.유닛_공격명중기회),
-			new StatsValue(StatsType.유닛_공격회피기회),
-			new StatsValue(StatsType.유닛_치명명중기회),
-			new StatsValue(StatsType.유닛_치명회피기회),
-			new StatsValue(StatsType.유닛_재공격지연시간_c),
-			new StatsValue(StatsType.유닛_연속공격횟수),
-			new StatsValue(StatsType.유닛_연속공격지연시간_c),
-			new StatsValue(StatsType.유닛_탄용량),
-			new StatsValue(StatsType.유닛_사용탄수),
-			new StatsValue(StatsType.유닛_재장전시간_c),
-			new StatsValue(StatsType.유닛_공격소모_전력),
-			new StatsValue(StatsType.유닛_공격소모_물자),
-			new StatsValue(StatsType.유닛_공격범위_종료최소_c),
-			new StatsValue(StatsType.유닛_공격범위_시작최소_c),
-			new StatsValue(StatsType.유닛_공격범위_시작최대_c),
-			new StatsValue(StatsType.유닛_공격범위_종료최대_c),
-			new StatsValue(StatsType.유닛_행동범위_c),
-			new StatsValue(StatsType.유닛_시야범위_c),
-			new StatsValue(StatsType.유닛_이동속도_c),
-			new StatsValue(StatsType.유닛_점령점수),
-			new StatsValue(StatsType.None)
+				// 🛡️ 기본 내구도 및 회복 (Durability & Recovery)
+				new StatsValue(StatsType.유닛_최대내구도),
+				new StatsValue(StatsType.유닛_현재내구도),
+				new StatsValue(StatsType.유닛_치유력),
+				new StatsValue(StatsType.유닛_회복력),
+				// ⚔️ 기본 전투 능력 (Base Combat)
+				new StatsValue(StatsType.유닛_공격력),
+				new StatsValue(StatsType.유닛_방어력),
+				// 🎯 치명타 스탯 (Critical Stats) 
+				new StatsValue(StatsType.유닛_치명공격력),
+				new StatsValue(StatsType.유닛_치명피해율),
+				new StatsValue(StatsType.유닛_치명방어력),
+				// 🛡️ 관통 및 저항 레벨 (Level Stats)
+				new StatsValue(StatsType.유닛_관통레벨),
+				new StatsValue(StatsType.유닛_장갑레벨),
+				new StatsValue(StatsType.유닛_EMP충격레벨), 
+				new StatsValue(StatsType.유닛_EMP방호레벨), 
+				new StatsValue(StatsType.유닛_상태이상적용레벨),
+				new StatsValue(StatsType.유닛_상태이상저항레벨),
+				// 🎲 명중 및 회피 확률 (Chance Score)
+				new StatsValue(StatsType.유닛_공격명중기회),
+				new StatsValue(StatsType.유닛_공격회피기회),
+				new StatsValue(StatsType.유닛_치명명중기회),
+				new StatsValue(StatsType.유닛_치명회피기회),
+				// 탄약 (Ammunition)
+				// ⚙️ 공격 시스템 계수 (Attack Multipliers)
+				new StatsValue(StatsType.유닛_탄용량),
+				new StatsValue(StatsType.유닛_사용탄수),
+				new StatsValue(StatsType.유닛_연속공격횟수),
+				new StatsValue(StatsType.유닛_명중피격수), 
+				new StatsValue(StatsType.유닛_동시공격개수), 
+				// ⏱️ 시간 및 딜레이 (Time Delays)
+				new StatsValue(StatsType.유닛_조준지연시간_c),
+				new StatsValue(StatsType.유닛_재공격지연시간_c),
+				new StatsValue(StatsType.유닛_연속공격지연시간_c),
+				new StatsValue(StatsType.유닛_재장전시간_c),
+				// 💸 공격 소모 자원 (Attack Cost)
+				new StatsValue(StatsType.유닛_공격소모_전력),
+				new StatsValue(StatsType.유닛_공격소모_물자),
+				// 🔭 범위 및 이동 (Range & Movement)
+				new StatsValue(StatsType.유닛_이동속도_c),
+				new StatsValue(StatsType.유닛_점령점수),
+				new StatsValue(StatsType.유닛_행동범위_c),
+				new StatsValue(StatsType.유닛_시야범위_c),
+				new StatsValue(StatsType.유닛_공격범위_종료최소_c),
+				new StatsValue(StatsType.유닛_공격범위_시작최소_c),
+				new StatsValue(StatsType.유닛_공격범위_시작최대_c),
+				new StatsValue(StatsType.유닛_공격범위_종료최대_c)
 			);
 		public static StatsList SectorStatsList => new StatsList(
 				new StatsValue(StatsType.거점_내구도_최대, 500),
@@ -601,13 +618,31 @@ public partial class StrategyGamePlayData // StatsValue
 			}
 		}
 	}
-	public interface IStateValueControl
+	public interface IStatsValueControl
 	{
+		// 데이터 저장소 접근을 위한 속성
+		public IStatsValueControl StatsValue { get; }
 		public StatsList MainStatsList { get; }
 		public StatsGroup SkillBuffGroup { get; }
-		float GetStateValuePercent(StatsType type);
-		int GetStateValue(StatsType type);
-		void SetValueInMainState(StatsType type, int value);
+		int GetStatsValue(StatsType type)
+		{
+			if (StrategyManager.IsNotReadyScene) return 0;
+			int value = MainStatsList.GetValueInt(type) + SkillBuffGroup.GetValueInt(type);
+			return value;
+		}
+		float GetStatsValuePercent(StatsType type)
+		{
+			return GetStatsValue(type) * 0.01f;
+		}
+		public void SetValueInMainStats(StatsType type, int value)
+		{
+			if (StrategyManager.IsNotReadyScene) return;
+			MainStatsList.SetValue(type, value);
+		}
+		void SetValueInMainStatsPercent(StatsType type, float valuePercent)
+		{
+			SetValueInMainStats(type, Mathf.RoundToInt(valuePercent * 100f));
+		}
 	}
 
 }

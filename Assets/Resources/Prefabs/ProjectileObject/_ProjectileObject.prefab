@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 4352377263228712090}
   - component: {fileID: 2472412321012481619}
   - component: {fileID: 2185268791876524567}
-  - component: {fileID: 3291056699324998358}
   m_Layer: 0
   m_Name: _ProjectileObject
   m_TagString: Untagged
@@ -58,6 +57,7 @@ MonoBehaviour:
     lifeTime: 0
     piercingCount: 0
   statsData:
+    projectileKey: 0
     weaponType: 0
     moveStartSpeed: 3
     isShiftSpeed: 0
@@ -120,6 +120,9 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
+  hitLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &2185268791876524567
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -137,19 +140,7 @@ MonoBehaviour:
   prevPosition: {x: 0, y: 0, z: 0}
   currentPosition: {x: 0, y: 0, z: 0}
   moveSpeed: 0
-  moveDiraction: {x: 0, y: 0, z: 0}
---- !u!114 &3291056699324998358
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 690911111885271451}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c75124846937804e9697ebf4a56ad57, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ProjectileHit
+  moveDirection: {x: 0, y: 0, z: 0}
 --- !u!1 &4763628165798253653
 GameObject:
   m_ObjectHideFlags: 0

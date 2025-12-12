@@ -2,15 +2,16 @@
 
 using UnityEngine;
 
-public partial class UnitObject : IUnitCombatController, INearbyElement, ITargetableCombatant
+public partial class UnitObject : ICombatHandler, INearbyElement, ITargetableCombatant
 {
-	public IUnitCombatController ThisCombatController => this;
-	bool IUnitCombatController.IsCombatState => FSMController.CurrentStateType is UnitMainFSMType.Chasing or UnitMainFSMType.Fighting;
-	bool IUnitCombatController.IsRootCombatState { get => isOperationCombatState; set => isOperationCombatState = value; }
+	public ICombatHandler ThisCombatHandler => this;
+	bool ICombatHandler.IsCombatState => FSMController.CurrentStateType is UnitMainFSMType.Chasing or UnitMainFSMType.Fighting;
+	bool ICombatHandler.IsRootCombatState { get => isOperationCombatState; set => isOperationCombatState = value; }
+
+	private Collider hitCollider;
+
 	private Vector2 combatAttackStartRange;
 	private Vector2 combatAttackLimitRange;
-	private float combatActionRange;
-	private float combatVisionRange;
 
 	private Vector2 sqrCombatAttackStartRange;
 	private Vector2 sqrCombatAttackLimitRange;
@@ -28,10 +29,10 @@ public partial class UnitObject : IUnitCombatController, INearbyElement, ITarget
 
 	partial void InitCombat()
 	{
+		hitCollider = GetComponentInChildren<Collider>();
+
 		combatAttackStartRange = Vector2.zero;
 		combatAttackLimitRange = Vector2.zero;
-		combatActionRange = 0f;
-		combatVisionRange = 0f;
 		sqrCombatAttackStartRange = Vector2.zero;
 		sqrCombatAttackLimitRange = Vector2.zero;
 		sqrCombatActionRange = 0f;
@@ -46,38 +47,38 @@ public partial class UnitObject : IUnitCombatController, INearbyElement, ITarget
 		currentCombatTarget = null;
 		OnChangeCurrentCombatTarget = null;
 	}
-	float INearbyElement.Radius => ThisMovement.CurrentRadius;
+	Collider IHitableCombatant.HitCollider => hitCollider;
 	Vector3 ITargetableCombatant.Position => ThisMovement.CurrentPosition;
-	Vector3 IUnitCombatController.Position => ThisMovement.CurrentPosition;
-	Vector3 IUnitCombatController.AttackStartPosition => ThisMovement.CurrentPosition + Vector3.up;
-	Vector3 ITargetableCombatant.HitTargetPosition => ThisMovement.CurrentPosition + Vector3.up;
-	Vector2 IUnitCombatController.AttackStartRange => combatAttackStartRange;
-	Vector2 IUnitCombatController.AttackLimitRange => combatAttackLimitRange;
-	float IUnitCombatController.ActionRange => combatActionRange;
-	float IUnitCombatController.VisionRange => combatVisionRange;
-
-	ITargetableCombatant IUnitCombatController.CurrentTarget { get => currentCombatTarget; set => currentCombatTarget = value; }
-	ITargetableCombatant IUnitCombatController.RootCurrentTarget { get => rootCurrentCombatTarget; set => rootCurrentCombatTarget = value; }
-	bool IUnitCombatController.TargetInStartAttackRange => ThisCombatController.HasCurrentTarget && isTargetInStartAttackRange;
-	bool IUnitCombatController.TargetInLimitAttackRange => ThisCombatController.HasCurrentTarget && isTargetInLimitAttackRange;
-	bool IUnitCombatController.TargetInActionRange => ThisCombatController.HasCurrentTarget && isTargetInActionRange;
+	Vector3 ITargetableCombatant.HitTargetPosition => hitCollider == null ? ThisMovement.CurrentPosition + Vector3.up : hitCollider.bounds.center;
 	public ITargetableCombatant TargetableObject => this;
+	float INearbyElement.Radius => ThisMovement.CurrentRadius;
 
-	void IUnitCombatController.UpdateParameters()
+	Vector3 ICombatHandler.Position => ThisMovement.CurrentPosition;
+	Vector3 ICombatHandler.AttackStartPosition => ThisMovement.CurrentPosition + Vector3.up;
+	Vector2 ICombatHandler.AttackStartRange => combatAttackStartRange;
+	Vector2 ICombatHandler.AttackLimitRange => combatAttackLimitRange;
+
+	ITargetableCombatant ICombatHandler.CurrentTarget { get => currentCombatTarget; set => currentCombatTarget = value; }
+	ITargetableCombatant ICombatHandler.RootCurrentTarget { get => rootCurrentCombatTarget; set => rootCurrentCombatTarget = value; }
+	bool ICombatHandler.TargetInStartAttackRange => ThisCombatHandler.HasCurrentTarget && isTargetInStartAttackRange;
+	bool ICombatHandler.TargetInLimitAttackRange => ThisCombatHandler.HasCurrentTarget && isTargetInLimitAttackRange;
+	bool ICombatHandler.TargetInActionRange => ThisCombatHandler.HasCurrentTarget && isTargetInActionRange;
+	void ICombatHandler.UpdateParameters()
 	{
-		float combatAttackLimitMinRange = GetStateValuePercent(StrategyGamePlayData.StatsType.유닛_공격범위_종료최소_c);
-		float combatAttackStartMinRange = GetStateValuePercent(StrategyGamePlayData.StatsType.유닛_공격범위_시작최소_c);
-		float combatAttackStartMaxRange = GetStateValuePercent(StrategyGamePlayData.StatsType.유닛_공격범위_시작최대_c);
-		float combatAttackLimitMaxRange = GetStateValuePercent(StrategyGamePlayData.StatsType.유닛_공격범위_종료최대_c);
-		combatAttackStartRange = new Vector2(combatAttackStartMinRange, combatAttackStartMaxRange);
-		combatAttackLimitRange = new Vector2(combatAttackLimitMinRange, combatAttackLimitMaxRange);
-		combatActionRange = GetStateValuePercent(StrategyGamePlayData.StatsType.유닛_행동범위_c);
-		combatVisionRange = GetStateValuePercent(StrategyGamePlayData.StatsType.유닛_시야범위_c);
+		
+		float combatAttackRangeLimitMin = ThisCombatStats.AttackRangeLimitMin;
+		float combatAttackRangeStartMin = ThisCombatStats.AttackRangeStartMin;
+		float combatAttackRangeStartMax = ThisCombatStats.AttackRangeStartMax;
+		float combatAttackRangeLimitMax = ThisCombatStats.AttackRangeLimitMax;
+		combatAttackStartRange = new Vector2(combatAttackRangeStartMin, combatAttackRangeStartMax);
+		combatAttackLimitRange = new Vector2(combatAttackRangeLimitMin, combatAttackRangeLimitMax);
+		var combatActionRange = ThisCombatStats.ActionRange;
+		var combatVisionRange = ThisCombatStats.VisionRange;
 
-		float sqrCombatAttackStartMinRange = combatAttackStartMinRange * combatAttackStartMinRange;
-		float sqrCombatAttackStartMaxRange = combatAttackStartMaxRange * combatAttackStartMaxRange;
-		float sqrCombatAttackLimitMinRange = combatAttackLimitMinRange * combatAttackLimitMinRange;
-		float sqrCombatAttackLimitMaxRange = combatAttackLimitMaxRange * combatAttackLimitMaxRange;
+		float sqrCombatAttackStartMinRange = combatAttackRangeStartMin * combatAttackRangeStartMin;
+		float sqrCombatAttackStartMaxRange = combatAttackRangeStartMax * combatAttackRangeStartMax;
+		float sqrCombatAttackLimitMinRange = combatAttackRangeLimitMin * combatAttackRangeLimitMin;
+		float sqrCombatAttackLimitMaxRange = combatAttackRangeLimitMax * combatAttackRangeLimitMax;
 		sqrCombatAttackStartRange = new Vector2(sqrCombatAttackStartMinRange, sqrCombatAttackStartMaxRange);
 		sqrCombatAttackLimitRange = new Vector2(sqrCombatAttackLimitMinRange, sqrCombatAttackLimitMaxRange);
 		sqrCombatActionRange = combatActionRange * combatActionRange;
@@ -85,19 +86,19 @@ public partial class UnitObject : IUnitCombatController, INearbyElement, ITarget
 
 		if (currentCombatTarget != null)
 		{
-			float sqrDistance = (currentCombatTarget.Position - ThisCombatController.Position).sqrMagnitude;
+			float sqrDistance = (currentCombatTarget.Position - ThisCombatHandler.Position).sqrMagnitude;
 
 			isTargetInStartAttackRange = sqrCombatAttackStartMinRange <= sqrDistance && sqrDistance <= sqrCombatAttackStartMaxRange;
 			isTargetInLimitAttackRange = sqrCombatAttackLimitMinRange <= sqrDistance && sqrDistance <= sqrCombatAttackLimitMaxRange;
 			isTargetInActionRange = sqrDistance <= sqrCombatActionRange;
 		}
 	}
-	bool IUnitCombatController.IsKeepingTargetAllowed()
+	bool ICombatHandler.IsKeepingTargetAllowed()
 	{
 		var currentTarget = currentCombatTarget;
 		if (currentTarget == null) return false;
 
-		Vector3 distance = currentTarget.Position - ThisCombatController.Position;
+		Vector3 distance = currentTarget.Position - ThisCombatHandler.Position;
 		float sqrDistance = distance.sqrMagnitude;
 		float sqrCombatAttackLimitMinRange = combatAttackLimitRange.x;
 		float sqrCombatAttackLimitMaxRange = combatAttackLimitRange.y;
@@ -109,13 +110,13 @@ public partial class UnitObject : IUnitCombatController, INearbyElement, ITarget
 		}
 		return false;
 	}
-	bool IUnitCombatController.SearchingNewTarget(out ITargetableCombatant newTarget)
+	bool ICombatHandler.SearchingNewTarget(out ITargetableCombatant newTarget)
 	{
 		newTarget = null;
 		var detectingList = Faction.DetectingList;
 		if (detectingList == null || detectingList.Count == 0) return false;
 
-		Vector3 thisPosition = ThisCombatController.Position;
+		Vector3 thisPosition = ThisCombatHandler.Position;
 		float minDistance = float.MaxValue;
 		float maxActionRange = Mathf.Max(sqrCombatActionRange, sqrCombatAttackStartRange.y);
 		foreach (var item in detectingList)
@@ -131,7 +132,7 @@ public partial class UnitObject : IUnitCombatController, INearbyElement, ITarget
 		}
 		return newTarget != null;
 	}
-	void IUnitCombatController.ChangeCombatTarget(in ITargetableCombatant newTarget)
+	void ICombatHandler.ChangeCombatTarget(in ITargetableCombatant newTarget)
 	{
 		if (newTarget == null)
 		{
@@ -155,7 +156,7 @@ public partial class UnitObject : IUnitCombatController, INearbyElement, ITarget
 		currentCombatTarget = newTarget;
 		if (currentCombatTarget == null) return;
 
-		float sqrDistance = (currentCombatTarget.Position - ThisCombatController.Position).sqrMagnitude;
+		float sqrDistance = (currentCombatTarget.Position - ThisCombatHandler.Position).sqrMagnitude;
 		float sqrCombatAttackStartMinRange = combatAttackStartRange.x;
 		float sqrCombatAttackStartMaxRange = combatAttackStartRange.y;
 		float sqrCombatAttackLimitMinRange = combatAttackLimitRange.x;
@@ -167,7 +168,6 @@ public partial class UnitObject : IUnitCombatController, INearbyElement, ITarget
 		OnChangeCurrentCombatTarget?.Invoke(currentCombatTarget);
 	}
 }
-
 
 #if UNITY_EDITOR
 
@@ -200,10 +200,12 @@ public partial class UnitObject // RangeGizmos
 			DrawCircleXZ(center, combatAttackLimitRange.y, attackLimitColor, dotted: false, segments: segments);
 
 		// action range (실선)
+		float combatActionRange = ThisCombatStats.ActionRange;
 		if (combatActionRange > 0f)
 			DrawCircleXZ(center, combatActionRange, actionColor, dotted: false, segments: segments);
 
 		// vision range (실선)
+		float combatVisionRange = ThisCombatStats.VisionRange;
 		if (combatVisionRange > 0f)
 			DrawCircleXZ(center, combatVisionRange, visionColor, dotted: false, segments: segments);
 	}

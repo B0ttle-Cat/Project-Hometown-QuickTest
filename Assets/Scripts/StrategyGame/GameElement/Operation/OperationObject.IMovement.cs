@@ -36,6 +36,8 @@ public partial class OperationObject : IMovement , ITargetableCombatant
     private Action onStartMove;
     private Action onEndedMove;
 
+	private Collider collider;
+
     public IMovement ThisMovement => this;
 
 	public Seeker ThisSeeker => seeker;
@@ -70,7 +72,9 @@ public partial class OperationObject : IMovement , ITargetableCombatant
 	Action IMovement.OnEndedMove { get => onEndedMove; set => onEndedMove = value; }
 	Vector3 ITargetableCombatant.Position => movePosition;
 	Vector3 ITargetableCombatant.HitTargetPosition => movePosition + Vector3.up;
-	partial void InitMovement()
+	Collider IHitableCombatant.HitCollider => null;
+
+    partial void InitMovement()
 	{
 		initPath = new Vector3[0];
 		movePath = new List<Vector3>();
@@ -78,6 +82,7 @@ public partial class OperationObject : IMovement , ITargetableCombatant
 		findingPoints = new Queue<Vector3>();
 		totalLength = 0;
 		tempLength = 0;
+
 		InitPositionAndVelocity(out movePosition, out moveVelocity);
 		UpdateMovementTransform();
 

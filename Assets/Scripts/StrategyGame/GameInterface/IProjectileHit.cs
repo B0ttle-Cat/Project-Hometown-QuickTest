@@ -1,8 +1,10 @@
 ﻿
 using UnityEngine;
 
-public interface IProjectileHitReporting
+public interface IProjectileHit
 {
+	public const int MIN_ARRAY_CAPACITY = 16;
+	void ProjectileMoveCast(out int hitCount, ref RaycastHit[] raycastHits);
 	public void HitReporting(Collider hit)
 	{
 		var hitObject = hit.gameObject;
@@ -11,8 +13,8 @@ public interface IProjectileHitReporting
 		{
 			switch (strategyElement)
 			{
-				case ITargetableCombatant targetable:
-				HitTargetable(targetable);
+				case IHitableCombatant hitable:
+				Hitable(hitable);
 				return;
 				default:
 				HitOtherElement(strategyElement);
@@ -22,6 +24,7 @@ public interface IProjectileHitReporting
 		HitOtherObject(hitObject);
 	}
 	public void HitOtherObject(GameObject gameObject);
-	public void HitTargetable(ITargetableCombatant targetable);
+	public void Hitable(IHitableCombatant hitable);
 	public void HitOtherElement(IStrategyElement hit);
+ 
 }

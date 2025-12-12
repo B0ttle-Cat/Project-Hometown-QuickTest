@@ -34,12 +34,12 @@ public partial class UnitObject : IUnitAttackFSMController
 		AttackState.OnAttackReady -= AttackState_OnAttackReady;
 		AttackState.OnAttackTiming -= AttackState_OnAttackTiming;
 		AttackState.OnReloadingTiming -= AttackState_OnReloadingTiming;
-		ThisCombatController.OnChangeCurrentCombatTarget -= ThisCombatController_OnChangeCurrentCombatTarget;
+		ThisCombatHandler.OnChangeCurrentCombatTarget -= ThisCombatController_OnChangeCurrentCombatTarget;
 
 		AttackState.OnAttackReady += AttackState_OnAttackReady;
 		AttackState.OnAttackTiming += AttackState_OnAttackTiming;
 		AttackState.OnReloadingTiming += AttackState_OnReloadingTiming;
-		ThisCombatController.OnChangeCurrentCombatTarget += ThisCombatController_OnChangeCurrentCombatTarget;
+		ThisCombatHandler.OnChangeCurrentCombatTarget += ThisCombatController_OnChangeCurrentCombatTarget;
 
 		minaProjectileKey = ProfileData.projectileKey;
 	}
@@ -50,7 +50,7 @@ public partial class UnitObject : IUnitAttackFSMController
 			AttackState.OnAttackReady -= AttackState_OnAttackReady;
 			AttackState.OnAttackTiming -= AttackState_OnAttackTiming;
 			AttackState.OnReloadingTiming -= AttackState_OnReloadingTiming;
-			ThisCombatController.OnChangeCurrentCombatTarget -= ThisCombatController_OnChangeCurrentCombatTarget;
+			ThisCombatHandler.OnChangeCurrentCombatTarget -= ThisCombatController_OnChangeCurrentCombatTarget;
 
 			AttackController.DeinitState();
 			unitAttackState = null;
@@ -59,7 +59,7 @@ public partial class UnitObject : IUnitAttackFSMController
 
 	private void AttackState_OnReloadingTiming()
 	{
-		SetValueInMainState(StrategyGamePlayData.StatsType.유닛_사용탄수, 0);
+		StatsValue.SetValueInMainStats(StrategyGamePlayData.StatsType.유닛_사용탄수, 0);
 	}
 
 	private void AttackState_OnAttackReady(int continuousAttackCount, int simultaneousAttackCount, float continuousAttackDelay)
@@ -86,7 +86,7 @@ public partial class UnitObject : IUnitAttackFSMController
 		// 4. 이떄 데미지 게산을 위해 콜백으로 데미지 계산 함수를 넘긴다.
 		// 5. 데미지 함수의 매개변수로는 공격자, 피격자, 스킬 정보 등이 있다.
 
-		if (this is not IUnitCombatController unitCombat || unitCombat == null) return;
+		if (this is not ICombatHandler unitCombat || unitCombat == null) return;
 		ITargetableCombatant target  = unitCombat.CurrentTarget;
 		if (target == null) return;
 
@@ -99,7 +99,7 @@ public partial class UnitObject : IUnitAttackFSMController
 
 
 
-		static void OnShot(ProjectileObject projectile, IUnitCombatController order, ITargetableCombatant target)
+		static void OnShot(ProjectileObject projectile, ICombatHandler order, ITargetableCombatant target)
 		{
 			if (projectile == null) return;
 			projectile.SetTarget(order, target);

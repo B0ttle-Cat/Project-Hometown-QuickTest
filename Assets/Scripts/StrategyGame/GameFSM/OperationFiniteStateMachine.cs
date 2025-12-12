@@ -63,7 +63,7 @@ public class OperationFiniteStateMachine : FiniteStateMachine<OperationFSMType>
 			for (int i = 0 ; i < length ; i++)
 			{
 				var unit = unitList[i];
-				if (unit == null || unit is not IUnitCombatController combat) continue;
+				if (unit == null || unit is not ICombatHandler combat) continue;
 
 				if (combat.IsCombatState)
 				{
@@ -105,7 +105,7 @@ public class OperationFiniteStateMachine : FiniteStateMachine<OperationFSMType>
 			for (int i = 0 ; i < length ; i++)
 			{
 				var unit = unitList[i];
-				if (unit == null || unit is not IUnitCombatController combat) continue;
+				if (unit == null || unit is not ICombatHandler combat) continue;
 
 				if (!combat.IsRootCombatState)
 				{
@@ -151,7 +151,7 @@ public class OperationFiniteStateMachine : FiniteStateMachine<OperationFSMType>
 			{
 				var unit = unitList[i];
 				if (unit == null) continue;
-				if (unit is not IUnitCombatController combat) continue;
+				if (unit is not ICombatHandler combat) continue;
 
 				combat.IsRootCombatState = true;
 				combat.RootCurrentTarget = target;
@@ -183,7 +183,7 @@ public class OperationFiniteStateMachine : FiniteStateMachine<OperationFSMType>
 			{
 				var unit = unitList[i];
 				if (unit == null) continue;
-				if (unit is not IUnitCombatController combat) continue;
+				if (unit is not ICombatHandler combat) continue;
 
 				combat.IsRootCombatState = false;
 				combat.RootCurrentTarget = null;

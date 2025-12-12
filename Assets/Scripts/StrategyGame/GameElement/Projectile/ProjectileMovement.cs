@@ -8,7 +8,7 @@ using Random = UnityEngine.Random;
 
 public class ProjectileMovement : MonoBehaviour, IProjectileMovement
 {
-	[SerializeField] protected IUnitCombatController order;
+	[SerializeField] protected ICombatHandler order;
 	[SerializeField] protected ITargetableCombatant target;
 	[SerializeField] protected Vector3 startPosition;
 	[SerializeField] protected Vector3 targetPosition;
@@ -77,7 +77,7 @@ public class ProjectileMovement : MonoBehaviour, IProjectileMovement
 		target = null;
 	}
 
-	void IProjectileMovement.SetTarget(IUnitCombatController order, ITargetableCombatant target)
+	void IProjectileMovement.SetTarget(ICombatHandler order, ITargetableCombatant target)
 	{
 		this.order = order;
 		this.target = target;

@@ -5,7 +5,6 @@ using StrategyManagerModule;
 using UnityEngine;
 
 using static StrategyGamePlayData;
-using static StrategyGamePlayData.UnitData.Skill;
 
 public partial class UnitObject : MonoBehaviour
 {
@@ -136,58 +135,4 @@ public partial class UnitObject : MonoBehaviour
 		OnDrawGizmos_Range();
 	}
 #endif
-}
-public partial class UnitObject : IStateValueControl
-{
-	private StatsGroup skillBuffGroup;
-	public StatsList MainStatsList => StatsData.GetStatsList();
-	public StatsGroup SkillBuffGroup => skillBuffGroup ??= new StatsGroup();
-	partial void InitProfileObject(UnitProfileObject profileObj)
-	{
-		if (profileObj == null) return;
-
-		Stats = new UnitData.Stats(new()
-		{
-			stats = new StatsList(profileObj.ConvertStatsValues())
-		});
-		Skill = new UnitData.Skill(new()
-		{
-			skillDatas = profileObj.personalSkills == null ? new SkillData[0] : profileObj.personalSkills.Clone() as SkillData[]
-		});
-
-		var 유닛_점령점수 = StatsData.GetValue(StatsType.유닛_점령점수);
-		if (유닛_점령점수 > 0)
-		{
-			if (CaptureTag == null) CaptureTag = GetComponentInChildren<CaptureTag>();
-			if (CaptureTag == null) CaptureTag = gameObject.AddComponent<CaptureTag>();
-
-			CaptureTag.factionID = FactionID;
-			CaptureTag.pointValue = profileObj.유닛_점령점수;
-		}
-		else
-		{
-			if (CaptureTag != null)
-			{
-				Destroy(CaptureTag);
-				CaptureTag = null;
-			}
-		}
-	}
-	public float GetStateValuePercent(StatsType type)
-	{
-		if (StrategyManager.IsNotReadyScene) return 0;
-		float value = MainStatsList.GetValueInt(type) + SkillBuffGroup.GetValueInt(type);
-		return value * 0.01f;
-	}
-	public int GetStateValue(StatsType type)
-	{
-		if (StrategyManager.IsNotReadyScene) return 0;
-		int value = MainStatsList.GetValueInt(type) + SkillBuffGroup.GetValueInt(type);
-		return value;
-	}
-	public void SetValueInMainState(StatsType type, int value)
-	{
-		if (StrategyManager.IsNotReadyScene) return;
-		StatsData.SetValue(type, value);
-	}
 }

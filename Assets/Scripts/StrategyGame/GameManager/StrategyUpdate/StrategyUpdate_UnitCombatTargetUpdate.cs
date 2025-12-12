@@ -34,7 +34,7 @@ namespace StrategyManagerModule
 			public class CombatTarget : UpdateLogic
 			{
 				public readonly UnitObject unitObject;
-				public readonly IUnitCombatController combatController;
+				public readonly ICombatHandler combatController;
 				public CombatTarget(UnitObject unitObject, StrategyUpdate_UnitCombatTargetUpdate thisSubClass) : base(thisSubClass)
 				{
 					this.unitObject = unitObject;

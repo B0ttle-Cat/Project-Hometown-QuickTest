@@ -1,10 +1,16 @@
 ﻿using UnityEngine;
 
-public interface ITargetableCombatant
+
+public interface IHitableCombatant
+{
+	public Transform transform { get; }
+	public Collider HitCollider { get; }
+}
+
+public interface ITargetableCombatant : IHitableCombatant
 {
 	// IStrategyElement 가 선언된 class 에서만 사용 할수 있도록 강제 하도록 위함
 	public IStrategyElement ThisElement { get; }
-	public Transform transform { get; }
 	public int FactionID { get; }
 	public Vector3 Position { get; }
 	public Vector3 HitTargetPosition { get; }

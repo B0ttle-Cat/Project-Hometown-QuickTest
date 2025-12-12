@@ -14,7 +14,7 @@ public interface IProjectileMovement
 	float MoveSpeed { get; }
 	Vector3 MoveDiraction { get; }
 	//(ProjectileKey Key, MovmentConstantData Data) GetConstantData();
-	public void SetTarget(IUnitCombatController order, ITargetableCombatant target);
+	public void SetTarget(ICombatHandler order, ITargetableCombatant target);
 	public void ApplyJobResult(in MovementJobData movementJobData);
 	public bool ResetJobDataFlag { get; }
 	public void InitMovementJobData(out MovementJobData movementJobData);
