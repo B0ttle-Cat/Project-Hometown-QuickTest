@@ -66,4 +66,14 @@ public partial class UnitObject : ICombatCommon, ICombatOffense, ICombatDefance
     public ICombatCommon ThisCombatStats => this;
 	public ICombatOffense ThisOffense => this;
 	public ICombatDefance ThisDefance => this;
+
+    public void TakeDamage(int damage, CombatUtility.DamageFlag flag)
+    {
+		int currentDurability = ThisCombatStats.CurrentDurability;
+		if (currentDurability <= 0)
+		{
+			return;
+		}
+
+	}
 }

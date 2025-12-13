@@ -118,16 +118,16 @@ public partial class ProjectileObject // Init Lifetime
 				// ExplosionEffect 생성
 			}
 		}
-		else if (StatsData.ElectromagneticEnabled)
+		else if (StatsData.EmpShockEnabled)
 		{
-			var empChainEffectKey = StatsData.EmpChainEffectKey;
-			if (offense != null && empChainEffectKey != SubEffectKey.None)
+			var empShockEffectKey = StatsData.EmpShockEffectKey;
+			if (offense != null && empShockEffectKey != SubEffectKey.None)
 			{
-				float empChainPropagationDistance = StatsData.EmpChainPropagationDistance;
-				int empChainPropagationCount = StatsData.EmpChainPropagationCount;
-				int empChainDepthCount =StatsData.EmpChainDepthCount;
-				int empChainOverlapsCount = StatsData.EmpChainOverlapsCount;
-				AnimationCurve empChainFalloffCurve = StatsData.EmpChainFalloffCurve;
+				float empShockPropagationDistance = StatsData.EmpShockPropagationDistance;
+				int empShockChainCount = StatsData.EmpShockChainCount;
+				int empShockDepthCount =StatsData.EmpShockDepthCount;
+				int empShockOverlapsCount = StatsData.EmpShockOverlapsCount;
+				AnimationCurve empShockFalloffCurve = StatsData.EmpShockFalloffCurve;
 
 				// EmpChainEffec 생성
 			}
@@ -160,18 +160,18 @@ public partial class ProjectileObject // Init Lifetime
 				// ExplosionEffect 생성
 			}
 		}
-		else if (StatsData.ElectromagneticEnabled)
+		else if (StatsData.EmpShockEnabled)
 		{
 			var offense = OrderCombatCommon.ThisOffense;
 
-			var empChainEffectKey = StatsData.EmpChainEffectKey;
-			if (offense != null && empChainEffectKey != SubEffectKey.None)
+			var empShockEffectKey = StatsData.EmpShockEffectKey;
+			if (offense != null && empShockEffectKey != SubEffectKey.None)
 			{
-				float empChainPropagationDistance = StatsData.EmpChainPropagationDistance;
-				int empChainPropagationCount = StatsData.EmpChainPropagationCount;
-				int empChainDepthCount =StatsData.EmpChainDepthCount;
-				int empChainOverlapsCount = StatsData.EmpChainOverlapsCount;
-				AnimationCurve empChainFalloffCurve = StatsData.EmpChainFalloffCurve;
+				float empShockPropagationDistance = StatsData.EmpShockPropagationDistance;
+				int empShockChainCount = StatsData.EmpShockChainCount;
+				int empShockDepthCount =StatsData.EmpShockDepthCount;
+				int empShockOverlapsCount = StatsData.EmpShockOverlapsCount;
+				AnimationCurve empShockFalloffCurve = StatsData.EmpShockFalloffCurve;
 
 				// EmpChainEffec 생성
 			}
@@ -395,17 +395,19 @@ public partial class ProjectileObject : IProjectileHit
 				if (baseDifference > 0)
 				{
 					piercingCount += baseDifference + 1;
+					// 관통됨 2회의 데미지를 준다.
+					new CombatUtility.DamageCommander(offense, defance, projectileDamageFactor, CombatUtility.DamageFlag.Hit | CombatUtility.DamageFlag.Pierce);
 					new CombatUtility.DamageCommander(offense, defance, projectileDamageFactor, CombatUtility.DamageFlag.Hit | CombatUtility.DamageFlag.Pierce);
 				}
 				else if (baseDifference == 0)
 				{
 					piercingCount += 1;
-					new CombatUtility.DamageCommander(offense, defance, projectileDamageFactor, CombatUtility.DamageFlag.Hit);
+					new CombatUtility.DamageCommander(offense, defance, projectileDamageFactor, CombatUtility.DamageFlag.Hit | CombatUtility.DamageFlag.Pierce);
 				}
 				else
 				{
 					piercingCount = int.MaxValue;
-					new CombatUtility.DamageCommander(offense, defance, projectileDamageFactor, CombatUtility.DamageFlag.Hit);
+					new CombatUtility.DamageCommander(offense, defance, projectileDamageFactor, CombatUtility.DamageFlag.Hit | CombatUtility.DamageFlag.Pierce);
 				}
 				return piercingCount;
 			}
@@ -414,7 +416,7 @@ public partial class ProjectileObject : IProjectileHit
 		{
 			HitableDeath(offense, defance);
 		}
-		else if (StatsData.ElectromagneticEnabled)
+		else if (StatsData.EmpShockEnabled)
 		{
 			HitableDeath(offense, defance);
 		}

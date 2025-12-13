@@ -459,7 +459,7 @@ namespace StrategyManagerModule
 				protected override void OnUpdate(in float deltaTime)
 				{
 					if (commander == null) return;
-					commander.Compute();
+					commander.ComputeDamage();
 				}
 			}
 

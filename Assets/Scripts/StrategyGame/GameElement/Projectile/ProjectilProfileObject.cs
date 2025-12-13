@@ -142,12 +142,12 @@ public class ProjectileProfileObject : ScriptableObject
 			explosionMinMaxRadius: new Vector2(1f, 5f),
 			explosionFalloffCurve: AnimationCurve.Linear(0, 1, 1, 0),
 			explosionEffectKey: SubEffectKey.폭발_소형,
-			empChainPropagationDistance: 5f,
-			empChainPropagationCount: 3,
-			empChainDepthCount : 5, 
-			empChainOverlapsCount : 1,
-			empChainFalloffCurve : AnimationCurve.Linear(0, 1, 1, 0),
-			empChainEffectKey: SubEffectKey.전격_소형
+			empShockPropagationDistance: 5f,
+			empShockChainCount: 3,
+			empShockDepthCount : 5, 
+			empShockOverlapsCount : 1,
+			empShockFalloffCurve : AnimationCurve.Linear(0, 1, 1, 0),
+			empShockEffectKey: SubEffectKey.전격_소형
 		);
 	}
 #endif

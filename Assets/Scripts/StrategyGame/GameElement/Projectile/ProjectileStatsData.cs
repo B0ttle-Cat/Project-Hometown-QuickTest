@@ -75,7 +75,7 @@ public record ProjectileStatsData // ProfileStats
 	private SubEffectKey lastHitEffectKey;
 	public bool PiercingEnable => weaponType is WeaponType.관통 or WeaponType.관통특화;
 	public bool ExplosionEnabled => weaponType is WeaponType.폭발 or WeaponType.폭발특화;
-	public bool ElectromagneticEnabled => weaponType is WeaponType.에너지;
+	public bool EmpShockEnabled => weaponType is WeaponType.에너지;
 
 	[BoxGroup("Hit/P", GroupName ="관통", VisibleIf = "PiercingEnable"),  LabelText("관통 최대 점수"), SerializeField]
 	private int piercingMaxCount;
@@ -92,18 +92,18 @@ public record ProjectileStatsData // ProfileStats
 	private SubEffectKey explosionEffectKey;
 
 
-	[BoxGroup("Hit/Emp", GroupName ="EMP충격", VisibleIf = "ElectromagneticEnabled"), LabelText("전파 전달 거리"), SerializeField]
-	private float empChainPropagationDistance;
+	[BoxGroup("Hit/S", GroupName ="EMP충격", VisibleIf = "EmpShockEnabled"), LabelText("전파 전달 거리"), SerializeField]
+	private float empShockPropagationDistance;
 	[BoxGroup("Hit/Emp"), LabelText("EMP 동시 전파 수"), SerializeField]
-	private int empChainPropagationCount;
+	private int empShockChainCount;
 	[BoxGroup("Hit/Emp"), LabelText("EMP 전파 횟수"), SerializeField]
-	private int empChainDepthCount;
+	private int empShockDepthCount;
 	[BoxGroup("Hit/Emp"), LabelText("EMP 중첩 횟수"), SerializeField]
-	private int empChainOverlapsCount;
+	private int empShockOverlapsCount;
 	[BoxGroup("Hit/Emp"), LabelText("EMP 효과 감쇠 커브(Depth)"), SerializeField]
-	private AnimationCurve empChainFalloffCurve;
+	private AnimationCurve empShockFalloffCurve;
 	[BoxGroup("Hit/Emp"), LabelText("EMP 충격 Effect 타입"), SerializeField]
-	private SubEffectKey empChainEffectKey;
+	private SubEffectKey empShockEffectKey;
 
 
 	public ProjectileStatsData()
@@ -152,12 +152,12 @@ public record ProjectileStatsData // ProfileStats
 		explosionFalloffCurve = statsData.ExplosionFalloffCurve;
 		explosionEffectKey = statsData.ExplosionEffectKey;
 
-		empChainPropagationDistance = statsData.EmpChainPropagationDistance;
-		empChainPropagationCount = statsData.EmpChainPropagationCount;
-		empChainDepthCount = statsData.EmpChainDepthCount;
-		empChainOverlapsCount = statsData.EmpChainOverlapsCount;
-		empChainFalloffCurve = statsData.EmpChainFalloffCurve;
-		empChainEffectKey = statsData.EmpChainEffectKey;
+		empShockPropagationDistance = statsData.EmpShockPropagationDistance;
+		empShockChainCount = statsData.EmpShockChainCount;
+		empShockDepthCount = statsData.EmpShockDepthCount;
+		empShockOverlapsCount = statsData.EmpShockOverlapsCount;
+		empShockFalloffCurve = statsData.EmpShockFalloffCurve;
+		empShockEffectKey = statsData.EmpShockEffectKey;
 	}
 
 	public ProjectileStatsData(ProjectileKey projectileKey = ProjectileKey.None, WeaponType weaponType = WeaponType.일반,
@@ -169,7 +169,7 @@ public record ProjectileStatsData // ProfileStats
 		float hitDamageMultiplier = 1f, StatusEffectsFlag hitEffectsFlag = StatusEffectsFlag.None, float hitEffectsTimeMultiplier = 1f, SubEffectKey projectileHitEffectKey = SubEffectKey.None,
 		bool piercingEnable = false, int PiercingMaxCount = default, AnimationCurve piercingFalloffCurve = null,
 		bool explosionEnabled = false, Vector2 explosionMinMaxRadius = default, float explosionDelayAfterHit = 0f, AnimationCurve explosionFalloffCurve = null, SubEffectKey explosionEffectKey = SubEffectKey.폭발_소형,
-		float empChainPropagationDistance = 5f, int empChainPropagationCount = 3, int empChainDepthCount = 5, int empChainOverlapsCount = 1, AnimationCurve empChainFalloffCurve = null, SubEffectKey empChainEffectKey = SubEffectKey.전격_소형)
+		float empShockPropagationDistance = 5f, int empShockChainCount = 3, int empShockDepthCount = 5, int empShockOverlapsCount = 1, AnimationCurve empShockFalloffCurve = null, SubEffectKey empShockEffectKey = SubEffectKey.전격_소형)
 	{
 	
 		this.projectileKey = projectileKey;
@@ -209,12 +209,12 @@ public record ProjectileStatsData // ProfileStats
 		this.explosionFalloffCurve = explosionFalloffCurve ?? AnimationCurve.Linear(0, 1, 1, 0);
 		this.explosionEffectKey = explosionEffectKey;
 
-		this.empChainPropagationDistance = empChainPropagationDistance;
-		this.empChainPropagationCount = empChainPropagationCount;
-		this.empChainDepthCount = empChainDepthCount;
-		this.empChainOverlapsCount = empChainOverlapsCount;
-		this.empChainFalloffCurve = empChainFalloffCurve ?? AnimationCurve.Linear(0, 1, 1, 0);
-		this.empChainEffectKey = empChainEffectKey;
+		this.empShockPropagationDistance = empShockPropagationDistance;
+		this.empShockChainCount = empShockChainCount;
+		this.empShockDepthCount = empShockDepthCount;
+		this.empShockOverlapsCount = empShockOverlapsCount;
+		this.empShockFalloffCurve = empShockFalloffCurve ?? AnimationCurve.Linear(0, 1, 1, 0);
+		this.empShockEffectKey = empShockEffectKey;
 	}
 
 	public ProjectileStatsData Copy()
@@ -259,12 +259,12 @@ public record ProjectileStatsData // ProfileStats
 			explosionFalloffCurve = this.explosionFalloffCurve,
 			explosionEffectKey = this.explosionEffectKey,
 	
-			empChainPropagationDistance = this.empChainPropagationDistance,
-			empChainPropagationCount = this.empChainPropagationCount,
-			empChainDepthCount = this.empChainDepthCount,
-			empChainOverlapsCount = this.empChainOverlapsCount,
-			empChainFalloffCurve = this.empChainFalloffCurve ,
-			empChainEffectKey = this.empChainEffectKey,
+			empShockPropagationDistance = this.empShockPropagationDistance,
+			empShockChainCount = this.empShockChainCount,
+			empShockDepthCount = this.empShockDepthCount,
+			empShockOverlapsCount = this.empShockOverlapsCount,
+			empShockFalloffCurve = this.empShockFalloffCurve ,
+			empShockEffectKey = this.empShockEffectKey,
 		};
 	}
 
@@ -301,12 +301,12 @@ public record ProjectileStatsData // ProfileStats
 	public float ExplosionDelayAfterHit => Mathf.Max(0,explosionDelayAfterHit);
 	public AnimationCurve ExplosionFalloffCurve => explosionFalloffCurve;
 	public SubEffectKey ExplosionEffectKey => explosionEffectKey;
-	public float EmpChainPropagationDistance => empChainPropagationDistance;
-	public int EmpChainPropagationCount => empChainPropagationCount;
-	public int EmpChainDepthCount => empChainDepthCount;
-	public int EmpChainOverlapsCount => empChainOverlapsCount;
-	public AnimationCurve EmpChainFalloffCurve => empChainFalloffCurve;
-	public SubEffectKey EmpChainEffectKey => empChainEffectKey;
+	public float EmpShockPropagationDistance => empShockPropagationDistance;
+	public int EmpShockChainCount => empShockChainCount;
+	public int EmpShockDepthCount => empShockDepthCount;
+	public int EmpShockOverlapsCount => empShockOverlapsCount;
+	public AnimationCurve EmpShockFalloffCurve => empShockFalloffCurve;
+	public SubEffectKey EmpShockEffectKey => empShockEffectKey;
 
 	public float PiercingFalloffMultiplier(int currentCount)
 	{
@@ -329,14 +329,14 @@ public record ProjectileStatsData // ProfileStats
 		float rate = (point - min) / (max - min);
 		return ExplosionFalloffCurve.Evaluate(rate);
 	}
-	public float EmpFalloffMultiplier(int currentDepth)
+	public float EmpShockFalloffMultiplier(int currentDepth)
 	{
-		if (!ElectromagneticEnabled) return 1f;
-		int max = EmpChainDepthCount;
+		if (!EmpShockEnabled) return 1f;
+		int max = EmpShockDepthCount;
 		if (max <= 1) return 1f;
 
 		float rate = (float)currentDepth / (float)max;
-		return EmpChainFalloffCurve.Evaluate(rate);
+		return EmpShockFalloffCurve.Evaluate(rate);
 	}
 
 	public MovmentConstantData GetMovementConstantData()
