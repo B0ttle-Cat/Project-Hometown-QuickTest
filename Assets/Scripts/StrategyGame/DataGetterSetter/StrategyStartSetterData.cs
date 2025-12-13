@@ -394,15 +394,18 @@ namespace StrategyManagerModule
 			public struct Info
 			{
 				[HorizontalGroup("Idx")]
-				[ValueDropdown("@GetFactionNames($property)"), LabelText("Order")]
+				[ValueDropdown("@GetUnitNames($property)"), LabelText("Order")]
 				public int orderInSetterIndex;
 				[HorizontalGroup("Idx")]
-				[ValueDropdown("@GetFactionNames($property)"), LabelText("Target")]
+				[ValueDropdown("@GetUnitNames($property)"), LabelText("Target")]
 				public int targetInSetterIndex;
 				[HorizontalGroup("Pos"), LabelText("Start")]
 				public Vector3 startPosition;
 				[HorizontalGroup("Pos"), LabelText("Target")]
 				public Vector3 targetPosition;
+				[HorizontalGroup("Pos"), LabelText("Target-Ended")]
+				public Vector3 endedPosition;
+
 
 				public Vector3 position;
 				public Quaternion rotation;
@@ -411,7 +414,7 @@ namespace StrategyManagerModule
 				public float lifeTime;
 				public int piercingCount;
 #if UNITY_EDITOR
-				private static ValueDropdownList<int> GetFactionNames(InspectorProperty property)
+				private static ValueDropdownList<int> GetUnitNames(InspectorProperty property)
 				{
 					ValueDropdownList<int> list = new ValueDropdownList<int>();
 
@@ -423,18 +426,18 @@ namespace StrategyManagerModule
 						return list;
 					}
 
-					var bases = root.data.factionDatas;
+					var bases = root.data.unitDatas;
 					if (bases == null || bases.Length == 0)
 					{
 						list.Add("(No Info)", -1);
 						return list;
 					}
 
-					var items = bases.Select(x => x.factionName).ToList();
+					var items = bases.Select(x => x.unitKey.ToString()).ToList();
 					list.Add("", -1);
 					for (int i = 0 ; i < items.Count ; i++)
 					{
-						list.Add(items[i], i);
+						list.Add($"{i:00}:{items[i]}", i);
 					}
 
 					return list;

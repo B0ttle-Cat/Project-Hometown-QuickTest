@@ -1,4 +1,6 @@
-﻿using static StrategyGamePlayData;
+﻿using UnityEngine;
+
+using static StrategyGamePlayData;
 using static StrategyGamePlayData.UnitData.Skill;
 public partial class UnitObject : IStatsValueControl
 {
@@ -39,12 +41,29 @@ public partial class UnitObject : IStatsValueControl
 		}
 	}
 
+	int IStatsValueControl.GetStatsValue(StatsType type)
+	{
+		if (StrategyManager.IsNotReadyScene) return 0;
+		int value = MainStatsList.GetValueInt(type) + SkillBuffGroup.GetValueInt(type);
+		return value;
+	}
+	float IStatsValueControl.GetStatsValuePercent(StatsType type)
+	{
+		return StatsValue.GetStatsValue(type) * 0.01f;
+	}
+	void IStatsValueControl.SetValueInMainStats(StatsType type, int value)
+	{
+		if (StrategyManager.IsNotReadyScene) return;
+		MainStatsList.SetValue(type, value);
+	}
+	void IStatsValueControl.SetValueInMainStatsPercent(StatsType type, float valuePercent)
+	{
+		StatsValue.SetValueInMainStats(type, Mathf.RoundToInt(valuePercent * 100f));
+	}
 }
 public partial class UnitObject : ICombatCommon, ICombatOffense, ICombatDefance
 {
     public ICombatCommon ThisCombatStats => this;
 	public ICombatOffense ThisOffense => this;
 	public ICombatDefance ThisDefance => this;
-
-	ProtectionType ICombatDefance.DefanceType => ProfileData.protectType;
 }

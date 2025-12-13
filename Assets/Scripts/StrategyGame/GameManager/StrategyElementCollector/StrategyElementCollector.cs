@@ -41,10 +41,6 @@ namespace StrategyManagerModule
 	{
 		[ShowInInspector]
 		private readonly Dictionary<Type, IElementStore> stores = new Dictionary<Type, IElementStore>();
-
-		// 글로벌 이벤트: 모든 타입 추가/삭제 발생시 호출
-		private event Action<object, bool> onAnyElementChanged;
-
 		public StrategyElementCollector Register<T>(int capacity = 32) where T : class => Register(typeof(T), capacity);
 		private StrategyElementCollector Register(Type type, int capacity = 32)
 		{
@@ -182,10 +178,6 @@ namespace StrategyManagerModule
 
 			var list = (stores[typeof(T)] as IElementStore<T>)?.List;
 			bool result = list.Add(item);
-			if (result)
-			{
-				onAnyElementChanged?.Invoke(item, true);
-			}
 			return result;
 		}
 		public bool Remove<T>(T item) where T : class
@@ -193,10 +185,13 @@ namespace StrategyManagerModule
 			var list = GetList<T>();
 			if (list == null) throw new InvalidOperationException($"Type {typeof(T).Name} is not registered.");
 			bool result = list.Remove(item);
-			if (result)
-			{
-				onAnyElementChanged?.Invoke(item, false);
-			}
+			return result;
+		}
+		public bool Clear<T>(bool callback = true) where T : class
+		{
+			var list = GetList<T>();
+			if (list == null) throw new InvalidOperationException($"Type {typeof(T).Name} is not registered.");
+			bool result = list.Clear(callback);
 			return result;
 		}
 		public bool AddRange<T>(IEnumerable<T> items) where T : class
@@ -239,31 +234,6 @@ namespace StrategyManagerModule
 			if (list == null) return;
 			list.RemoveListener(onChange);
 		}
-
-		public void AddAnyChangeListener(Action<object, bool> onChange, bool invokeForExisting = false)
-		{
-			onAnyElementChanged -= onChange;
-			onAnyElementChanged += onChange;
-
-			if (invokeForExisting)
-			{
-				foreach (var kv in stores)
-				{
-					var list = kv.Value.GetRawList();
-					if (list == null) continue;
-
-					foreach (var item in list)
-					{
-						onChange?.Invoke(item, true);
-					}
-				}
-			}
-		}
-		public void RemoveAnyChangeListener(Action<object, bool> onChange)
-		{
-			onAnyElementChanged -= onChange;
-		}
-
 		/// <summary>유틸: Find / FindAll</summary>
 		public bool TryFind<T>(int id, out T t) where T : class, IStrategyElement
 		{

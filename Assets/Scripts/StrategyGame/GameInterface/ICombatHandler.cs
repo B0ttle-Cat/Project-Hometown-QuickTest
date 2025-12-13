@@ -4,7 +4,9 @@ using UnityEngine;
 
 using static StrategyGamePlayData;
 
-public interface ICombatHandler: ICombatCommon
+using Random = UnityEngine.Random;
+
+public interface ICombatHandler : ICombatCommon
 {
 	ICombatHandler ThisCombatHandler { get; }
 	IStrategyElement ThisElement { get; }
@@ -88,7 +90,7 @@ public interface ICombatOffense : IStatsValueControl
 
 	// 🛡️ 관통 및 적용 스탯 (Penetration & Application)
 	int PenetrationLevel => GetStatsValue(StatsType.유닛_관통레벨);
-	int EMPImpactLevel => GetStatsValue(StatsType.유닛_EMP충격레벨); 
+	int EMPImpactLevel => GetStatsValue(StatsType.유닛_EMP충격레벨);
 	int StatusPotencyLevel => GetStatsValue(StatsType.유닛_상태이상적용레벨);
 
 	// 📈 확률 기회 스탯 (Chance Score)
@@ -98,7 +100,7 @@ public interface ICombatOffense : IStatsValueControl
 public interface ICombatDefance : IStatsValueControl
 {
 	ICombatDefance ThisDefance { get; }
-	ProtectionType DefanceType => ProtectionType.일반;
+	ProtectionType ProtectionType => ProtectionType.일반;
 
 	// 🛡️ 기본 방어 스탯 (Base Defense)
 	int AntiAttackPower => GetStatsValue(StatsType.유닛_방어력);
@@ -108,15 +110,25 @@ public interface ICombatDefance : IStatsValueControl
 
 	// 🛡️ 장갑 및 방호 스탯 (Armor & Protection)
 	int AntiPenetrationLevel => GetStatsValue(StatsType.유닛_장갑레벨);
-	int AntiEMPImpactLevel => GetStatsValue(StatsType.유닛_EMP방호레벨); 
+	int AntiEMPImpactLevel => GetStatsValue(StatsType.유닛_EMP방호레벨);
 	int AntiStatusPotencyLevel => GetStatsValue(StatsType.유닛_상태이상저항레벨);
 
 	// 확률 회피 스탯 (Evasion Score)
 	int AntiHitChanceScore => GetStatsValue(StatsType.유닛_공격회피기회);
 	int AntiCriticalChanceScore => GetStatsValue(StatsType.유닛_치명회피기회);
 }
-public static class CombatUtility
+public static partial class CombatUtility
 {
+	private const float FACTOR_VERY_LOW = 0.5f;  // (--)
+	private const float FACTOR_LOW = 0.75f;       // (- )
+	private const float FACTOR_NORMAL = 1.00f;    // ( )
+	private const float FACTOR_HIGH = 1.50f;      // (+ )
+	private const float FACTOR_VERY_HIGH = 2.00f; // (++)
+
+	public static bool CheckChance(float chance)
+	{
+		return Random.value <= chance;
+	}
 	#region Calculate
 	/// <summary>
 	/// 공격자의 명중 확률 (0.0f ~ 1.0f)을 계산합니다.
@@ -177,9 +189,71 @@ public static class CombatUtility
 	/// <returns>레벨 차이 값 (int)</returns>
 	public static int GetPenetrationLevelDifference(ICombatOffense offense, ICombatDefance defance)
 	{
-		return offense.PenetrationLevel - defance.AntiPenetrationLevel;
-	}
+		// 일반 & 관통타입 & 에너지 타입 
+		// => baseDifference >=0 일 경우 관통했다고 봄.
+		// => baseDifference >= 0 에서 100% 
+		// => baseDifference < 0 일수록 더 작은 데미지
+		// => 관통특화 타입은 baseDifference 에 +1  
+		// => 상대가 강화장갑일 경우 baseDifference 에 -1
+		// 폭발타입
+		// => baseDifference를 일단 절대값으로 취급한다.
+		// => baseDifference == 0 일 경우 내부 에서 정확히 폭발했다고 봄
+		// => baseDifference == 0 일 경우 100%
+		// => baseDifference 가 0 에서 멀어질수록 거 적은 데미지
+		// => 폭발특화 타입 은 baseDifference 의 유효범위를 1 늘린다.
+		// => 상대가 강화장갑일 경우 baseDifference 유효범위를 1 줄인다.
+		// baseDifference 에 의한 상성 변화는 수치별 5% 씩 감소한다.
+		WeaponType wType = offense.WeaponType;
+		ProtectionType pType = defance.ProtectionType;
+		int baseDifference = offense.PenetrationLevel - defance.AntiPenetrationLevel;
 
+		if (wType is WeaponType.폭발 or WeaponType.폭발특화)
+		{
+			baseDifference = -Mathf.Abs(baseDifference);
+			if (wType is WeaponType.폭발특화)
+			{
+				baseDifference += 1;
+			}
+			if (pType is ProtectionType.강화장갑)
+			{
+				baseDifference -= 1;
+			}
+			if (baseDifference > 0) baseDifference = 0;
+		}
+		else
+		{
+			if (wType is WeaponType.관통특화)
+			{
+				baseDifference += 1;
+			}
+			if (pType is ProtectionType.강화장갑)
+			{
+				baseDifference -= 1;
+			}
+		}
+
+		Mathf.Clamp(baseDifference, -5, 5);
+		return baseDifference;
+	}
+	public static int CalculatePiercingCount(ICombatOffense offense, ICombatDefance defance, int piercingCount)
+	{
+		WeaponType wType = offense.WeaponType;
+		ProtectionType pType = defance.ProtectionType;
+		if (wType is WeaponType.관통 or WeaponType.관통특화)
+		{
+			int baseDifference = offense.PenetrationLevel - (defance.AntiPenetrationLevel + (pType is ProtectionType.강화장갑?1:0));
+			if (baseDifference < 0)
+			{
+				return int.MaxValue;
+			}
+			piercingCount += baseDifference + 1;
+			return piercingCount;
+		}
+		else
+		{
+			return int.MaxValue;
+		}
+	}
 	/// <summary>
 	/// 공격자의 EMP 충격 레벨과 방어자의 EMP 방호 레벨의 차이를 계산합니다.
 	/// (EMPImpactLevel - AntiEMPImpactLevel)
@@ -204,7 +278,73 @@ public static class CombatUtility
 		return offense.StatusPotencyLevel - defance.AntiStatusPotencyLevel;
 	}
 
+	public static float GetWeaponEffectivenessFactor(ICombatOffense offense, ICombatDefance defance)
+	{
+		WeaponType wType = offense.WeaponType;
+		ProtectionType pType = defance.ProtectionType;
 
+		return (wType, pType) switch
+		{
+			// ----------------------------------------------------------------------
+			// 📦 일반 무기 상성 (경장갑( ), 중장갑( ), 강화장갑(- ), 역장( ), 건물( ))
+			// ----------------------------------------------------------------------
+			(WeaponType.일반, ProtectionType.경장갑) => FACTOR_NORMAL,
+			(WeaponType.일반, ProtectionType.중장갑) => FACTOR_NORMAL,
+			(WeaponType.일반, ProtectionType.강화장갑) => FACTOR_LOW,
+			(WeaponType.일반, ProtectionType.역장) => FACTOR_NORMAL,
+			(WeaponType.일반, ProtectionType.건물) => FACTOR_NORMAL,
+
+			// ----------------------------------------------------------------------
+			// ⚔️ 관통 무기 상성 (경장갑( ), 중장갑(+ ), 강화장갑( ), 역장(- ), 건물( ))
+			// ----------------------------------------------------------------------
+			(WeaponType.관통, ProtectionType.경장갑) => FACTOR_NORMAL,
+			(WeaponType.관통, ProtectionType.중장갑) => FACTOR_HIGH,
+			(WeaponType.관통, ProtectionType.강화장갑) => FACTOR_NORMAL,
+			(WeaponType.관통, ProtectionType.역장) => FACTOR_LOW,
+			(WeaponType.관통, ProtectionType.건물) => FACTOR_NORMAL,
+
+			// ----------------------------------------------------------------------
+			// 💥 폭발 무기 상성 (경장갑(+ ), 중장갑( ), 강화장갑(- ), 역장(- ), 건물( ))
+			// ----------------------------------------------------------------------
+			(WeaponType.폭발, ProtectionType.경장갑) => FACTOR_HIGH,
+			(WeaponType.폭발, ProtectionType.중장갑) => FACTOR_NORMAL,
+			(WeaponType.폭발, ProtectionType.강화장갑) => FACTOR_LOW,
+			(WeaponType.폭발, ProtectionType.역장) => FACTOR_LOW,
+			(WeaponType.폭발, ProtectionType.건물) => FACTOR_NORMAL,
+
+			// ----------------------------------------------------------------------
+			// 🔨 관통특화 무기 상성 (경장갑(- ), 중장갑(++), 강화장갑(++), 역장(- ), 건물(+ ))
+			// ----------------------------------------------------------------------
+			(WeaponType.관통특화, ProtectionType.경장갑) => FACTOR_LOW,
+			(WeaponType.관통특화, ProtectionType.중장갑) => FACTOR_VERY_HIGH,
+			(WeaponType.관통특화, ProtectionType.강화장갑) => FACTOR_VERY_HIGH,
+			(WeaponType.관통특화, ProtectionType.역장) => FACTOR_LOW,
+			(WeaponType.관통특화, ProtectionType.건물) => FACTOR_HIGH,
+
+			// ----------------------------------------------------------------------
+			// 💣 폭발특화 무기 상성 (경장갑(++), 중장갑(--), 강화장갑(--), 역장( ), 건물(+ ))
+			// ----------------------------------------------------------------------
+			(WeaponType.폭발특화, ProtectionType.경장갑) => FACTOR_VERY_HIGH,
+			(WeaponType.폭발특화, ProtectionType.중장갑) => FACTOR_VERY_LOW,
+			(WeaponType.폭발특화, ProtectionType.강화장갑) => FACTOR_VERY_LOW,
+			(WeaponType.폭발특화, ProtectionType.역장) => FACTOR_NORMAL,
+			(WeaponType.폭발특화, ProtectionType.건물) => FACTOR_HIGH,
+
+			// ----------------------------------------------------------------------
+			// ⚛️ 에너지 무기 상성 (경장갑(- ), 중장갑(--), 강화장갑(--), 역장(++), 건물(--))
+			// ----------------------------------------------------------------------
+			(WeaponType.에너지, ProtectionType.경장갑) => FACTOR_LOW,
+			(WeaponType.에너지, ProtectionType.중장갑) => FACTOR_VERY_LOW,
+			(WeaponType.에너지, ProtectionType.강화장갑) => FACTOR_VERY_LOW,
+			(WeaponType.에너지, ProtectionType.역장) => FACTOR_VERY_HIGH,
+			(WeaponType.에너지, ProtectionType.건물) => FACTOR_VERY_LOW,
+
+			// ----------------------------------------------------------------------
+			// 🏷️ 정의되지 않은 모든 조합 처리 (ProtectionType.일반 포함)
+			// ----------------------------------------------------------------------
+			_ => FACTOR_NORMAL // 안전 장치: 정의되지 않은 모든 조합은 100% (보통)
+		};
+	}
 	/// <summary>
 	/// 공격력과 방어력을 기반으로 최소 피해량 1을 보장하는 기본 상쇄 피해량을 계산합니다.
 	/// </summary>
@@ -221,121 +361,60 @@ public static class CombatUtility
 	/// </summary>
 	public static float CalculateTypeFactor(ICombatOffense offense, ICombatDefance defance)
 	{
-		WeaponType wType = offense.WeaponType;
-		ProtectionType pType = defance.DefanceType; // ICombatDefance에서 직접 방어 타입 접근
-										  
-		const float EFFECTIVENESS_VERY_LOW = 0.5f;  // (--)
-		const float EFFECTIVENESS_LOW = 0.75f;       // (- )
-		const float EFFECTIVENESS_NORMAL = 1.00f;    // ( )
-		const float EFFECTIVENESS_HIGH = 1.50f;      // (+ )
-		const float EFFECTIVENESS_VERY_HIGH = 2.00f; // (++)
 
-		// 일반 & 관통타입 & 에너지 타입 
-		// => levelDifference >=0 일 경우 관통했다고 봄.
-		// => levelDifference >= 0 에서 100% 
-		// => levelDifference < 0 일수록 더 작은 데미지
-		// => 관통특화 타입은 levelDifference 에 +1  
-		// => 상대가 강화장갑일 경우 levelDifference 에 -1
-		// 폭발타입
-		// => levelDifference를 일단 절대값으로 취급한다.
-		// => levelDifference == 0 일 경우 내부 에서 정확히 폭발했다고 봄
-		// => levelDifference == 0 일 경우 100%
-		// => levelDifference 가 0 에서 멀어질수록 거 적은 데미지
-		// => 폭발특화 타입 은 levelDifference 의 유효범위를 1 늘린다.
-		// => 상대가 강화장갑일 경우 levelDifference 유효범위를 1 줄인다.
-		// levelDifference 에 의한 상성 변화는 수치별 5% 씩 감소한다.
-		// levelDifference 에 의한 수치 감소는 최대 25% 이다.
-		
-		int levelDifference = GetPenetrationLevelDifference(offense, defance); // 이전에 정의한 함수 활용
-		float levelDamageFactor =  1f - (wType, pType) switch
-        {
-			(WeaponType.폭발특화, ProtectionType.강화장갑) => -Mathf.Abs(levelDifference),
-			(WeaponType.폭발특화, _) => -Mathf.Max(0, Mathf.Abs(levelDifference) - 1),
-
-			(WeaponType.폭발, ProtectionType.강화장갑) => -(Mathf.Abs(levelDifference) + 1),
-            (WeaponType.폭발, _) => -Mathf.Abs(levelDifference),
+		float levelDamageFactor =  1f - (GetPenetrationLevelDifference(offense, defance) * 0.05f);
+		levelDamageFactor = Mathf.Clamp(levelDamageFactor, FACTOR_LOW, 1f);
 
 
-			(WeaponType.관통특화, ProtectionType.강화장갑) => Mathf.Min(0,levelDifference),
-			(WeaponType.관통특화, _) => Mathf.Min(0,levelDifference + 1),
+		float weaponEffectivenessFactor = GetWeaponEffectivenessFactor(offense, defance);
 
-			(_, ProtectionType.강화장갑) => Mathf.Min(0,levelDifference - 1),
-			_ => Mathf.Min(0,levelDifference),
-        } * 0.05f;
-		levelDamageFactor = Mathf.Clamp(levelDamageFactor, EFFECTIVENESS_LOW, 1f);
-
-		// 상성표 기호: 무효 |<< (--) (- ) (   ) (+  ) (++ ) >>|유효
-		//일반     =>   경장갑(  ) | 중장갑(  ) | 강화장갑(- ) | 역장(  ) | 건물(  )
-		//관통     =>   경장갑(  ) | 중장갑(+ ) | 강화장갑(  ) | 역장(- ) | 건물(  )
-		//폭발     =>   경장갑(+ ) | 중장갑(  ) | 강화장갑(- ) | 역장(- ) | 건물(  )
-		//관통특화 =>   경장갑(- ) | 중장갑(++) | 강화장갑(++) | 역장(- ) | 건물(+ )
-		//폭발특화 =>   경장갑(++) | 중장갑(--) | 강화장갑(--) | 역장(  ) | 건물(+ )
-		//에너지   =>   경장갑(- ) | 중장갑(--) | 강화장갑(--) | 역장(++) | 건물(--)
-		
-		float weaponEffectivenessFactor = (wType, pType) switch
-		{
-            // ----------------------------------------------------------------------
-            // 📦 일반 무기 상성 (경장갑( ), 중장갑( ), 강화장갑(- ), 역장( ), 건물( ))
-            // ----------------------------------------------------------------------
-            (WeaponType.일반, ProtectionType.경장갑) => EFFECTIVENESS_NORMAL,
-			(WeaponType.일반, ProtectionType.중장갑) => EFFECTIVENESS_NORMAL,
-			(WeaponType.일반, ProtectionType.강화장갑) => EFFECTIVENESS_LOW, 
-            (WeaponType.일반, ProtectionType.역장) => EFFECTIVENESS_NORMAL,
-			(WeaponType.일반, ProtectionType.건물) => EFFECTIVENESS_NORMAL,
-
-            // ----------------------------------------------------------------------
-            // ⚔️ 관통 무기 상성 (경장갑( ), 중장갑(+ ), 강화장갑( ), 역장(- ), 건물( ))
-            // ----------------------------------------------------------------------
-            (WeaponType.관통, ProtectionType.경장갑) => EFFECTIVENESS_NORMAL,
-			(WeaponType.관통, ProtectionType.중장갑) => EFFECTIVENESS_HIGH,
-			(WeaponType.관통, ProtectionType.강화장갑) => EFFECTIVENESS_NORMAL, 
-            (WeaponType.관통, ProtectionType.역장) => EFFECTIVENESS_LOW,
-			(WeaponType.관통, ProtectionType.건물) => EFFECTIVENESS_NORMAL,
-
-            // ----------------------------------------------------------------------
-            // 💥 폭발 무기 상성 (경장갑(+ ), 중장갑( ), 강화장갑(- ), 역장(- ), 건물( ))
-            // ----------------------------------------------------------------------
-            (WeaponType.폭발, ProtectionType.경장갑) => EFFECTIVENESS_HIGH,
-			(WeaponType.폭발, ProtectionType.중장갑) => EFFECTIVENESS_NORMAL,
-			(WeaponType.폭발, ProtectionType.강화장갑) => EFFECTIVENESS_LOW,  
-            (WeaponType.폭발, ProtectionType.역장) => EFFECTIVENESS_LOW,
-			(WeaponType.폭발, ProtectionType.건물) => EFFECTIVENESS_NORMAL,
-
-            // ----------------------------------------------------------------------
-            // 🔨 관통특화 무기 상성 (경장갑(- ), 중장갑(++), 강화장갑(++), 역장(- ), 건물(+ ))
-            // ----------------------------------------------------------------------
-            (WeaponType.관통특화, ProtectionType.경장갑) => EFFECTIVENESS_LOW,
-			(WeaponType.관통특화, ProtectionType.중장갑) => EFFECTIVENESS_VERY_HIGH,
-			(WeaponType.관통특화, ProtectionType.강화장갑) => EFFECTIVENESS_VERY_HIGH, 
-            (WeaponType.관통특화, ProtectionType.역장) => EFFECTIVENESS_LOW,
-			(WeaponType.관통특화, ProtectionType.건물) => EFFECTIVENESS_HIGH,
-
-            // ----------------------------------------------------------------------
-            // 💣 폭발특화 무기 상성 (경장갑(++), 중장갑(--), 강화장갑(--), 역장( ), 건물(+ ))
-            // ----------------------------------------------------------------------
-            (WeaponType.폭발특화, ProtectionType.경장갑) => EFFECTIVENESS_VERY_HIGH,
-			(WeaponType.폭발특화, ProtectionType.중장갑) => EFFECTIVENESS_VERY_LOW,
-			(WeaponType.폭발특화, ProtectionType.강화장갑) => EFFECTIVENESS_VERY_LOW, 
-            (WeaponType.폭발특화, ProtectionType.역장) => EFFECTIVENESS_NORMAL,
-			(WeaponType.폭발특화, ProtectionType.건물) => EFFECTIVENESS_HIGH,
-
-            // ----------------------------------------------------------------------
-            // ⚛️ 에너지 무기 상성 (경장갑(- ), 중장갑(--), 강화장갑(--), 역장(++), 건물(--))
-            // ----------------------------------------------------------------------
-            (WeaponType.에너지, ProtectionType.경장갑) => EFFECTIVENESS_LOW,
-			(WeaponType.에너지, ProtectionType.중장갑) => EFFECTIVENESS_VERY_LOW,
-			(WeaponType.에너지, ProtectionType.강화장갑) => EFFECTIVENESS_VERY_LOW, 
-            (WeaponType.에너지, ProtectionType.역장) => EFFECTIVENESS_VERY_HIGH,
-			(WeaponType.에너지, ProtectionType.건물) => EFFECTIVENESS_VERY_LOW,
-
-            // ----------------------------------------------------------------------
-            // 🏷️ 정의되지 않은 모든 조합 처리 (ProtectionType.일반 포함)
-            // ----------------------------------------------------------------------
-            _ => EFFECTIVENESS_NORMAL // 안전 장치: 정의되지 않은 모든 조합은 100% (보통)
-		};
 
 		// levelDifference 의한 수치 * 상성표에 대한 수치
 		return levelDamageFactor * weaponEffectivenessFactor;
 	}
+
+
 	#endregion
+}
+public static partial class CombatUtility // Command
+{
+	[Flags]
+	public enum DamageFlag
+	{
+		Miss = 0,
+		Hit			 = 0 << 1,
+		Pierce	 = 0 << 2,
+	}
+	public class DamageCommander : IDisposable
+	{
+		private readonly ICombatOffense offense;
+		private readonly ICombatDefance defance;
+		private readonly float projectileDemageFactor;
+		private DamageFlag flag;
+
+        public DamageCommander(ICombatOffense offense, ICombatDefance defance, float projectileDemageFactor, DamageFlag flag)
+        {
+            this.offense = offense;
+            this.defance = defance;
+            this.flag = flag;
+
+			StrategyManager.Collector.Add<DamageCommander>(this);
+		}
+		public void ChangeFlag(DamageFlag flag)
+		{
+			this.flag = flag;
+		}
+		public DamageFlag GetFlag() => flag;
+        public void Dispose()
+        {
+			StrategyManager.Collector.Remove<DamageCommander>(this);
+		}
+
+
+		public virtual void Compute()
+		{
+			// TODO : 데미지  계산 작업 진행
+
+		}
+	}
 }

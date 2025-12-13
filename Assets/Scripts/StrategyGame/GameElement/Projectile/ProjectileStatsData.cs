@@ -52,16 +52,10 @@ public record ProjectileStatsData // ProfileStats
 	[ToggleGroup("cepEnabled", GroupID = "Movement/C"), LabelText("공산오차 반경"), SerializeField]
 	private float cepRadius;
 	[ToggleGroup("cepEnabled", GroupID = "Movement/C"), LabelText("반경 내 들어갈 확률"), SerializeField]
-	private float cepProbability; // 0~100
-	[ToggleGroup("cepEnabled", GroupID = "Movement/C"), LabelText("재계산 여부"), SerializeField]
-	private bool cepReapply;
-	[ToggleGroup("cepEnabled", GroupID = "Movement/C"), LabelText("재계산 간격"), SerializeField, ShowIf("cepReapply")]
-	private Vector2 cepReapplyMinMaxTime;
+	private float cepProbability; 
 
 	[BoxGroup("LifeCycle"), LabelText("생존 시간"), SerializeField]
 	private float lifeTime = 5f;
-	[BoxGroup("LifeCycle"), LabelText("명중 후 삭제 지연"), SerializeField]
-	private float destroyDelayAfterHit = 0.1f;
 
 	[BoxGroup("Collision"), LabelText("충돌 반경"), SerializeField]
 	private float collisionRadius = 0.1f;
@@ -77,19 +71,40 @@ public record ProjectileStatsData // ProfileStats
 	[BoxGroup("Hit"), LabelText("명중시 상태이상 시간 배율"), SerializeField]
 	private float hitEffectsTimeMultiplier = 1;
 
-	[ToggleGroup("piercingEnable", GroupID = "Hit/P", ToggleGroupTitle ="관통 사용 여부"), SerializeField]
-	private bool piercingEnable = false;
-	[ToggleGroup("piercingEnable", GroupID = "Hit/P"), LabelText("관통 최소/최대 점수"), SerializeField]
-	private Vector2Int piercingMinMaxCount;
-	[ToggleGroup("piercingEnable", GroupID = "Hit/P"), LabelText("관통 효과 감쇠 커브"), SerializeField]
+	[BoxGroup("Hit"), LabelText("Last Hit Effect 타입"), SerializeField]
+	private SubEffectKey lastHitEffectKey;
+	public bool PiercingEnable => weaponType is WeaponType.관통 or WeaponType.관통특화;
+	public bool ExplosionEnabled => weaponType is WeaponType.폭발 or WeaponType.폭발특화;
+	public bool ElectromagneticEnabled => weaponType is WeaponType.에너지;
+
+	[BoxGroup("Hit/P", GroupName ="관통", VisibleIf = "PiercingEnable"),  LabelText("관통 최대 점수"), SerializeField]
+	private int piercingMaxCount;
+	[BoxGroup("Hit/P"), LabelText("관통 효과 감쇠 커브(관통횟수)"), SerializeField]
 	private AnimationCurve piercingFalloffCurve;
 
-	[ToggleGroup("explosionEnabled", GroupID = "Hit/E", ToggleGroupTitle ="폭발 사용 여부"), SerializeField]
-	private bool explosionEnabled = false;
-	[ToggleGroup("explosionEnabled", GroupID = "Hit/E"), LabelText("폭발 최소/최대 반경"), SerializeField]
+	[BoxGroup("Hit/E", GroupName ="폭발", VisibleIf = "ExplosionEnabled"), LabelText("폭발 최소/최대 반경"), SerializeField]
 	private Vector2 explosionMinMaxRadius;
-	[ToggleGroup("explosionEnabled", GroupID = "Hit/E"),  LabelText("폭발 효과 감쇠 커브"), SerializeField]
+	[BoxGroup("Hit/E"), LabelText("폭발 지연시간"), SerializeField]
+	private float explosionDelayAfterHit = 0.1f;
+	[BoxGroup("Hit/E"), LabelText("폭발 효과 감쇠 커브(거리)"), SerializeField]
 	private AnimationCurve explosionFalloffCurve;
+	[BoxGroup("Hit/E"), LabelText("폭발 Effect 타입"), SerializeField]
+	private SubEffectKey explosionEffectKey;
+
+
+	[BoxGroup("Hit/Emp", GroupName ="EMP충격", VisibleIf = "ElectromagneticEnabled"), LabelText("전파 전달 거리"), SerializeField]
+	private float empChainPropagationDistance;
+	[BoxGroup("Hit/Emp"), LabelText("EMP 동시 전파 수"), SerializeField]
+	private int empChainPropagationCount;
+	[BoxGroup("Hit/Emp"), LabelText("EMP 전파 횟수"), SerializeField]
+	private int empChainDepthCount;
+	[BoxGroup("Hit/Emp"), LabelText("EMP 중첩 횟수"), SerializeField]
+	private int empChainOverlapsCount;
+	[BoxGroup("Hit/Emp"), LabelText("EMP 효과 감쇠 커브(Depth)"), SerializeField]
+	private AnimationCurve empChainFalloffCurve;
+	[BoxGroup("Hit/Emp"), LabelText("EMP 충격 Effect 타입"), SerializeField]
+	private SubEffectKey empChainEffectKey;
+
 
 	public ProjectileStatsData()
 	{
@@ -122,7 +137,6 @@ public record ProjectileStatsData // ProfileStats
 		cepProbability = statsData.CepProbability;
 
 		lifeTime = statsData.LifeTime;
-		destroyDelayAfterHit = statsData.DestroyDelayAfterHit;
 
 		collisionRadius = statsData.CollisionRadius;
 
@@ -130,25 +144,34 @@ public record ProjectileStatsData // ProfileStats
 		hitEffectsFlag = statsData.HitEffectsFlag;
 		hitEffectsTimeMultiplier = statsData.HitEffectsTimeMultiplier;
 
-		piercingEnable = statsData.PiercingEnable;
-		piercingMinMaxCount = statsData.PiercingMinMaxCount;
+		piercingMaxCount = statsData.PiercingMaxCount;
 		piercingFalloffCurve = statsData.PiercingFalloffCurve;
 
-		explosionEnabled = statsData.ExplosionEnabled;
 		explosionMinMaxRadius = statsData.ExplosionMinMaxRadius;
+		explosionDelayAfterHit = statsData.ExplosionDelayAfterHit;
 		explosionFalloffCurve = statsData.ExplosionFalloffCurve;
+		explosionEffectKey = statsData.ExplosionEffectKey;
+
+		empChainPropagationDistance = statsData.EmpChainPropagationDistance;
+		empChainPropagationCount = statsData.EmpChainPropagationCount;
+		empChainDepthCount = statsData.EmpChainDepthCount;
+		empChainOverlapsCount = statsData.EmpChainOverlapsCount;
+		empChainFalloffCurve = statsData.EmpChainFalloffCurve;
+		empChainEffectKey = statsData.EmpChainEffectKey;
 	}
 
 	public ProjectileStatsData(ProjectileKey projectileKey = ProjectileKey.None, WeaponType weaponType = WeaponType.일반,
 		float moveStartSpeed = 10f, bool isShiftSpeed = false, float moveMaxSpeed = 20f, AnimationCurve moveSpeedCurve = null, float timeFromStartToMaxSpeed = 2f,
 		bool homingEnabled = false, float homingActivationDelay = 0f, float homingTurnSpeed = 180f, float homingTurnSpeedWhenMaxSpeed = 180f, float homingLimitAngle = 180f, float homingLimitDistance = float.PositiveInfinity,
-		bool cepEnabled = false, float cepRadius = 3f, float cepProbability = 0.9f, bool cepReapply = false, Vector2 cepReapplyMinMaxTime = default,
-		float lifeTime = 1f, float destroyDelayAfterHit = 0.1f,
+		bool cepEnabled = false, float cepRadius = 3f, float cepProbability = 0.9f,
+		float lifeTime = 1f,
 		float collisionRadius = 0.1f,
-		float hitDamageMultiplier = 1f, StatusEffectsFlag hitEffectsFlag = StatusEffectsFlag.None, float hitEffectsTimeMultiplier = 1f,
-		bool piercingEnable = false, Vector2Int piercingMinMaxCount = default, AnimationCurve piercingFalloffCurve = null,
-		bool explosionEnabled = false, Vector2 explosionMinMaxRadius = default, AnimationCurve explosionFalloffCurve = null)
+		float hitDamageMultiplier = 1f, StatusEffectsFlag hitEffectsFlag = StatusEffectsFlag.None, float hitEffectsTimeMultiplier = 1f, SubEffectKey projectileHitEffectKey = SubEffectKey.None,
+		bool piercingEnable = false, int PiercingMaxCount = default, AnimationCurve piercingFalloffCurve = null,
+		bool explosionEnabled = false, Vector2 explosionMinMaxRadius = default, float explosionDelayAfterHit = 0f, AnimationCurve explosionFalloffCurve = null, SubEffectKey explosionEffectKey = SubEffectKey.폭발_소형,
+		float empChainPropagationDistance = 5f, int empChainPropagationCount = 3, int empChainDepthCount = 5, int empChainOverlapsCount = 1, AnimationCurve empChainFalloffCurve = null, SubEffectKey empChainEffectKey = SubEffectKey.전격_소형)
 	{
+	
 		this.projectileKey = projectileKey;
 
 		this.weaponType = weaponType;
@@ -169,24 +192,29 @@ public record ProjectileStatsData // ProfileStats
 		this.cepEnabled = cepEnabled;
 		this.cepRadius = cepRadius;
 		this.cepProbability = cepProbability;
-		this.cepReapply = cepReapply;
-		this.cepReapplyMinMaxTime = cepReapplyMinMaxTime;
 
 		this.lifeTime = lifeTime;
-		this.destroyDelayAfterHit = destroyDelayAfterHit;
 		this.collisionRadius = collisionRadius;
 
 		this.hitDamageMultiplier = hitDamageMultiplier;
 		this.hitEffectsFlag = hitEffectsFlag;
 		this.hitEffectsTimeMultiplier = hitEffectsTimeMultiplier;
+		this.lastHitEffectKey = projectileHitEffectKey;
 
-		this.piercingEnable = piercingEnable;
-		this.piercingMinMaxCount = piercingMinMaxCount;
+		this.piercingMaxCount = PiercingMaxCount;
 		this.piercingFalloffCurve = piercingFalloffCurve ?? AnimationCurve.Linear(0, 1, 1, 0);
 
-		this.explosionEnabled = explosionEnabled;
 		this.explosionMinMaxRadius = explosionMinMaxRadius;
+		this.explosionDelayAfterHit = explosionDelayAfterHit;
 		this.explosionFalloffCurve = explosionFalloffCurve ?? AnimationCurve.Linear(0, 1, 1, 0);
+		this.explosionEffectKey = explosionEffectKey;
+
+		this.empChainPropagationDistance = empChainPropagationDistance;
+		this.empChainPropagationCount = empChainPropagationCount;
+		this.empChainDepthCount = empChainDepthCount;
+		this.empChainOverlapsCount = empChainOverlapsCount;
+		this.empChainFalloffCurve = empChainFalloffCurve ?? AnimationCurve.Linear(0, 1, 1, 0);
+		this.empChainEffectKey = empChainEffectKey;
 	}
 
 	public ProjectileStatsData Copy()
@@ -213,25 +241,30 @@ public record ProjectileStatsData // ProfileStats
 			cepEnabled = this.cepEnabled,
 			cepRadius = this.cepRadius,
 			cepProbability = this.cepProbability,
-			cepReapply = this.cepReapply,
-			cepReapplyMinMaxTime = this.cepReapplyMinMaxTime,
 
 			lifeTime = this.lifeTime,
-			destroyDelayAfterHit = this.destroyDelayAfterHit,
 
 			collisionRadius = this.collisionRadius,
 
 			hitDamageMultiplier = this.hitDamageMultiplier,
 			hitEffectsFlag = this.hitEffectsFlag,
 			hitEffectsTimeMultiplier = this.hitEffectsTimeMultiplier,
+			lastHitEffectKey = this.lastHitEffectKey,
 
-			piercingEnable = this.piercingEnable,
-			piercingMinMaxCount = this.piercingMinMaxCount,
+			piercingMaxCount = this.piercingMaxCount,
 			piercingFalloffCurve = this.piercingFalloffCurve,
 
-			explosionEnabled = this.explosionEnabled,
 			explosionMinMaxRadius = this.explosionMinMaxRadius,
-			explosionFalloffCurve = this.explosionFalloffCurve
+			explosionDelayAfterHit = this.explosionDelayAfterHit,
+			explosionFalloffCurve = this.explosionFalloffCurve,
+			explosionEffectKey = this.explosionEffectKey,
+	
+			empChainPropagationDistance = this.empChainPropagationDistance,
+			empChainPropagationCount = this.empChainPropagationCount,
+			empChainDepthCount = this.empChainDepthCount,
+			empChainOverlapsCount = this.empChainOverlapsCount,
+			empChainFalloffCurve = this.empChainFalloffCurve ,
+			empChainEffectKey = this.empChainEffectKey,
 		};
 	}
 
@@ -257,29 +290,29 @@ public record ProjectileStatsData // ProfileStats
 	public float CepRadius => cepRadius;
 	public float CepProbability => cepProbability;
 	public float LifeTime => lifeTime;
-	public float DestroyDelayAfterHit => destroyDelayAfterHit;
 	public float CollisionRadius => collisionRadius;
 	public float HitDamageMultiplier => hitDamageMultiplier;
 	public StatusEffectsFlag HitEffectsFlag => hitEffectsFlag;
 	public float HitEffectsTimeMultiplier => hitEffectsTimeMultiplier;
-	public bool PiercingEnable => piercingEnable;
-	public Vector2Int PiercingMinMaxCount => piercingMinMaxCount;
+	public SubEffectKey ProjectileHitEffectKey => lastHitEffectKey;
+	public int PiercingMaxCount => Mathf.Max(1,piercingMaxCount);
 	public AnimationCurve PiercingFalloffCurve => piercingFalloffCurve;
-	public bool ExplosionEnabled => explosionEnabled;
 	public Vector2 ExplosionMinMaxRadius => explosionMinMaxRadius;
+	public float ExplosionDelayAfterHit => Mathf.Max(0,explosionDelayAfterHit);
 	public AnimationCurve ExplosionFalloffCurve => explosionFalloffCurve;
+	public SubEffectKey ExplosionEffectKey => explosionEffectKey;
+	public float EmpChainPropagationDistance => empChainPropagationDistance;
+	public int EmpChainPropagationCount => empChainPropagationCount;
+	public int EmpChainDepthCount => empChainDepthCount;
+	public int EmpChainOverlapsCount => empChainOverlapsCount;
+	public AnimationCurve EmpChainFalloffCurve => empChainFalloffCurve;
+	public SubEffectKey EmpChainEffectKey => empChainEffectKey;
+
 	public float PiercingFalloffMultiplier(int currentCount)
 	{
 		if (!PiercingEnable) return 1f;
-		Vector2Int minMax = PiercingMinMaxCount;
-		float min = Mathf.Min(minMax.x, minMax.y);
-		float max = Mathf.Max(minMax.x, minMax.y);
-		float point = (float)currentCount;
-		if (Mathf.Approximately(min, max))
-		{
-			return 1f;
-		}
-		float rate = (point - min) / (max - min);
+		int max = PiercingMaxCount;
+		float rate = (float)currentCount / (float)max;
 		return PiercingFalloffCurve.Evaluate(rate);
 	}
 	public float ExplosionFalloffMultiplier(float currentDistance)
@@ -296,7 +329,15 @@ public record ProjectileStatsData // ProfileStats
 		float rate = (point - min) / (max - min);
 		return ExplosionFalloffCurve.Evaluate(rate);
 	}
+	public float EmpFalloffMultiplier(int currentDepth)
+	{
+		if (!ElectromagneticEnabled) return 1f;
+		int max = EmpChainDepthCount;
+		if (max <= 1) return 1f;
 
+		float rate = (float)currentDepth / (float)max;
+		return EmpChainFalloffCurve.Evaluate(rate);
+	}
 
 	public MovmentConstantData GetMovementConstantData()
 	{

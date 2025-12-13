@@ -622,23 +622,12 @@ public partial class StrategyGamePlayData // StatsValue
 	{
 		// 데이터 저장소 접근을 위한 속성
 		public IStatsValueControl StatsValue { get; }
-		public StatsList MainStatsList { get; }
-		public StatsGroup SkillBuffGroup { get; }
-		int GetStatsValue(StatsType type)
-		{
-			if (StrategyManager.IsNotReadyScene) return 0;
-			int value = MainStatsList.GetValueInt(type) + SkillBuffGroup.GetValueInt(type);
-			return value;
-		}
-		float GetStatsValuePercent(StatsType type)
+		int GetStatsValue(StatsType type);
+		float GetStatsValuePercent(StatsType type)	 
 		{
 			return GetStatsValue(type) * 0.01f;
 		}
-		public void SetValueInMainStats(StatsType type, int value)
-		{
-			if (StrategyManager.IsNotReadyScene) return;
-			MainStatsList.SetValue(type, value);
-		}
+		public void SetValueInMainStats(StatsType type, int value);
 		void SetValueInMainStatsPercent(StatsType type, float valuePercent)
 		{
 			SetValueInMainStats(type, Mathf.RoundToInt(valuePercent * 100f));

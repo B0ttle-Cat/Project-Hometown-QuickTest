@@ -6,6 +6,8 @@ using StrategyManagerModule;
 
 using UnityEngine;
 
+using static StrategyGamePlayData;
+
 public partial class ProjectileObject : MonoBehaviour
 {
 	[SerializeField, InlineProperty, HideLabel]
@@ -17,8 +19,12 @@ public partial class ProjectileObject : MonoBehaviour
 
 
 	public ICombatHandler Order { get; private set; }
-	public ICombatCommon OrderCombatCommon => Order as ICombatCommon;
-
+	public ICombatCommon OrderCombatCommon => Order == null ? null : Order as ICombatCommon;
+	public void Init()
+	{
+		runtimeData = null;
+		statsData = null;
+	}
 	public void Init(StrategyStartSetterData.ProjectileData.Info setterData)
 	{
 		RuntimeData = new ProjectileRuntimeData(setterData);
@@ -64,17 +70,122 @@ public partial class ProjectileObject : MonoBehaviour
 }
 public partial class ProjectileObject // Init Lifetime
 {
-	ProjectileLifetime objectLifetime;
+	private bool isDeath;
+	public bool IsDeath => isDeath;
+
+	ObjectLifetime objectLifetime;
 	partial void InitLifetime()
 	{
-		if (objectLifetime == null || !TryGetComponent<ProjectileLifetime>(out objectLifetime))
+		isDeath = false;
+		if (objectLifetime == null || !TryGetComponent<ObjectLifetime>(out objectLifetime))
 		{
-			objectLifetime = gameObject.AddComponent<ProjectileLifetime>();
+			objectLifetime = gameObject.AddComponent<ObjectLifetime>();
 		}
-		objectLifetime.ResetTime(RuntimeData.LifeTime);
+		objectLifetime.enabled = true;
+		objectLifetime.ResetTime(RuntimeData.LifeTime, LifeTimeDeath);
 	}
 
+	private void LifeTimeDeath()
+	{
+		if (isDeath) return;
+		isDeath = true;
+		objectLifetime.enabled = false;
+
+		StrategyElementFactory.Destroy(this);
+	}
+
+	private void HitableDeath(ICombatOffense offense, ICombatDefance defance)
+	{
+		if (isDeath) return;
+		isDeath = true;
+		objectLifetime.enabled = false;
+
+		var projectileHitEffectKey =  StatsData.ProjectileHitEffectKey;
+		if (projectileHitEffectKey != SubEffectKey.None)
+		{
+			// HitEffect 생성
+		}
+
+		if (StatsData.ExplosionEnabled)
+		{
+			var explosionEffectKey = StatsData.ExplosionEffectKey;
+			if (offense != null && explosionEffectKey != SubEffectKey.None)
+			{
+				Vector2 explosionMinMaxRadius = StatsData.ExplosionMinMaxRadius;
+				float explosionDelayAfterHit = StatsData.ExplosionDelayAfterHit;
+				AnimationCurve explosionFalloffCurve = StatsData.ExplosionFalloffCurve;
+
+				// ExplosionEffect 생성
+			}
+		}
+		else if (StatsData.ElectromagneticEnabled)
+		{
+			var empChainEffectKey = StatsData.EmpChainEffectKey;
+			if (offense != null && empChainEffectKey != SubEffectKey.None)
+			{
+				float empChainPropagationDistance = StatsData.EmpChainPropagationDistance;
+				int empChainPropagationCount = StatsData.EmpChainPropagationCount;
+				int empChainDepthCount =StatsData.EmpChainDepthCount;
+				int empChainOverlapsCount = StatsData.EmpChainOverlapsCount;
+				AnimationCurve empChainFalloffCurve = StatsData.EmpChainFalloffCurve;
+
+				// EmpChainEffec 생성
+			}
+		}
+
+		DestroyNextFrame();
+		async void DestroyNextFrame()
+		{
+			await Awaitable.NextFrameAsync();
+			StrategyElementFactory.Destroy(this);
+		}
+	}
+	private void MovementDeath(Vector3 deathPosition)
+	{
+		if (isDeath) return;
+		isDeath = true;
+		objectLifetime.enabled = false;
+
+
+		if (StatsData.ExplosionEnabled)
+		{
+			var offense = OrderCombatCommon.ThisOffense;
+			var explosionEffectKey = StatsData.ExplosionEffectKey;
+			if (offense != null && explosionEffectKey != SubEffectKey.None)
+			{
+				Vector2 explosionMinMaxRadius = StatsData.ExplosionMinMaxRadius;
+				float explosionDelayAfterHit = StatsData.ExplosionDelayAfterHit;
+				AnimationCurve explosionFalloffCurve = StatsData.ExplosionFalloffCurve;
+
+				// ExplosionEffect 생성
+			}
+		}
+		else if (StatsData.ElectromagneticEnabled)
+		{
+			var offense = OrderCombatCommon.ThisOffense;
+
+			var empChainEffectKey = StatsData.EmpChainEffectKey;
+			if (offense != null && empChainEffectKey != SubEffectKey.None)
+			{
+				float empChainPropagationDistance = StatsData.EmpChainPropagationDistance;
+				int empChainPropagationCount = StatsData.EmpChainPropagationCount;
+				int empChainDepthCount =StatsData.EmpChainDepthCount;
+				int empChainOverlapsCount = StatsData.EmpChainOverlapsCount;
+				AnimationCurve empChainFalloffCurve = StatsData.EmpChainFalloffCurve;
+
+				// EmpChainEffec 생성
+			}
+		}
+
+		DestroyNextFrame();
+		async void DestroyNextFrame()
+		{
+			await Awaitable.NextFrameAsync();
+			StrategyElementFactory.Destroy(this);
+		}
+	}
 }
+
 public partial class ProjectileObject : IStrategyPoolingElement
 {
 	IStrategyElement IStrategyElement.ThisElement => this;
@@ -82,13 +193,11 @@ public partial class ProjectileObject : IStrategyPoolingElement
 	GameObject IStrategyPoolingElement.PrefabReference { get; set; }
 	void IStrategyElement.InStrategyCollector()
 	{
-		runtimeData = null;
-		statsData = null;
+
 	}
 	void IStrategyElement.OutStrategyCollector()
 	{
-		runtimeData = null;
-		statsData = null;
+
 	}
 	void IStrategyStartGame.OnStartGame()
 	{
@@ -99,85 +208,158 @@ public partial class ProjectileObject : IStrategyPoolingElement
 }
 public partial class ProjectileObject : IProjectileHit
 {
-	public LayerMask hitLayerMask;
+	public IProjectileHit ThisProjectileHit => this;
 
+	public LayerMask hitLayerMask;
+	private HashSet<Collider> alreadyHit;
 	partial void InitHitReporting()
 	{
 		hitLayerMask = LayerMask.GetMask("Ground", "HardObject", "Hitable", "Unit");
+		alreadyHit = new HashSet<Collider>();
 	}
 	partial void DeinitHitReporting()
 	{
-
+		alreadyHit.Clear();
 	}
+
 
 	void IProjectileHit.ProjectileMoveCast(out int hitCount, ref RaycastHit[] raycastHits)
 	{
-		// 1. 초기 체크 및 변수 계산
-		int currPiercingCount = RuntimeData.PiercingCount;
-		int maxPiercingCount = StatsData.PiercingMinMaxCount.y;
-		// 관통 횟수가 maxPiercingCount 를 이상이면 즉시 종료 (hitCount는 0 유지)
-		if (currPiercingCount >= maxPiercingCount)
+		if (StatsData.PiercingEnable)
 		{
-			hitCount = 0;
-			return;
-		}
-
-		// 2. 배열 최소 크기 보장 로직
-		if (raycastHits == null || raycastHits.Length < IProjectileHit.MIN_ARRAY_CAPACITY)
-		{
-			raycastHits = new RaycastHit[IProjectileHit.MIN_ARRAY_CAPACITY];
-		}
-
-		float collisionRadius = statsData.CollisionRadius;
-		var prevPosition = PrevPosition;
-		var moveDiraction = MoveDiraction;
-		float maxLength = Vector3.Distance(prevPosition, CurrentPosition);
-
-		// 2. NonAlloc으로 충돌 검사 (GC 없음)
-		int currentCapacity = raycastHits.Length;
-		hitCount = UnityEngine.Physics.SphereCastNonAlloc(prevPosition, collisionRadius, moveDiraction, raycastHits, maxLength, hitLayerMask);
-
-		// 3. 충돌 누락 검사 및 배열 확장 폴백 (GC 발생 영역)
-		// NonAlloc으로 감지된 개수가 배열 크기와 같다면, 충돌체가 더 있을 가능성이 높음.
-		if (hitCount == currentCapacity)
-		{
-			RaycastHit[] allHits = UnityEngine.Physics.SphereCastAll(prevPosition,collisionRadius,moveDiraction,maxLength,hitLayerMask);
-
-			// 실제 충돌 개수
-			hitCount = allHits.Length;
-
-			// Step A: 실제 충돌 개수(allHits.Length)가 기존 배열 크기보다 큰지 확인
-			if (hitCount > currentCapacity)
+			ProjectileMoveCast_관통(out hitCount, ref raycastHits);
+			void ProjectileMoveCast_관통(out int hitCount, ref RaycastHit[] raycastHits)
 			{
-				// 새로운 크기를 MIN_ARRAY_CAPACITY 단위로 계산하여 확장합니다.
-				int numUnits = Mathf.CeilToInt((float)hitCount / IProjectileHit.MIN_ARRAY_CAPACITY);
-				int newCapacity = numUnits * IProjectileHit.MIN_ARRAY_CAPACITY;
+				// 1. 초기 체크 및 변수 계산
+				int currPiercingCount = RuntimeData.PiercingCount;
+				int maxPiercingCount = StatsData.PiercingMaxCount;
+				// 관통 횟수가 maxPiercingCount 를 이상이면 즉시 종료 (hitCount는 0 유지)
+				if (currPiercingCount >= maxPiercingCount)
+				{
+					hitCount = 0;
+					return;
+				}
 
-				// 기존 배열의 내용을 새 배열로 옮기지 않고, allHits 배열 자체를 새 버퍼로 사용
-				raycastHits = new RaycastHit[newCapacity];
-				System.Array.Copy(allHits, raycastHits, hitCount);
-				Debug.LogWarning($"ProjectileMoveCast 에 사용중인 베열 크기가 부족합니다. ({currentCapacity} -> {newCapacity}). 배열을 확장합니다.");
-			}
-			else if (hitCount == currentCapacity)
-			{
-				int newCapacity = currentCapacity + IProjectileHit.MIN_ARRAY_CAPACITY;
-				raycastHits = new RaycastHit[newCapacity];
-				System.Array.Copy(allHits, raycastHits, hitCount);
-				Debug.LogWarning($"ProjectileMoveCast 에 사용중인 베열 크기가 부족합니다. ({currentCapacity} -> {newCapacity}). 배열을 확장합니다.");
-			}
-			else
-			{
-				// 크기는 그대로 유지하고, 정확성을 위해 Alloc 결과를 기존 버퍼에 복사합니다.
-				System.Array.Copy(allHits, raycastHits, hitCount);
+				// 2. 배열 최소 크기 보장 로직
+				if (raycastHits == null || raycastHits.Length < IProjectileHit.MIN_ARRAY_CAPACITY)
+				{
+					raycastHits = new RaycastHit[IProjectileHit.MIN_ARRAY_CAPACITY];
+				}
+
+				float collisionRadius = statsData.CollisionRadius;
+				var prevPosition = PrevPosition;
+				var moveDiraction = MoveDiraction;
+				float maxLength = Vector3.Distance(prevPosition, CurrentPosition);
+
+				// 2. NonAlloc으로 충돌 검사 (GC 없음)
+				int currentCapacity = raycastHits.Length;
+				hitCount = UnityEngine.Physics.SphereCastNonAlloc(prevPosition, collisionRadius, moveDiraction, raycastHits, maxLength, hitLayerMask);
+
+				// 3. 충돌 누락 검사 및 배열 확장 폴백 (GC 발생 영역)
+				// NonAlloc으로 감지된 개수가 배열 크기와 같다면, 충돌체가 더 있을 가능성이 높음.
+				if (hitCount == currentCapacity)
+				{
+					RaycastHit[] allHits = UnityEngine.Physics.SphereCastAll(prevPosition,collisionRadius,moveDiraction,maxLength,hitLayerMask);
+
+					// 실제 충돌 개수
+					hitCount = allHits.Length;
+
+					// Step A: 실제 충돌 개수(allHits.Length)가 기존 배열 크기보다 큰지 확인
+					if (hitCount > currentCapacity)
+					{
+						// 새로운 크기를 MIN_ARRAY_CAPACITY 단위로 계산하여 확장합니다.
+						int numUnits = Mathf.CeilToInt((float)hitCount / IProjectileHit.MIN_ARRAY_CAPACITY);
+						int newCapacity = numUnits * IProjectileHit.MIN_ARRAY_CAPACITY;
+
+						// 기존 배열의 내용을 새 배열로 옮기지 않고, allHits 배열 자체를 새 버퍼로 사용
+						raycastHits = new RaycastHit[newCapacity];
+						System.Array.Copy(allHits, raycastHits, hitCount);
+						Debug.LogWarning($"ProjectileMoveCast 에 사용중인 베열 크기가 부족합니다. ({currentCapacity} -> {newCapacity}). 배열을 확장합니다.");
+					}
+					else if (hitCount == currentCapacity)
+					{
+						int newCapacity = currentCapacity + IProjectileHit.MIN_ARRAY_CAPACITY;
+						raycastHits = new RaycastHit[newCapacity];
+						System.Array.Copy(allHits, raycastHits, hitCount);
+						Debug.LogWarning($"ProjectileMoveCast 에 사용중인 베열 크기가 부족합니다. ({currentCapacity} -> {newCapacity}). 배열을 확장합니다.");
+					}
+					else
+					{
+						// 크기는 그대로 유지하고, 정확성을 위해 Alloc 결과를 기존 버퍼에 복사합니다.
+						System.Array.Copy(allHits, raycastHits, hitCount);
+					}
+				}
+
+				// 순서를 보장하기 위해 거리 순으로 정렬합니다.
+				if (hitCount > 1)
+				{
+					System.Array.Sort(raycastHits, 0, hitCount, Comparer<RaycastHit>.Create((a, b) => a.distance.CompareTo(b.distance)));
+				}
 			}
 		}
-
-		// 순서를 보장하기 위해 거리 순으로 정렬합니다.
-		if (hitCount > 1)
+		else
 		{
-			System.Array.Sort(raycastHits, 0, hitCount, Comparer<RaycastHit>.Create((a, b) => a.distance.CompareTo(b.distance)));
+			ProjectileMoveCast_일반(out hitCount, ref raycastHits);
+			void ProjectileMoveCast_일반(out int hitCount, ref RaycastHit[] raycastHits)
+			{
+
+				if (raycastHits == null || raycastHits.Length < IProjectileHit.MIN_ARRAY_CAPACITY)
+				{
+					raycastHits = new RaycastHit[IProjectileHit.MIN_ARRAY_CAPACITY];
+				}
+
+				float collisionRadius = statsData.CollisionRadius;
+				var prevPosition = PrevPosition;
+				var moveDiraction = MoveDiraction;
+				float maxLength = Vector3.Distance(prevPosition, CurrentPosition);
+
+
+				if (UnityEngine.Physics.SphereCast(prevPosition, collisionRadius, moveDiraction, out var raycastHit, maxLength, hitLayerMask))
+				{
+					raycastHits[0] = raycastHit;
+					hitCount = 1;
+				}
+				else
+				{
+					hitCount = 0;
+				}
+			}
 		}
 	}
+	void IProjectileHit.SendHitReporting(in int hitCount, in RaycastHit[] raycastHits)
+	{
+		if (hitCount <= 0) return;
+
+		var statsData = StatsData;
+
+		if (StatsData.PiercingEnable)
+		{
+			SendHitReporting_관통(in hitCount, in raycastHits);
+			void SendHitReporting_관통(in int hitCount, in RaycastHit[] raycastHits)
+			{
+				for (int i = 0 ; i < hitCount ; i++)
+				{
+					var hitCollider = raycastHits[i].collider;
+					if (!alreadyHit.Add(hitCollider))
+					{
+						alreadyHit.Add(hitCollider);
+					}
+
+					ThisProjectileHit.HitReporting(raycastHits[i].collider);
+
+					if (isDeath)
+					{
+						break;
+					}
+				}
+			}
+		}
+		else
+		{
+			ThisProjectileHit.HitReporting(raycastHits[0].collider);
+		}
+	}
+
 
 	void IProjectileHit.HitOtherObject(GameObject gameObject)
 	{
@@ -191,15 +373,59 @@ public partial class ProjectileObject : IProjectileHit
 
 		var order = OrderCombatCommon;
 		var offense = order.ThisOffense;
+		float projectileDamageFactor = 1f;
+		if (!CombatUtility.CheckChance(CombatUtility.CalculateHitChance(offense, defance)))
+		{
+			new CombatUtility.DamageCommander(offense, defance, projectileDamageFactor, CombatUtility.DamageFlag.Miss);
+			return;
+		}
 
-		//offense.PenetrationLevel
-		//
-		//defance.AntiAttackPower
+		if (StatsData.PiercingEnable)
+		{
+			RuntimeData.PiercingCount = Hitable_관통(RuntimeData.PiercingCount);
+			if (runtimeData.PiercingCount >= statsData.PiercingMaxCount)
+			{
+				HitableDeath(offense, defance);
+			}
+			int Hitable_관통(int piercingCount)
+			{
+				projectileDamageFactor = statsData.PiercingFalloffMultiplier(piercingCount);
+
+				int baseDifference = offense.PenetrationLevel - (defance.AntiPenetrationLevel + (defance.ProtectionType is ProtectionType.강화장갑?1:0));
+				if (baseDifference > 0)
+				{
+					piercingCount += baseDifference + 1;
+					new CombatUtility.DamageCommander(offense, defance, projectileDamageFactor, CombatUtility.DamageFlag.Hit | CombatUtility.DamageFlag.Pierce);
+				}
+				else if (baseDifference == 0)
+				{
+					piercingCount += 1;
+					new CombatUtility.DamageCommander(offense, defance, projectileDamageFactor, CombatUtility.DamageFlag.Hit);
+				}
+				else
+				{
+					piercingCount = int.MaxValue;
+					new CombatUtility.DamageCommander(offense, defance, projectileDamageFactor, CombatUtility.DamageFlag.Hit);
+				}
+				return piercingCount;
+			}
+		}
+		else if (StatsData.ExplosionEnabled)
+		{
+			HitableDeath(offense, defance);
+		}
+		else if (StatsData.ElectromagneticEnabled)
+		{
+			HitableDeath(offense, defance);
+		}
+		else
+		{
+			new CombatUtility.DamageCommander(offense, defance, projectileDamageFactor, CombatUtility.DamageFlag.Hit);
+			HitableDeath(offense, defance);
+		}
 	}
 	void IProjectileHit.HitOtherElement(IStrategyElement hit)
 	{
 
 	}
-
-
 }

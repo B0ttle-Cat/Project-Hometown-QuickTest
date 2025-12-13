@@ -51,6 +51,7 @@ namespace StrategyManagerModule
 				public void Execute(int index)
 				{
 					var m = Movements[index];
+
 					float dt = m.DeltaTime;
 
 					if (dt <= 0f) return;
@@ -108,7 +109,8 @@ namespace StrategyManagerModule
 				{
 					if (!c.HomingEnabled) return;
 
-					float3 toTarget = m.TargetPosition + m.CepOffset - m.Position;
+					m.EndedPosition = m.TargetPosition + m.CepOffset;
+					float3 toTarget = m.EndedPosition - m.Position;
 					float sqrDist = math.lengthsq(toTarget);
 
 					bool withinDistance = float.IsPositiveInfinity(c.HomingLimitSqrDistance) || sqrDist <= c.HomingLimitSqrDistance;
@@ -307,6 +309,7 @@ namespace StrategyManagerModule
 				public ProjectileObject thisProjectile;
 				public IProjectileMovement ThisMovement => thisProjectile == null ? null : thisProjectile.ThisMovement;
 				public MovementJobData movementJobData;
+				public bool IsDeath => thisProjectile.IsDeath;
 
 				public Movement(ProjectileObject projectile, StrategyUpdateSubClass<Movement> thisSubClass) : base(thisSubClass)
 				{
@@ -356,7 +359,7 @@ namespace StrategyManagerModule
 				for (int i = 0 ; i < length ; i++)
 				{
 					var entry = UpdateList[i];
-					if (entry == null || entry.ThisMovement == null)
+					if (entry == null || entry.ThisMovement == null || entry.IsDeath)
 					{
 						// default-initialize (safe)
 						movements[i] = default;

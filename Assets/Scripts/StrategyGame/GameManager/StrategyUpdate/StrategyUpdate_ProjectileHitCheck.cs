@@ -1,8 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using UnityEngine;
 
-using UnityEngine;
-
-using Collider = UnityEngine.Collider;
 using RaycastHit = UnityEngine.RaycastHit;
 
 
@@ -50,45 +47,32 @@ namespace StrategyManagerModule
 			public class HitCheck : UpdateLogic
 			{
 				public readonly  ProjectileObject thisProjectile;
-				private readonly HashSet<Collider> alreadyHit;
+
 				public IProjectileHit hitReporting => thisProjectile;
+
+				StrategyGamePlayData.WeaponType weaponType;
 
 				public HitCheck(ProjectileObject projectile, StrategyUpdate_ProjectileHitCheck thisSubClass) : base(thisSubClass)
 				{
 					thisProjectile = projectile;
-					alreadyHit = new();
 				}
 
 				protected override void OnDispose()
 				{
-					alreadyHit.Clear();
+
 				}
 
 				protected override void OnUpdate(in float deltaTime)
 				{
-
+					
 				}
 				public void ProjectileMoveCast(out int hitCount, ref RaycastHit[] raycastHits)
 				{
 					hitReporting.ProjectileMoveCast(out hitCount, ref raycastHits);
 				}
-				public void SendMoveCastReport(in int hitCount, in RaycastHit[] raycastHits)
+				public void SendHitReporting(in int hitCount, in RaycastHit[] raycastHits)
 				{
-					var runtimeData = thisProjectile.RuntimeData;
-					var statsData = thisProjectile.StatsData;
-					int currPiercingCount = runtimeData.PiercingCount; // 관통 가능한 횟수
-					int maxPiercingCount = statsData.PiercingMinMaxCount.y;
-
-					for (int i = 0 ; i < hitCount && currPiercingCount < maxPiercingCount ; i++)
-					{
-						var hitCollider = raycastHits[i].collider;
-						if (!alreadyHit.Add(hitCollider)) continue;
-
-						hitReporting.HitReporting(raycastHits[i].collider);
-
-						// HitReporting 이후 적절한 수치만큼 관통 카운트가 감소될 것.
-						currPiercingCount = runtimeData.PiercingCount;
-					}
+					hitReporting.SendHitReporting(in hitCount, in raycastHits);
 				}
 			}
 
@@ -103,7 +87,7 @@ namespace StrategyManagerModule
 					if (projectile == null) continue;
 
 					item.ProjectileMoveCast(out int hitCount, ref raycastHits);
-					if (hitCount > 0) item.SendMoveCastReport(in hitCount, in raycastHits);
+					if (hitCount > 0) item.SendHitReporting(in hitCount, in raycastHits);
 				}
 			}
 		}

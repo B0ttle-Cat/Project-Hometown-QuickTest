@@ -18,7 +18,7 @@ public partial class ProjectileObject : IProjectileMovement
     partial void InitMovement()
 	{
 		movement = GetComponent<ProjectileMovement>();
-		movement.Init(StatsData, OnTransformUpdate);
+		movement.Init(RuntimeData, StatsData, OnTransformUpdate, OnArrive);
 	}
 	partial void DeinitMovment()
 	{
@@ -37,7 +37,16 @@ public partial class ProjectileObject : IProjectileMovement
         RuntimeData.Velocity = MoveDiraction * MoveSpeed;
 	}
 
-    public void ApplyJobResult(in ProjectileMovement.MovementJobData movementJobData)
+    void OnArrive(Vector3 arrivePosition)
+    {
+        if (StatsData.HomingEnabled || StatsData.ExplosionEnabled)
+        {
+            MovementDeath(arrivePosition);
+        }
+    }
+
+
+	public void ApplyJobResult(in ProjectileMovement.MovementJobData movementJobData)
     {
         ThisMovement.ApplyJobResult(movementJobData);
     }

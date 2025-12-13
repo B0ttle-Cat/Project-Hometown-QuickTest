@@ -78,6 +78,21 @@ namespace StrategyManagerModule
 			return false;
 		}
 
+		public virtual bool Clear(bool callback = true)
+		{
+			int length = Count;
+			if (length == 0) return false;
+			if (callback)
+			{
+				for (int i = 0 ; i < length ; i++)
+				{
+					Invoke(Items[i], false);
+				}
+			}
+			Items.Clear();
+			return true;
+		}
+
 		// Bulk helpers
 		public bool AddRange(IEnumerable<T> items)
 		{
@@ -369,7 +384,6 @@ namespace StrategyManagerModule
 			{
 				var item = factory();
 				item.gameObject.SetActive(true);
-				Add(item);
 				return item;
 			}
 		}
@@ -388,24 +402,23 @@ namespace StrategyManagerModule
 				{
 					var newArray = await factory(count);
 					int length = newArray.Length;
-                    for (int i = 0 ; i < length ; i++)
-                    {
+					for (int i = 0 ; i < length ; i++)
+					{
 						result[i] = newArray[i];
 					}
-                    count = 0;
+					count = 0;
 				}
 
 			}
+
 			count = result.Length;
-            for (int i = 0 ; i < count ; i++)
-            {
+			for (int i = 0 ; i < count ; i++)
+			{
 				var item = result[i];
 				item.gameObject.SetActive(true);
-				Add(item);
 			}
 
-
-            return result;
+			return result;
 		}
 		public async void ReadyPoolCount(int count, Func<int, Awaitable<T[]>> factory)
 		{
@@ -413,8 +426,8 @@ namespace StrategyManagerModule
 			count -= recycled.Count;
 			var newArray = await factory(count);
 
-            for (int i = 0 ; i < count ; i++)
-            {
+			for (int i = 0 ; i < count ; i++)
+			{
 				var item = newArray[i];
 				item.gameObject.SetActive(false);
 				recycled.Push(item); // 풀에 반환
@@ -454,7 +467,7 @@ namespace StrategyManagerModule
 			recycled.Clear();
 		}
 
-        public int RecycledCount => recycled.Count;
+		public int RecycledCount => recycled.Count;
 	}
 
 	/// <summary>

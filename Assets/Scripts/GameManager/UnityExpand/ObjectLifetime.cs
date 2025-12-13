@@ -1,12 +1,17 @@
-﻿using UnityEngine;
+﻿using System;
+
+using UnityEngine;
 
 [DefaultExecutionOrder(99)]
 public class ObjectLifetime : MonoBehaviour
 {
-    public float lifeTime;
-    protected virtual void OnEnable()
+        [SerializeField]
+	private float lifeTime;
+    private Action deathAction;
+
+	protected virtual void OnEnable()
     {
-        ResetTime(lifeTime);
+        ResetTime(lifeTime, deathAction ?? TimeoutDestroy);
 	}
 	protected virtual void Update()
     {
@@ -14,9 +19,10 @@ public class ObjectLifetime : MonoBehaviour
         UpdateTime(in deltaTIme);
 	}
 
-    public virtual void ResetTime(float lifeTime)
+    public virtual void ResetTime(float lifeTime, Action deathAction)
     {
         this.lifeTime = lifeTime; 
+        this. deathAction = deathAction;
     }
     protected virtual void UpdateTime(in float deltaTIme)
     {
@@ -26,7 +32,7 @@ public class ObjectLifetime : MonoBehaviour
 		
         if (lifeTime < 0f)
 		{
-            TimeoutDestroy();
+            deathAction?.Invoke();
 		}
 	}
     protected virtual void TimeoutDestroy()

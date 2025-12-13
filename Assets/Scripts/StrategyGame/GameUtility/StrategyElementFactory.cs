@@ -19,7 +19,7 @@ public static class StrategyElementFactory
 		UnitObject newUnit = Instantiate(unitKey, factionId, position, rotation, false);
 		newUnit.Init(setterData);
 		SetOperationBelong(setterData.belongedOperation);
-		if (enterThis) newUnit.InitOther();
+		if (enterThis) AddCollector(newUnit);
 
 		return newUnit;
 
@@ -52,17 +52,23 @@ public static class StrategyElementFactory
 			GameObject.Destroy(newObject);
 			return null;
 		}
-
-		StrategyManager.Collector.Add<UnitObject>(unitObject);
 		unitObject.Init(profile, factionID);
-		if (enterThis) unitObject.InitOther();
 		newObject.name = $"{profile.displayName}_{unitObject.UnitID:00}";
-
 		if (StrategyManager.Collector.TryFind<Faction>(factionID, out var faction))
 		{
 			faction.API_UnitCounter(profile.유닛_인력);
 		}
+		if (enterThis)
+		{
+			AddCollector(unitObject);
+		}
+
 		return unitObject;
+	}
+	private static void AddCollector(UnitObject unitObject)
+	{
+		unitObject.InitOther();
+		StrategyManager.Collector.Add<UnitObject>(unitObject);
 	}
 	public static void Destroy(UnitObject unitObject)
 	{
@@ -162,28 +168,31 @@ public static class StrategyElementFactory
 		int newCount = setterData.count;
 		if (newCount == 0) return null;
 
-		var newProjectiles = await Instantiate(projectilKey, newCount, false);
+
+		var newProjectiles = await Instantiate(null,null,projectilKey, newCount, false);
 
 		for (int i = 0 ; i < newCount ; i++)
 		{
 			newProjectiles[i].Init(setterData[i]);
 			if (enterThis)
 			{
-				newProjectiles[i].InitOther();
+				ICombatHandler order = StrategyManager.Collector.Find<UnitObject>(setterData[i].orderInSetterIndex);
+				ITargetableCombatant target = StrategyManager.Collector.Find<UnitObject>(setterData[i].targetInSetterIndex);
+				AddCollector(order, target, newProjectiles[i]);
 			}
 		}
 		return newProjectiles;
 	}
-	public static async Awaitable<ProjectileObject[]> Instantiate(ProjectileKey projectileKey, int newCount = 1, bool enterThis = true)
+	public static async Awaitable<ProjectileObject[]> Instantiate(ICombatHandler order, ITargetableCombatant target, ProjectileKey projectileKey, int newCount = 1, bool enterThis = true)
 	{
 		if (StrategyManager.Key2Projectile.TryGetAsset(projectileKey, out var info))
 		{
-			return await Instantiate(info.ProjectileProfileObject, newCount, enterThis);
+			return await Instantiate(order, target, info.ProjectileProfileObject, newCount, enterThis);
 		}
 		return null;
 	}
 
-	public static async Awaitable<ProjectileObject[]> Instantiate(ProjectileProfileObject profile, int newCount = 1, bool enterThis = true)
+	public static async Awaitable<ProjectileObject[]> Instantiate(ICombatHandler order, ITargetableCombatant target, ProjectileProfileObject profile, int newCount = 1, bool enterThis = true)
 	{
 		GameObject prefab = profile.prefab;
 		ProjectileObject projectilePrefab = prefab.GetComponent<ProjectileObject>();
@@ -192,11 +201,12 @@ public static class StrategyElementFactory
 
 		for (int i = 0 ; i < newCount ; i++)
 		{
+			newProjectiles[i].Init();
 			newProjectiles[i].Init(profile);
-			if (enterThis)
-			{
-				newProjectiles[i].InitOther();
-			}
+		}
+		if (enterThis)
+		{
+			AddCollector(order, target, newProjectiles);
 		}
 
 		return newProjectiles;
@@ -212,6 +222,28 @@ public static class StrategyElementFactory
 
 		projectile.DeInit();
 		StrategyManager.Pooling.Release(projectile);
+	}
+	private static void AddCollector(ICombatHandler order, ITargetableCombatant target, ProjectileObject projectile)
+	{
+		projectile.InitOther();
+		if (order != null && target != null)
+		{
+			projectile.SetTarget(order, target);
+		}
+		StrategyManager.Pooling.Add<ProjectileObject>(projectile);
+	}
+	private static void AddCollector(ICombatHandler order, ITargetableCombatant target, ProjectileObject[] projectiles)
+	{
+		int addCout = projectiles.Length;
+		for (int i = 0 ; i < addCout ; i++)
+		{
+			projectiles[i].InitOther();
+			if (order != null && target != null)
+			{
+				projectiles[i].SetTarget(order, target);
+			}
+		}
+		StrategyManager.Pooling.Add<ProjectileObject>(projectiles);
 	}
 
 	#endregion

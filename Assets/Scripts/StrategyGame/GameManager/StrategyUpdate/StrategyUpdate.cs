@@ -166,44 +166,44 @@ namespace StrategyManagerModule
 		{
 			tempData = new StrategyUpdateTempData();
 			updateList = new List<(UpdateLogicSort type, IStrategyUpdater updater)>()
-		{
-			(UpdateLogicSort.Start,  null),
+			{
+				(UpdateLogicSort.Start,  null),
 
-			(UpdateLogicSort.거점_점령상태,  new StrategyUpdate_CaptureUpdate(this)),
-			(UpdateLogicSort.거점_시설_건설,  new StrategyUpdate_ConstructUpdate(this)),
+				(UpdateLogicSort.거점_점령상태,  new StrategyUpdate_CaptureUpdate(this)),
+				(UpdateLogicSort.거점_시설_건설,  new StrategyUpdate_ConstructUpdate(this)),
 
-			(UpdateLogicSort.세력_자원갱신시작,  new StrategyUpdate_StartFactionResourcesSupply(this)),
-			(UpdateLogicSort.거점_자원갱신시작,  new StrategyUpdate_StartSectorResourcesSupply(this)),
+				(UpdateLogicSort.세력_자원갱신시작,  new StrategyUpdate_StartFactionResourcesSupply(this)),
+				(UpdateLogicSort.거점_자원갱신시작,  new StrategyUpdate_StartSectorResourcesSupply(this)),
 
-			(UpdateLogicSort.거점_시설보급, null),
-			(UpdateLogicSort.거점_버프계산, null),
-			(UpdateLogicSort.유닛_보급충전, null),
+				(UpdateLogicSort.거점_시설보급, null),
+				(UpdateLogicSort.거점_버프계산, null),
+				(UpdateLogicSort.유닛_보급충전, null),
 
-			(UpdateLogicSort.NearbyUpdate, new StrategyUpdate_NearbyUpdate(this)),
-			(UpdateLogicSort.세력_감지목록_업데이트, new StrategyUpdate_FactionDetectListUpdate(this)),
-			(UpdateLogicSort.유닛_CombatTarget_업데이트, new StrategyUpdate_UnitCombatTargetUpdate(this)),
-			(UpdateLogicSort.각종_상태_업데이트,  new StrategyUpdate_FSMUpdater(this)),
+				(UpdateLogicSort.NearbyUpdate, new StrategyUpdate_NearbyUpdate(this)),
+				(UpdateLogicSort.세력_감지목록_업데이트, new StrategyUpdate_FactionDetectListUpdate(this)),
+				(UpdateLogicSort.유닛_CombatTarget_업데이트, new StrategyUpdate_UnitCombatTargetUpdate(this)),
+				(UpdateLogicSort.각종_상태_업데이트,  new StrategyUpdate_FSMUpdater(this)),
 
-			(UpdateLogicSort.유닛_기본변수갱신, null),
-			(UpdateLogicSort.유닛_버프계산,  new StrategyUpdate_UnitBuff(this)),
+				(UpdateLogicSort.유닛_기본변수갱신, null),
+				(UpdateLogicSort.유닛_버프계산,  new StrategyUpdate_UnitBuff(this)),
 
-			(UpdateLogicSort.작전_기본변수_갱신, new StrategyUpdate_OperationUpdate(this)),
+				(UpdateLogicSort.작전_기본변수_갱신, new StrategyUpdate_OperationUpdate(this)),
 
-			(UpdateLogicSort.유닛_노드_이동,  new StrategyUpdate_NodeMovement(this)),
-			(UpdateLogicSort.유닛_추격_이동,  new StrategyUpdate_NavMovement(this)),
+				(UpdateLogicSort.유닛_노드_이동,  new StrategyUpdate_NodeMovement(this)),
+				(UpdateLogicSort.유닛_추격_이동,  new StrategyUpdate_NavMovement(this)),
 
-			(UpdateLogicSort.투사체_위치이동,  new StrategyUpdate_ProjectileMovement(this)),
-			(UpdateLogicSort.투사체_충돌확인,  new StrategyUpdate_ProjectileHitCheck(this)),
+				(UpdateLogicSort.투사체_위치이동,  new StrategyUpdate_ProjectileMovement(this)),
+				(UpdateLogicSort.투사체_충돌확인,  new StrategyUpdate_ProjectileHitCheck(this)),
 
-			(UpdateLogicSort.유닛_공격_업데이트,  null),
-			(UpdateLogicSort.유닛_데미지_계산,  null),
-			(UpdateLogicSort.유닛_사망_처리,  null),
+				(UpdateLogicSort.유닛_공격_업데이트,  null),
+				(UpdateLogicSort.유닛_데미지_계산,  null),
+				(UpdateLogicSort.유닛_사망_처리,  null),
 
-			(UpdateLogicSort.거점_자원갱신종료,  new StrategyUpdate_EndedSectorResourcesSupply(this)),
-			(UpdateLogicSort.세력_자원갱신종료,  new StrategyUpdate_EndedFactionResourcesSupply(this)),
+				(UpdateLogicSort.거점_자원갱신종료,  new StrategyUpdate_EndedSectorResourcesSupply(this)),
+				(UpdateLogicSort.세력_자원갱신종료,  new StrategyUpdate_EndedFactionResourcesSupply(this)),
 
-			(UpdateLogicSort.End, null)
-		};
+				(UpdateLogicSort.End, null)
+			};
 
 			foreach ((UpdateLogicSort type, IStrategyUpdater updater) in updateList)
 			{
@@ -270,7 +270,11 @@ namespace StrategyManagerModule
 		public virtual List<T> UpdateList { get => updateList; protected set => updateList = value; }
 
 		void IStrategyUpdater.Start() => Start();
-		void IStrategyUpdater.Update(in float deltaTime) => Update(in deltaTime);
+		void IStrategyUpdater.Update(in float deltaTime)
+		{
+			if (UpdateList == null || UpdateList.Count == 0) return;
+			Update(in deltaTime);
+		}
 		void IDisposable.Dispose()
 		{
 			thisUpdater = null;
@@ -413,5 +417,64 @@ namespace StrategyManagerModule
 	}
 	public partial class StrategyUpdate
 	{
+		public class StrategyUpdate_ComputeDamage : StrategyUpdateSubClass<StrategyUpdate_ComputeDamage.ComputeDamage>
+		{
+			public StrategyUpdate_ComputeDamage(StrategyUpdate updater) : base(updater)
+			{
+			}
+
+			protected override void Dispose()
+			{
+				StrategyManager.Collector.RemoveChangeListener<CombatUtility.DamageCommander>(OnChangeValue);
+			}
+			protected override void Start()
+			{
+				StrategyManager.Collector.AddChangeListener<CombatUtility.DamageCommander>(OnChangeValue, true);
+			}
+
+			private void OnChangeValue(CombatUtility.DamageCommander commander, bool added)
+			{
+				if (commander == null) return;
+				if (added)
+				{
+					UpdateList.Add(new ComputeDamage(commander, this));
+				}
+			}
+
+			public class ComputeDamage : UpdateLogic
+			{
+				public readonly CombatUtility.DamageCommander commander;
+
+				public ComputeDamage(CombatUtility.DamageCommander commander, StrategyUpdateSubClass<ComputeDamage> thisSubClass) : base(thisSubClass)
+				{
+					this.commander = commander;
+				}
+
+				protected override void OnDispose()
+				{
+					if(commander == null) return;
+					commander.Dispose();
+				}
+
+				protected override void OnUpdate(in float deltaTime)
+				{
+					if (commander == null) return;
+					commander.Compute();
+				}
+			}
+
+			protected override void Update(in float deltaTime)
+			{
+				int length = UpdateList.Count;
+				for (int i = 0 ; i < length ; i++)
+				{
+					var item = UpdateList[i];
+					if (item == null) continue;
+					item.Update(in deltaTime);
+					item.Dispose();
+				}
+				UpdateList.Clear();
+			}
+		}
 	}
 }

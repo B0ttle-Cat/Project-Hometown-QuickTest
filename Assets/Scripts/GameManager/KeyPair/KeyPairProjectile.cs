@@ -33,35 +33,35 @@ public class KeyPairProjectile : KeyPairAssets<StrategyGamePlayData.ProjectileKe
 			AddAsset(item.Key, new(item.Key, item.Value));
 		}
 	}
-	Dictionary<StrategyGamePlayData.ProjectileKey, string> GeneralNames = new Dictionary<StrategyGamePlayData.ProjectileKey, string>
+	Dictionary<ProjectileKey, string> GeneralNames = new Dictionary<ProjectileKey, string>
 	{
-		[ StrategyGamePlayData.ProjectileKey.일반탄_소형] =  "일반탄_소형" ,
-		[ StrategyGamePlayData.ProjectileKey.일반탄_중형] =  "일반탄_중형" ,
-		[ StrategyGamePlayData.ProjectileKey.일반탄_대형] =  "일반탄_대형" ,
+		[ ProjectileKey.일반탄_소형] =  nameof(ProjectileKey.일반탄_소형) ,
+		[ ProjectileKey.일반탄_중형] =  nameof(ProjectileKey.일반탄_중형) ,
+		[ ProjectileKey.일반탄_대형] =  nameof(ProjectileKey.일반탄_대형) ,
 
-		[ StrategyGamePlayData.ProjectileKey.관통탄_소형] =  "관통탄_소형" ,
-		[ StrategyGamePlayData.ProjectileKey.관통탄_중형] =  "관통탄_중형" ,
-		[ StrategyGamePlayData.ProjectileKey.관통탄_대형] =  "관통탄_대형" ,
+		[ ProjectileKey.관통탄_소형] =  nameof(ProjectileKey.관통탄_소형) ,
+		[ ProjectileKey.관통탄_중형] =  nameof(ProjectileKey.관통탄_중형) ,
+		[ ProjectileKey.관통탄_대형] =  nameof(ProjectileKey.관통탄_대형) ,
 
-		[ StrategyGamePlayData.ProjectileKey.관통특화탄_소형] =  "관통특화탄_소형" ,
-		[ StrategyGamePlayData.ProjectileKey.관통특화탄_중형] =  "관통특화탄_중형" ,
-		[ StrategyGamePlayData.ProjectileKey.관통특화탄_대형] =  "관통특화탄_대형" ,
+		[ ProjectileKey.관통특화탄_소형] =  nameof(ProjectileKey.관통특화탄_소형) ,
+		[ ProjectileKey.관통특화탄_중형] =  nameof(ProjectileKey.관통특화탄_중형) ,
+		[ ProjectileKey.관통특화탄_대형] =  nameof(ProjectileKey.관통특화탄_대형) ,
 
-		[ StrategyGamePlayData.ProjectileKey.폭발탄_소형] =  "폭발탄_소형" ,
-		[ StrategyGamePlayData.ProjectileKey.폭발탄_중형] =  "폭발탄_중형" ,
-		[ StrategyGamePlayData.ProjectileKey.폭발탄_대형] =  "폭발탄_대형" ,
+		[ ProjectileKey.폭발탄_소형] =  nameof(ProjectileKey.폭발탄_소형) ,
+		[ ProjectileKey.폭발탄_중형] =  nameof(ProjectileKey.폭발탄_중형) ,
+		[ ProjectileKey.폭발탄_대형] =  nameof(ProjectileKey.폭발탄_대형) ,
 
-		[ StrategyGamePlayData.ProjectileKey.관통특화탄_소형] =  "관통특화탄_소형" ,
-		[ StrategyGamePlayData.ProjectileKey.관통특화탄_중형] =  "관통특화탄_중형" ,
-		[ StrategyGamePlayData.ProjectileKey.관통특화탄_대형] =  "관통특화탄_대형" ,
+		[ ProjectileKey.관통특화탄_소형] =  nameof(ProjectileKey.관통특화탄_소형) ,
+		[ ProjectileKey.관통특화탄_중형] =  nameof(ProjectileKey.관통특화탄_중형) ,
+		[ ProjectileKey.관통특화탄_대형] =  nameof(ProjectileKey.관통특화탄_대형) ,
 
-		[ StrategyGamePlayData.ProjectileKey.폭발특화탄_소형] =  "폭발특화탄_소형" ,
-		[ StrategyGamePlayData.ProjectileKey.폭발특화탄_중형] =  "폭발특화탄_중형" ,
-		[ StrategyGamePlayData.ProjectileKey.폭발특화탄_대형] =  "폭발특화탄_대형" ,
+		[ ProjectileKey.폭발특화탄_소형] =  nameof(ProjectileKey.폭발특화탄_소형) ,
+		[ ProjectileKey.폭발특화탄_중형] =  nameof(ProjectileKey.폭발특화탄_중형) ,
+		[ ProjectileKey.폭발특화탄_대형] =  nameof(ProjectileKey.폭발특화탄_대형) ,
 
-		[ StrategyGamePlayData.ProjectileKey.에너지탄_소형] =  "에너지탄_소형" ,
-		[ StrategyGamePlayData.ProjectileKey.에너지탄_중형] =  "에너지탄_중형" ,
-		[ StrategyGamePlayData.ProjectileKey.에너지탄_대형] =  "에너지탄_대형" ,
+		[ ProjectileKey.에너지탄_소형] =  nameof(ProjectileKey.에너지탄_소형) ,
+		[ ProjectileKey.에너지탄_중형] =  nameof(ProjectileKey.에너지탄_중형) ,
+		[ ProjectileKey.에너지탄_대형] =  nameof(ProjectileKey.에너지탄_대형) ,
 	};
 	#endregion
 	#region SetUniqueType

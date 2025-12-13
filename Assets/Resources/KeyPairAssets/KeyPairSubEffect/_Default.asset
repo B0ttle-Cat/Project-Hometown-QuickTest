@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e51aeb49d08ab34b8bc45ec9fe4ca03, type: 3}
+  m_Name: _Default
+  m_EditorClassIdentifier: Assembly-CSharp::KeyPairSubEffect
+  chains:
+  - {fileID: 11400000, guid: f6a5cee91abf34043aeaaa92c8a24410, type: 2}
+  prefix: 
+  suffix: 
+  KeyPairTargetList: []

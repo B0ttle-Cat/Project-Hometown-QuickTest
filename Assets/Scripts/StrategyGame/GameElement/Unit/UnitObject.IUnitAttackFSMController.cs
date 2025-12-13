@@ -91,19 +91,7 @@ public partial class UnitObject : IUnitAttackFSMController
 		if (target == null) return;
 
 
-		var projectiles = await StrategyElementFactory.Instantiate(minaProjectileKey, count);
-		for (int i = 0 ; i < count ; i++)
-		{
-			OnShot(projectiles[i], this, target);
-		}
-
-
-
-		static void OnShot(ProjectileObject projectile, ICombatHandler order, ITargetableCombatant target)
-		{
-			if (projectile == null) return;
-			projectile.SetTarget(order, target);
-		}
+		var projectiles = await StrategyElementFactory.Instantiate(this, target, minaProjectileKey, count);
 	}
 
 	private void ThisCombatController_OnChangeCurrentCombatTarget(ITargetableCombatant obj)

@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e51aeb49d08ab34b8bc45ec9fe4ca03, type: 3}
+  m_Name: CombatSubEffect
+  m_EditorClassIdentifier: Assembly-CSharp::KeyPairSubEffect
+  chains: []
+  prefix: 
+  suffix: 
+  KeyPairTargetList:
+  - key: 1
+    asset:
+      subEffectKey: 1
+      displayName: "\uD3ED\uBC1C_\uC18C\uD615"
+      subEffectProfileObject: {fileID: 11400000, guid: eb6e139bfd3099643b162b78395062dc, type: 2}
+  - key: 2
+    asset:
+      subEffectKey: 2
+      displayName: "\uD3ED\uBC1C_\uC911\uD615"
+      subEffectProfileObject: {fileID: 11400000, guid: 476b7fb063e91d647b265faca32db548, type: 2}
+  - key: 3
+    asset:
+      subEffectKey: 3
+      displayName: "\uD3ED\uBC1C_\uB300\uD615"
+      subEffectProfileObject: {fileID: 11400000, guid: 5185522237d76ab43a2fdc4e7e9dcb03, type: 2}
+  - key: 4
+    asset:
+      subEffectKey: 4
+      displayName: "\uC804\uACA9_\uC18C\uD615"
+      subEffectProfileObject: {fileID: 11400000, guid: 486a0e9dbedc7ab4ab2a07a02ddee41f, type: 2}
+  - key: 5
+    asset:
+      subEffectKey: 5
+      displayName: "\uC804\uACA9_\uC911\uD615"
+      subEffectProfileObject: {fileID: 11400000, guid: efa7fb1802a096a4084c5d16bcde57e7, type: 2}
+  - key: 6
+    asset:
+      subEffectKey: 6
+      displayName: "\uC804\uACA9_\uB300\uD615"
+      subEffectProfileObject: {fileID: 11400000, guid: e04491fa97f225949b26cd766f28e778, type: 2}

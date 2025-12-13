@@ -58,19 +58,11 @@ namespace StrategyManagerModule
 
 			var store = stores[prefabObject] as PoolingElementStore<T>;
 			T[] items = await store.PoolList.Acquires(count, factory);
-
-            for (int i = 0 ; i < count ; i++)
-            {
-                var item = items[i];
+			for (int i = 0 ; i < count ; i++)
+			{
+				var item = items[i];
 				item.PrefabReference = prefabObject;
-
-				onAnyElementChanged?.Invoke(item.gameObject, true);
-				if (onChangeEventWithType.TryGetValue(typeof(T), out var eventWithType))
-				{
-					eventWithType?.Invoke(item.gameObject, true);
-				}
-            }
-
+			}
 			return items;
 		}
 		public T Acquire<T>(GameObject prefabObject, Func<T> factory) where T : class, IStrategyPoolingElement
@@ -111,6 +103,31 @@ namespace StrategyManagerModule
 				Debug.LogWarning($"풀에 등록되지 않은 프리팹 {item.gameObject.name}의 객체를 반환 시도했습니다.");
 			}
 			return false;
+		}
+
+		public void Add<T>(params T[] addObjects) where T : class, IStrategyPoolingElement
+		{
+			if(addObjects.Length == 0) return;
+			var prefabObject = addObjects[0].PrefabReference;
+
+			if (!stores.TryGetValue(prefabObject, out var s))
+				Register<T>(prefabObject);
+
+			var store = stores[prefabObject] as PoolingElementStore<T>;
+			int count = addObjects.Length;
+
+
+			for (int i = 0 ; i < count ; i++)
+			{
+				var item = addObjects[i];
+				store.PoolList.Add(item);
+
+				onAnyElementChanged?.Invoke(item.gameObject, true);
+				if (onChangeEventWithType.TryGetValue(typeof(T), out var eventWithType))
+				{
+					eventWithType?.Invoke(item.gameObject, true);
+				}
+			}
 		}
 
 		public IEnumerable<IList> GetAllRawLists()

@@ -10,12 +10,7 @@ public class ProjectileMovement : MonoBehaviour, IProjectileMovement
 {
 	[SerializeField] protected ICombatHandler order;
 	[SerializeField] protected ITargetableCombatant target;
-	[SerializeField] protected Vector3 startPosition;
-	[SerializeField] protected Vector3 targetPosition;
 	[SerializeField] protected Vector3 prevPosition;
-	[SerializeField] protected Vector3 currentPosition;
-	[SerializeField] protected float moveSpeed;
-	[SerializeField] protected Vector3 moveDirection;
 
 	private bool resetJobDataFlag;
 	public struct MovementJobData
@@ -25,14 +20,15 @@ public class ProjectileMovement : MonoBehaviour, IProjectileMovement
 		public float3 Position;
 		public float3 PrevPosition;
 		public float3 TargetPosition;
+		public float3 EndedPosition;
 		public float3 MoveDirection;
 		public float MoveSpeed;
 
 		public float DeltaTime;
 		public float UpdateTime;
 
-		public float3 CepOffset; // 초기 CEP 오프셋은 유지
-		public uint RandomState; // Job 내부 난수 상태 유지
+		public float3 CepOffset; 
+		public uint RandomState;
 	}
 	public struct MovmentConstantData
 	{
@@ -52,25 +48,28 @@ public class ProjectileMovement : MonoBehaviour, IProjectileMovement
 	IProjectileMovement IProjectileMovement.ThisMovement => this;
 	int IProjectileMovement.OrderElementID => order.ThisElement.ID;
 	int IProjectileMovement.TargetElementID => target.ThisElement.ID;
-	Vector3 IProjectileMovement.StartPosition => startPosition;
-	Vector3 IProjectileMovement.TargetPosition => targetPosition;
+	Vector3 IProjectileMovement.StartPosition => RuntimeData.StartPosition;
+	Vector3 IProjectileMovement.TargetPosition => RuntimeData.TargetPosition;
 	Vector3 IProjectileMovement.PrevPosition => prevPosition;
-	Vector3 IProjectileMovement.CurrentPosition => currentPosition;
-	float IProjectileMovement.MoveSpeed => moveSpeed;
-	Vector3 IProjectileMovement.MoveDiraction => moveDirection;
+	Vector3 IProjectileMovement.CurrentPosition => RuntimeData.Position;
+	float IProjectileMovement.MoveSpeed => RuntimeData.MoveSpeed;
+	Vector3 IProjectileMovement.MoveDiraction => RuntimeData.MoveDiraction;
 
-	private ProjectileStatsData projectileStats;
+	private ProjectileRuntimeData RuntimeData;
+	private ProjectileStatsData StatsData;
 	private Action onTransformUpdate;
+	private Action<Vector3> onArrive;
 
-	public void Init(ProjectileStatsData projectileStats, Action onTransformUpdate)
+	public void Init(ProjectileRuntimeData runtimeData, ProjectileStatsData statsData, Action onTransformUpdate, Action<Vector3> onArrive)
 	{
-		this.projectileStats = projectileStats;
+		this.RuntimeData = runtimeData;
+		this.StatsData = statsData;
 
-		OnInit(projectileStats);
+		OnInit(runtimeData, statsData);
 
 		resetJobDataFlag = true;
 	}
-	protected virtual void OnInit(ProjectileStatsData projectileStats) { }
+	protected virtual void OnInit(ProjectileRuntimeData runtimeData, ProjectileStatsData statsData) { }
 	internal void Deinit()
 	{
 		order = null;
@@ -82,11 +81,11 @@ public class ProjectileMovement : MonoBehaviour, IProjectileMovement
 		this.order = order;
 		this.target = target;
 
-		startPosition = order.AttackStartPosition;
-		targetPosition = target.HitTargetPosition;
+		RuntimeData.StartPosition = order.AttackStartPosition;
+		RuntimeData.TargetPosition = target.HitTargetPosition;
 
-		transform.position = startPosition;
-		transform.LookAt(targetPosition);
+		transform.position = RuntimeData.StartPosition;
+		transform.LookAt(RuntimeData.TargetPosition);
 
 
 		OnSetTarget();
@@ -96,26 +95,28 @@ public class ProjectileMovement : MonoBehaviour, IProjectileMovement
 
 	public void InitMovementJobData(out MovementJobData pureMovementData)
 	{
-		startPosition = order.AttackStartPosition;
-		targetPosition = target.HitTargetPosition;
-		Vector3 cepOffset = projectileStats.CepEnabled ? GenerateCEPOffset(projectileStats.CepRadius, projectileStats.CepProbability) : Vector3.zero;
+		RuntimeData.StartPosition = order.AttackStartPosition;
+		RuntimeData.TargetPosition = target.HitTargetPosition;
+		Vector3 cepOffset = StatsData.CepEnabled ? GenerateCEPOffset(StatsData.CepRadius, StatsData.CepProbability) : Vector3.zero;
 
-		prevPosition = startPosition;
-		currentPosition = startPosition;
-		moveDirection = (targetPosition + cepOffset - startPosition).normalized;
-		moveSpeed = projectileStats.MoveStartSpeed;;
+		prevPosition = RuntimeData.StartPosition;
+		RuntimeData.Position = RuntimeData.StartPosition;
+		RuntimeData.EndedPosition = RuntimeData.TargetPosition + cepOffset;
+		RuntimeData.MoveDiraction = (RuntimeData.EndedPosition - RuntimeData.Position).normalized;
+		RuntimeData.MoveSpeed = StatsData.MoveStartSpeed;
 
-		transform.position = currentPosition;
-		transform.LookAt(currentPosition + moveDirection);
+		transform.position = RuntimeData.Position;
+		transform.LookAt(RuntimeData.Position + RuntimeData.MoveDiraction);
 
 		pureMovementData = new MovementJobData
 		{
-			ProjectileKey = (int)projectileStats.ProjectileKey, // ProjectileKey 필드가 ProjectileStatsData에 있다고 가정
-			Position = currentPosition,
+			ProjectileKey = (int)StatsData.ProjectileKey, // ProjectileKey 필드가 ProjectileStatsData에 있다고 가정
+			Position = RuntimeData.Position,
 			PrevPosition = prevPosition,
-			TargetPosition = targetPosition,
-			MoveDirection = moveDirection,
-			MoveSpeed = moveSpeed,
+			TargetPosition = RuntimeData.TargetPosition,
+			EndedPosition = RuntimeData.EndedPosition,
+			MoveDirection = RuntimeData.MoveDiraction,
+			MoveSpeed = RuntimeData.MoveSpeed,
 			DeltaTime = 0,
 			UpdateTime = 0,
 			CepOffset = cepOffset,
@@ -127,22 +128,30 @@ public class ProjectileMovement : MonoBehaviour, IProjectileMovement
 		// PrepareCurve 함수 및 NativeArray 할당 로직은 더 이상 이 함수 내부에서 호출하지 않습니다.
 		// Curve Data는 StrategyUpdate_ProjectileMovement 클래스가 모든 키에 대해 미리 준비하여 Job에 전달해야 합니다.
 	}
-
 	public void ApplyJobResult(in MovementJobData pureMovementData)
 	{
 		prevPosition = pureMovementData.PrevPosition;
-		currentPosition = pureMovementData.Position;
-		moveSpeed = pureMovementData.MoveSpeed;
-		moveDirection = pureMovementData.MoveDirection;
+		RuntimeData.Position = pureMovementData.Position;
+		RuntimeData.EndedPosition = pureMovementData.EndedPosition;
+		RuntimeData.MoveSpeed = pureMovementData.MoveSpeed;
+		RuntimeData.MoveDiraction = pureMovementData.MoveDirection;
 
-		transform.position = currentPosition;
-		transform.LookAt(currentPosition + moveDirection);
+		transform.position = RuntimeData.Position;
+		transform.LookAt(RuntimeData.Position + RuntimeData.MoveDiraction);
 
 		onTransformUpdate?.Invoke();
+		
+		float sqrRemainingdistance = (RuntimeData.Position - RuntimeData.EndedPosition).sqrMagnitude;
+		float deltaMoveDistance = RuntimeData.MoveSpeed * pureMovementData.DeltaTime;
+		if (sqrRemainingdistance < deltaMoveDistance * deltaMoveDistance)
+		{
+			onArrive?.Invoke(RuntimeData.Position);
+		}
 	}
 	public void UpdateMovementJobData(ref MovementJobData pureMovementData)
 	{
 		if (target == null) return;
+		RuntimeData.TargetPosition = target.HitTargetPosition;
 		pureMovementData.TargetPosition = target.HitTargetPosition;
 	}
 	protected static Vector3 GenerateCEPOffset(float cepRadius, float cepProbability)
@@ -158,7 +167,5 @@ public class ProjectileMovement : MonoBehaviour, IProjectileMovement
 		float z = r * Mathf.Sin(angle);
 		return new Vector3(x, 0f, z);
 	}
-
-
 }
 

@@ -15,13 +15,15 @@ namespace StrategyManagerModule
 			}
 			protected override void Dispose()
 			{
-				StrategyManager.Collector.RemoveAnyChangeListener(OnChangeElement);
+				StrategyManager.Collector.RemoveChangeListener<INearbySearcherValueGetter>(OnChangeElement);
+				StrategyManager.Collector.RemoveChangeListener<INearbyElement>(OnChangeElement);
 				serchTargets.Clear();
 				serchTargets = null;
 			}
 			protected override void Start()
 			{
-				StrategyManager.Collector.AddAnyChangeListener(OnChangeElement, true);
+				StrategyManager.Collector.AddChangeListener<INearbySearcherValueGetter>(OnChangeElement, true);
+				StrategyManager.Collector.AddChangeListener<INearbyElement>(OnChangeElement, true);
 			}
 			private void OnChangeElement(object element, bool added)
 			{
