@@ -309,7 +309,7 @@ namespace StrategyManagerModule
 				public ProjectileObject thisProjectile;
 				public IProjectileMovement ThisMovement => thisProjectile == null ? null : thisProjectile.ThisMovement;
 				public MovementJobData movementJobData;
-				public bool IsDeath => thisProjectile.IsDeath;
+				public bool IsDestroy => thisProjectile.IsDestroy;
 
 				public Movement(ProjectileObject projectile, StrategyUpdateSubClass<Movement> thisSubClass) : base(thisSubClass)
 				{
@@ -359,7 +359,7 @@ namespace StrategyManagerModule
 				for (int i = 0 ; i < length ; i++)
 				{
 					var entry = UpdateList[i];
-					if (entry == null || entry.ThisMovement == null || entry.IsDeath)
+					if (entry == null || entry.ThisMovement == null || entry.IsDestroy)
 					{
 						// default-initialize (safe)
 						movements[i] = default;

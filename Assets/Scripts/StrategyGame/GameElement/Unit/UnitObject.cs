@@ -96,6 +96,7 @@ public partial class UnitObject : MonoBehaviour
 
 	public void InitOther()
 	{
+		InitLife();		   
 		InitDebugRender();
 		InitMovement();
 		InitOperationObject();
@@ -104,12 +105,12 @@ public partial class UnitObject : MonoBehaviour
 		InitCombat();
 		InitAttack();
 	}
+	partial void InitProfileObject(UnitProfileObject profileObj);
 	private void InitDebugRender()
 	{
 		if (debugRender == null || Faction == null) return;
 		debugRender.SetColor(Faction.FactionColor);
 	}
-	partial void InitProfileObject(UnitProfileObject profileObj);
 	partial void InitMovement();
 	partial void InitVisibility();
 	partial void InitOperationObject();

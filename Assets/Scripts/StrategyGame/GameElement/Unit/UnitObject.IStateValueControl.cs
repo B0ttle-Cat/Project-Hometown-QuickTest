@@ -9,6 +9,7 @@ public partial class UnitObject : IStatsValueControl
 	private StatsGroup skillBuffGroup;
 	public StatsList MainStatsList => StatsData.GetStatsList();
 	public StatsGroup SkillBuffGroup => skillBuffGroup ??= new StatsGroup();
+
 	partial void InitProfileObject(UnitProfileObject profileObj)
 	{
 		if (profileObj == null) return;
@@ -63,17 +64,19 @@ public partial class UnitObject : IStatsValueControl
 }
 public partial class UnitObject : ICombatCommon, ICombatOffense, ICombatDefance
 {
-    public ICombatCommon ThisCombatStats => this;
+	public ICombatCommon ThisCombatStats => this;
 	public ICombatOffense ThisOffense => this;
 	public ICombatDefance ThisDefance => this;
 
-    public void TakeDamage(int damage, CombatUtility.DamageFlag flag)
-    {
+	public void TakeDamage(int damage, CombatUtility.DamageFlag flag)
+	{
 		int currentDurability = ThisCombatStats.CurrentDurability;
+		currentDurability -= damage;
+		ThisCombatStats.SetValueInMainStats(StatsType.유닛_현재내구도, currentDurability);
+
 		if (currentDurability <= 0)
 		{
-			return;
+			DamageDeath();
 		}
-
 	}
 }

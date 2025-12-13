@@ -55,16 +55,13 @@ MonoBehaviour:
     cepEnabled: 0
     cepRadius: 3
     cepProbability: 0.9
-    cepReapply: 0
-    cepReapplyMinMaxTime: {x: 1, y: 3}
     lifeTime: 1
-    destroyDelayAfterHit: 0.1
     collisionRadius: 0.1
     hitDamageMultiplier: 1
     hitEffectsFlag: 0
     hitEffectsTimeMultiplier: 1
-    piercingEnable: 0
-    piercingMinMaxCount: {x: 1, y: 1}
+    lastHitEffectKey: 0
+    piercingMaxCount: 1
     piercingFalloffCurve:
       serializedVersion: 2
       m_Curve:
@@ -89,8 +86,8 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    explosionEnabled: 0
     explosionMinMaxRadius: {x: 1, y: 5}
+    explosionDelayAfterHit: 0
     explosionFalloffCurve:
       serializedVersion: 2
       m_Curve:
@@ -115,3 +112,33 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
+    explosionEffectKey: 1
+    empShockPropagationDistance: 5
+    empShockChainCount: 3
+    empShockDepthCount: 5
+    empShockOverlapsCount: 1
+    empShockFalloffCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: -1
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: -1
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    empShockEffectKey: 4

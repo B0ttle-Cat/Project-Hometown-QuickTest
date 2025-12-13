@@ -60,8 +60,6 @@ public record ProjectileStatsData // ProfileStats
 	[BoxGroup("Collision"), LabelText("충돌 반경"), SerializeField]
 	private float collisionRadius = 0.1f;
 
-	[BoxGroup("Hit"), LabelText("명중시 피해 배율"), SerializeField]
-	private float hitDamageMultiplier = 1f;
 	[BoxGroup("Hit"), LabelText("명중시 상태이상 플래그"), SerializeField]
 	private StatusEffectsFlag hitEffectsFlag = StatusEffectsFlag.None;
 #if UNITY_EDITOR
@@ -94,15 +92,15 @@ public record ProjectileStatsData // ProfileStats
 
 	[BoxGroup("Hit/S", GroupName ="EMP충격", VisibleIf = "EmpShockEnabled"), LabelText("전파 전달 거리"), SerializeField]
 	private float empShockPropagationDistance;
-	[BoxGroup("Hit/Emp"), LabelText("EMP 동시 전파 수"), SerializeField]
+	[BoxGroup("Hit/S"), LabelText("EMP 동시 전파 수"), SerializeField]
 	private int empShockChainCount;
-	[BoxGroup("Hit/Emp"), LabelText("EMP 전파 횟수"), SerializeField]
+	[BoxGroup("Hit/S"), LabelText("EMP 전파 횟수"), SerializeField]
 	private int empShockDepthCount;
-	[BoxGroup("Hit/Emp"), LabelText("EMP 중첩 횟수"), SerializeField]
+	[BoxGroup("Hit/S"), LabelText("EMP 중첩 횟수"), SerializeField]
 	private int empShockOverlapsCount;
-	[BoxGroup("Hit/Emp"), LabelText("EMP 효과 감쇠 커브(Depth)"), SerializeField]
+	[BoxGroup("Hit/S"), LabelText("EMP 효과 감쇠 커브(Depth)"), SerializeField]
 	private AnimationCurve empShockFalloffCurve;
-	[BoxGroup("Hit/Emp"), LabelText("EMP 충격 Effect 타입"), SerializeField]
+	[BoxGroup("Hit/S"), LabelText("EMP 충격 Effect 타입"), SerializeField]
 	private SubEffectKey empShockEffectKey;
 
 
@@ -140,7 +138,6 @@ public record ProjectileStatsData // ProfileStats
 
 		collisionRadius = statsData.CollisionRadius;
 
-		hitDamageMultiplier = statsData.HitDamageMultiplier;
 		hitEffectsFlag = statsData.HitEffectsFlag;
 		hitEffectsTimeMultiplier = statsData.HitEffectsTimeMultiplier;
 
@@ -166,10 +163,10 @@ public record ProjectileStatsData // ProfileStats
 		bool cepEnabled = false, float cepRadius = 3f, float cepProbability = 0.9f,
 		float lifeTime = 1f,
 		float collisionRadius = 0.1f,
-		float hitDamageMultiplier = 1f, StatusEffectsFlag hitEffectsFlag = StatusEffectsFlag.None, float hitEffectsTimeMultiplier = 1f, SubEffectKey projectileHitEffectKey = SubEffectKey.None,
+		StatusEffectsFlag hitEffectsFlag = StatusEffectsFlag.None, float hitEffectsTimeMultiplier = 1f, SubEffectKey projectileHitEffectKey = SubEffectKey.None,
 		bool piercingEnable = false, int PiercingMaxCount = default, AnimationCurve piercingFalloffCurve = null,
 		bool explosionEnabled = false, Vector2 explosionMinMaxRadius = default, float explosionDelayAfterHit = 0f, AnimationCurve explosionFalloffCurve = null, SubEffectKey explosionEffectKey = SubEffectKey.폭발_소형,
-		float empShockPropagationDistance = 5f, int empShockChainCount = 3, int empShockDepthCount = 5, int empShockOverlapsCount = 1, AnimationCurve empShockFalloffCurve = null, SubEffectKey empShockEffectKey = SubEffectKey.전격_소형)
+		float empShockPropagationDistance = 5f, int empShockChainCount = 3, int empShockDepthCount = 5, int empShockOverlapsCount = 1, AnimationCurve empShockFalloffCurve = null, SubEffectKey empShockEffectKey = SubEffectKey.EMP충격_소형)
 	{
 	
 		this.projectileKey = projectileKey;
@@ -196,7 +193,6 @@ public record ProjectileStatsData // ProfileStats
 		this.lifeTime = lifeTime;
 		this.collisionRadius = collisionRadius;
 
-		this.hitDamageMultiplier = hitDamageMultiplier;
 		this.hitEffectsFlag = hitEffectsFlag;
 		this.hitEffectsTimeMultiplier = hitEffectsTimeMultiplier;
 		this.lastHitEffectKey = projectileHitEffectKey;
@@ -246,7 +242,6 @@ public record ProjectileStatsData // ProfileStats
 
 			collisionRadius = this.collisionRadius,
 
-			hitDamageMultiplier = this.hitDamageMultiplier,
 			hitEffectsFlag = this.hitEffectsFlag,
 			hitEffectsTimeMultiplier = this.hitEffectsTimeMultiplier,
 			lastHitEffectKey = this.lastHitEffectKey,
@@ -291,7 +286,6 @@ public record ProjectileStatsData // ProfileStats
 	public float CepProbability => cepProbability;
 	public float LifeTime => lifeTime;
 	public float CollisionRadius => collisionRadius;
-	public float HitDamageMultiplier => hitDamageMultiplier;
 	public StatusEffectsFlag HitEffectsFlag => hitEffectsFlag;
 	public float HitEffectsTimeMultiplier => hitEffectsTimeMultiplier;
 	public SubEffectKey ProjectileHitEffectKey => lastHitEffectKey;

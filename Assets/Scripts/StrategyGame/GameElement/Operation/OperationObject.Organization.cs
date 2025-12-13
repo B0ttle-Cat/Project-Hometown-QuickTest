@@ -157,7 +157,10 @@ public partial class OperationObject // Organization
 		}
 		return false;
 	}
-	public void RelaseAllUnit(bool withDestroy = false)
+	/// <summary>
+	/// </summary>
+	/// <param name="withDestroy">true 인 경우 == OperationObject와 함꼐 소속된 Unit 도 같이 삭제되는 경우</param>
+	public void RelaseAllUnit(bool withDestroy = false) 
 	{
 		if (allUnitObj != null)
 		{
@@ -176,7 +179,7 @@ public partial class OperationObject // Organization
 				}
 				if (withDestroy)
 				{
-					StrategyElementFactory.Destroy(unit);
+					unit.DestroyWithOperation();
 				}
 				tempList[i] = null;
 			}

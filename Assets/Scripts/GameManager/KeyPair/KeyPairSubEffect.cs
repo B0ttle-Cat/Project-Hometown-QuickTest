@@ -38,9 +38,9 @@ public class KeyPairSubEffect : KeyPairAssets<StrategyGamePlayData.SubEffectKey,
 		[SubEffectKey.폭발_소형] = nameof(SubEffectKey.폭발_소형),
 		[SubEffectKey.폭발_중형] = nameof(SubEffectKey.폭발_중형),
 		[SubEffectKey.폭발_대형] = nameof(SubEffectKey.폭발_대형),
-		[SubEffectKey.전격_소형] = nameof(SubEffectKey.전격_소형),
-		[SubEffectKey.전격_중형] = nameof(SubEffectKey.전격_중형),
-		[SubEffectKey.전격_대형] = nameof(SubEffectKey.전격_대형),
+		[SubEffectKey.EMP충격_소형] = nameof(SubEffectKey.EMP충격_소형),
+		[SubEffectKey.EMP충격_중형] = nameof(SubEffectKey.EMP충격_중형),
+		[SubEffectKey.EMP충격_대형] = nameof(SubEffectKey.EMP충격_대형),
 	};
 	#endregion
 	[ButtonGroup("SetupProfiles", order: -4)]

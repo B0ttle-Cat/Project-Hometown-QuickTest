@@ -131,7 +131,6 @@ public class ProjectileProfileObject : ScriptableObject
 			cepProbability: 0.9f,
 			lifeTime: 1f,
 			collisionRadius: 0.1f,
-			hitDamageMultiplier: 1f,
 			hitEffectsFlag: StatusEffectsFlag.None,
 			hitEffectsTimeMultiplier: 1f,
 			projectileHitEffectKey : SubEffectKey.None,
@@ -147,7 +146,7 @@ public class ProjectileProfileObject : ScriptableObject
 			empShockDepthCount : 5, 
 			empShockOverlapsCount : 1,
 			empShockFalloffCurve : AnimationCurve.Linear(0, 1, 1, 0),
-			empShockEffectKey: SubEffectKey.전격_소형
+			empShockEffectKey: SubEffectKey.EMP충격_소형
 		);
 	}
 #endif

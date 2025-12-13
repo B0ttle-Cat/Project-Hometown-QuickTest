@@ -44,11 +44,10 @@ public partial class ProjectileObject : MonoBehaviour
 
 	public void InitOther()
 	{
+		InitLife();
 		InitScale();
-		InitLifetime();
 		InitMovement();
 	}
-	partial void InitLifetime();
 	partial void InitMovement();
 	partial void InitHitReporting();
 	public void DeInit()
@@ -68,15 +67,15 @@ public partial class ProjectileObject : MonoBehaviour
 		ThisMovement.SetTarget(order, target);
 	}
 }
-public partial class ProjectileObject // Init Lifetime
+public partial class ProjectileObject : IStrategyElementDestroyer
 {
-	private bool isDeath;
-	public bool IsDeath => isDeath;
+	public IStrategyElementDestroyer ThisDestroyer => this;
+    public bool IsDestroy { get ; set ; }
 
-	ObjectLifetime objectLifetime;
-	partial void InitLifetime()
+    ObjectLifetime objectLifetime;
+	public void InitLife()
 	{
-		isDeath = false;
+		IsDestroy = false;
 		if (objectLifetime == null || !TryGetComponent<ObjectLifetime>(out objectLifetime))
 		{
 			objectLifetime = gameObject.AddComponent<ObjectLifetime>();
@@ -84,20 +83,21 @@ public partial class ProjectileObject // Init Lifetime
 		objectLifetime.enabled = true;
 		objectLifetime.ResetTime(RuntimeData.LifeTime, LifeTimeDeath);
 	}
-
+	void IStrategyElementDestroyer.OnDestroy()
+	{
+		StrategyElementFactory.Destroy(this);
+	}
 	private void LifeTimeDeath()
 	{
-		if (isDeath) return;
-		isDeath = true;
+		if (IsDestroy) return;
 		objectLifetime.enabled = false;
 
-		StrategyElementFactory.Destroy(this);
+		ThisDestroyer.ReservationDestroy();
 	}
 
 	private void HitableDeath(ICombatOffense offense, ICombatDefance defance)
 	{
-		if (isDeath) return;
-		isDeath = true;
+		if (IsDestroy) return;
 		objectLifetime.enabled = false;
 
 		var projectileHitEffectKey =  StatsData.ProjectileHitEffectKey;
@@ -133,17 +133,11 @@ public partial class ProjectileObject // Init Lifetime
 			}
 		}
 
-		DestroyNextFrame();
-		async void DestroyNextFrame()
-		{
-			await Awaitable.NextFrameAsync();
-			StrategyElementFactory.Destroy(this);
-		}
+		ThisDestroyer.ReservationDestroy();
 	}
 	private void MovementDeath(Vector3 deathPosition)
 	{
-		if (isDeath) return;
-		isDeath = true;
+		if (IsDestroy) return;
 		objectLifetime.enabled = false;
 
 
@@ -177,12 +171,7 @@ public partial class ProjectileObject // Init Lifetime
 			}
 		}
 
-		DestroyNextFrame();
-		async void DestroyNextFrame()
-		{
-			await Awaitable.NextFrameAsync();
-			StrategyElementFactory.Destroy(this);
-		}
+		ThisDestroyer.ReservationDestroy();
 	}
 }
 
@@ -347,7 +336,7 @@ public partial class ProjectileObject : IProjectileHit
 
 					ThisProjectileHit.HitReporting(raycastHits[i].collider);
 
-					if (isDeath)
+					if (IsDestroy)
 					{
 						break;
 					}

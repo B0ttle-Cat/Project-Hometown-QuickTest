@@ -45,8 +45,8 @@ namespace StrategyManagerModule
 			유닛_노드_이동,
 			유닛_추격_이동,
 			유닛_공격_업데이트,         // 공격 딜레이 계산 및 공격 생성
-			유닛_데미지_계산,          // 충돌된 데이미 계산을 진행
-			유닛_사망_처리,               // HP 없는 유닛을 삭제.
+			데미지_계산,          // 충돌된 데이미 계산을 진행
+			사망_파괴_처리,               // HP 없는 유닛을 삭제.
 
 			투사체_위치이동,
 			투사체_충돌확인,
@@ -195,9 +195,8 @@ namespace StrategyManagerModule
 				(UpdateLogicSort.투사체_위치이동,  new StrategyUpdate_ProjectileMovement(this)),
 				(UpdateLogicSort.투사체_충돌확인,  new StrategyUpdate_ProjectileHitCheck(this)),
 
-				(UpdateLogicSort.유닛_공격_업데이트,  null),
-				(UpdateLogicSort.유닛_데미지_계산,  null),
-				(UpdateLogicSort.유닛_사망_처리,  null),
+				(UpdateLogicSort.데미지_계산,  new StrategyUpdate_ComputeDamage(this)),
+				(UpdateLogicSort.사망_파괴_처리,  new StrategyUpdate_ElementDestroyer(this)),
 
 				(UpdateLogicSort.거점_자원갱신종료,  new StrategyUpdate_EndedSectorResourcesSupply(this)),
 				(UpdateLogicSort.세력_자원갱신종료,  new StrategyUpdate_EndedFactionResourcesSupply(this)),
@@ -303,6 +302,15 @@ namespace StrategyManagerModule
 				if (item == null) continue;
 				item.Update(in deltaTime);
 			}
+		}
+		protected void Clear()
+		{
+			int length = UpdateList == null ? 0 : UpdateList.Count;
+            for (int i = 0 ; i < length ; i++)
+            {
+				UpdateList[i].Dispose();
+			}
+			UpdateList.Clear();
 		}
 		public abstract partial class UpdateLogic : IDisposable
 		{
@@ -414,57 +422,64 @@ namespace StrategyManagerModule
 				}
 			}
 		}
+
 	}
 	public partial class StrategyUpdate
 	{
-		public class StrategyUpdate_ComputeDamage : StrategyUpdateSubClass<StrategyUpdate_ComputeDamage.ComputeDamage>
+		public class StrategyUpdate_ElementDestroyer : StrategyUpdateSubClass<StrategyUpdate_ElementDestroyer.ElementDestroyer>
 		{
-			public StrategyUpdate_ComputeDamage(StrategyUpdate updater) : base(updater)
-			{
+			BaseList<IStrategyElementDestroyer> destroyers;
+			public StrategyUpdate_ElementDestroyer(StrategyUpdate updater) : base(updater)
+            {
+            }
+
+            protected override void Dispose()
+            {
+				StrategyManager.Collector.RemoveChangeListener<IStrategyElementDestroyer>(OnChangeValue);
+				destroyers = null;
 			}
 
-			protected override void Dispose()
-			{
-				StrategyManager.Collector.RemoveChangeListener<CombatUtility.DamageCommander>(OnChangeValue);
-			}
-			protected override void Start()
-			{
-				StrategyManager.Collector.AddChangeListener<CombatUtility.DamageCommander>(OnChangeValue, true);
-			}
+            protected override void Start()
+            {
+				StrategyManager.Collector.AddChangeListener<IStrategyElementDestroyer>(OnChangeValue, true);
+            }
 
-			private void OnChangeValue(CombatUtility.DamageCommander commander, bool added)
-			{
-				if (commander == null) return;
-				if (added)
+            private void OnChangeValue(IStrategyElementDestroyer destroyer, bool added)
+            {
+				if (destroyer == null) return;
+
+				if(added)
 				{
-					UpdateList.Add(new ComputeDamage(commander, this));
+					UpdateList.Add(new ElementDestroyer(destroyer, this));
 				}
-			}
+            }
 
-			public class ComputeDamage : UpdateLogic
-			{
-				public readonly CombatUtility.DamageCommander commander;
-
-				public ComputeDamage(CombatUtility.DamageCommander commander, StrategyUpdateSubClass<ComputeDamage> thisSubClass) : base(thisSubClass)
-				{
-					this.commander = commander;
-				}
-
-				protected override void OnDispose()
-				{
-					if(commander == null) return;
-					commander.Dispose();
+            public class ElementDestroyer : UpdateLogic
+            {
+				public IStrategyElementDestroyer destroyer;
+				public ElementDestroyer(IStrategyElementDestroyer destroyer, StrategyUpdate_ElementDestroyer thisSubClass) : base(thisSubClass)
+                {
+					this.destroyer = destroyer;
 				}
 
-				protected override void OnUpdate(in float deltaTime)
+                protected override void OnDispose()
 				{
-					if (commander == null) return;
-					commander.ComputeDamage();
+					if(destroyer != null)
+					{
+						destroyer = null;
+					}
 				}
-			}
 
-			protected override void Update(in float deltaTime)
-			{
+                protected override void OnUpdate(in float deltaTime)
+                {
+					if(destroyer == null) return;
+					destroyer.OnDestroy();
+					destroyer = null;
+				}
+            }
+
+            protected override void Update(in float deltaTime)
+            {
 				int length = UpdateList.Count;
 				for (int i = 0 ; i < length ; i++)
 				{
@@ -474,6 +489,7 @@ namespace StrategyManagerModule
 					item.Dispose();
 				}
 				UpdateList.Clear();
+				(destroyers ??= StrategyManager.Collector.GetList<IStrategyElementDestroyer>())?.Clear();
 			}
 		}
 	}

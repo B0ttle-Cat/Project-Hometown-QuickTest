@@ -21,3 +21,29 @@
 	{
 	}
 }
+
+public partial class UnitObject : IStrategyElementDestroyer
+{
+	public IStrategyElementDestroyer ThisDestroyer => this;
+    public bool IsDestroy { get; set; }
+
+    public void InitLife()
+	{
+		IsDestroy = false;
+	}
+
+	void IStrategyElementDestroyer.OnDestroy()
+    {
+		IsDestroy = true;
+		StrategyElementFactory.Destroy(this);
+	}
+
+	public void DamageDeath()
+	{
+		ThisDestroyer.ReservationDestroy();
+	}
+	public void DestroyWithOperation()
+	{
+		ThisDestroyer.ReservationDestroy();
+	}
+}
