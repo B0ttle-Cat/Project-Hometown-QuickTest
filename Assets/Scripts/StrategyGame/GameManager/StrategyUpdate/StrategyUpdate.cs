@@ -269,11 +269,7 @@ namespace StrategyManagerModule
 		public virtual List<T> UpdateList { get => updateList; protected set => updateList = value; }
 
 		void IStrategyUpdater.Start() => Start();
-		void IStrategyUpdater.Update(in float deltaTime)
-		{
-			if (UpdateList == null || UpdateList.Count == 0) return;
-			Update(in deltaTime);
-		}
+		void IStrategyUpdater.Update(in float deltaTime)=>Update(in deltaTime);
 		void IDisposable.Dispose()
 		{
 			thisUpdater = null;

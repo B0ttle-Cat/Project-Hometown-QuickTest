@@ -13,6 +13,7 @@ namespace StrategyManagerModule
 		public class StrategyUpdate_ProjectileHitCheck : StrategyUpdateSubClass<StrategyUpdate_ProjectileHitCheck.HitCheck>
 		{
 			private RaycastHit[] raycastHits = null;
+			private Collider[] overlaps = null;
 			public StrategyUpdate_ProjectileHitCheck(StrategyUpdate updater) : base(updater)
 			{
 
@@ -27,6 +28,7 @@ namespace StrategyManagerModule
 			protected override void Start()
 			{
 				raycastHits = new RaycastHit[IProjectileHit.MIN_ARRAY_CAPACITY];
+				overlaps = new Collider[IProjectileHit.MIN_ARRAY_CAPACITY];
 				StrategyManager.Pooling.AddChangeListener<ProjectileObject>(OnChangeValue, true);
 			}
 
@@ -64,15 +66,19 @@ namespace StrategyManagerModule
 
 				protected override void OnUpdate(in float deltaTime)
 				{
-					
+
+				}
+				public void ProjectileOverlap(out int overlapCount, ref Collider[] overlaps)
+				{
+					hitReporting.ProjectileOverlap(out overlapCount, ref overlaps);
 				}
 				public void ProjectileMoveCast(out int hitCount, ref RaycastHit[] raycastHits)
 				{
 					hitReporting.ProjectileMoveCast(out hitCount, ref raycastHits);
 				}
-				public void SendHitReporting(in int hitCount, in RaycastHit[] raycastHits)
+				public void SendHitReporting(in int overlapCount, in Collider[] overlaps, in int hitCount, in RaycastHit[] raycastHits)
 				{
-					hitReporting.SendHitReporting(in hitCount, in raycastHits);
+					hitReporting.SendHitReporting(in overlapCount, in overlaps, in hitCount, in raycastHits);
 				}
 			}
 
@@ -86,8 +92,9 @@ namespace StrategyManagerModule
 					var projectile = item.thisProjectile;
 					if (projectile == null) continue;
 
+					item.ProjectileOverlap(out int overlapCount, ref overlaps);
 					item.ProjectileMoveCast(out int hitCount, ref raycastHits);
-					if (hitCount > 0) item.SendHitReporting(in hitCount, in raycastHits);
+					if (overlapCount + hitCount > 0) item.SendHitReporting(in overlapCount, in overlaps, in hitCount, in raycastHits);
 				}
 			}
 		}

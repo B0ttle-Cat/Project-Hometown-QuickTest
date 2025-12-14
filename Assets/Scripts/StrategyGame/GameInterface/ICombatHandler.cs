@@ -7,10 +7,9 @@ using static StrategyGamePlayData;
 
 using Random = UnityEngine.Random;
 
-public interface ICombatHandler : ICombatCommon
+public interface ICombatHandler : ICombatCommon, IStrategyElement
 {
 	ICombatHandler ThisCombatHandler { get; }
-	IStrategyElement ThisElement { get; }
 	int FactionID { get; }
 
 	Transform transform { get; }
@@ -36,11 +35,12 @@ public interface ICombatHandler : ICombatCommon
 	void ChangeCombatTarget(in ITargetableCombatant newTarget);
 }
 
-public interface ICombatCommon : IStatsValueControl
+public interface ICombatCommon : IStatsValueControl, IStrategyElement
 {
 	ICombatCommon ThisCombatStats { get; }
 	ICombatOffense ThisOffense { get; }
 	ICombatDefance ThisDefance { get; }
+	int FactionID { get; }
 
 	// 🛡️ 내구도 및 회복 스탯 (Durability & Recovery)
 	int MaxDurability => GetStatsValue(StatsType.유닛_최대내구도);
@@ -77,9 +77,10 @@ public interface ICombatCommon : IStatsValueControl
 	float ActionRange => GetStatsValuePercent(StatsType.유닛_행동범위_c);
 	float VisionRange => GetStatsValuePercent(StatsType.유닛_시야범위_c);
 }
-public interface ICombatOffense : IStatsValueControl
+public interface ICombatOffense : IStatsValueControl, IStrategyElement
 {
 	ICombatOffense ThisOffense { get; }
+	int FactionID { get; }
 	WeaponType WeaponType => WeaponType.일반;
 
 	// 💥 기본 피해 스탯 (Base Damage)
@@ -98,9 +99,10 @@ public interface ICombatOffense : IStatsValueControl
 	int HitChanceScore => GetStatsValue(StatsType.유닛_공격명중기회);
 	int CriticalChanceScore => GetStatsValue(StatsType.유닛_치명명중기회);
 }
-public interface ICombatDefance : IStatsValueControl
+public interface ICombatDefance : IStatsValueControl, IStrategyElement
 {
 	ICombatDefance ThisDefance { get; }
+	int FactionID { get; }
 	ProtectionType ProtectionType => ProtectionType.일반;
 
 	// 🛡️ 기본 방어 스탯 (Base Defense)
@@ -429,7 +431,7 @@ public static partial class CombatUtility // Command
 		public virtual void ComputeDamage()
 		{
 			totalDamage = 0;
-			if (flag.HasFlag(DamageFlag.None)) return;
+			if (flag == DamageFlag.None) return;
 			if (flag.HasFlag(DamageFlag.Miss)) return;
 
 			bool isCritical = CombatUtility.CheckChance(CombatUtility.CalculateCriticalChance(offense, defance));
@@ -445,8 +447,8 @@ public static partial class CombatUtility // Command
 
 		public virtual void InjectDamage()
 		{
-			if (flag.HasFlag(DamageFlag.None)) return;
-			
+			if (flag == DamageFlag.None) return;
+
 			if (flag.HasFlag(DamageFlag.Miss))
 			{
 				defance.TakeDamage(0, flag);

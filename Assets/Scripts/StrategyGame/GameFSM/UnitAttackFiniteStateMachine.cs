@@ -1,5 +1,7 @@
 ﻿using System;
 
+using Sirenix.OdinInspector;
+
 using UnityEngine;
 
 using static StrategyGamePlayData;
@@ -58,6 +60,7 @@ public partial class UnitAttackFiniteStateMachine : FiniteStateMachine<UnitAttac
 	{
 		OnReloadingTiming?.Invoke();
 	}
+	[Serializable]
 	public abstract class AttackState : BaseState
 	{
 		protected readonly UnitAttackFiniteStateMachine attackState;
@@ -91,6 +94,7 @@ public partial class UnitAttackFiniteStateMachine : FiniteStateMachine<UnitAttac
 			return ThisType;
 		}
 	}
+	[Serializable]
 	public class IdleStatte : AttackState
 	{
 		public IdleStatte(UnitAttackFiniteStateMachine attackState, UnitAttackFSMType type) : base(attackState, type)
@@ -114,8 +118,10 @@ public partial class UnitAttackFiniteStateMachine : FiniteStateMachine<UnitAttac
 			return ThisType;
 		}
 	}
+	[Serializable]
 	public class AimingState : AttackState
 	{
+		[ShowInInspector]
 		float aimingTime;
 		public AimingState(UnitAttackFiniteStateMachine attackState, UnitAttackFSMType type) : base(attackState, type)
 		{
@@ -144,16 +150,17 @@ public partial class UnitAttackFiniteStateMachine : FiniteStateMachine<UnitAttac
 			return ThisType;
 		}
 	}
+	[Serializable]
 	public class AttackingState : AttackState
 	{
 		private readonly Action<int,int,float> onReady;
 		private readonly Action<int> onAttack;
-		int continuousAttackCount;
-		int simultaneousAttackCount;
-		float continuousAttackDelay;
+		[ShowInInspector] int continuousAttackCount;
+		[ShowInInspector] int simultaneousAttackCount;
+		[ShowInInspector] float continuousAttackDelay;
 
-		int ammoMaxCount;
-		int ammoUsedCount;
+		[ShowInInspector] int ammoMaxCount;
+		[ShowInInspector] int ammoUsedCount;
 		public AttackingState(UnitAttackFiniteStateMachine attackState, UnitAttackFSMType type, Action<int, int, float> onReady, Action<int> onAttack) : base(attackState, type)
 		{
 			this.onReady = onReady;
@@ -221,8 +228,10 @@ public partial class UnitAttackFiniteStateMachine : FiniteStateMachine<UnitAttac
 			}
 		}
 	}
+	[Serializable]
 	public class ReattackingState : AttackState
 	{
+		[ShowInInspector]
 		private float reattackingTime;
 		public ReattackingState(UnitAttackFiniteStateMachine attackState, UnitAttackFSMType type) : base(attackState, type)
 		{
@@ -252,9 +261,11 @@ public partial class UnitAttackFiniteStateMachine : FiniteStateMachine<UnitAttac
 			return ThisType;
 		}
 	}
+	[Serializable]
 	public class Reloading : AttackState
 	{
 		private readonly Action onReloading;
+		[ShowInInspector]
 		private float reloadingTime;
 		public Reloading(UnitAttackFiniteStateMachine attackState, UnitAttackFSMType type, Action onReloading) : base(attackState, type)
 		{

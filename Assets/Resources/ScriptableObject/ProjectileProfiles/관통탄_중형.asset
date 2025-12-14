@@ -17,7 +17,7 @@ MonoBehaviour:
   projectileKey: 1101
   statsData:
     projectileKey: 1101
-    weaponType: 0
+    weaponType: 1
     moveStartSpeed: 10
     isShiftSpeed: 0
     moveMaxSpeed: 20
@@ -57,11 +57,10 @@ MonoBehaviour:
     cepProbability: 0.9
     lifeTime: 1
     collisionRadius: 0.1
-    hitDamageMultiplier: 1
     hitEffectsFlag: 0
     hitEffectsTimeMultiplier: 1
     lastHitEffectKey: 0
-    piercingMaxCount: 1
+    piercingMaxCount: 5
     piercingFalloffCurve:
       serializedVersion: 2
       m_Curve:

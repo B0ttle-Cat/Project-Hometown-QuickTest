@@ -30,6 +30,8 @@ public partial class OperationObject : INearbySearcherValueGetter
 		Searcher = nearbySearcher;
 		Searcher.Init(this);
 		ignoreNearbyList = new HashSet<INearbyElement>();
+
+		StrategyManager.Collector.Add<INearbySearcherValueGetter>(this);
 	}
 	partial void DeInitNearby()
 	{
@@ -37,6 +39,8 @@ public partial class OperationObject : INearbySearcherValueGetter
 		Searcher.DeInit();
 		Searcher = null;
 		ignoreNearbyList?.Clear();
+
+		StrategyManager.Collector.Remove<INearbySearcherValueGetter>(this);
 	}
 	private void AddIgnoreNearbyList(INearbyElement item)
 	{

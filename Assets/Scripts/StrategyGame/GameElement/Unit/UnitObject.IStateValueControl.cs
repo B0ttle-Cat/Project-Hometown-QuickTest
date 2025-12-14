@@ -74,6 +74,9 @@ public partial class UnitObject : ICombatCommon, ICombatOffense, ICombatDefance
 		currentDurability -= damage;
 		ThisCombatStats.SetValueInMainStats(StatsType.유닛_현재내구도, currentDurability);
 
+		// Show Demage Effect
+
+
 		if (currentDurability <= 0)
 		{
 			DamageDeath();

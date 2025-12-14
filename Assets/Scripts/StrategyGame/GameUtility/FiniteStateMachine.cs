@@ -47,9 +47,10 @@ public interface IState<T> where T : Enum
 
 public abstract class FiniteStateMachine<T> : MonoBehaviour, IFSMInterface<T>, IFSMUpdater , IStrategyStartGame where T : Enum
 {
-	private IState<T> currentState;
 	[ShowInInspector]
 	public T CurrentStateType => currentState == null ? default : currentState.ThisType;
+	[ShowInInspector]
+	private IState<T> currentState;
 
 	[SerializeField]
 	private bool testPause;
@@ -127,6 +128,7 @@ public abstract class FiniteStateMachine<T> : MonoBehaviour, IFSMInterface<T>, I
 	}
 
 
+	[Serializable]
     public abstract class BaseState : IState<T>, IDisposable
 	{
 		private readonly FiniteStateMachine<T> fsm;

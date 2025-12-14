@@ -6,6 +6,7 @@ public interface IProjectileHit
 	IProjectileHit ThisProjectileHit { get; }
 
 	public const int MIN_ARRAY_CAPACITY = 16;
+	void ProjectileOverlap(out int overlapCount, ref Collider[] overlaps);
 	void ProjectileMoveCast(out int hitCount, ref RaycastHit[] raycastHits);
 	public void HitReporting(Collider hit)
 	{
@@ -28,5 +29,5 @@ public interface IProjectileHit
 	public void HitOtherObject(GameObject gameObject);
 	public void Hitable(IHitableCombatant hitable);
 	public void HitOtherElement(IStrategyElement hit);
-    void SendHitReporting(in int hitCount, in RaycastHit[] raycastHits);
+    void SendHitReporting(in int overlapCount, in Collider[] overlaps, in int hitCount, in RaycastHit[] raycastHits);
 }

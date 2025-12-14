@@ -17,7 +17,7 @@ MonoBehaviour:
   projectileKey: 1201
   statsData:
     projectileKey: 1201
-    weaponType: 0
+    weaponType: 4
     moveStartSpeed: 10
     isShiftSpeed: 0
     moveMaxSpeed: 20
@@ -57,7 +57,6 @@ MonoBehaviour:
     cepProbability: 0.9
     lifeTime: 1
     collisionRadius: 0.1
-    hitDamageMultiplier: 1
     hitEffectsFlag: 0
     hitEffectsTimeMultiplier: 1
     lastHitEffectKey: 0
@@ -86,7 +85,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    explosionMinMaxRadius: {x: 1, y: 5}
+    explosionMinMaxRadius: {x: 2, y: 4}
     explosionDelayAfterHit: 0
     explosionFalloffCurve:
       serializedVersion: 2
@@ -112,7 +111,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    explosionEffectKey: 1
+    explosionEffectKey: 2
     empShockPropagationDistance: 5
     empShockChainCount: 3
     empShockDepthCount: 5

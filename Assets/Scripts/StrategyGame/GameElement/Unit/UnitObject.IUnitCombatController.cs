@@ -41,11 +41,15 @@ public partial class UnitObject : ICombatHandler, INearbyElement, ITargetableCom
 		isTargetInStartAttackRange = false;
 		isTargetInLimitAttackRange = false;
 		isTargetInActionRange = false;
+
+		StrategyManager.Collector.Add<INearbyElement>(this);
 	}
 	partial void DeinitCombat()
 	{
 		currentCombatTarget = null;
 		OnChangeCurrentCombatTarget = null;
+
+		StrategyManager.Collector.Remove<INearbyElement>(this);
 	}
 	Collider IHitableCombatant.HitCollider => hitCollider;
 	Vector3 ITargetableCombatant.Position => ThisMovement.CurrentPosition;
