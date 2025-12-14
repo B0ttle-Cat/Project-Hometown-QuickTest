@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -256,57 +257,127 @@ namespace StrategyManagerModule
 			}
 		}
 	}
-	public abstract class StrategyUpdateSubClass<T> : IStrategyUpdater where T : StrategyUpdateSubClass<T>.UpdateLogic
+	public abstract class StrategyUpdateSubClass<T> : IStrategyUpdater, IList<T> where T : StrategyUpdateSubClass<T>.UpdateLogic
 	{
 		protected StrategyUpdate thisUpdater;
 		protected StrategyUpdate.StrategyUpdateTempData TempData => thisUpdater == null ? null : thisUpdater.TempData;
-		public StrategyUpdateSubClass(StrategyUpdate updater)
+
+		private readonly List<T> updateList;
+        public int Count => updateList.Count;
+
+        public bool IsReadOnly => ((ICollection<T>)updateList).IsReadOnly;
+
+        public T this[int index] { get => updateList[index]; set => updateList[index] = value; }
+
+        public StrategyUpdateSubClass(StrategyUpdate updater)
 		{
 			thisUpdater = updater;
 			updateList = new List<T>();
 		}
-		protected List<T> updateList;
-		public virtual List<T> UpdateList { get => updateList; protected set => updateList = value; }
-
-		void IStrategyUpdater.Start() => Start();
+        void IStrategyUpdater.Start() => Start();
 		void IStrategyUpdater.Update(in float deltaTime)=>Update(in deltaTime);
 		void IDisposable.Dispose()
 		{
 			thisUpdater = null;
 
-			if (UpdateList != null)
+			if (updateList != null)
 			{
-				int length = UpdateList.Count;
+				int length = updateList.Count;
 				for (int i = 0 ; i < length ; i++)
 				{
-					UpdateList[i].Dispose();
+					updateList[i].Dispose();
 				}
-				UpdateList.Clear();
+				updateList.Clear();
 			}
-			UpdateList = null;
-
 			Dispose();
 		}
 		protected abstract void Dispose();
 		protected abstract void Start();
 		protected virtual void Update(in float deltaTime)
 		{
-			int length = UpdateList.Count;
+			int length = updateList.Count;
 			for (int i = 0 ; i < length ; i++)
 			{
-				var item = UpdateList[i];
+				var item = updateList[i];
 				if (item == null) continue;
 				item.Update(in deltaTime);
 			}
 		}
-		protected void Clear()
+        public int IndexOf(T item)
+        {
+            return updateList.IndexOf(item);
+        }
+        public void Insert(int index, T item)
+        {
+			updateList.Insert(index, item);
+        }
+        public void Add(T item)
+        {
+			updateList.Add(item);
+		}
+		public bool Remove(T item)
 		{
-			int length = UpdateList == null ? 0 : UpdateList.Count;
-            for (int i = 0 ; i < length ; i++)
-            {
-				UpdateList[i].Dispose();
+			if(item  == null) return false;
+			item.Dispose();
+			return updateList.Remove(item);
+		}
+		public void RemoveAt(int index)
+        {
+			if(index < 0 || index >= updateList.Count) return;
+			updateList[index].Dispose();
+			updateList.RemoveAt(index);
+        }
+        public void Clear()
+        {
+			int length = this == null ? 0 : updateList.Count;
+			for (int i = 0 ; i < length ; i++)
+			{
+				updateList[i].Dispose();
 			}
-			UpdateList.Clear();
+			updateList.Clear();
+		}
+		public int RemoveAll(Predicate<T> match)
+		{
+			if (match == null) return 0;
+
+			int removed = 0;
+
+			for (int i = updateList.Count - 1 ; i >= 0 ; --i)
+			{
+				var item = updateList[i];
+				if (!match(item))
+					continue;
+
+				item.Dispose();
+				updateList.RemoveAt(i);
+				++removed;
+			}
+
+			return removed;
+
+		}
+		public bool Contains(T item)
+        {
+			return updateList.Contains(item);
+        }
+
+        public void CopyTo(T[] array, int arrayIndex)
+        {
+			updateList.CopyTo(array, arrayIndex);
+        }
+        public IEnumerator<T> GetEnumerator()
+        {
+            return updateList.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return updateList.GetEnumerator();
+        }
+
+		public int FindIndex(Predicate<T> match)
+		{
+			return updateList.FindIndex(match);
 		}
 		public abstract partial class UpdateLogic : IDisposable
 		{
@@ -420,6 +491,7 @@ namespace StrategyManagerModule
 		}
 
 	}
+
 	public partial class StrategyUpdate
 	{
 		public class StrategyUpdate_ElementDestroyer : StrategyUpdateSubClass<StrategyUpdate_ElementDestroyer.ElementDestroyer>
@@ -446,7 +518,7 @@ namespace StrategyManagerModule
 
 				if(added)
 				{
-					UpdateList.Add(new ElementDestroyer(destroyer, this));
+					Add(new ElementDestroyer(destroyer, this));
 				}
             }
 
@@ -476,15 +548,15 @@ namespace StrategyManagerModule
 
             protected override void Update(in float deltaTime)
             {
-				int length = UpdateList.Count;
+				int length = this.Count;
 				for (int i = 0 ; i < length ; i++)
 				{
-					var item = UpdateList[i];
+					var item = this[i];
 					if (item == null) continue;
 					item.Update(in deltaTime);
 					item.Dispose();
 				}
-				UpdateList.Clear();
+				this.Clear();
 				(destroyers ??= StrategyManager.Collector.GetList<IStrategyElementDestroyer>())?.Clear();
 			}
 		}

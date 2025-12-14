@@ -25,22 +25,22 @@ namespace StrategyManagerModule
 				{
 					if (added)
 					{
-						UpdateList.Add(new DetectListUpdate(faction, this));
+						this.Add(new DetectListUpdate(faction, this));
 					}
 					else
 					{
-						int findIndex = UpdateList.FindIndex(i=>i.thisFactionID == faction.FactionID);
+						int findIndex = this.FindIndex(i=>i.thisFactionID == faction.FactionID);
 						if (findIndex < 0) return;
-						UpdateList.RemoveAt(findIndex);
+						this.RemoveAt(findIndex);
 					}
 				}
 			}
 			protected override void Update(in float deltaTime)
 			{
-				int length = UpdateList == null ? 0 : UpdateList.Count;
+				int length = this == null ? 0 : this.Count;
 				for (int i = 0 ; i < length ; i++)
 				{
-					var item = UpdateList[i];
+					var item = this[i];
 					if (item == null) continue;
 					item.Update(in deltaTime);
 				}

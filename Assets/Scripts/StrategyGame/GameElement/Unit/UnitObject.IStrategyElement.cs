@@ -26,8 +26,7 @@ public partial class UnitObject : IStrategyElementDestroyer
 {
 	public IStrategyElementDestroyer ThisDestroyer => this;
     public bool IsDestroy { get; set; }
-
-    public void InitLife()
+	public void InitLife()
 	{
 		IsDestroy = false;
 	}
@@ -40,10 +39,10 @@ public partial class UnitObject : IStrategyElementDestroyer
 
 	public void DamageDeath()
 	{
-		ThisDestroyer.ReservationDestroy();
+		ThisDestroyer.OnReservationDestroy();
 	}
 	public void DestroyWithOperation()
 	{
-		ThisDestroyer.ReservationDestroy();
+		ThisDestroyer.OnReservationDestroy();
 	}
 }

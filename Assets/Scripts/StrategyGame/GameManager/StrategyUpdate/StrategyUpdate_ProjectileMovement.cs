@@ -259,11 +259,11 @@ namespace StrategyManagerModule
 
 				if (added)
 				{
-					updateList.Add(new(component, this));
+					this.Add(new(component, this));
 				}
 				else
 				{
-					updateList.RemoveAll(f => f.thisProjectile == component);
+					this.RemoveAll(f => f.thisProjectile == component);
 				}
 			}
 			public void RegisterNewProjectileData(int key)
@@ -311,10 +311,11 @@ namespace StrategyManagerModule
 				public MovementJobData movementJobData;
 				public bool IsDestroy => thisProjectile.IsDestroy;
 
-				public Movement(ProjectileObject projectile, StrategyUpdateSubClass<Movement> thisSubClass) : base(thisSubClass)
+				public Movement(ProjectileObject projectile, StrategyUpdate_ProjectileMovement thisSubClass) : base(thisSubClass)
 				{
 					thisProjectile = projectile;
-					movementJobData = default;
+					ThisMovement.InitMovementJobData(out movementJobData);
+					thisSubClass.RegisterNewProjectileData(movementJobData.ProjectileKey);
 				}
 
 				protected override void OnDispose()
@@ -325,16 +326,7 @@ namespace StrategyManagerModule
 				protected override void OnUpdate(in float deltaTime)
 				{
 					if (ThisMovement == null) return;
-					if (ThisMovement.ResetJobDataFlag)
-					{
-						ThisMovement.InitMovementJobData(out movementJobData);
-						if (thisSubClass is StrategyUpdate_ProjectileMovement parent)
-							parent.RegisterNewProjectileData(movementJobData.ProjectileKey);
-					}
-					else
-					{
-						ThisMovement.ApplyJobResult(in movementJobData);
-					}
+					ThisMovement.ApplyJobResult(in movementJobData);
 				}
 
 				public void JobDataUpdate()
@@ -348,7 +340,7 @@ namespace StrategyManagerModule
 			// 8. Update: Job에 HashMap 전달
 			protected override void Update(in float deltaTime)
 			{
-				int length = UpdateList.Count;
+				int length = this.Count;
 				if (length == 0) return;
 
 				// Create native array for job (TempJob)
@@ -358,7 +350,7 @@ namespace StrategyManagerModule
 				// Mono -> Native: read once per instance
 				for (int i = 0 ; i < length ; i++)
 				{
-					var entry = UpdateList[i];
+					var entry = this[i];
 					if (entry == null || entry.ThisMovement == null || entry.IsDestroy)
 					{
 						// default-initialize (safe)
@@ -390,7 +382,7 @@ namespace StrategyManagerModule
 				// Apply results back to Mono (single write per instance)
 				for (int i = 0 ; i < length ; i++)
 				{
-					var entry = UpdateList[i];
+					var entry = this[i];
 					if (entry == null || entry.ThisMovement == null)
 					{
 						continue;

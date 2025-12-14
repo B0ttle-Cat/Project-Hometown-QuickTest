@@ -206,6 +206,10 @@ namespace StrategyManagerModule
 			[InlineButton("Clear_visiteSectorName","Clear")]
 			public int visiteSectorID;
 
+			[FoldoutGroup("@unitKey")]
+			[LabelText("현재 내구도")]
+			[InlineButton("MaxDurability","Max")]
+			public int durability;
 			[ToggleGroup("showEdit")]
 			public Vector3 position;
 			[ToggleGroup("showEdit")]
@@ -225,6 +229,10 @@ namespace StrategyManagerModule
 			private void Clear_belongedOperation()
 			{
 				belongedOperation = -1;
+			}
+			private void MaxDurability()
+			{
+				durability = int.MaxValue;
 			}
 			private static ValueDropdownList<int> GetFactionNames(InspectorProperty property)
 			{

@@ -57,13 +57,13 @@ namespace StrategyManagerModule
 				{
 					if (added)
 					{
-						UpdateList.Add(new FSMUpdater(item, this));
+						this.Add(new FSMUpdater(item, this));
 					}
 					else
 					{
-						int findIndex = UpdateList.FindIndex(f=>f.fsm == item);
+						int findIndex = this.FindIndex(f=>f.fsm == item);
 						if (findIndex < 0) return;
-						UpdateList.RemoveAt(findIndex);
+						this.RemoveAt(findIndex);
 					}
 				}
 			}
@@ -74,9 +74,9 @@ namespace StrategyManagerModule
 
 				UpdateFSMList(unitAttackFsnList, in deltaTime);
 
-				UpdateFSMList(UpdateList, in deltaTime);
+				UpdateFSMList(this, in deltaTime);
 
-				static void UpdateFSMList(List<FSMUpdater> list, in float deltaTime)
+				static void UpdateFSMList(IList<FSMUpdater> list, in float deltaTime)
 				{
 					int length = list.Count;
 					for (int i = 0 ; i < length ; i++)

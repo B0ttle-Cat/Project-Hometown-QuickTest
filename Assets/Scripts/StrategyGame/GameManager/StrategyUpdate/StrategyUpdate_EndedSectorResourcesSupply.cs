@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace StrategyManagerModule
 {
@@ -16,23 +14,22 @@ namespace StrategyManagerModule
 			}
 			protected override void Start()
 			{
-				updateList = new List<ResourcesSupply>();
 				var list = StrategyManager.Collector.GetList<SectorObject>();
 				int length = list.Count;
 				for (int i = 0 ; i < length ; i++)
 				{
 					var sector = list[i];
 					if (sector == null) continue;
-					updateList.Add(new ResourcesSupply(this, sector));
+					this.Add(new ResourcesSupply(this, sector));
 				}
 			}
 
 			protected override void Update(in float deltaTime)
 			{
-				int length = updateList.Count;
+				int length = this.Count;
 				for (int i = 0 ; i < length ; i++)
 				{
-					var update = updateList[i];
+					var update = this[i];
 					if (update == null) continue;
 					update.Update(in deltaTime);
 				}

@@ -26,16 +26,6 @@ namespace StrategyManagerModule
 
 			protected override void Start()
 			{
-				UpdateList = new List<CaptureUpdate>();
-				var list = StrategyManager.Collector.GetList<SectorObject>();
-				int length = list.Count;
-				for (int i = 0 ; i < length ; i++)
-				{
-					var cb = list[i];
-					if (cb == null) continue;
-					UpdateList.Add(new CaptureUpdate(this, cb));
-				}
-
 				StrategyManager.Collector.AddChangeListener<CaptureTag>(OnChangeCaptureTag, true);
 			}
 			private void OnChangeCaptureTag(CaptureTag item, bool added)
@@ -54,12 +44,10 @@ namespace StrategyManagerModule
 
 			protected override void Update(in float deltaTime)
 			{
-				if (UpdateList == null) return;
-
-				int length = UpdateList.Count;
+				int length = Count;
 				for (int i = 0 ; i < length ; i++)
 				{
-					CaptureUpdate update = UpdateList[i];
+					CaptureUpdate update = this[i];
 					SectorObject sector = update.sector;
 					if (sector == null || !sector.isActiveAndEnabled) continue;
 
@@ -75,7 +63,7 @@ namespace StrategyManagerModule
 					float nextProgress = update.captureProgress;
 
 					bool changeProgress =  oldProgress != nextProgress;
-					UpdateList[i] = update;
+					this[i] = update;
 
 					if (oldFaction != nextFaction || changeProgress)
 					{

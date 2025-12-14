@@ -6,7 +6,7 @@
 	{
 		// 스스로에게 파괴 명령
 		RelaseAndDestroyAllUnit();
-		StrategyElementFactory.Destroy(this);
+		ControllerDestory();
 	}
 
 	void IOperationController.OnMovementOrder_AvailableType(out bool execute, out bool pause, out bool cancel)

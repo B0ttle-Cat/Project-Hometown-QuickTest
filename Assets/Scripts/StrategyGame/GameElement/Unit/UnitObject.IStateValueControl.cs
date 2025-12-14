@@ -14,10 +14,13 @@ public partial class UnitObject : IStatsValueControl
 	{
 		if (profileObj == null) return;
 
+		var mainStatsList = new StatsList(profileObj.ConvertStatsValues());
+		mainStatsList.SetValue(StatsType.유닛_현재내구도, mainStatsList.GetValue(StatsType.유닛_최대내구도));
 		Stats = new UnitData.Stats(new()
 		{
-			stats = new StatsList(profileObj.ConvertStatsValues())
+			stats = mainStatsList
 		});
+
 		Skill = new UnitData.Skill(new()
 		{
 			skillDatas = profileObj.personalSkills == null ? new SkillData[0] : profileObj.personalSkills.Clone() as SkillData[]

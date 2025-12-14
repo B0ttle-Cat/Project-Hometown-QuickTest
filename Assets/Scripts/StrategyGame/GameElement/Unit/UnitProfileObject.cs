@@ -209,7 +209,6 @@ public class UnitProfileObject : ScriptableObject
 	[FoldoutGroup("StatsData")] public int 유닛_전력;
 	[Space]
 	[FoldoutGroup("StatsData")] public int 유닛_최대내구도;
-	[FoldoutGroup("StatsData")] public int 유닛_현재내구도;
 
 	[FoldoutGroup("StatsData")] public int 유닛_공격력;
 	[FoldoutGroup("StatsData")] public int 유닛_방어력;
@@ -271,6 +270,7 @@ public class UnitProfileObject : ScriptableObject
 			new (StatsType.유닛_전력, 유닛_전력),
 
 			new (StatsType.유닛_최대내구도, 유닛_최대내구도),
+			
 			new (StatsType.유닛_공격력, 유닛_공격력),
 			new (StatsType.유닛_방어력, 유닛_방어력),
 			new (StatsType.유닛_치유력, 유닛_치유력),
@@ -321,7 +321,6 @@ public class UnitProfileObject : ScriptableObject
 		유닛_전력 = 1;
 
 		유닛_최대내구도 = 1000;
-		유닛_현재내구도 = 900;
 
 		유닛_공격력 = 10;
 		유닛_방어력 = 1;

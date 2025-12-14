@@ -19,21 +19,20 @@ namespace StrategyManagerModule
 
 			protected override void Start()
 			{
-				updateList = new List<ConstructUpdate>();
 				var list = StrategyManager.Collector.GetList<SectorObject>();
 				int length = list.Count;
 				for (int i = 0 ; i < length ; i++)
 				{
 					var cb = list[i];
-					updateList.Add(new ConstructUpdate(this, cb));
+					this.Add(new ConstructUpdate(this, cb));
 				}
 			}
 			protected override void Update(in float deltaTime)
 			{
-				int length = updateList.Count;
+				int length = this.Count;
 				for (int i = 0 ; i < length ; i++)
 				{
-					var item = updateList[i];
+					var item = this[i];
 					if (item == null) continue;
 
 					item.Update(in deltaTime);

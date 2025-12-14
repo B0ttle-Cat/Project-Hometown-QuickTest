@@ -10,23 +10,21 @@ using Random = UnityEngine.Random;
 public interface ICombatHandler : ICombatCommon, IStrategyElement
 {
 	ICombatHandler ThisCombatHandler { get; }
-	int FactionID { get; }
-
 	Transform transform { get; }
 	Vector3 Position { get; }
 	Vector3 AttackStartPosition { get; }
 	Vector2 AttackStartRange { get; }
 	Vector2 AttackLimitRange { get; }
 	bool IsCombatState { get; }
-	ITargetableCombatant CurrentTarget { get; set; }
+	ITargetableCombatant CurrentTarget { get; }
 	bool HasCurrentTarget => CurrentTarget != null;
 	bool TargetInStartAttackRange { get; }
 	bool TargetInLimitAttackRange { get; }
 	bool TargetInActionRange { get; }
 
 	bool IsRootCombatState { get; set; }
-	ITargetableCombatant RootCurrentTarget { get; set; }
-	bool HasRootCurrentTarget => RootCurrentTarget != null;
+	ITargetableCombatant OperationCurrentTarget { get; set; }
+	bool HasOperationCurrentTarget => OperationCurrentTarget != null;
 
 	event Action<ITargetableCombatant> OnChangeCurrentCombatTarget;
 	void UpdateParameters();

@@ -11,8 +11,6 @@ public class ProjectileMovement : MonoBehaviour, IProjectileMovement
 	[SerializeField] protected ICombatHandler order;
 	[SerializeField] protected ITargetableCombatant target;
 	[SerializeField] protected Vector3 prevPosition;
-
-	private bool resetJobDataFlag;
 	public struct MovementJobData
 	{
 		public int ProjectileKey;
@@ -27,7 +25,7 @@ public class ProjectileMovement : MonoBehaviour, IProjectileMovement
 		public float DeltaTime;
 		public float UpdateTime;
 
-		public float3 CepOffset; 
+		public float3 CepOffset;
 		public uint RandomState;
 	}
 	public struct MovmentConstantData
@@ -44,8 +42,7 @@ public class ProjectileMovement : MonoBehaviour, IProjectileMovement
 		public float HomingLimitSqrDistance;
 	}
 
-	bool IProjectileMovement.ResetJobDataFlag => resetJobDataFlag;
-	IProjectileMovement IProjectileMovement.ThisMovement => this;
+	public IProjectileMovement ThisMovement => this;
 	int IProjectileMovement.OrderElementID => order.ThisElement.ID;
 	int IProjectileMovement.TargetElementID => target.ThisElement.ID;
 	Vector3 IProjectileMovement.StartPosition => RuntimeData.StartPosition;
@@ -66,8 +63,6 @@ public class ProjectileMovement : MonoBehaviour, IProjectileMovement
 		this.StatsData = statsData;
 
 		OnInit(runtimeData, statsData);
-
-		resetJobDataFlag = true;
 	}
 	protected virtual void OnInit(ProjectileRuntimeData runtimeData, ProjectileStatsData statsData) { }
 	internal void Deinit()
@@ -79,6 +74,7 @@ public class ProjectileMovement : MonoBehaviour, IProjectileMovement
 	void IProjectileMovement.SetTarget(ICombatHandler order, ITargetableCombatant target)
 	{
 		this.order = order;
+		
 		this.target = target;
 
 		RuntimeData.StartPosition = order.AttackStartPosition;
@@ -86,13 +82,11 @@ public class ProjectileMovement : MonoBehaviour, IProjectileMovement
 
 		transform.position = RuntimeData.StartPosition;
 		transform.LookAt(RuntimeData.TargetPosition);
-
-
-		OnSetTarget();
-		resetJobDataFlag = true;
 	}
-	protected virtual void OnSetTarget() { }
-
+	void IProjectileMovement.ReleaseTarget()
+	{
+		this.target = null;
+	}
 	public void InitMovementJobData(out MovementJobData pureMovementData)
 	{
 		RuntimeData.StartPosition = order.AttackStartPosition;
@@ -122,11 +116,6 @@ public class ProjectileMovement : MonoBehaviour, IProjectileMovement
 			CepOffset = cepOffset,
 			RandomState = (uint)Random.Range(1, int.MaxValue),
 		};
-
-		resetJobDataFlag = false;
-
-		// PrepareCurve 함수 및 NativeArray 할당 로직은 더 이상 이 함수 내부에서 호출하지 않습니다.
-		// Curve Data는 StrategyUpdate_ProjectileMovement 클래스가 모든 키에 대해 미리 준비하여 Job에 전달해야 합니다.
 	}
 	public void ApplyJobResult(in MovementJobData pureMovementData)
 	{
@@ -140,7 +129,7 @@ public class ProjectileMovement : MonoBehaviour, IProjectileMovement
 		transform.LookAt(RuntimeData.Position + RuntimeData.MoveDiraction);
 
 		onTransformUpdate?.Invoke();
-		
+
 		float sqrRemainingdistance = (RuntimeData.Position - RuntimeData.EndedPosition).sqrMagnitude;
 		float deltaMoveDistance = RuntimeData.MoveSpeed * pureMovementData.DeltaTime;
 		if (sqrRemainingdistance < deltaMoveDistance * deltaMoveDistance)
@@ -150,7 +139,8 @@ public class ProjectileMovement : MonoBehaviour, IProjectileMovement
 	}
 	public void UpdateMovementJobData(ref MovementJobData pureMovementData)
 	{
-		if (target == null) return;
+		if (target.IsNullRef()) return;
+		
 		RuntimeData.TargetPosition = target.HitTargetPosition;
 		pureMovementData.TargetPosition = target.HitTargetPosition;
 	}

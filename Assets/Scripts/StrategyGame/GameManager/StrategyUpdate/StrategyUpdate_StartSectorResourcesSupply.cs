@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-using static StrategyGamePlayData;
+﻿using static StrategyGamePlayData;
 namespace StrategyManagerModule
 {
 	public partial class StrategyUpdate
@@ -16,15 +14,6 @@ namespace StrategyManagerModule
 			}
 			protected override void Start()
 			{
-				updateList = new List<ResourcesSupply>();
-				BaseList<SectorObject> list = StrategyManager.Collector.GetList<SectorObject>();
-				int length = list.Count;
-				for (int i = 0 ; i < length ; i++)
-				{
-					var sector = list[i];
-					if (sector == null) continue;
-					updateList.Add(new ResourcesSupply(sector, this));
-				}
 				StrategyManager.Collector.AddChangeListener<SectorObject>(OnChangeSector);
 			}
 			private void OnChangeSector(IStrategyElement element, bool isAdd)
@@ -33,21 +22,21 @@ namespace StrategyManagerModule
 
 				if (isAdd)
 				{
-					UpdateList.Add(new ResourcesSupply(sector, this));
+					this.Add(new ResourcesSupply(sector, this));
 				}
 				else
 				{
-					int findIndex = UpdateList.FindIndex(i=>i.Sector.Equals(sector));
+					int findIndex = this.FindIndex(i=>i.Sector.Equals(sector));
 					if (findIndex < 0) return;
-					UpdateList.RemoveAt(findIndex);
+					this.RemoveAt(findIndex);
 				}
 			}
 			protected override void Update(in float deltaTime)
 			{
-				int length = updateList.Count;
+				int length = this.Count;
 				for (int i = 0 ; i < length ; i++)
 				{
-					var item = updateList[i];
+					var item = this[i];
 					if (item == null) continue;
 
 					item.Update(in deltaTime);

@@ -4,7 +4,7 @@
 	public bool IsDestroy { get; set; }
 	public void InitLife();
 	public void OnDestroy();
-	public void ReservationDestroy()
+	public void OnReservationDestroy()
 	{
 		if (IsDestroy) return;
 		IsDestroy = true;

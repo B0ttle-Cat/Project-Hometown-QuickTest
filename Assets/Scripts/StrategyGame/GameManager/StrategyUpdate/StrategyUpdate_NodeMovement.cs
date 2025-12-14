@@ -1,6 +1,4 @@
-﻿using System.Collections;
-
-using UnityEngine;
+﻿using UnityEngine;
 
 using static StrategyManagerModule.StrategyUpdate.StrategyUpdate_NodeMovement;
 
@@ -16,31 +14,6 @@ namespace StrategyManagerModule
 
 			protected override void Start()
 			{
-				UpdateList = new();
-				var iList = StrategyManager.Collector.GetAllElementLists();
-				foreach (IList list in iList)
-				{
-					if (list is ElementList<UnitObject> unitList)
-					{
-						int length = list.Count;
-						for (int i = 0 ; i < length ; i++)
-						{
-							var item = unitList[i];
-							if (item == null || item.ThisNodeMovement == null || null != item.ParentMovement) continue;
-							UpdateList.Add(new(item.ThisNodeMovement, this));
-						}
-					}
-					if (list is ElementList<OperationObject> opList)
-					{
-						int length = list.Count;
-						for (int i = 0 ; i < length ; i++)
-						{
-							var item = opList[i];
-							if (item == null || item.ThisNodeMovement == null) continue;
-							UpdateList.Add(new(item.ThisNodeMovement, this));
-						}
-					}
-				}
 				StrategyManager.Collector.AddChangeListener<UnitObject>(ChangeList);
 				StrategyManager.Collector.AddChangeListener<OperationObject>(ChangeList);
 			}
@@ -55,22 +28,22 @@ namespace StrategyManagerModule
 
 				if (isAdd)
 				{
-					UpdateList.Add(new Movement(movement, this));
+					this.Add(new Movement(movement, this));
 				}
 				else
 				{
-					int findIndex = UpdateList.FindIndex(l => l.thisMovement == element);
+					int findIndex = this.FindIndex(l => l.thisMovement == element);
 					if (findIndex < 0) return;
-					UpdateList.RemoveAt(findIndex);
+					this.RemoveAt(findIndex);
 				}
 			}
 
 			protected override void Update(in float deltaTime)
 			{
-				int length = UpdateList.Count;
+				int length = this.Count;
 				for (int i = 0 ; i < length ; i++)
 				{
-					var update = updateList[i];
+					var update = this[i];
 					if (update == null) continue;
 					update.Update(deltaTime);
 				}

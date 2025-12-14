@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-using static StrategyManagerModule.StrategyPathfinding;
+﻿using static StrategyManagerModule.StrategyPathfinding;
 using static StrategyManagerModule.StrategyUpdate.StrategyUpdate_SectorResourcesDistribution;
 
 namespace StrategyManagerModule
@@ -18,15 +16,6 @@ namespace StrategyManagerModule
 			}
 			protected override void Start()
 			{
-				UpdateList = new List<Distribution>();
-				var sectorList = StrategyManager.Collector.GetList<SectorObject>();
-				int length = sectorList.Count;
-				for (int i = 0 ; i < length ; i++)
-				{
-					SectorObject sector = sectorList[i];
-					if (sector == null) continue;
-					UpdateList.Add(new Distribution(sector, this));
-				}
 				StrategyManager.Collector.AddChangeListener<SectorObject>(OnChangeSector);
 			}
 			private void OnChangeSector(IStrategyElement element, bool isAdd)
@@ -35,33 +24,33 @@ namespace StrategyManagerModule
 
 				if (isAdd)
 				{
-					UpdateList.Add(new Distribution(sector, this));
+					this.Add(new Distribution(sector, this));
 				}
 				else
 				{
-					int findIndex = UpdateList.FindIndex(i=>i.Sector.Equals(sector));
+					int findIndex = this.FindIndex(i=>i.Sector.Equals(sector));
 					if (findIndex < 0) return;
-					UpdateList.RemoveAt(findIndex);
+					this.RemoveAt(findIndex);
 				}
 			}
 			protected override void Update(in float deltaTime)
 			{
-				int length = UpdateList.Count;
+				int length = this.Count;
 				for (int i = 0 ; i < length ; i++)
 				{
-					var item = UpdateList[i];
+					var item = this[i];
 					if (item == null) continue;
 					item.Start();
 				}
 				for (int i = 0 ; i < length ; i++)
 				{
-					var item = UpdateList[i];
+					var item = this[i];
 					if (item == null) continue;
 					item.Update(in deltaTime);
 				}
 				for (int i = 0 ; i < length ; i++)
 				{
-					var item = UpdateList[i];
+					var item = this[i];
 					if (item == null) continue;
 					item.Update(in deltaTime);
 				}
@@ -73,7 +62,7 @@ namespace StrategyManagerModule
 				public SectorObject Sector => sector;
 
 				private SectorNetwork network;
-				private int[] neighborIndexs; // => Distribution neighbor = thisSubClass.UpdateList[neighborIndex]
+				private int[] neighborIndexs; // => Distribution neighbor = thisSubClass.this[neighborIndex]
 
 				public int currPoint;
 				public int maxPoint;
@@ -132,7 +121,7 @@ namespace StrategyManagerModule
 					}
 
 					var neigh = network.neighbors;
-					var list = thisSubClass.UpdateList;
+					var list = thisSubClass;
 
 					neighborIndexs = new int[neigh.Count];
 

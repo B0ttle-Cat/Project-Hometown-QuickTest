@@ -60,7 +60,6 @@ public partial class UnitObject : MonoBehaviour
 		{
 			if (StrategyManager.Key2Unit.TryGetAsset(data.unitKey, out var info) && info.UnitProfileObject != null)
 			{
-
 				profile = new UnitData.Profile(new()
 				{
 					unitKey = data.unitKey,
@@ -90,6 +89,11 @@ public partial class UnitObject : MonoBehaviour
 			refData.factionID = data.factionID;
 		}
 
+
+		int durability = Mathf.Min(data.durability, MainStatsList.GetValue(StatsType.유닛_최대내구도));
+		if (durability < 1) durability = 1;
+		MainStatsList.SetValue(StatsType.유닛_현재내구도, durability);
+		
 		sector = new UnitData.ConnectSector(new(data.visiteSectorID));
 	}
 

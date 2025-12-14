@@ -22,13 +22,13 @@ namespace StrategyManagerModule
 
 				if (added)
 				{
-					UpdateList.Add(new CombatTarget(unitObject, this));
+					this.Add(new CombatTarget(unitObject, this));
 				}
 				else
 				{
-					int findIndex = UpdateList.FindIndex(i=>i.unitObject == unitObject);
+					int findIndex = this.FindIndex(i=>i.unitObject == unitObject);
 					if (findIndex < 0) return;
-					UpdateList.RemoveAt(findIndex);
+					this.RemoveAt(findIndex);
 				}
 			}
 			public class CombatTarget : UpdateLogic

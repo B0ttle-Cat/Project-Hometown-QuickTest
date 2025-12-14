@@ -13,8 +13,6 @@ public partial class ProjectileObject : IProjectileMovement
 	public Vector3 CurrentPosition => ThisMovement.CurrentPosition;
 	public float MoveSpeed => ThisMovement.MoveSpeed;
 	public Vector3 MoveDiraction => ThisMovement.MoveDiraction;
-    public bool ResetJobDataFlag => ThisMovement.ResetJobDataFlag;
-
     partial void InitMovement()
 	{
 		movement = GetComponent<ProjectileMovement>();
@@ -59,5 +57,10 @@ public partial class ProjectileObject : IProjectileMovement
     public void UpdateMovementJobData(ref ProjectileMovement.MovementJobData movementJobData)
     {
         ThisMovement.UpdateMovementJobData(ref movementJobData);
+    }
+
+    public void ReleaseTarget()
+    {
+        ThisMovement.ReleaseTarget();
     }
 }

@@ -143,6 +143,7 @@ public partial class OperationObject : IMovement , ITargetableCombatant
 		}
 	}
 }
+
 public partial class OperationObject : INodeMovement
 {
 	public INodeMovement ThisNodeMovement => this;

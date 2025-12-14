@@ -154,7 +154,7 @@ public class OperationFiniteStateMachine : FiniteStateMachine<OperationFSMType>
 				if (unit is not ICombatHandler combat) continue;
 
 				combat.IsRootCombatState = true;
-				combat.RootCurrentTarget = target;
+				combat.OperationCurrentTarget = target;
 			}
 			ITargetableCombatant FindNearTarget()
 			{
@@ -186,7 +186,7 @@ public class OperationFiniteStateMachine : FiniteStateMachine<OperationFSMType>
 				if (unit is not ICombatHandler combat) continue;
 
 				combat.IsRootCombatState = false;
-				combat.RootCurrentTarget = null;
+				combat.OperationCurrentTarget = null;
 			}
 		}
 	}

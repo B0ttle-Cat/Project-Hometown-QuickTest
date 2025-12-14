@@ -52,12 +52,11 @@ MonoBehaviour:
     homingTurnSpeedWhenMaxSpeed: 180
     homingLimitAngle: 180
     homingLimitDistance: Infinity
-    cepEnabled: 0
-    cepRadius: 3
-    cepProbability: 0.9
+    cepEnabled: 1
+    cepRadius: 1
+    cepProbability: 0.5
     lifeTime: 1
     collisionRadius: 0.1
-    hitDamageMultiplier: 1
     hitEffectsFlag: 0
     hitEffectsTimeMultiplier: 1
     lastHitEffectKey: 0

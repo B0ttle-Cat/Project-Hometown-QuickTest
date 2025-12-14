@@ -15,8 +15,8 @@ public interface IProjectileMovement
 	Vector3 MoveDiraction { get; }
 	//(ProjectileKey Key, MovmentConstantData Data) GetConstantData();
 	public void SetTarget(ICombatHandler order, ITargetableCombatant target);
+	public void ReleaseTarget();
 	public void ApplyJobResult(in MovementJobData movementJobData);
-	public bool ResetJobDataFlag { get; }
 	public void InitMovementJobData(out MovementJobData movementJobData);
 	public void UpdateMovementJobData(ref MovementJobData movementJobData);
 }

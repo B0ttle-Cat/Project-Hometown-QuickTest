@@ -10,13 +10,6 @@
 
 			protected override void Start()
 			{
-				UpdateList = new();
-				var iList = StrategyManager.Collector.GetList<OperationObject>();
-				foreach (var item in iList)
-				{
-					if (item == null) continue;
-					UpdateList.Add(new(item, this));
-				}
 				StrategyManager.Collector.AddChangeListener<OperationObject>(ChangeList);
 			}
 			protected override void Dispose()
@@ -29,22 +22,22 @@
 
 				if (isAdd)
 				{
-					UpdateList.Add(new OperationUpdate(op, this));
+					this.Add(new OperationUpdate(op, this));
 				}
 				else
 				{
-					int findIndex = UpdateList.FindIndex(l => l.operationObject == op);
+					int findIndex = this.FindIndex(l => l.operationObject == op);
 					if (findIndex >= 0) return;
-					UpdateList.RemoveAt(findIndex);
+					this.RemoveAt(findIndex);
 				}
 			}
 
 			protected override void Update(in float deltaTime)
 			{
-				int length = UpdateList.Count;
+				int length = this.Count;
 				for (int i = 0 ; i < length ; i++)
 				{
-					var update = updateList[i];
+					var update = this[i];
 					if (update == null) continue;
 					update.Update(deltaTime);
 				}

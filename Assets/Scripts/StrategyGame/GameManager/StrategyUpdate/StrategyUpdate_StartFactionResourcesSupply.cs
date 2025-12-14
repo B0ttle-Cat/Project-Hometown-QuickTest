@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-using static StrategyManagerModule.StrategyUpdate.StrategyUpdate_StartFactionResourcesSupply;
+﻿using static StrategyManagerModule.StrategyUpdate.StrategyUpdate_StartFactionResourcesSupply;
 
 namespace StrategyManagerModule
 {
@@ -16,23 +14,22 @@ namespace StrategyManagerModule
 			}
 			protected override void Start()
 			{
-				updateList = new List<ResourcesSupply>();
 				var list = StrategyManager.Collector.GetList<Faction>();
 				int length = list.Count;
 				for (int i = 0 ; i < length ; i++)
 				{
 					var faction = list[i];
 					if (faction == null) continue;
-					updateList.Add(new ResourcesSupply(this, faction));
+					this.Add(new ResourcesSupply(this, faction));
 				}
 			}
 
 			protected override void Update(in float deltaTime)
 			{
-				int length = updateList.Count;
+				int length = this.Count;
 				for (int i = 0 ; i < length ; i++)
 				{
-					var update = updateList[i];
+					var update = this[i];
 					if (update == null) continue;
 					update.Update(in deltaTime);
 				}

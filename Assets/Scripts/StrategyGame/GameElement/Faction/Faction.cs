@@ -96,20 +96,19 @@ public partial class Faction : IEquatable<Faction>, IDisposable
 		return !(left == right);
 	}
 }
-public partial class Faction : IStrategyElement, IStrategyStartGame
+public partial class Faction : IStrategyElement
 {
 	public IStrategyElement ThisElement => this;
-	public bool IsInCollector { get; set; }
 	int IStrategyElement.ID { get => factionID; set => factionID = value; }
 
-	public void InStrategyCollector()
+    public void InStrategyCollector()
 	{
 	}
 	public void OutStrategyCollector()
 	{
 	}
 
-	void IStrategyStartGame.OnStartGame()
+    void IStrategyStartGame.OnStartGame()
 	{
 	}
 	void IStrategyStartGame.OnStopGame()

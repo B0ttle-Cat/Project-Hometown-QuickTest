@@ -45,7 +45,7 @@ public partial class OperationObject : MonoBehaviour  // Main
 	partial void InitMovement();
 	partial void InitFSM();
 	partial void InitNearby(in float baseRadius);
-	
+
 	public void DeInit()
 	{
 		DeInitOrganization();
@@ -80,7 +80,7 @@ public partial class OperationObject // StatsData
 		return GetAllUnitObj.Count == 0 ? 0 : GetAllUnitObj.Select(i => i.StatsValue.GetStatsValuePercent(StatsType.유닛_시야범위_c)).Max();
 	}
 }
-public partial class OperationObject : IStrategyElement, IStrategyStartGame
+public partial class OperationObject : IStrategyElement, IStrategyElementDestroyer
 {
 	public IStrategyElement ThisElement => this;
 	int IStrategyElement.ID { get => operationID; set => operationID = value; }
@@ -95,6 +95,23 @@ public partial class OperationObject : IStrategyElement, IStrategyStartGame
 	}
 	void IStrategyStartGame.OnStopGame()
 	{
+	}
+
+	public IStrategyElementDestroyer ThisDestroyer => this;
+	bool IStrategyElementDestroyer.IsDestroy { get; set; }
+
+	public void InitLife()
+	{
+		ThisDestroyer.IsDestroy = false;
+	}
+
+	void IStrategyElementDestroyer.OnDestroy()
+	{
+		StrategyElementFactory.Destroy(this);
+	}
+	private void ControllerDestory()
+	{
+		ThisDestroyer.OnReservationDestroy();
 	}
 }
 public partial class OperationObject : ISelectable

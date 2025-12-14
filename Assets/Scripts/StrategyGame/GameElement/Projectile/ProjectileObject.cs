@@ -74,7 +74,7 @@ public partial class ProjectileObject : IStrategyElementDestroyer
 	public IStrategyElementDestroyer ThisDestroyer => this;
 	public bool IsDestroy { get; set; }
 
-	ObjectLifetime objectLifetime;
+    ObjectLifetime objectLifetime;
 	public void InitLife()
 	{
 		IsDestroy = false;
@@ -94,7 +94,7 @@ public partial class ProjectileObject : IStrategyElementDestroyer
 		if (IsDestroy) return;
 		objectLifetime.enabled = false;
 
-		ThisDestroyer.ReservationDestroy();
+		ThisDestroyer.OnReservationDestroy();
 	}
 
 	private void HitableDeath(ICombatOffense offense, ICombatDefance defance)
@@ -135,7 +135,7 @@ public partial class ProjectileObject : IStrategyElementDestroyer
 			}
 		}
 
-		ThisDestroyer.ReservationDestroy();
+		ThisDestroyer.OnReservationDestroy();
 	}
 	private void MovementDeath(Vector3 deathPosition)
 	{
@@ -173,7 +173,7 @@ public partial class ProjectileObject : IStrategyElementDestroyer
 			}
 		}
 
-		ThisDestroyer.ReservationDestroy();
+		ThisDestroyer.OnReservationDestroy();
 	}
 }
 

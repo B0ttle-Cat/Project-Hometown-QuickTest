@@ -33,13 +33,13 @@ namespace StrategyManagerModule
 					INearbySearcher searcher = valueGetter.Searcher;
 					if (added)
 					{
-						UpdateList.Add(new NearbyUpdate(searcher, this));
+						this.Add(new NearbyUpdate(searcher, this));
 					}
 					else
 					{
-						int findIndex = UpdateList.FindIndex(i=>i.searcher == searcher);
+						int findIndex = this.FindIndex(i=>i.searcher == searcher);
 						if (findIndex < 0) return;
-						UpdateList.RemoveAt(findIndex);
+						this.RemoveAt(findIndex);
 					}
 				}
 				else if (element is INearbyElement serchTarget)
@@ -50,10 +50,10 @@ namespace StrategyManagerModule
 			}
 			protected override void Update(in float deltaTime)
 			{
-				int length = UpdateList == null ? 0 : UpdateList.Count;
+				int length = this == null ? 0 : this.Count;
 				for (int i = 0 ; i < length ; i++)
 				{
-					var item = UpdateList[i];
+					var item = this[i];
 					if (item == null) continue;
 					item.Update(deltaTime);
 				}
@@ -75,7 +75,7 @@ namespace StrategyManagerModule
 
 				protected override void OnUpdate(in float deltaTime)
 				{
-					if (searcher == null) return;
+					if (searcher.IsNullRef()) return;
 					searcher.UpdateNearby(allElements);
 				}
 			}

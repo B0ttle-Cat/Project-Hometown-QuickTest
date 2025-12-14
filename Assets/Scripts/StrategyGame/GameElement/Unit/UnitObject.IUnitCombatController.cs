@@ -62,14 +62,14 @@ public partial class UnitObject : ICombatHandler, INearbyElement, ITargetableCom
 	Vector2 ICombatHandler.AttackStartRange => combatAttackStartRange;
 	Vector2 ICombatHandler.AttackLimitRange => combatAttackLimitRange;
 
-	ITargetableCombatant ICombatHandler.CurrentTarget { get => currentCombatTarget; set => currentCombatTarget = value; }
-	ITargetableCombatant ICombatHandler.RootCurrentTarget { get => rootCurrentCombatTarget; set => rootCurrentCombatTarget = value; }
+	ITargetableCombatant ICombatHandler.CurrentTarget { get => currentCombatTarget; }
+	ITargetableCombatant ICombatHandler.OperationCurrentTarget { get => rootCurrentCombatTarget; set => rootCurrentCombatTarget = value; }
 	bool ICombatHandler.TargetInStartAttackRange => ThisCombatHandler.HasCurrentTarget && isTargetInStartAttackRange;
 	bool ICombatHandler.TargetInLimitAttackRange => ThisCombatHandler.HasCurrentTarget && isTargetInLimitAttackRange;
 	bool ICombatHandler.TargetInActionRange => ThisCombatHandler.HasCurrentTarget && isTargetInActionRange;
 	void ICombatHandler.UpdateParameters()
 	{
-		
+
 		float combatAttackRangeLimitMin = ThisCombatStats.AttackRangeLimitMin;
 		float combatAttackRangeStartMin = ThisCombatStats.AttackRangeStartMin;
 		float combatAttackRangeStartMax = ThisCombatStats.AttackRangeStartMax;
@@ -88,7 +88,7 @@ public partial class UnitObject : ICombatHandler, INearbyElement, ITargetableCom
 		sqrCombatActionRange = combatActionRange * combatActionRange;
 		sqrCombatVisionRange = combatVisionRange * combatVisionRange;
 
-		if (currentCombatTarget != null)
+		if (currentCombatTarget.IsNotNullRef())
 		{
 			float sqrDistance = (currentCombatTarget.Position - ThisCombatHandler.Position).sqrMagnitude;
 
@@ -96,13 +96,17 @@ public partial class UnitObject : ICombatHandler, INearbyElement, ITargetableCom
 			isTargetInLimitAttackRange = sqrCombatAttackLimitMinRange <= sqrDistance && sqrDistance <= sqrCombatAttackLimitMaxRange;
 			isTargetInActionRange = sqrDistance <= sqrCombatActionRange;
 		}
+		else
+		{
+			currentCombatTarget = null;
+		}
 	}
 	bool ICombatHandler.IsKeepingTargetAllowed()
 	{
-		var currentTarget = currentCombatTarget;
-		if (currentTarget == null) return false;
 
-		Vector3 distance = currentTarget.Position - ThisCombatHandler.Position;
+		if (currentCombatTarget.IsNullRef()) return false;
+
+		Vector3 distance = currentCombatTarget.Position - ThisCombatHandler.Position;
 		float sqrDistance = distance.sqrMagnitude;
 		float sqrCombatAttackLimitMinRange = combatAttackLimitRange.x;
 		float sqrCombatAttackLimitMaxRange = combatAttackLimitRange.y;
@@ -142,23 +146,22 @@ public partial class UnitObject : ICombatHandler, INearbyElement, ITargetableCom
 		{
 			ClearCombatTarget();
 		}
-		else if (currentCombatTarget == null || currentCombatTarget.ThisElement.ID != newTarget.ThisElement.ID)
+		else if (currentCombatTarget.IsNullRef() || currentCombatTarget.ThisElement.ID != newTarget.ThisElement.ID)
 		{
 			SetCombatTarget(newTarget);
 		}
 	}
 	void ClearCombatTarget()
 	{
-		if (currentCombatTarget == null) return;
+		if (currentCombatTarget.IsNullRef()) return;
 
 		currentCombatTarget = null;
-
 		OnChangeCurrentCombatTarget?.Invoke(null);
 	}
 	void SetCombatTarget(in ITargetableCombatant newTarget)
 	{
 		currentCombatTarget = newTarget;
-		if (currentCombatTarget == null) return;
+		if (currentCombatTarget.IsNullRef()) return;
 
 		float sqrDistance = (currentCombatTarget.Position - ThisCombatHandler.Position).sqrMagnitude;
 		float sqrCombatAttackStartMinRange = combatAttackStartRange.x;

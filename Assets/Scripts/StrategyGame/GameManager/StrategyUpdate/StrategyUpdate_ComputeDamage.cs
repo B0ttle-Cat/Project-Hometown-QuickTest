@@ -22,7 +22,7 @@
 				if (commander == null) return;
 				if (added)
 				{
-					UpdateList.Add(new ComputeDamage(commander, this));
+					this.Add(new ComputeDamage(commander, this));
 				}
 			}
 
@@ -51,15 +51,15 @@
 
 			protected override void Update(in float deltaTime)
 			{
-				int length = UpdateList.Count;
+				int length = Count;
 				for (int i = 0 ; i < length ; i++)
 				{
-					var item = UpdateList[i];
+					var item = this[i];
 					if (item == null) continue;
 					item.Update(in deltaTime);
 					item.Dispose();
 				}
-				UpdateList.Clear();
+				this.Clear();
 			}
 		}
 	}

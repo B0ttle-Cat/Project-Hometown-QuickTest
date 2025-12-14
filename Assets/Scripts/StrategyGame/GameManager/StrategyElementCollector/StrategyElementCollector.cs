@@ -211,7 +211,7 @@ namespace StrategyManagerModule
 		/// 이벤트 연결: IStrategyElement 타입이면 IStrategyElement 형식의 핸들러를, 일반 타입이면 T 형식 핸들러를 사용
 		/// invokeForExisting 가 true 이 경우 기존 아이템에 대해 onChangeListener 콜백을 즉시 호출한다.
 		/// </summary>
-		public void AddChangeListener<T>(Action<T, bool> onChange, bool invokeForExisting = false) where T : class
+		public void AddChangeListener<T>(Action<T, bool> onChange, bool invokeForExisting = true) where T : class
 		{
 			var list = GetList<T>();
 			if (list == null)

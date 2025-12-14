@@ -14,8 +14,6 @@ namespace StrategyManagerModule
 
 			protected override void Start()
 			{
-				UpdateList = new();
-
 				StrategyManager.Collector.AddChangeListener<UnitObject>(OnChangeValue, true);
 			}
 			private void OnChangeValue(IStrategyElement element, bool added)
@@ -25,12 +23,12 @@ namespace StrategyManagerModule
 
 				if (added)
 				{
-					UpdateList.Add(new(item.ThisNavMovement, this));
+					this.Add(new(item.ThisNavMovement, this));
 				}
 				else
 				{
-					int findIndex = UpdateList.FindIndex(f => f.thisMovement == item.ThisNavMovement);
-					if (findIndex >= 0) UpdateList.RemoveAt(findIndex);
+					int findIndex = this.FindIndex(f => f.thisMovement == item.ThisNavMovement);
+					if (findIndex >= 0) this.RemoveAt(findIndex);
 				}
 			}
 			protected override void Dispose()

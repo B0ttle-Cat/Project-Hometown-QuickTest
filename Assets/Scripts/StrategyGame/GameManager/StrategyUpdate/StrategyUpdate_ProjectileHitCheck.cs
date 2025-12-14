@@ -38,11 +38,11 @@ namespace StrategyManagerModule
 
 				if (added)
 				{
-					updateList.Add(new(component, this));
+					this.Add(new(component, this));
 				}
 				else
 				{
-					updateList.RemoveAll(f => f.thisProjectile == component);
+					this.RemoveAll(f => f.thisProjectile == component);
 				}
 			}
 
@@ -84,10 +84,10 @@ namespace StrategyManagerModule
 
 			protected override void Update(in float deltaTime)
 			{
-				int length = UpdateList.Count;
+				int length = this.Count;
 				for (int i = 0 ; i < length ; i++)
 				{
-					var item = UpdateList[i];
+					var item = this[i];
 					if (item == null) continue;
 					var projectile = item.thisProjectile;
 					if (projectile == null) continue;
