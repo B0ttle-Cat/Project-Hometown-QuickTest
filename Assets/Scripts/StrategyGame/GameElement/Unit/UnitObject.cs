@@ -15,16 +15,19 @@ public partial class UnitObject : MonoBehaviour
 	private CaptureTag captureTag;
 	[SerializeField]
 	private UnitDebugRender debugRender;
-
-	[ShowInInspector, FoldoutGroup("UnitData"), ReadOnly]
+#if UNITY_EDITOR
+	[ShowInInspector, ToggleGroup("EditUnitData")]
+	bool EditUnitData { get; set; } = false;
+#endif
+	[ShowInInspector, ToggleGroup("EditUnitData", GroupName = "UnitData"), HideReferenceObjectPicker]
 	public UnitData.Profile Profile { get => profile; set => profile = value; }
-	[ShowInInspector, FoldoutGroup("UnitData"), ReadOnly]
+	[ShowInInspector, ToggleGroup("EditUnitData"), HideReferenceObjectPicker]
 	public UnitData.Stats Stats { get => stats; set => stats = value; }
-	[ShowInInspector, FoldoutGroup("UnitData"), ReadOnly]
+	[ShowInInspector, ToggleGroup("EditUnitData"), HideReferenceObjectPicker]
 	public UnitData.Skill Skill { get => skill; set => skill = value; }
-	[ShowInInspector, FoldoutGroup("UnitData"), ReadOnly]
+	[ShowInInspector, ToggleGroup("EditUnitData"), HideReferenceObjectPicker]
 	public UnitData.ConnectSector Sector { get => sector; set => sector = value; }
-	[ShowInInspector, FoldoutGroup("UnitData"), ReadOnly]
+	[ShowInInspector, ToggleGroup("EditUnitData"), HideReferenceObjectPicker]
 	public CaptureTag CaptureTag { get => captureTag; set => captureTag = value; }
 	public ref readonly UnitData.Profile.Data ProfileData => ref Profile.ReadonlyData();
 	public ref readonly UnitData.Stats.Data StatsData => ref Stats.ReadonlyData();
@@ -33,7 +36,6 @@ public partial class UnitObject : MonoBehaviour
 	public string UnitName => ProfileData.displayName;
 	public int UnitID => ProfileData.unitID;
 	public int FactionID => ProfileData.factionID;
-	[ShowInInspector, FoldoutGroup("UnitData"), ReadOnly]
 	public Faction Faction
 	{
 		get => StrategyManager.IsNotReadyScene ? null : StrategyManager.Collector.Find<Faction>(FactionID);
@@ -55,7 +57,6 @@ public partial class UnitObject : MonoBehaviour
 	}
 	public void Init(in StrategyStartSetterData.UnitData data) // UnitData
 	{
-		//UnitProfileObject profileObj = data.GetUnitProfile;
 		if (profile == null)
 		{
 			if (StrategyManager.Key2Unit.TryGetAsset(data.unitKey, out var info) && info.UnitProfileObject != null)

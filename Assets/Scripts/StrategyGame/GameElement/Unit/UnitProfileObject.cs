@@ -112,7 +112,7 @@ public class UnitProfileObject : ScriptableObject
 			유닛_치명명중기회 = statsData.GetValue(StatsType.유닛_치명명중기회);
 			유닛_치명회피기회 = statsData.GetValue(StatsType.유닛_치명회피기회);
 
-			유닛_명중피격수 = statsData.GetValue(StatsType.유닛_명중피격수);
+			유닛_동시공격개수 = statsData.GetValue(StatsType.유닛_동시공격개수);
 			유닛_연속공격횟수 = statsData.GetValue(StatsType.유닛_연속공격횟수);
 			유닛_조준지연시간 = statsData.GetValue(StatsType.유닛_조준지연시간_c);
 			유닛_연속공격지연시간 = statsData.GetValue(StatsType.유닛_연속공격지연시간_c);
@@ -176,7 +176,7 @@ public class UnitProfileObject : ScriptableObject
 			statsData.SetValue(StatsType.유닛_치명명중기회, 유닛_치명명중기회);
 			statsData.SetValue(StatsType.유닛_치명회피기회, 유닛_치명회피기회);
 
-			statsData.SetValue(StatsType.유닛_명중피격수, 유닛_명중피격수);
+			statsData.SetValue(StatsType.유닛_동시공격개수, 유닛_동시공격개수);
 			statsData.SetValue(StatsType.유닛_연속공격횟수, 유닛_연속공격횟수);
 			statsData.SetValue(StatsType.유닛_조준지연시간_c, 유닛_조준지연시간);
 			statsData.SetValue(StatsType.유닛_연속공격지연시간_c, 유닛_연속공격지연시간);
@@ -237,7 +237,7 @@ public class UnitProfileObject : ScriptableObject
 	[FoldoutGroup("StatsData")] public int 유닛_치명명중기회;
 	[FoldoutGroup("StatsData")] public int 유닛_치명회피기회;
 	[Space]
-	[FoldoutGroup("StatsData")] public int 유닛_명중피격수;
+	[FoldoutGroup("StatsData")] public int 유닛_동시공격개수;
 	[FoldoutGroup("StatsData")] public int 유닛_연속공격횟수;
 	[FoldoutGroup("StatsData")] public int 유닛_조준지연시간;
 	[FoldoutGroup("StatsData")] public int 유닛_연속공격지연시간;
@@ -291,7 +291,7 @@ public class UnitProfileObject : ScriptableObject
 			new (StatsType.유닛_치명명중기회, 유닛_치명명중기회),
 			new (StatsType.유닛_치명회피기회, 유닛_치명회피기회),
 
-			new (StatsType.유닛_명중피격수, 유닛_명중피격수),
+			new (StatsType.유닛_동시공격개수, 유닛_동시공격개수),
 			new (StatsType.유닛_연속공격횟수, 유닛_연속공격횟수),
 			new (StatsType.유닛_조준지연시간_c, 유닛_조준지연시간),
 			new (StatsType.유닛_연속공격지연시간_c, 유닛_연속공격지연시간),
@@ -346,7 +346,7 @@ public class UnitProfileObject : ScriptableObject
 		유닛_치명명중기회 = 30;
 		유닛_치명회피기회 = 20;
 
-		유닛_명중피격수 = 1;
+		유닛_동시공격개수 = 1;
 		유닛_연속공격횟수 = 3;
 		유닛_조준지연시간 = 1_00;
 		유닛_연속공격지연시간 = 0_10;

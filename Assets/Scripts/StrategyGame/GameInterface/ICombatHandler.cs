@@ -53,9 +53,8 @@ public interface ICombatCommon : IStatsValueControl, IStrategyElement
 	// ⚙️ 공격 시스템 계수 (Attack System Multipliers)
 	int AmmunitionCapacity => GetStatsValue(StatsType.유닛_탄용량);
 	int AmmunitionUsed => GetStatsValue(StatsType.유닛_사용탄수);
-	int HitDamageCount => GetStatsValue(StatsType.유닛_명중피격수);
-	int ContinuousAttackCount => GetStatsValue(StatsType.유닛_연속공격횟수);
 	int ConcurrentProjectileCount => GetStatsValue(StatsType.유닛_동시공격개수);
+	int ContinuousAttackCount => GetStatsValue(StatsType.유닛_연속공격횟수);
 
 	// ⏱️ 딜레이 스탯 (Time Delays)
 	float AimDelayTime => GetStatsValuePercent(StatsType.유닛_조준지연시간_c);

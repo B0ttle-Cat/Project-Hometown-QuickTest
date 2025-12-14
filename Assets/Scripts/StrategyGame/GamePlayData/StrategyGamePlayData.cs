@@ -516,6 +516,7 @@ public partial class StrategyGamePlayData // Play Content Info
 			[Serializable]
 			public struct Data : IDataCopy<Data>
 			{
+				[InlineProperty,HideLabel, HideReferenceObjectPicker]
 				public StatsList stats;
 				public Data(StatsList statsList = null)
 				{

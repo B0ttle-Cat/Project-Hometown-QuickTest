@@ -169,7 +169,7 @@ public partial class UnitAttackFiniteStateMachine : FiniteStateMachine<UnitAttac
 		protected override void OnStateEnter()
 		{
 			continuousAttackCount = StateControl.GetStatsValue(StatsType.유닛_연속공격횟수);
-			simultaneousAttackCount = StateControl.GetStatsValue(StatsType.유닛_동시공격개수);
+			simultaneousAttackCount = StateControl.GetStatsValue(StatsType.유닛_동시공격개수1);
 			continuousAttackDelay = StateControl.GetStatsValuePercent(StatsType.유닛_연속공격지연시간_c);
 			ammoMaxCount = StateControl.GetStatsValue(StatsType.유닛_탄용량);
 			ammoUsedCount = StateControl.GetStatsValue(StatsType.유닛_사용탄수);

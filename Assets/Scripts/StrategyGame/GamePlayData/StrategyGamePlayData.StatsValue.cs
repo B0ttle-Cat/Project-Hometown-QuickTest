@@ -166,7 +166,6 @@ public partial class StrategyGamePlayData // StatsValue
 				new StatsValue(StatsType.유닛_탄용량),
 				new StatsValue(StatsType.유닛_사용탄수),
 				new StatsValue(StatsType.유닛_연속공격횟수),
-				new StatsValue(StatsType.유닛_명중피격수), 
 				new StatsValue(StatsType.유닛_동시공격개수), 
 				// ⏱️ 시간 및 딜레이 (Time Delays)
 				new StatsValue(StatsType.유닛_조준지연시간_c),

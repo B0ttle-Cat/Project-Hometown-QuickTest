@@ -275,6 +275,7 @@ MonoBehaviour:
       factionID: 0
       belongedOperation: 0
       visiteSectorID: 0
+      durability: 2147483647
       position: {x: 10, y: 0, z: 0}
       rotation: {x: -0, y: 0, z: 0}
       showEdit: 0
@@ -282,6 +283,7 @@ MonoBehaviour:
       factionID: 1
       belongedOperation: -1
       visiteSectorID: 0
+      durability: 2147483647
       position: {x: 0, y: 0, z: 10}
       rotation: {x: 0, y: 0, z: 0}
       showEdit: 0
