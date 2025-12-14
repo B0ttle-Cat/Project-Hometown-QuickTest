@@ -145,11 +145,11 @@ public partial class StrategyGamePlayData // StatsValue
 				// ⚔️ 기본 전투 능력 (Base Combat)
 				new StatsValue(StatsType.유닛_공격력),
 				new StatsValue(StatsType.유닛_방어력),
-				// 🎯 치명타 스탯 (Critical Stats) 
+				// 🎯 치명타 스탯 (Critical Stats_old) 
 				new StatsValue(StatsType.유닛_치명공격력),
 				new StatsValue(StatsType.유닛_치명피해율),
 				new StatsValue(StatsType.유닛_치명방어력),
-				// 🛡️ 관통 및 저항 레벨 (Level Stats)
+				// 🛡️ 관통 및 저항 레벨 (Level Stats_old)
 				new StatsValue(StatsType.유닛_관통레벨),
 				new StatsValue(StatsType.유닛_장갑레벨),
 				new StatsValue(StatsType.유닛_EMP충격레벨), 
@@ -162,7 +162,7 @@ public partial class StrategyGamePlayData // StatsValue
 				new StatsValue(StatsType.유닛_치명명중기회),
 				new StatsValue(StatsType.유닛_치명회피기회),
 				// 탄약 (Ammunition)
-				// ⚙️ 공격 시스템 계수 (Attack Multipliers)
+				// ⚙️ 공격 시스템 계수 (Cycle Multipliers)
 				new StatsValue(StatsType.유닛_탄용량),
 				new StatsValue(StatsType.유닛_사용탄수),
 				new StatsValue(StatsType.유닛_연속공격횟수),
@@ -172,7 +172,7 @@ public partial class StrategyGamePlayData // StatsValue
 				new StatsValue(StatsType.유닛_재공격지연시간_c),
 				new StatsValue(StatsType.유닛_연속공격지연시간_c),
 				new StatsValue(StatsType.유닛_재장전시간_c),
-				// 💸 공격 소모 자원 (Attack Cost)
+				// 💸 공격 소모 자원 (Cycle Cost)
 				new StatsValue(StatsType.유닛_공격소모_전력),
 				new StatsValue(StatsType.유닛_공격소모_물자),
 				// 🔭 범위 및 이동 (Range & Movement)
@@ -622,15 +622,9 @@ public partial class StrategyGamePlayData // StatsValue
 		// 데이터 저장소 접근을 위한 속성
 		public IStatsValueControl StatsValue { get; }
 		int GetStatsValue(StatsType type);
-		float GetStatsValuePercent(StatsType type)	 
-		{
-			return GetStatsValue(type) * 0.01f;
-		}
-		public void SetValueInMainStats(StatsType type, int value);
-		void SetValueInMainStatsPercent(StatsType type, float valuePercent)
-		{
-			SetValueInMainStats(type, Mathf.RoundToInt(valuePercent * 100f));
-		}
+		float GetStatsValuePrecent(StatsType type);
+		public void SetRuntimeDataValue(StatsType type, int value);
+		void SetRuntimeDataValuePrecent(StatsType type, float valuePercent);
 	}
 
 }

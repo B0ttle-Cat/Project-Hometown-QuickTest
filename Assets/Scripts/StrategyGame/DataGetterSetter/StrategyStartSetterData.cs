@@ -73,17 +73,17 @@ namespace StrategyManagerModule
 			[FoldoutGroup("@factionName")]
 			public Sprite factionIcon;
 
-			[FoldoutGroup("@factionName/StatsData")] public int maxOperationPoint;
-			[FoldoutGroup("@factionName/StatsData")] public int requireOperationPoint;
-			[FoldoutGroup("@factionName/StatsData")] public int currentOperationPoint;
+			[FoldoutGroup("@factionName/StatsData_old")] public int maxOperationPoint;
+			[FoldoutGroup("@factionName/StatsData_old")] public int requireOperationPoint;
+			[FoldoutGroup("@factionName/StatsData_old")] public int currentOperationPoint;
 			[Space]
-			[FoldoutGroup("@factionName/StatsData")] public int maxMaterialPoint;
-			[FoldoutGroup("@factionName/StatsData")] public int currentMaterialPoint;
+			[FoldoutGroup("@factionName/StatsData_old")] public int maxMaterialPoint;
+			[FoldoutGroup("@factionName/StatsData_old")] public int currentMaterialPoint;
 			[Space]
-			[FoldoutGroup("@factionName/StatsData")] public int maxElectricPoint;
-			[FoldoutGroup("@factionName/StatsData")] public int currentElectricPoint;
+			[FoldoutGroup("@factionName/StatsData_old")] public int maxElectricPoint;
+			[FoldoutGroup("@factionName/StatsData_old")] public int currentElectricPoint;
 			[Space]
-			[FoldoutGroup("@factionName/StatsData")] public int captureSpeed;
+			[FoldoutGroup("@factionName/StatsData_old")] public int captureSpeed;
 
 			[FoldoutGroup("@factionName")] public GameObject defaultUnitPrefab;
 

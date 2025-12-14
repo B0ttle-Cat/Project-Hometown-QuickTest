@@ -10,9 +10,16 @@ public abstract class CombatSubEffect : SubEffectObject, ICombatOffense
     {
         return 0;
     }
-
-    void IStatsValueControl.SetValueInMainStats(StrategyGamePlayData.StatsType type, int value)
+	public float GetStatsValuePrecent(StatsType type)
+	{
+        return 0;
+	}
+	void IStatsValueControl.SetRuntimeDataValue(StrategyGamePlayData.StatsType type, int value)
     {
 
+    }
+    public void SetRuntimeDataValuePrecent(StatsType type, float valuePercent)
+    {
+        
     }
 }

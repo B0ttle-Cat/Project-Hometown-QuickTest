@@ -148,6 +148,7 @@ public class KeyPairProjectile : KeyPairAssets<StrategyGamePlayData.ProjectileKe
 
 		public readonly string DisplayName => ProjectileProfileObject == null ? displayName : ProjectileProfileObject.displayName;
 		public readonly ProjectileKey ProjectileKey => ProjectileProfileObject == null ? projectileKey : ProjectileProfileObject.projectileKey;
+		public readonly WeaponType WeaponType => ProjectileProfileObject == null || ProjectileProfileObject.statsData == null ? WeaponType.None : ProjectileProfileObject.statsData.WeaponType;
 		public readonly ProjectileProfileObject ProjectileProfileObject => projectileProfileObject;
 
 		public ProjectileInfo(ProjectileKey key, string displayName) : this()

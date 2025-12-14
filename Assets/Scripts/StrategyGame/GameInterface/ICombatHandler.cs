@@ -47,32 +47,32 @@ public interface ICombatCommon : IStatsValueControl, IStrategyElement
 	int RecoveryPower => GetStatsValue(StatsType.유닛_회복력);
 
 	// 💨 이동 및 점령 스탯 (Movement & Capture)
-	float MovementSpeed => GetStatsValuePercent(StatsType.유닛_이동속도_c);
+	float MovementSpeed => GetStatsValuePrecent(StatsType.유닛_이동속도_c);
 	float CaptureScore => GetStatsValue(StatsType.유닛_점령점수);
 
-	// ⚙️ 공격 시스템 계수 (Attack System Multipliers)
+	// ⚙️ 공격 시스템 계수 (Cycle System Multipliers)
 	int AmmunitionCapacity => GetStatsValue(StatsType.유닛_탄용량);
 	int AmmunitionUsed => GetStatsValue(StatsType.유닛_사용탄수);
 	int ConcurrentProjectileCount => GetStatsValue(StatsType.유닛_동시공격개수);
 	int ContinuousAttackCount => GetStatsValue(StatsType.유닛_연속공격횟수);
 
 	// ⏱️ 딜레이 스탯 (Time Delays)
-	float AimDelayTime => GetStatsValuePercent(StatsType.유닛_조준지연시간_c);
-	float ContinuousAttackDelayTime => GetStatsValuePercent(StatsType.유닛_연속공격지연시간_c);
-	float ReattackDelayTime => GetStatsValuePercent(StatsType.유닛_재공격지연시간_c);
-	float ReloadTime => GetStatsValuePercent(StatsType.유닛_재장전시간_c);
+	float AimDelayTime => GetStatsValuePrecent(StatsType.유닛_조준지연시간_c);
+	float ContinuousAttackDelayTime => GetStatsValuePrecent(StatsType.유닛_연속공격지연시간_c);
+	float ReattackDelayTime => GetStatsValuePrecent(StatsType.유닛_재공격지연시간_c);
+	float ReloadTime => GetStatsValuePrecent(StatsType.유닛_재장전시간_c);
 
-	// 💸 공격 소모 자원 스탯 (Attack Cost)
+	// 💸 공격 소모 자원 스탯 (Cycle Cost)
 	float AttackCostMaterial => GetStatsValue(StatsType.유닛_공격소모_물자);
 	float AttackCostPower => GetStatsValue(StatsType.유닛_공격소모_전력);
 
 	// 🔭 범위 스탯 (Range)
-	float AttackRangeLimitMin => GetStatsValuePercent(StatsType.유닛_공격범위_종료최소_c);
-	float AttackRangeStartMin => GetStatsValuePercent(StatsType.유닛_공격범위_시작최소_c);
-	float AttackRangeStartMax => GetStatsValuePercent(StatsType.유닛_공격범위_시작최대_c);
-	float AttackRangeLimitMax => GetStatsValuePercent(StatsType.유닛_공격범위_종료최대_c);
-	float ActionRange => GetStatsValuePercent(StatsType.유닛_행동범위_c);
-	float VisionRange => GetStatsValuePercent(StatsType.유닛_시야범위_c);
+	float AttackRangeLimitMin => GetStatsValuePrecent(StatsType.유닛_공격범위_종료최소_c);
+	float AttackRangeStartMin => GetStatsValuePrecent(StatsType.유닛_공격범위_시작최소_c);
+	float AttackRangeStartMax => GetStatsValuePrecent(StatsType.유닛_공격범위_시작최대_c);
+	float AttackRangeLimitMax => GetStatsValuePrecent(StatsType.유닛_공격범위_종료최대_c);
+	float ActionRange => GetStatsValuePrecent(StatsType.유닛_행동범위_c);
+	float VisionRange => GetStatsValuePrecent(StatsType.유닛_시야범위_c);
 }
 public interface ICombatOffense : IStatsValueControl, IStrategyElement
 {
@@ -84,7 +84,7 @@ public interface ICombatOffense : IStatsValueControl, IStrategyElement
 	int AttackPower => GetStatsValue(StatsType.유닛_공격력);
 
 	// 🎯 치명타 스탯 (Critical)
-	float CriticalDamageRatio => GetStatsValuePercent(StatsType.유닛_치명피해율);
+	float CriticalDamageRatio => GetStatsValuePrecent(StatsType.유닛_치명피해율);
 	int CriticalAttackPower => GetStatsValue(StatsType.유닛_치명공격력);
 
 	// 🛡️ 관통 및 적용 스탯 (Penetration & Application)

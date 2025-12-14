@@ -28,9 +28,7 @@ public partial class UnitObject // Movement
 	{
 		unitMovement.OnNewCombatMovementPath(target);
 	}
-}
-public partial class UnitObject
-{
+
 	public IMovement ThisMovement
 	{
 		get

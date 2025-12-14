@@ -17,7 +17,7 @@ public record ProjectileStatsData // ProfileStats
 	[SerializeField,HideIf("@true")]
 	private ProjectileKey projectileKey;
 
-	[Title("StatsData")]
+	[Title("StatsData_old")]
 	[LabelText("공격 속성"), SerializeField]
 	private WeaponType weaponType;
 

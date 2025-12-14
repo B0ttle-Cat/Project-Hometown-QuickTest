@@ -17,7 +17,7 @@ public class ProjectileProfileObject : ScriptableObject
 	[InlineButton("PushData"), InlineButton("PullData")]
 	public ProjectileKey projectileKey;
 
-	// 단일 Stats 관리
+	// 단일 Stats_old 관리
 	[SerializeField, InlineProperty, HideLabel]
 	public ProjectileStatsData statsData = new ProjectileStatsData();
 
@@ -77,7 +77,7 @@ public class ProjectileProfileObject : ScriptableObject
 
 		if (obj.StatsData == null)
 		{
-			Debug.LogWarning("ProjectileObject.StatsData is null. Cannot pull data.");
+			Debug.LogWarning("ProjectileObject.StatsData_old is null. Cannot pull data.");
 			return;
 		}
 
@@ -85,7 +85,7 @@ public class ProjectileProfileObject : ScriptableObject
 		statsData = obj.StatsData.Copy();
 
 		EditorUtility.SetDirty(this);
-		Debug.Log($"Pulled StatsData from prefab '{prefab.name}'.");
+		Debug.Log($"Pulled StatsData_old from prefab '{prefab.name}'.");
 	}
 
 	private void PushData()
@@ -106,7 +106,7 @@ public class ProjectileProfileObject : ScriptableObject
 		obj.Init(this);
 
 		EditorUtility.SetDirty(prefab);
-		Debug.Log($"Pushed StatsData to prefab '{prefab.name}'.");
+		Debug.Log($"Pushed StatsData_old to prefab '{prefab.name}'.");
 	}
 	private void Reset() { SetTestStatsValue(); }
 	[Button]

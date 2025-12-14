@@ -41,7 +41,7 @@ public partial class UnitObject : IUnitAttackFSMController
 		AttackState.OnReloadingTiming += AttackState_OnReloadingTiming;
 		ThisCombatHandler.OnChangeCurrentCombatTarget += ThisCombatController_OnChangeCurrentCombatTarget;
 
-		minaProjectileKey = ProfileData.projectileKey;
+		minaProjectileKey = StatsData.ProjectileKey;
 	}
 	partial void DeinitAttack()
 	{
@@ -59,7 +59,7 @@ public partial class UnitObject : IUnitAttackFSMController
 
 	private void AttackState_OnReloadingTiming()
 	{
-		StatsValue.SetValueInMainStats(StrategyGamePlayData.StatsType.유닛_사용탄수, 0);
+		StatsValue.SetRuntimeDataValue(StrategyGamePlayData.StatsType.유닛_사용탄수, 0);
 	}
 
 	private void AttackState_OnAttackReady(int continuousAttackCount, int simultaneousAttackCount, float continuousAttackDelay)

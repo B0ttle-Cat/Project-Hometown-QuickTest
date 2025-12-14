@@ -491,12 +491,6 @@ public partial class StrategyGamePlayData // Play Content Info
 				public string displayName;  // 유닛 이름
 				public int unitID;          // 씬에 배치된 유닛 고유번호
 				public int factionID;       // 유닛이 속한 세력 번호
-
-				// 무기 타입과 방어구 타입
-				public ProjectileKey projectileKey;
-				public ProtectionType protectType;
-				// 적용되어 있는 각종 효과
-				public StatusEffectsFlag effects;
 				public Data Copy()
 				{
 					return this;

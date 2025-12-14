@@ -21,8 +21,8 @@ public record ProjectileRuntimeData // RuntimeData
 	[SerializeField, BoxGroup("Projectile Runtime Data/Transform")] private Vector3 moveDiraction;
 	[SerializeField, BoxGroup("Projectile Runtime Data/Transform")] private float moveSpeed;
 
-	[SerializeField, BoxGroup("Projectile Runtime Data/Runtime Stats")] private float lifeTime;
-	[SerializeField, BoxGroup("Projectile Runtime Data/Runtime Stats")] private int piercingCount;
+	[SerializeField, BoxGroup("Projectile Runtime Data/Runtime Stats_old")] private float lifeTime;
+	[SerializeField, BoxGroup("Projectile Runtime Data/Runtime Stats_old")] private int piercingCount;
 	public ProjectileRuntimeData(ProjectileProfileObject profile)
 	{
 		if (profile == null || profile.statsData == null) return;

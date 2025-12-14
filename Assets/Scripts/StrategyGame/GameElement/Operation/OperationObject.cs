@@ -2,8 +2,6 @@
 using System.Linq;
 
 using UnityEngine;
-
-using static StrategyGamePlayData;
 public partial class OperationObject : MonoBehaviour  // Main
 {
 	[SerializeField]
@@ -58,7 +56,7 @@ public partial class OperationObject : MonoBehaviour  // Main
 	partial void DeinitFSM();
 	partial void DeInitNearby();
 }
-public partial class OperationObject // StatsData
+public partial class OperationObject // StatsData_old
 {
 	int computeFrame = -1;
 	public void ComputeOperationValue()
@@ -73,11 +71,11 @@ public partial class OperationObject // StatsData
 
 	private float ComputeMoveSpeed()
 	{
-		return GetAllUnitObj.Count == 0 ? 0 : GetAllUnitObj.Select(i => i.StatsValue.GetStatsValuePercent(StatsType.유닛_이동속도_c)).Average();
+		return GetAllUnitObj.Count == 0 ? 0 : GetAllUnitObj.Select(i => i.StatsData.MovementSpeed).Average();
 	}
 	private float ComputeViewRange()
 	{
-		return GetAllUnitObj.Count == 0 ? 0 : GetAllUnitObj.Select(i => i.StatsValue.GetStatsValuePercent(StatsType.유닛_시야범위_c)).Max();
+		return GetAllUnitObj.Count == 0 ? 0 : GetAllUnitObj.Select(i => i.StatsData.VisionRange).Max();
 	}
 }
 public partial class OperationObject : IStrategyElement, IStrategyElementDestroyer

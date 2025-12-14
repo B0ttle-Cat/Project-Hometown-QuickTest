@@ -8,8 +8,14 @@ using static StrategyGamePlayData;
 
 public partial class UnitObject : MonoBehaviour
 {
+	private UnitRuntimeData runtimeData;
+	private UnitStatsData statsData;
+
+	public UnitRuntimeData RuntimeData => runtimeData;
+	public UnitStatsData StatsData => statsData;
+
 	private UnitData.Profile profile;
-	private UnitData.Stats stats;
+	private UnitData.Stats stats_old;
 	private UnitData.Skill skill;
 	private UnitData.ConnectSector sector;
 	private CaptureTag captureTag;
@@ -22,7 +28,7 @@ public partial class UnitObject : MonoBehaviour
 	[ShowInInspector, ToggleGroup("EditUnitData", GroupName = "UnitData"), HideReferenceObjectPicker]
 	public UnitData.Profile Profile { get => profile; set => profile = value; }
 	[ShowInInspector, ToggleGroup("EditUnitData"), HideReferenceObjectPicker]
-	public UnitData.Stats Stats { get => stats; set => stats = value; }
+	public UnitData.Stats Stats_old { get => stats_old; set => stats_old = value; }
 	[ShowInInspector, ToggleGroup("EditUnitData"), HideReferenceObjectPicker]
 	public UnitData.Skill Skill { get => skill; set => skill = value; }
 	[ShowInInspector, ToggleGroup("EditUnitData"), HideReferenceObjectPicker]
@@ -30,7 +36,7 @@ public partial class UnitObject : MonoBehaviour
 	[ShowInInspector, ToggleGroup("EditUnitData"), HideReferenceObjectPicker]
 	public CaptureTag CaptureTag { get => captureTag; set => captureTag = value; }
 	public ref readonly UnitData.Profile.Data ProfileData => ref Profile.ReadonlyData();
-	public ref readonly UnitData.Stats.Data StatsData => ref Stats.ReadonlyData();
+	public ref readonly UnitData.Stats.Data StatsData_old => ref Stats_old.ReadonlyData();
 	public ref readonly UnitData.Skill.Data SkillData => ref Skill.ReadonlyData();
 	public ref readonly UnitData.ConnectSector.Data SectorData => ref Sector.ReadonlyData();
 	public string UnitName => ProfileData.displayName;
@@ -50,10 +56,10 @@ public partial class UnitObject : MonoBehaviour
 			displayName = data.displayName,
 			unitID = unitElementID,
 			factionID = factionID,
-			projectileKey = data.projectileKey,
-			protectType = data.protectType,
 		});
-		InitProfileObject(data);
+		statsData = new UnitStatsData(data);
+		runtimeData = new UnitRuntimeData(statsData);
+		InitCaptureTag(data);
 	}
 	public void Init(in StrategyStartSetterData.UnitData data) // UnitData
 	{
@@ -67,8 +73,6 @@ public partial class UnitObject : MonoBehaviour
 					displayName = info.UnitProfileObject.displayName,
 					unitID = unitElementID,
 					factionID = data.factionID,
-					projectileKey = info.UnitProfileObject.projectileKey,
-					protectType = info.UnitProfileObject.protectType,
 				});
 			}
 			else
@@ -79,8 +83,6 @@ public partial class UnitObject : MonoBehaviour
 					displayName = "",
 					unitID = unitElementID,
 					factionID = -1,
-					projectileKey = ProjectileKey.None,
-					protectType = ProtectionType.일반,
 				});
 			}
 		}
@@ -91,9 +93,9 @@ public partial class UnitObject : MonoBehaviour
 		}
 
 
-		int durability = Mathf.Min(data.durability, MainStatsList.GetValue(StatsType.유닛_최대내구도));
+		int durability = Mathf.Min(data.durability, StatsData.MaxDurability);
 		if (durability < 1) durability = 1;
-		MainStatsList.SetValue(StatsType.유닛_현재내구도, durability);
+		RuntimeData.CurrentDurability = durability;
 		
 		sector = new UnitData.ConnectSector(new(data.visiteSectorID));
 	}
@@ -110,7 +112,7 @@ public partial class UnitObject : MonoBehaviour
 		InitCombat();
 		InitAttack();
 	}
-	partial void InitProfileObject(UnitProfileObject profileObj);
+	partial void InitCaptureTag(UnitProfileObject profileObj);
 	private void InitDebugRender()
 	{
 		if (debugRender == null || Faction == null) return;

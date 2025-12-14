@@ -7,7 +7,6 @@ using UnityEditor;
 using UnityEngine;
 
 using static StrategyGamePlayData;
-using static StrategyGamePlayData.UnitData.Skill;
 
 using Object = UnityEngine.Object;
 
@@ -19,6 +18,10 @@ public class UnitProfileObject : ScriptableObject
 	[InlineButton("PushData"), InlineButton("PullData")]
 	public UnitKey unitKey;
 	public string displayName;
+
+	[Title("Stats"), InlineProperty, HideLabel]
+	public UnitStatsData stats;
+
 #if UNITY_EDITOR
 	private void CreatePrefab()
 	{
@@ -79,58 +82,9 @@ public class UnitProfileObject : ScriptableObject
 		{
 			var profileData = unit.ProfileData;
 			displayName = profileData.displayName;
-			protectType = profileData.protectType;
 
-			var statsData = unit.StatsData;
-			유닛_인력 = statsData.GetValue(StatsType.유닛_인력);
-			유닛_물자 = statsData.GetValue(StatsType.유닛_물자);
-			유닛_전력 = statsData.GetValue(StatsType.유닛_전력);
-
-			유닛_최대내구도 = statsData.GetValue(StatsType.유닛_최대내구도);
-
-			유닛_공격력 = statsData.GetValue(StatsType.유닛_공격력);
-			유닛_방어력 = statsData.GetValue(StatsType.유닛_방어력);
-			유닛_치유력 = statsData.GetValue(StatsType.유닛_치유력);
-			유닛_회복력 = statsData.GetValue(StatsType.유닛_회복력);
-			유닛_이동속도 = statsData.GetValue(StatsType.유닛_이동속도_c);
-			유닛_점령점수 = statsData.GetValue(StatsType.유닛_점령점수);
-
-			유닛_치명공격력 = statsData.GetValue(StatsType.유닛_치명공격력);
-			유닛_치명피해율 = statsData.GetValue(StatsType.유닛_치명피해율);
-			유닛_치명방어력 = statsData.GetValue(StatsType.유닛_치명방어력);
-
-			유닛_관통레벨 = statsData.GetValue(StatsType.유닛_관통레벨);
-			유닛_장갑레벨 = statsData.GetValue(StatsType.유닛_장갑레벨);
-			유닛_EMP충격레벨 = statsData.GetValue(StatsType.유닛_EMP충격레벨); 
-			유닛_EMP방호레벨 = statsData.GetValue(StatsType.유닛_EMP방호레벨);
-
-			유닛_상태이상적용레벨 = statsData.GetValue(StatsType.유닛_상태이상적용레벨);
-			유닛_상태이상저항레벨 = statsData.GetValue(StatsType.유닛_상태이상저항레벨);
-
-			유닛_공격명중기회 = statsData.GetValue(StatsType.유닛_공격명중기회);
-			유닛_공격회피기회 = statsData.GetValue(StatsType.유닛_공격회피기회);
-			유닛_치명명중기회 = statsData.GetValue(StatsType.유닛_치명명중기회);
-			유닛_치명회피기회 = statsData.GetValue(StatsType.유닛_치명회피기회);
-
-			유닛_동시공격개수 = statsData.GetValue(StatsType.유닛_동시공격개수);
-			유닛_연속공격횟수 = statsData.GetValue(StatsType.유닛_연속공격횟수);
-			유닛_조준지연시간 = statsData.GetValue(StatsType.유닛_조준지연시간_c);
-			유닛_연속공격지연시간 = statsData.GetValue(StatsType.유닛_연속공격지연시간_c);
-			유닛_재공격지연시간 = statsData.GetValue(StatsType.유닛_재공격지연시간_c);
-
-			유닛_탄용량 = statsData.GetValue(StatsType.유닛_탄용량);
-			유닛_사용탄수 = statsData.GetValue(StatsType.유닛_사용탄수);
-			유닛_재장전시간 = statsData.GetValue(StatsType.유닛_재장전시간_c);
-
-			유닛_공격소모_물자 = statsData.GetValue(StatsType.유닛_공격소모_물자);
-			유닛_공격소모_전력 = statsData.GetValue(StatsType.유닛_공격소모_전력);
-
-			유닛_공격범위_종료최소 = statsData.GetValue(StatsType.유닛_공격범위_종료최소_c);
-			유닛_공격범위_시작최소 = statsData.GetValue(StatsType.유닛_공격범위_시작최소_c);
-			유닛_공격범위_시작최대 = statsData.GetValue(StatsType.유닛_공격범위_시작최대_c);
-			유닛_공격범위_종료최대 = statsData.GetValue(StatsType.유닛_공격범위_종료최대_c);
-			유닛_행동범위 = statsData.GetValue(StatsType.유닛_행동범위_c);
-			유닛_시야범위 = statsData.GetValue(StatsType.유닛_시야범위_c);
+			var objStats = unit.StatsData;
+			stats = new UnitStatsData(objStats);
 		}
 	}
 	private void PushData()
@@ -141,229 +95,9 @@ public class UnitProfileObject : ScriptableObject
 			var profileData = unit.ProfileData;
 			profileData.unitKey = unitKey;
 			profileData.displayName = displayName;
-			profileData.protectType = protectType;
-			unit.Profile.SetData(profileData);
 
-			var statsData = unit.StatsData;
-			statsData.SetValue(StatsType.유닛_인력, 유닛_인력);
-			statsData.SetValue(StatsType.유닛_물자, 유닛_물자);
-			statsData.SetValue(StatsType.유닛_전력, 유닛_전력);
-
-			statsData.SetValue(StatsType.유닛_최대내구도, 유닛_최대내구도);
-
-			statsData.SetValue(StatsType.유닛_공격력, 유닛_공격력);
-			statsData.SetValue(StatsType.유닛_방어력, 유닛_방어력);
-			statsData.SetValue(StatsType.유닛_치유력, 유닛_치유력);
-			statsData.SetValue(StatsType.유닛_회복력, 유닛_회복력);
-			statsData.SetValue(StatsType.유닛_이동속도_c, 유닛_이동속도);
-			statsData.SetValue(StatsType.유닛_점령점수, 유닛_점령점수);
-
-			statsData.SetValue(StatsType.유닛_치명공격력, 유닛_치명공격력);
-			statsData.SetValue(StatsType.유닛_치명피해율, 유닛_치명피해율);
-			statsData.SetValue(StatsType.유닛_치명방어력, 유닛_치명방어력);
-
-			statsData.SetValue(StatsType.유닛_관통레벨, 유닛_관통레벨);
-			statsData.SetValue(StatsType.유닛_장갑레벨, 유닛_장갑레벨);
-
-			statsData.SetValue(StatsType.유닛_EMP충격레벨, 유닛_EMP충격레벨);
-			statsData.SetValue(StatsType.유닛_EMP방호레벨, 유닛_EMP방호레벨);
-
-			statsData.SetValue(StatsType.유닛_상태이상적용레벨, 유닛_상태이상적용레벨);
-			statsData.SetValue(StatsType.유닛_상태이상저항레벨, 유닛_상태이상저항레벨);
-
-			statsData.SetValue(StatsType.유닛_공격명중기회, 유닛_공격명중기회);
-			statsData.SetValue(StatsType.유닛_공격회피기회, 유닛_공격회피기회);
-			statsData.SetValue(StatsType.유닛_치명명중기회, 유닛_치명명중기회);
-			statsData.SetValue(StatsType.유닛_치명회피기회, 유닛_치명회피기회);
-
-			statsData.SetValue(StatsType.유닛_동시공격개수, 유닛_동시공격개수);
-			statsData.SetValue(StatsType.유닛_연속공격횟수, 유닛_연속공격횟수);
-			statsData.SetValue(StatsType.유닛_조준지연시간_c, 유닛_조준지연시간);
-			statsData.SetValue(StatsType.유닛_연속공격지연시간_c, 유닛_연속공격지연시간);
-			statsData.SetValue(StatsType.유닛_재공격지연시간_c, 유닛_재공격지연시간);
-
-			statsData.SetValue(StatsType.유닛_탄용량, 유닛_탄용량);
-			statsData.SetValue(StatsType.유닛_사용탄수, 유닛_사용탄수);
-			statsData.SetValue(StatsType.유닛_재장전시간_c, 유닛_재장전시간);
-
-			statsData.SetValue(StatsType.유닛_공격소모_물자, 유닛_공격소모_물자);
-			statsData.SetValue(StatsType.유닛_공격소모_전력, 유닛_공격소모_전력);
-
-			statsData.SetValue(StatsType.유닛_공격범위_종료최소_c, 유닛_공격범위_종료최소);
-			statsData.SetValue(StatsType.유닛_공격범위_시작최소_c, 유닛_공격범위_시작최소);
-			statsData.SetValue(StatsType.유닛_공격범위_시작최대_c, 유닛_공격범위_시작최대);
-			statsData.SetValue(StatsType.유닛_공격범위_종료최대_c, 유닛_공격범위_종료최대);
-			statsData.SetValue(StatsType.유닛_행동범위_c, 유닛_행동범위);
-			statsData.SetValue(StatsType.유닛_시야범위_c, 유닛_시야범위);
-			unit.Stats.SetData(statsData);
-			//UnityEditor.PrefabUtility.SavePrefabAsset(prefab);
+			unit.Init(this);
 		}
 	}
 #endif
-
-	public ProjectileKey projectileKey;
-	public ProtectionType protectType;
-
-	[FoldoutGroup("StatsData")] public int 유닛_인력;
-	[FoldoutGroup("StatsData")] public int 유닛_물자;
-	[FoldoutGroup("StatsData")] public int 유닛_전력;
-	[Space]
-	[FoldoutGroup("StatsData")] public int 유닛_최대내구도;
-
-	[FoldoutGroup("StatsData")] public int 유닛_공격력;
-	[FoldoutGroup("StatsData")] public int 유닛_방어력;
-	[FoldoutGroup("StatsData")] public int 유닛_치유력;
-	[FoldoutGroup("StatsData")] public int 유닛_회복력;
-	[FoldoutGroup("StatsData")] public int 유닛_이동속도;
-	[FoldoutGroup("StatsData")] public int 유닛_점령점수;
-
-	[FoldoutGroup("StatsData")] public int 유닛_치명공격력;
-	[FoldoutGroup("StatsData")] public int 유닛_치명피해율;
-	[FoldoutGroup("StatsData")] public int 유닛_치명방어력;
-
-	[Space]
-	[FoldoutGroup("StatsData")] public int 유닛_관통레벨;
-	[FoldoutGroup("StatsData")] public int 유닛_장갑레벨;
-
-	[FoldoutGroup("StatsData")] public int 유닛_EMP충격레벨;
-	[FoldoutGroup("StatsData")] public int 유닛_EMP방호레벨;
-
-	[FoldoutGroup("StatsData")] public int 유닛_상태이상적용레벨;
-	[FoldoutGroup("StatsData")] public int 유닛_상태이상저항레벨;
-
-	[Space]
-	[FoldoutGroup("StatsData")] public int 유닛_공격명중기회;
-	[FoldoutGroup("StatsData")] public int 유닛_공격회피기회;
-	[FoldoutGroup("StatsData")] public int 유닛_치명명중기회;
-	[FoldoutGroup("StatsData")] public int 유닛_치명회피기회;
-	[Space]
-	[FoldoutGroup("StatsData")] public int 유닛_동시공격개수;
-	[FoldoutGroup("StatsData")] public int 유닛_연속공격횟수;
-	[FoldoutGroup("StatsData")] public int 유닛_조준지연시간;
-	[FoldoutGroup("StatsData")] public int 유닛_연속공격지연시간;
-	[FoldoutGroup("StatsData")] public int 유닛_재공격지연시간;
-	[Space]
-	[FoldoutGroup("StatsData")] public int 유닛_탄용량;
-	[FoldoutGroup("StatsData")] public int 유닛_사용탄수;
-	[FoldoutGroup("StatsData")] public int 유닛_재장전시간;
-
-	[Space]
-	[FoldoutGroup("StatsData")] public int 유닛_공격소모_물자;
-	[FoldoutGroup("StatsData")] public int 유닛_공격소모_전력;
-	[Space]
-	[FoldoutGroup("StatsData")] public int 유닛_공격범위_종료최소;
-	[FoldoutGroup("StatsData")] public int 유닛_공격범위_시작최소;
-	[FoldoutGroup("StatsData")] public int 유닛_공격범위_시작최대;
-	[FoldoutGroup("StatsData")] public int 유닛_공격범위_종료최대;
-	[FoldoutGroup("StatsData")] public int 유닛_행동범위;
-	[FoldoutGroup("StatsData")] public int 유닛_시야범위;
-
-	[Space]
-	public SkillData[] personalSkills;
-
-	public StatsValue[] ConvertStatsValues()
-	{
-		return new StatsValue[]
-		{
-			new (StatsType.유닛_인력, 유닛_인력),
-			new (StatsType.유닛_물자, 유닛_물자),
-			new (StatsType.유닛_전력, 유닛_전력),
-
-			new (StatsType.유닛_최대내구도, 유닛_최대내구도),
-			
-			new (StatsType.유닛_공격력, 유닛_공격력),
-			new (StatsType.유닛_방어력, 유닛_방어력),
-			new (StatsType.유닛_치유력, 유닛_치유력),
-			new (StatsType.유닛_회복력, 유닛_회복력),
-			new (StatsType.유닛_이동속도_c, 유닛_이동속도),
-			new (StatsType.유닛_점령점수, 유닛_점령점수),
-			new (StatsType.유닛_치명공격력, 유닛_치명공격력),
-			new (StatsType.유닛_치명피해율, 유닛_치명피해율),
-			new (StatsType.유닛_치명방어력, 유닛_치명방어력),
-
-			new (StatsType.유닛_관통레벨, 유닛_관통레벨),
-			new (StatsType.유닛_장갑레벨, 유닛_장갑레벨),
-			new (StatsType.유닛_EMP충격레벨, 유닛_EMP충격레벨),
-			new (StatsType.유닛_EMP방호레벨, 유닛_EMP방호레벨),
-
-			new (StatsType.유닛_공격명중기회, 유닛_공격명중기회),
-			new (StatsType.유닛_공격회피기회, 유닛_공격회피기회),
-			new (StatsType.유닛_치명명중기회, 유닛_치명명중기회),
-			new (StatsType.유닛_치명회피기회, 유닛_치명회피기회),
-
-			new (StatsType.유닛_동시공격개수, 유닛_동시공격개수),
-			new (StatsType.유닛_연속공격횟수, 유닛_연속공격횟수),
-			new (StatsType.유닛_조준지연시간_c, 유닛_조준지연시간),
-			new (StatsType.유닛_연속공격지연시간_c, 유닛_연속공격지연시간),
-			new (StatsType.유닛_재공격지연시간_c, 유닛_재공격지연시간),
-
-			new(StatsType.유닛_탄용량    , 유닛_탄용량    ),
-			new(StatsType.유닛_사용탄수    , 유닛_사용탄수    ),
-			new(StatsType.유닛_재장전시간_c, 유닛_재장전시간),
-
-			new (StatsType.유닛_공격소모_물자, 유닛_공격소모_물자),
-			new (StatsType.유닛_공격소모_전력, 유닛_공격소모_전력),
-
-			new (StatsType.유닛_공격범위_종료최소_c, 유닛_공격범위_종료최소),
-			new (StatsType.유닛_공격범위_시작최소_c, 유닛_공격범위_시작최소),
-			new (StatsType.유닛_공격범위_시작최대_c, 유닛_공격범위_시작최대),
-			new (StatsType.유닛_공격범위_종료최대_c, 유닛_공격범위_종료최대),
-			new (StatsType.유닛_행동범위_c, 유닛_행동범위),
-			new (StatsType.유닛_시야범위_c, 유닛_시야범위)
-		};
-	}
-
-	[Button]
-	private void SetTestStatsValue()
-	{
-		유닛_인력 = 1;
-		유닛_물자 = 1;
-		유닛_전력 = 1;
-
-		유닛_최대내구도 = 1000;
-
-		유닛_공격력 = 10;
-		유닛_방어력 = 1;
-		유닛_치유력 = 10;
-		유닛_회복력 = 1;
-		유닛_이동속도 = 1_00;
-		유닛_점령점수 = 1;
-
-		유닛_치명공격력 = 30;
-		유닛_치명피해율 = 200;
-		유닛_치명방어력 = 10;
-
-		유닛_관통레벨 = 1;
-		유닛_장갑레벨 = 1;
-		유닛_EMP충격레벨 = 1;
-		유닛_EMP방호레벨 = 1;
-
-		유닛_상태이상적용레벨 = 1;
-		유닛_상태이상저항레벨 = 1;
-
-		유닛_공격명중기회 = 70;
-		유닛_공격회피기회 = 10;
-		유닛_치명명중기회 = 30;
-		유닛_치명회피기회 = 20;
-
-		유닛_동시공격개수 = 1;
-		유닛_연속공격횟수 = 3;
-		유닛_조준지연시간 = 1_00;
-		유닛_연속공격지연시간 = 0_10;
-		유닛_재공격지연시간 = 0_50;
-
-		유닛_탄용량 = 8;
-		유닛_사용탄수 = 0;
-		유닛_재장전시간 = 3_00;
-
-		유닛_공격소모_물자 = 1;
-		유닛_공격소모_전력 = 1;
-
-		유닛_공격범위_종료최소 = 0;
-		유닛_공격범위_시작최소 = 0;
-		유닛_공격범위_시작최대 = 8_00;
-		유닛_공격범위_종료최대 = 1_000;
-		유닛_행동범위 = 11_00;
-		유닛_시야범위 = 15_00;
-	}
 }

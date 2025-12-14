@@ -1,7 +1,7 @@
 ﻿
 using System;
 
-public partial class OperationObject // NodeMovement Order StatsData
+public partial class OperationObject // NodeMovement Order StatsData_old
 {
 	public enum MovementOrderState
 	{

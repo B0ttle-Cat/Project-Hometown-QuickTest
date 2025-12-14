@@ -83,7 +83,7 @@ public partial class UnitMovement : MonoBehaviour
 	private float GetStateValue(StatsType type)
 	{
 		if (StateControl == null) return 0f;
-		return StateControl.GetStatsValuePercent(StrategyGamePlayData.StatsType.유닛_이동속도_c);
+		return StateControl.GetStatsValuePrecent(StrategyGamePlayData.StatsType.유닛_이동속도_c);
 	}
 
 	private void InitPositionAndVelocity(out Vector3 position, out Vector3 velocity)

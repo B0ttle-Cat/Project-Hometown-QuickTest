@@ -56,7 +56,7 @@ public static class StrategyElementFactory
 		newObject.name = $"{profile.displayName}_{unitObject.UnitID:00}";
 		if (StrategyManager.Collector.TryFind<Faction>(factionID, out var faction))
 		{
-			faction.API_UnitCounter(profile.유닛_인력);
+			faction.API_UnitCounter(profile.stats.DeploymentCostPersonnel);
 		}
 		if (enterThis)
 		{
@@ -76,7 +76,7 @@ public static class StrategyElementFactory
 
 		if (StrategyManager.Collector.TryFind<Faction>(unitObject.FactionID, out var faction))
 		{
-			faction.API_UnitCounter(-unitObject.StatsData.GetValue(StatsType.유닛_인력));
+			faction.API_UnitCounter(-unitObject.StatsData_old.GetValue(StatsType.유닛_인력));
 		}
 		unitObject.Deinit();
 		StrategyManager.Collector.Remove<UnitObject>(unitObject);

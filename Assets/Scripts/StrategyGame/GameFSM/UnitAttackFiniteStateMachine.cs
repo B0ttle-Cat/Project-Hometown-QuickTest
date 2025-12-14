@@ -130,7 +130,7 @@ public partial class UnitAttackFiniteStateMachine : FiniteStateMachine<UnitAttac
 		{
 			attackState.didAiming = true;
 			attackState.changeNewTargetFlag = false;
-			aimingTime = StateControl.GetStatsValuePercent(StatsType.유닛_조준지연시간_c);
+			aimingTime = StateControl.GetStatsValuePrecent(StatsType.유닛_조준지연시간_c);
 		}
 		protected override void OnStateExit()
 		{
@@ -169,8 +169,8 @@ public partial class UnitAttackFiniteStateMachine : FiniteStateMachine<UnitAttac
 		protected override void OnStateEnter()
 		{
 			continuousAttackCount = StateControl.GetStatsValue(StatsType.유닛_연속공격횟수);
-			simultaneousAttackCount = StateControl.GetStatsValue(StatsType.유닛_동시공격개수1);
-			continuousAttackDelay = StateControl.GetStatsValuePercent(StatsType.유닛_연속공격지연시간_c);
+			simultaneousAttackCount = StateControl.GetStatsValue(StatsType.유닛_동시공격개수);
+			continuousAttackDelay = StateControl.GetStatsValuePrecent(StatsType.유닛_연속공격지연시간_c);
 			ammoMaxCount = StateControl.GetStatsValue(StatsType.유닛_탄용량);
 			ammoUsedCount = StateControl.GetStatsValue(StatsType.유닛_사용탄수);
 
@@ -216,7 +216,7 @@ public partial class UnitAttackFiniteStateMachine : FiniteStateMachine<UnitAttac
 				onAttack?.Invoke(simultaneousAttackCount);
 				--continuousAttackCount;
 				++ammoUsedCount;
-				continuousAttackDelay += StateControl.GetStatsValuePercent(StatsType.유닛_연속공격지연시간_c);
+				continuousAttackDelay += StateControl.GetStatsValuePrecent(StatsType.유닛_연속공격지연시간_c);
 				ammoMaxCount = StateControl.GetStatsValue(StatsType.유닛_탄용량);
 			}
 			catch
@@ -238,7 +238,7 @@ public partial class UnitAttackFiniteStateMachine : FiniteStateMachine<UnitAttac
 		}
 		protected override void OnStateEnter()
 		{
-			reattackingTime = StateControl.GetStatsValuePercent(StatsType.유닛_재공격지연시간_c);
+			reattackingTime = StateControl.GetStatsValuePrecent(StatsType.유닛_재공격지연시간_c);
 		}
 		protected override void OnStateExit()
 		{
@@ -273,7 +273,7 @@ public partial class UnitAttackFiniteStateMachine : FiniteStateMachine<UnitAttac
 		}
 		protected override void OnStateEnter()
 		{
-			reloadingTime = StateControl.GetStatsValuePercent(StatsType.유닛_재장전시간_c);
+			reloadingTime = StateControl.GetStatsValuePrecent(StatsType.유닛_재장전시간_c);
 		}
 		protected override void OnStateExit()
 		{
