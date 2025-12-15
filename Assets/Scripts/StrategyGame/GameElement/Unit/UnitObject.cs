@@ -31,8 +31,7 @@ public partial class UnitObject : MonoBehaviour
 	{
 		get => StrategyManager.IsNotReadyScene ? null : StrategyManager.Collector.Find<Faction>(FactionID);
 	}
-
-	public void Init(UnitProfileObject data, int factionID = -1)
+    public void Init(UnitProfileObject data, int factionID = -1)
 	{
 		statsData = new UnitStatsData(data);
 		runtimeData = new UnitRuntimeData(statsData);

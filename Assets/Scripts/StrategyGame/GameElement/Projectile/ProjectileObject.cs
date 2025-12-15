@@ -75,6 +75,14 @@ public partial class ProjectileObject : IStrategyElementDestroyer
 	public bool IsDestroy { get; set; }
 
     ObjectLifetime objectLifetime;
+	private void OnDestroy()
+	{
+		if (!ThisDestroyer.IsDestroy)
+		{
+			ThisDestroyer.OnDestroy();
+		}
+	}
+
 	public void InitLife()
 	{
 		IsDestroy = false;
@@ -87,6 +95,7 @@ public partial class ProjectileObject : IStrategyElementDestroyer
 	}
 	void IStrategyElementDestroyer.OnDestroy()
 	{
+		ThisDestroyer.IsDestroy = true;
 		StrategyElementFactory.Destroy(this);
 	}
 	private void LifeTimeDeath()

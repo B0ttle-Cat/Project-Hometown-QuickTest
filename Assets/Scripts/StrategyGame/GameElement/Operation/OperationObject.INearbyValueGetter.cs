@@ -5,6 +5,9 @@ using UnityEngine;
 [RequireComponent(typeof(NearbySearcher))]
 public partial class OperationObject : INearbySearcherValueGetter
 {
+	// TODO :: INearbySearcherValueGetter // INearbySearcher 걔선
+
+
 	private float searcherRange;
 	public INearbySearcher Searcher { get; set; }
 	public float SearcherRange
@@ -22,7 +25,7 @@ public partial class OperationObject : INearbySearcherValueGetter
 
 	partial void InitNearby(in float baseRadius)
 	{
-		if (TryGetComponent<NearbySearcher>(out var nearbySearcher))
+		if (!TryGetComponent<NearbySearcher>(out var nearbySearcher))
 		{
 			nearbySearcher = gameObject.AddComponent<NearbySearcher>();
 		}

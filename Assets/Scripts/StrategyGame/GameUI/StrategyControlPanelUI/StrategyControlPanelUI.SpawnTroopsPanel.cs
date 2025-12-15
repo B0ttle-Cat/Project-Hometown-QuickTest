@@ -240,6 +240,7 @@ public partial class StrategyControlPanelUI // SpawnTroops
 				{
 					(UnitKey key, UnitInfo info, NumericSliderUI slider) = numericSliders[i];
 					int CostPersonnel =  info.UnitProfileObject.stats.DeploymentCostPersonnel;
+					if (CostPersonnel <= 0) CostPersonnel = 1;
 					slider.Label = $"{info.DisplayName} : (+{CostPersonnel})";
 					slider.SetMinMax(0, (int)(세력_병력_여유용량 / CostPersonnel), true);
 					slider.AddOnValueChange(OnChangeSliderValue);
@@ -254,6 +255,7 @@ public partial class StrategyControlPanelUI // SpawnTroops
 				{
 					(UnitKey _, UnitInfo info, NumericSliderUI slider) = numericSliders[i];
 					int CostPersonnel =  info.UnitProfileObject.stats.DeploymentCostPersonnel;
+					if (CostPersonnel <= 0) CostPersonnel = 1;
 					세력_병력_신규편제수 += (int)slider.Value * CostPersonnel;
 				}
 				float 세력_병력_여유용량 = 세력_병력_최대허용량 - 세력_병력_현재보유량 - 세력_병력_신규편제수;
@@ -261,6 +263,7 @@ public partial class StrategyControlPanelUI // SpawnTroops
 				{
 					(UnitKey key, UnitInfo info, NumericSliderUI slider) = numericSliders[i];
 					int CostPersonnel =  info.UnitProfileObject.stats.DeploymentCostPersonnel;
+					if (CostPersonnel <= 0) CostPersonnel = 1;
 					slider.SetHandleClamp(0, (int)(세력_병력_여유용량 + (slider.Value * CostPersonnel))/ CostPersonnel);
 				}
 				CheckSliderVaule();

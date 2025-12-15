@@ -20,12 +20,6 @@ public partial class OperationObject : MonoBehaviour  // Main
 		this.factionID = -1;
 		this.teamName = "";
 	}
-	private void OnDestroy()
-	{
-		operationID = -1;
-		teamName = "";
-		factionID = -1;
-	}
 	internal void Init(int factionID, string teamName)
 	{
 		this.factionID = factionID;
@@ -103,8 +97,17 @@ public partial class OperationObject : IStrategyElement, IStrategyElementDestroy
 		ThisDestroyer.IsDestroy = false;
 	}
 
+	private void OnDestroy()
+	{
+		if (!ThisDestroyer.IsDestroy)
+		{
+			ThisDestroyer.OnDestroy();
+		}
+	}
+
 	void IStrategyElementDestroyer.OnDestroy()
 	{
+		ThisDestroyer.IsDestroy = true;
 		StrategyElementFactory.Destroy(this);
 	}
 	private void ControllerDestory()

@@ -26,6 +26,15 @@ public partial class UnitObject : IStrategyElementDestroyer
 {
 	public IStrategyElementDestroyer ThisDestroyer => this;
     public bool IsDestroy { get; set; }
+
+	private void OnDestroy()
+	{
+		if (!ThisDestroyer.IsDestroy)
+		{
+			ThisDestroyer.OnDestroy();
+		}
+	}
+
 	public void InitLife()
 	{
 		IsDestroy = false;
