@@ -52,6 +52,7 @@ public record ProjectileStatsData // ProfileStats
 	[ToggleGroup("cepEnabled", GroupID = "Movement/C"), LabelText("공산오차  기준거리"), SerializeField]
 	private float cepDistance;
 	[ToggleGroup("cepEnabled", GroupID = "Movement/C"), LabelText("공산오차 반경"), SerializeField]
+	[Range(0f,5f)]
 	private float cepRadius;
 	[ToggleGroup("cepEnabled", GroupID = "Movement/C"), LabelText("반경 내 들어갈 확률"), SerializeField]
 	[Range(0f,1f)]
