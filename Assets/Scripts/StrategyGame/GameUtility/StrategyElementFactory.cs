@@ -76,7 +76,7 @@ public static class StrategyElementFactory
 
 		if (StrategyManager.Collector.TryFind<Faction>(unitObject.FactionID, out var faction))
 		{
-			faction.API_UnitCounter(-unitObject.StatsData_old.GetValue(StatsType.유닛_인력));
+			faction.API_UnitCounter(-unitObject.StatsData.DeploymentCostPersonnel);
 		}
 		unitObject.Deinit();
 		StrategyManager.Collector.Remove<UnitObject>(unitObject);

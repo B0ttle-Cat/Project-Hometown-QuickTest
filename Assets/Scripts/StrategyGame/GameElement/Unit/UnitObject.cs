@@ -4,46 +4,29 @@ using StrategyManagerModule;
 
 using UnityEngine;
 
-using static StrategyGamePlayData;
-
 public partial class UnitObject : MonoBehaviour
 {
-	private UnitRuntimeData runtimeData;
-	private UnitStatsData statsData;
-	// TODO :: 데이터 정리하기
-
-
-	public UnitRuntimeData RuntimeData => runtimeData;
-	public UnitStatsData StatsData => statsData;
-
-	private UnitData.Profile profile;
-	private UnitData.Stats stats_old;
-	private UnitData.Skill skill;
-	private UnitData.ConnectSector sector;
-	private CaptureTag captureTag;
-	[SerializeField]
-	private UnitDebugRender debugRender;
 #if UNITY_EDITOR
-	[ShowInInspector, ToggleGroup("EditUnitData")]
+	[ShowInInspector, ToggleGroup("EditUnitData", GroupName = "UnitData")]
 	bool EditUnitData { get; set; } = false;
 #endif
-	[ShowInInspector, ToggleGroup("EditUnitData", GroupName = "UnitData"), HideReferenceObjectPicker]
-	public UnitData.Profile Profile { get => profile; set => profile = value; }
-	[ShowInInspector, ToggleGroup("EditUnitData"), HideReferenceObjectPicker]
-	public UnitData.Stats Stats_old { get => stats_old; set => stats_old = value; }
-	[ShowInInspector, ToggleGroup("EditUnitData"), HideReferenceObjectPicker]
-	public UnitData.Skill Skill { get => skill; set => skill = value; }
-	[ShowInInspector, ToggleGroup("EditUnitData"), HideReferenceObjectPicker]
-	public UnitData.ConnectSector Sector { get => sector; set => sector = value; }
-	[ShowInInspector, ToggleGroup("EditUnitData"), HideReferenceObjectPicker]
-	public CaptureTag CaptureTag { get => captureTag; set => captureTag = value; }
-	public ref readonly UnitData.Profile.Data ProfileData => ref Profile.ReadonlyData();
-	public ref readonly UnitData.Stats.Data StatsData_old => ref Stats_old.ReadonlyData();
-	public ref readonly UnitData.Skill.Data SkillData => ref Skill.ReadonlyData();
-	public ref readonly UnitData.ConnectSector.Data SectorData => ref Sector.ReadonlyData();
-	public string UnitName => ProfileData.displayName;
-	public int UnitID => ProfileData.unitID;
-	public int FactionID => ProfileData.factionID;
+	[SerializeField, ToggleGroup("EditUnitData")]
+	private UnitStatsData statsData;
+	[SerializeField, ToggleGroup("EditUnitData")]
+	private UnitRuntimeData runtimeData;
+	[SerializeField, ToggleGroup("EditUnitData")]
+	private UnitInstanceData instanceData;
+	
+	public UnitRuntimeData RuntimeData => runtimeData;
+	public UnitStatsData StatsData => statsData;
+	public UnitInstanceData InstanceData => instanceData;
+
+	private CaptureTag captureTag;
+	private UnitDebugRender debugRender;
+	public CaptureTag UnitCaptureTag { get => captureTag; set => captureTag = value; }
+	public string UnitName => InstanceData.displayName;
+	public int UnitID => InstanceData.unitID;
+	public int FactionID => InstanceData.factionID;
 	public Faction Faction
 	{
 		get => StrategyManager.IsNotReadyScene ? null : StrategyManager.Collector.Find<Faction>(FactionID);
@@ -51,62 +34,23 @@ public partial class UnitObject : MonoBehaviour
 
 	public void Init(UnitProfileObject data, int factionID = -1)
 	{
-
-		profile = new UnitData.Profile(new UnitData.Profile.Data()
-		{
-			unitKey = UnitKey.None,
-			displayName = data.displayName,
-			unitID = unitElementID,
-			factionID = factionID,
-		});
 		statsData = new UnitStatsData(data);
 		runtimeData = new UnitRuntimeData(statsData);
-		InitCaptureTag(data);
+		instanceData = new UnitInstanceData(data, factionID);
 	}
 	public void Init(in StrategyStartSetterData.UnitData data) // UnitData
 	{
-		if (profile == null)
-		{
-			if (StrategyManager.Key2Unit.TryGetAsset(data.unitKey, out var info) && info.UnitProfileObject != null)
-			{
-				profile = new UnitData.Profile(new()
-				{
-					unitKey = data.unitKey,
-					displayName = info.UnitProfileObject.displayName,
-					unitID = unitElementID,
-					factionID = data.factionID,
-				});
-			}
-			else
-			{
-				profile = new UnitData.Profile(new()
-				{
-					unitKey = data.unitKey,
-					displayName = "",
-					unitID = unitElementID,
-					factionID = -1,
-				});
-			}
-		}
-		else
-		{
-			ref UnitData.Profile.Data refData = ref profile.RefData();
-			refData.factionID = data.factionID;
-		}
-
+		instanceData.Init(in data);
 
 		int durability = Mathf.Min(data.durability, StatsData.MaxDurability);
 		if (durability < 1) durability = 1;
 		RuntimeData.CurrentDurability = durability;
-		
-		sector = new UnitData.ConnectSector(new(data.visiteSectorID));
 	}
-
-
 	public void InitOther()
 	{
 		InitLife();		   
 		InitDebugRender();
+		InitCaptureTag();
 		InitMovement();
 		InitOperationObject();
 		InitVisibility();
@@ -114,7 +58,7 @@ public partial class UnitObject : MonoBehaviour
 		InitCombat();
 		InitAttack();
 	}
-	partial void InitCaptureTag(UnitProfileObject profileObj);
+	partial void InitCaptureTag();
 	private void InitDebugRender()
 	{
 		if (debugRender == null || Faction == null) return;

@@ -92,9 +92,9 @@ public partial class OperationObject // Organization
 	public bool AddUnitObject(UnitObject unitObject, bool callback = true)
 	{
 		if (unitObject == null) return false;
-		if (factionID != unitObject.ProfileData.factionID) return false;
+		if (factionID != unitObject.InstanceData.factionID) return false;
 
-		UnitKey unitKey = unitObject.ProfileData.unitKey;
+		UnitKey unitKey = unitObject.InstanceData.unitKey;
 
 		bool onChange = false;
 		if (!unitOrganization.TryGetValue(unitKey, out var unitList))
@@ -128,7 +128,7 @@ public partial class OperationObject // Organization
 	{
 		if (unitObject == null) return false;
 
-		UnitKey unitKey = unitObject.ProfileData.unitKey;
+		UnitKey unitKey = unitObject.InstanceData.unitKey;
 
 		bool onChange = false;
 		if (unitOrganization.TryGetValue(unitKey, out var unitList))

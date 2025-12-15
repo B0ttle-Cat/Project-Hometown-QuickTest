@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
 
-using static StrategyGamePlayData;
-
 public interface IUnitAttackFSMController : IFSMController<UnitAttackFSMType>
 {
 	IUnitAttackFSMController AttackController { get; }
@@ -18,9 +16,6 @@ public partial class UnitObject : IUnitAttackFSMController
 	public IUnitAttackState AttackState => unitAttackState;
 	IFSMController<UnitAttackFSMType> IFSMController<UnitAttackFSMType>.FSMController => this;
 	IFSMInterface<UnitAttackFSMType> IFSMController<UnitAttackFSMType>.FSMInterface { get => unitAttackState; set { } }
-
-
-	public ProjectileKey minaProjectileKey;
 
 	partial void InitAttack()
 	{
@@ -40,8 +35,6 @@ public partial class UnitObject : IUnitAttackFSMController
 		AttackState.OnAttackTiming += AttackState_OnAttackTiming;
 		AttackState.OnReloadingTiming += AttackState_OnReloadingTiming;
 		ThisCombatHandler.OnChangeCurrentCombatTarget += ThisCombatController_OnChangeCurrentCombatTarget;
-
-		minaProjectileKey = StatsData.ProjectileKey;
 	}
 	partial void DeinitAttack()
 	{
@@ -74,24 +67,15 @@ public partial class UnitObject : IUnitAttackFSMController
 		int requiredPoolSize = burstCount * simultaneousAttackCount;
 
 
-		StrategyElementFactory.ReadyPoolCount(minaProjectileKey, requiredPoolSize);
+		StrategyElementFactory.ReadyPoolCount(StatsData.ProjectileKey, requiredPoolSize);
 	}
 	private async void AttackState_OnAttackTiming(int count)
 	{
-		// TODO:
-		// 공격 발생시 처리
-		// 1. 총알을 생성한다.
-		// 2. 총알에 목표를 지정한다.
-		// 3. 총알이 목표에 도달하면 데미지를 입힌다.
-		// 4. 이떄 데미지 게산을 위해 콜백으로 데미지 계산 함수를 넘긴다.
-		// 5. 데미지 함수의 매개변수로는 공격자, 피격자, 스킬 정보 등이 있다.
-
 		if (this is not ICombatHandler unitCombat || unitCombat == null) return;
 		ITargetableCombatant target  = unitCombat.CurrentTarget;
 		if (target == null) return;
 
-
-		var projectiles = await StrategyElementFactory.Instantiate(this, target, minaProjectileKey, count);
+		var projectiles = await StrategyElementFactory.Instantiate(this, target, StatsData.ProjectileKey, count);
 	}
 
 	private void ThisCombatController_OnChangeCurrentCombatTarget(ITargetableCombatant obj)

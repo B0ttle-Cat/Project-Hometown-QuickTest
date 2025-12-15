@@ -7,7 +7,7 @@
 
 	public void InStrategyCollector()
 	{
-
+		instanceData.SetElementID(in unitElementID);
 	}
 
 	public void OutStrategyCollector()

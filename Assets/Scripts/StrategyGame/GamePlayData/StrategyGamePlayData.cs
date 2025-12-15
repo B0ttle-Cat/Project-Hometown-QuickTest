@@ -481,6 +481,7 @@ public partial class StrategyGamePlayData // Play Content Info
 	public class UnitData
 	{
 		[Serializable]
+		[Obsolete("UnitInstanceData 를 사용할것", true)]
 		public class Profile : GamePlayData<Profile.Data>
 		{
 			public Profile(Data data) : base(data) { }
@@ -504,6 +505,7 @@ public partial class StrategyGamePlayData // Play Content Info
 			}
 		}
 		[Serializable]
+		[Obsolete("UnitStatsData 를 사용할것", true)]
 		public class Stats : GamePlayData<Stats.Data>
 		{
 			public Stats(Data data) : base(data) { }
@@ -537,6 +539,7 @@ public partial class StrategyGamePlayData // Play Content Info
 			}
 		}
 		[Serializable]
+		[Obsolete("재정의 필요", true)]
 		public class Skill : GamePlayData<Skill.Data>
 		{
 			public Skill(Data data) : base(data) { }
@@ -566,12 +569,13 @@ public partial class StrategyGamePlayData // Play Content Info
 			}
 		}
 		[Serializable]
+		[Obsolete("UnitRuntimeData 의 DynamicKeyStatsList 를 사용할 것", true)]
 		public class StatsBuff
 		{
 
 		}
 
-		[Serializable]
+		[Obsolete("UnitInstanceData 를 사용할것", true)]
 		public class ConnectSector : GamePlayData<ConnectSector.Data>
 		{
 			public ConnectSector(Data data) : base(data) { }

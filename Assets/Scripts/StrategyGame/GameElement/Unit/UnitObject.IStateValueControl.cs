@@ -173,26 +173,24 @@ public partial class UnitObject : IStatsValueControl
 		}
 	}
 }
-public partial class UnitObject // CaptureTag
+public partial class UnitObject // UnitCaptureTag
 {
-	partial void InitCaptureTag(UnitProfileObject profileObj)
+	partial void InitCaptureTag()
 	{
-		if (profileObj == null) return;
-
 		if (StatsData.CaptureScore > 0)
 		{
-			if (CaptureTag == null) CaptureTag = GetComponentInChildren<CaptureTag>();
-			if (CaptureTag == null) CaptureTag = gameObject.AddComponent<CaptureTag>();
+			if (UnitCaptureTag == null) UnitCaptureTag = GetComponentInChildren<CaptureTag>();
+			if (UnitCaptureTag == null) UnitCaptureTag = gameObject.AddComponent<CaptureTag>();
 
-			CaptureTag.factionID = FactionID;
-			CaptureTag.pointValue = StatsData.CaptureScore;
+			UnitCaptureTag.factionID = FactionID;
+			UnitCaptureTag.pointValue = StatsData.CaptureScore;
 		}
 		else
 		{
-			if (CaptureTag != null)
+			if (UnitCaptureTag != null)
 			{
-				Destroy(CaptureTag);
-				CaptureTag = null;
+				Destroy(UnitCaptureTag);
+				UnitCaptureTag = null;
 			}
 		}
 	}

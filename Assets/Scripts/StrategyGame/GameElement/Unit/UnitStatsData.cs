@@ -2,6 +2,8 @@
 
 using Sirenix.OdinInspector;
 
+using StrategyManagerModule;
+
 using UnityEngine;
 
 using static StrategyGamePlayData;
@@ -10,20 +12,20 @@ using static StrategyGamePlayData;
 public record UnitStatsData
 {
 	// Private Fields (Odin Inspector attributes remain for editor visualization)
-	[InlineProperty, HideLabel, SerializeField, Header(nameof(Cost))]
-	private readonly Cost cost;
-	[InlineProperty, HideLabel, SerializeField, Header(nameof(Common))]
-	private readonly Common common;
-	[InlineProperty, HideLabel, SerializeField, Header(nameof(Range))]
-	private readonly Range range;
-	[InlineProperty, HideLabel, SerializeField, Header(nameof(Cycle))]
-	private readonly Cycle cycle;
-	[InlineProperty, HideLabel, SerializeField, Header(nameof(Ammo))]
-	private readonly Ammo ammo;
-	[InlineProperty, HideLabel, SerializeField, Header(nameof(Offense))]
-	private readonly Offense offense;
-	[InlineProperty, HideLabel, SerializeField, Header(nameof(Defense))]
-	private readonly Defense defense;
+	[FoldoutGroup(nameof(Cost)), InlineProperty, HideLabel, SerializeField]
+	private Cost cost;
+	[FoldoutGroup(nameof(Common)), InlineProperty, HideLabel, SerializeField]
+	private Common common;
+	[FoldoutGroup(nameof(Range)), InlineProperty, HideLabel, SerializeField]
+	private Range range;
+	[FoldoutGroup(nameof(Cycle)), InlineProperty, HideLabel, SerializeField]
+	private Cycle cycle;
+	[FoldoutGroup(nameof(Ammo)), InlineProperty, HideLabel, SerializeField]
+	private Ammo ammo;
+	[FoldoutGroup(nameof(Offense)), InlineProperty, HideLabel, SerializeField]
+	private Offense offense;
+	[FoldoutGroup(nameof(Defense)), InlineProperty, HideLabel, SerializeField]
+	private Defense defense;
 
 	public Cost GetCost => cost;
 	public Common GetCommon => common;
@@ -197,76 +199,6 @@ public record UnitStatsData
 	public int AntiStatusPotencyLevel => defense.AntiStatusPotencyLevel;
 	public int AntiHitChanceScore => defense.AntiHitChanceScore;
 	public int AntiCriticalChanceScore => defense.AntiCriticalChanceScore;
-
-	[Button]
-	void SetTestStatsValue()
-	{
-		// --- 💸 Cost (비용) ---
-		// 유닛_인력, 유닛_물자, 유닛_전력은 '배치 비용'에 해당합니다.
-		cost.DeploymentCostPersonnel = 1;
-		cost.DeploymentCostMaterial = 1;
-		cost.DeploymentCostPower = 1;
-
-		// 유닛_공격소모_물자, 유닛_공격소모_전력은 '공격 비용'에 해당합니다.
-		cost.AttackCostMaterial = 1;
-		cost.AttackCostPower = 1;
-
-		// --- 🛡️ Common (공통) ---
-		common.MaxDurability = 1000;      // 유닛_최대내구도
-		common.HealingPower = 10;         // 유닛_치유력
-		common.RecoveryPower = 1;         // 유닛_회복력
-		common.MovementSpeed = 1.00f;     // 유닛_이동속도 (float 형변환 필요)
-		common.CaptureScore = 1;          // 유닛_점령점수
-
-		// --- 🔭 Range (범위) ---
-		// Vector4(x: LimitMin, y: StartMin, z: StartMax, w: LimitMax)
-		range.AttackRange = new Vector4(
-			0f,     // 유닛_공격범위_종료최소 (x)
-			0f,     // 유닛_공격범위_시작최소 (y)
-			8.00f,  // 유닛_공격범위_시작최대 (z)
-			10.00f  // 유닛_공격범위_종료최대 (w)
-		);
-		range.ActionRange = 11.00f;       // 유닛_행동범위
-		range.VisionRange = 15.00f;       // 유닛_시야범위
-
-		// --- ⚙️ Cycle (공격 주기) ---
-		cycle.AimDelayTime = 1.00f;       // 유닛_조준지연시간
-		cycle.ContinuousAttackDelayTime = 0.10f; // 유닛_연속공격지연시간
-		cycle.ReattackDelayTime = 0.50f;    // 유닛_재공격지연시간
-		cycle.ReloadTime = 3.00f;         // 유닛_재장전시간
-
-		// --- 彈 Ammo (탄약) ---
-		ammo.AmmunitionCapacity = 8;      // 유닛_탄용량
-		ammo.ConcurrentAttackCount = 1;   // 유닛_동시공격개수
-		ammo.ContinuousAttackCount = 3;   // 유닛_연속공격횟수
-
-		// --- 💥 Offense (공격) ---
-		offense.projectileKey = ProjectileKey.일반탄_소형;
-
-		offense.AttackPower = 10;           // 유닛_공격력
-		offense.CriticalAttackPower = 30;   // 유닛_치명공격력
-		offense.CriticalDamageRatio = 200;  // 유닛_치명피해율
-
-		offense.PenetrationLevel = 1;       // 유닛_관통레벨
-		offense.EMPImpactLevel = 1;         // 유닛_EMP충격레벨
-		offense.StatusPotencyLevel = 1;     // 유닛_상태이상적용레벨
-
-		offense.HitChanceScore = 70;        // 유닛_공격명중기회
-		offense.CriticalChanceScore = 30;   // 유닛_치명명중기회
-
-		// --- 🛡️ Defense (방어) ---
-		defense.protectType = ProtectionType.일반;
-
-		defense.AntiAttackPower = 1;        // 유닛_방어력
-		defense.AntiCriticalAttackPower = 10; // 유닛_치명방어력
-
-		defense.AntiPenetrationLevel = 1;   // 유닛_장갑레벨 (Anti-Penetration)
-		defense.AntiEMPImpactLevel = 1;     // 유닛_EMP방호레벨
-		defense.AntiStatusPotencyLevel = 1; // 유닛_상태이상저항레벨
-
-		defense.AntiHitChanceScore = 10;    // 유닛_공격회피기회 (Anti-Hit Chance)
-		defense.AntiCriticalChanceScore = 20; // 유닛_치명회피기회 (Anti-Critical Chance)
-	}
 }
 [Serializable]
 public record UnitRuntimeData
@@ -285,5 +217,66 @@ public record UnitRuntimeData
 
 		Status = StatusEffectsFlag.None;
 		DynamicKeyStatsList = new StatsList();
+	}
+}
+[Serializable]
+public record UnitInstanceData
+{
+	public UnitKey unitKey;     // 원본과 매칭되는 키
+	public string displayName;  // 유닛 이름
+
+	public int unitID;
+	public int factionID;
+
+	[SerializeField]
+	private int lastVisiteSectorID;
+	[SerializeField]
+	private int currVisiteSectorID;
+	public int VisiteSectorID
+	{
+		get
+		{
+			if (currVisiteSectorID == -1)
+			{
+				if (lastVisiteSectorID == -1)
+				{
+					return -1;
+				}
+				return lastVisiteSectorID;
+			}
+			return currVisiteSectorID;
+		}
+		set
+		{
+			if (currVisiteSectorID == -1)
+			{
+				lastVisiteSectorID = currVisiteSectorID = value;
+			}
+			else
+			{
+				lastVisiteSectorID = currVisiteSectorID;
+				currVisiteSectorID = value;
+			}
+		}
+	}
+	public UnitInstanceData(UnitProfileObject data, int factionID = -1)
+    {
+		unitKey = data.unitKey;
+		displayName = data.displayName;
+		this.factionID = factionID;
+
+		unitID = -1;
+		lastVisiteSectorID = -1;
+		currVisiteSectorID = -1;
+	}
+	public void Init(in StrategyStartSetterData.UnitData data)
+	{
+		this.factionID = data.factionID;
+		lastVisiteSectorID = currVisiteSectorID = data.visiteSectorID;
+	}
+
+    internal void SetElementID(in int unitElementID)
+    {
+		unitID = unitElementID;
 	}
 }
