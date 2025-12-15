@@ -53,8 +53,12 @@ MonoBehaviour:
     homingLimitAngle: 180
     homingLimitDistance: Infinity
     cepEnabled: 1
-    cepRadius: 0.25
-    cepProbability: 0.25
+    cepDistance: 20
+    cepRadius: 1
+    cepProbability: 1
+    cepWidthScale: 0.75
+    cepHeaghtScale: 0.75
+    cepLengthScale: 1
     lifeTime: 1
     collisionRadius: 0.1
     hitEffectsFlag: 0

@@ -49,10 +49,25 @@ public record ProjectileStatsData // ProfileStats
 
 	[ToggleGroup("cepEnabled", GroupID = "Movement/C", ToggleGroupTitle ="공산오차 적용 여부"), SerializeField]
 	private bool cepEnabled;
+	[ToggleGroup("cepEnabled", GroupID = "Movement/C"), LabelText("공산오차  기준거리"), SerializeField]
+	private float cepDistance;
 	[ToggleGroup("cepEnabled", GroupID = "Movement/C"), LabelText("공산오차 반경"), SerializeField]
 	private float cepRadius;
 	[ToggleGroup("cepEnabled", GroupID = "Movement/C"), LabelText("반경 내 들어갈 확률"), SerializeField]
-	private float cepProbability; 
+	[Range(0f,1f)]
+	private float cepProbability;
+	[ToggleGroup("cepEnabled", GroupID = "Movement/C"), LabelText("가로 비율"), SerializeField]
+	[Range(0f,1f)]
+	[HorizontalGroup("Movement/C/H")]
+	public float cepWidthScale = 1f;
+	[ToggleGroup("cepEnabled", GroupID = "Movement/C"), LabelText("높이 비율"), SerializeField]
+	[Range(0f,1f)]
+	[HorizontalGroup("Movement/C/H")]
+	public float cepHeaghtScale = 1f;
+	[ToggleGroup("cepEnabled", GroupID = "Movement/C"), LabelText("길이 비율"), SerializeField]
+	[Range(0f,1f)]
+	[HorizontalGroup("Movement/C/H")]
+	public float cepLengthScale = 1f;
 
 	[BoxGroup("LifeCycle"), LabelText("생존 시간"), SerializeField]
 	private float lifeTime = 5f;
@@ -160,7 +175,7 @@ public record ProjectileStatsData // ProfileStats
 	public ProjectileStatsData(ProjectileKey projectileKey = ProjectileKey.None, WeaponType weaponType = WeaponType.일반,
 		float moveStartSpeed = 10f, bool isShiftSpeed = false, float moveMaxSpeed = 20f, AnimationCurve moveSpeedCurve = null, float timeFromStartToMaxSpeed = 2f,
 		bool homingEnabled = false, float homingActivationDelay = 0f, float homingTurnSpeed = 180f, float homingTurnSpeedWhenMaxSpeed = 180f, float homingLimitAngle = 180f, float homingLimitDistance = float.PositiveInfinity,
-		bool cepEnabled = false, float cepRadius = 3f, float cepProbability = 0.9f,
+		bool cepEnabled = false, float cepDistance = 10f, float cepScale = 3, float cepRadius = 0.5f, float cepProbability = 0.9f, float cepWidthScale = 0.5f, float cepLengthScale = 1f, float cepHeaghtScale = 1f,
 		float lifeTime = 1f,
 		float collisionRadius = 0.1f,
 		StatusEffectsFlag hitEffectsFlag = StatusEffectsFlag.None, float hitEffectsTimeMultiplier = 1f, SubEffectKey projectileHitEffectKey = SubEffectKey.None,
@@ -168,7 +183,7 @@ public record ProjectileStatsData // ProfileStats
 		bool explosionEnabled = false, Vector2 explosionMinMaxRadius = default, float explosionDelayAfterHit = 0f, AnimationCurve explosionFalloffCurve = null, SubEffectKey explosionEffectKey = SubEffectKey.폭발_소형,
 		float empShockPropagationDistance = 5f, int empShockChainCount = 3, int empShockDepthCount = 5, int empShockOverlapsCount = 1, AnimationCurve empShockFalloffCurve = null, SubEffectKey empShockEffectKey = SubEffectKey.EMP충격_소형)
 	{
-	
+
 		this.projectileKey = projectileKey;
 
 		this.weaponType = weaponType;
@@ -187,8 +202,12 @@ public record ProjectileStatsData // ProfileStats
 		this.homingLimitDistance = homingLimitDistance;
 
 		this.cepEnabled = cepEnabled;
+		this.cepDistance = cepDistance;
 		this.cepRadius = cepRadius;
 		this.cepProbability = cepProbability;
+		this.cepWidthScale = cepWidthScale;
+		this.cepHeaghtScale = cepHeaghtScale;
+		this.cepLengthScale = cepLengthScale;
 
 		this.lifeTime = lifeTime;
 		this.collisionRadius = collisionRadius;
@@ -234,9 +253,13 @@ public record ProjectileStatsData // ProfileStats
 			homingLimitAngle = this.homingLimitAngle,
 			homingLimitDistance = this.homingLimitDistance,
 
-			cepEnabled = this.cepEnabled,
-			cepRadius = this.cepRadius,
-			cepProbability = this.cepProbability,
+			cepEnabled =		this.cepEnabled,
+			cepDistance =		this.cepDistance,
+			cepRadius =		this.cepRadius,
+			cepProbability =	this.cepProbability,
+			cepWidthScale =		this.cepWidthScale,
+			cepHeaghtScale =	this.cepHeaghtScale,
+			cepLengthScale =	this.cepLengthScale,
 
 			lifeTime = this.lifeTime,
 
@@ -253,12 +276,12 @@ public record ProjectileStatsData // ProfileStats
 			explosionDelayAfterHit = this.explosionDelayAfterHit,
 			explosionFalloffCurve = this.explosionFalloffCurve,
 			explosionEffectKey = this.explosionEffectKey,
-	
+
 			empShockPropagationDistance = this.empShockPropagationDistance,
 			empShockChainCount = this.empShockChainCount,
 			empShockDepthCount = this.empShockDepthCount,
 			empShockOverlapsCount = this.empShockOverlapsCount,
-			empShockFalloffCurve = this.empShockFalloffCurve ,
+			empShockFalloffCurve = this.empShockFalloffCurve,
 			empShockEffectKey = this.empShockEffectKey,
 		};
 	}
@@ -282,17 +305,19 @@ public record ProjectileStatsData // ProfileStats
 	public float HomingLimitSqrDistance => float.IsPositiveInfinity(homingLimitDistance) ? float.PositiveInfinity : homingLimitDistance * homingLimitDistance;
 
 	public bool CepEnabled => cepEnabled;
-	public float CepRadius => cepRadius;
-	public float CepProbability => cepProbability;
+	public float CepDistance => Mathf.Max(cepDistance, 0.001f);
+	public float CepRadius => Mathf.Max(cepRadius, 0.001f);
+	public float CepProbability => Mathf.Clamp(cepProbability, 0.001f, 1f);
+	public Vector3 CepScaleVector3 => new Vector3(cepWidthScale, cepHeaghtScale, cepLengthScale);
 	public float LifeTime => lifeTime;
 	public float CollisionRadius => collisionRadius;
 	public StatusEffectsFlag HitEffectsFlag => hitEffectsFlag;
 	public float HitEffectsTimeMultiplier => hitEffectsTimeMultiplier;
 	public SubEffectKey ProjectileHitEffectKey => lastHitEffectKey;
-	public int PiercingMaxCount => Mathf.Max(1,piercingMaxCount);
+	public int PiercingMaxCount => Mathf.Max(1, piercingMaxCount);
 	public AnimationCurve PiercingFalloffCurve => piercingFalloffCurve;
 	public Vector2 ExplosionMinMaxRadius => explosionMinMaxRadius;
-	public float ExplosionDelayAfterHit => Mathf.Max(0,explosionDelayAfterHit);
+	public float ExplosionDelayAfterHit => Mathf.Max(0, explosionDelayAfterHit);
 	public AnimationCurve ExplosionFalloffCurve => explosionFalloffCurve;
 	public SubEffectKey ExplosionEffectKey => explosionEffectKey;
 	public float EmpShockPropagationDistance => empShockPropagationDistance;
@@ -331,6 +356,132 @@ public record ProjectileStatsData // ProfileStats
 
 		float rate = (float)currentDepth / (float)max;
 		return EmpShockFalloffCurve.Evaluate(rate);
+	}
+	/// <summary>
+	/// 목표 방향에 공산 오차를 적용하여 최종 착탄 지점까지의 벡터를 계산합니다.
+	/// </summary>
+	/// <param name="targetDirection">목표물의 방향 (정규화될 필요는 없지만, 방향 정보가 있어야 함).</param>
+	/// <param name="distanceD">단기 공산 위치 계산을 위한 기준 거리 (D).</param>
+	/// <param name="radiusR">투사체의 N%가 착탄될 반경 비율 (R) [0, 1].</param>
+	/// <param name="percentN">착탄될 투사체의 비율 (N) [0, 1].</param>
+	/// <param name="cepScale">착탄될 범위의 Vector3 스케일. Z: 목표 방향 스케일, XY: 수직면 스케일.</param>
+	/// <returns>원점에서 최종 착탄 지점으로 향하는 방향 벡터.</returns>
+	public Vector3 CalculateCEPDiraction(Vector3 targetDirection)
+	{
+		return CalculateCEPDiraction(targetDirection, Vector3.up);
+	}
+
+	public Vector3 CalculateCEPDiraction(Vector3 targetDirection,Vector3 directionUp) 
+	{
+		if (!CepEnabled) return targetDirection;
+
+
+		float distanceD = CepDistance;
+		float radiusR = CepRadius;
+		float percentN = CepProbability;
+		Vector3 cepScale = CepScaleVector3;
+
+		Vector3 V1 = targetDirection.normalized; // Z축 (Forward)
+		if (V1.sqrMagnitude < 0.001f)
+		{
+			return Vector3.forward * distanceD;
+		}
+
+		// 2. 표준 편차 (Sigma) 계산
+		float n_factor = GetSigmaFactor(percentN);
+		float n_factor_inv = (n_factor > float.Epsilon) ? 1.0f / n_factor : 0f;
+
+		float sigmaXY = radiusR * n_factor_inv;
+		float sigmaZ = radiusR * n_factor_inv;
+
+		// 3. 3D 가우시안 랜덤 샘플링 (클램핑 로직 추가됨)
+		// N(0, 1)을 따르는 독립적인 Zx, Zy, Zz 생성
+
+		// 99.99% 확률 반경에 해당하는 표준 계수
+		const float N_FACTOR_MAX = 4.0f; // GetSigmaFactor(0.9999f)의 결과
+
+		// Zx, Zy 쌍 생성 (2D Radial)
+		float u1 = UnityEngine.Random.value;
+		float u2 = UnityEngine.Random.value;
+		float mag1 = Mathf.Sqrt(-2f * Mathf.Log(u1)); // 2D 표준 가우시안 반경
+
+		// **2D Radial 클램핑**: 99.99% 반경(4.0 sigma)을 초과하는 샘플은 잘라냅니다.
+		mag1 = Mathf.Min(mag1, N_FACTOR_MAX);
+
+		float randX_std = mag1 * Mathf.Cos(2f * Mathf.PI * u2);
+		float randY_std = mag1 * Mathf.Sin(2f * Mathf.PI * u2);
+
+		// Zz 값 생성 (1D Normal)
+		float u3 = UnityEngine.Random.value;
+		float u4 = UnityEngine.Random.value;
+		float mag2 = Mathf.Sqrt(-2f * Mathf.Log(u3));
+		float randZ_std = mag2 * Mathf.Cos(2f * Mathf.PI * u4);
+
+		// **1D Longitudinal 클램핑**: Zz의 절댓값을 4.0 sigma로 제한합니다.
+		randZ_std = Mathf.Clamp(randZ_std, -N_FACTOR_MAX, N_FACTOR_MAX);
+
+
+		// 4. 목표 지역 좌표계 (V1, V2, V3) 계산
+
+		Vector3 V2; // X축 (Right, cepScale.x 적용)
+		Vector3 V3; // Y축 (Up, cepScale.y 적용)
+
+		// V2를 먼저 계산: V1과 directionUp에 모두 직교하는 벡터 (Right)
+		V2 = Vector3.Cross(V1, directionUp).normalized;
+
+		// V1과 directionUp이 평행하여 V2가 영벡터(Zero Vector)가 되는 경우 처리
+		if (V2.sqrMagnitude < 0.001f)
+		{
+			if (Mathf.Abs(V1.y) > 0.99f)
+				V2 = Vector3.right; // 월드 X축 사용
+			else
+				V2 = Vector3.Cross(V1, Vector3.up).normalized;
+		}
+
+		// V3를 다시 계산: V1과 V2에 모두 직교하는 벡터 (Up)
+		V3 = Vector3.Cross(V2, V1).normalized;
+
+		// 5. 표준 편차 및 스케일 적용하여 최종 오차 거리 계산
+		float errorX = randX_std * sigmaXY * cepScale.x; // V2 방향 오차
+		float errorY = randY_std * sigmaXY * cepScale.y; // V3 방향 오차
+		float errorZ = randZ_std * sigmaZ * cepScale.z; // V1 방향 오차
+
+		// 최종 착탄 지점의 오차 벡터
+		Vector3 finalErrorVector = errorX * V2 + errorY * V3;
+
+		// 6. 최종 착탄 지점 계산
+		float finalDistance = distanceD + errorZ;
+
+		Vector3 finalTargetVector = V1 * finalDistance + finalErrorVector;
+
+		return finalTargetVector / distanceD;
+	}
+	public Vector3 CalculateCEPPosition(Vector3 startPosition, Vector3 targetPosition, Vector3 directionUp)
+	{
+		if (!CepEnabled) return targetPosition;
+
+		Vector3 directionVector = targetPosition - startPosition;
+		float actualDistance = directionVector.magnitude; // D_actual
+		Vector3 targetDirection = directionVector.normalized; // V1
+
+		if (actualDistance < 0.001) actualDistance = 0.001f;
+		float stdDistance = CepDistance; // D_std
+
+		float distanceFactorK = actualDistance / stdDistance;
+
+		// 1. 표준 거리에서의 시뮬레이션 착탄 지점 (P_std) 획득
+		Vector3 calculateDiraction = CalculateCEPDiraction(targetDirection, directionUp);
+		return targetPosition + calculateDiraction * distanceFactorK;
+	}
+
+
+	// GetSigmaFactor는 그대로 사용합니다.
+	public static float GetSigmaFactor(float probability)
+	{
+		// 1.0에 가까워지면 log(0)이 되어 무한대로 발산하므로, 최대 확률을 제한합니다.
+		if (probability >= 0.9999f) return 4.0f;
+		if (probability <= 0.0f) return 0.0f;
+		return Mathf.Sqrt(-2f * Mathf.Log(1f - probability));
 	}
 
 	public MovmentConstantData GetMovementConstantData()

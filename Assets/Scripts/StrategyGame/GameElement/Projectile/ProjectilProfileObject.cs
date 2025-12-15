@@ -1,4 +1,6 @@
-﻿using Sirenix.OdinInspector;
+﻿using System.Collections.Generic;
+
+using Sirenix.OdinInspector;
 
 using UnityEditor;
 
@@ -17,8 +19,13 @@ public class ProjectileProfileObject : ScriptableObject
 	[InlineButton("PushData"), InlineButton("PullData")]
 	public ProjectileKey projectileKey;
 
+#if UNITY_EDITOR
+	[ShowInInspector, PropertyOrder(1)]
+	public bool showGizmos { get; set; }
+#endif
+
 	// 단일 Stats_old 관리
-	[SerializeField, InlineProperty, HideLabel]
+	[SerializeField, InlineProperty, HideLabel, PropertyOrder(2)]
 	public ProjectileStatsData statsData = new ProjectileStatsData();
 
 #if UNITY_EDITOR
@@ -127,8 +134,12 @@ public class ProjectileProfileObject : ScriptableObject
 			homingLimitAngle: 180f,
 			homingLimitDistance: float.PositiveInfinity,
 			cepEnabled: false,
-			cepRadius: 3f,
+			cepDistance : 10f,
+			cepScale: 3,
+			cepRadius: .5f,
 			cepProbability: 0.9f,
+			cepWidthScale: 0.5f,
+			cepHeaghtScale : 1f,
 			lifeTime: 1f,
 			collisionRadius: 0.1f,
 			hitEffectsFlag: StatusEffectsFlag.None,
@@ -148,6 +159,29 @@ public class ProjectileProfileObject : ScriptableObject
 			empShockFalloffCurve : AnimationCurve.Linear(0, 1, 1, 0),
 			empShockEffectKey: SubEffectKey.EMP충격_소형
 		);
+	}
+
+	public List<Vector3> cepCEPSimulation { get; set; }
+	[ButtonGroup("CEPSimulation", VisibleIf = "showGizmos"), PropertyOrder(1)]
+	private void CEPSimulation()
+	{
+		if (statsData == null) return;
+		cepCEPSimulation = new List<Vector3>();
+
+
+		Vector3 targetDirection = Vector3.forward; // Z 방향으로 발사한다고 가정
+		float diraction = statsData.CepDistance;
+		int count = 1000;
+		for (int i = 0 ; i < count ; i++)
+		{
+			Vector3 impactPoint = statsData.CalculateCEPDiraction(targetDirection) * diraction;
+			cepCEPSimulation.Add(impactPoint);
+		}
+	}
+	[ButtonGroup("CEPSimulation", VisibleIf = "showGizmos"), PropertyOrder(1)]
+	private void ClearCEPSimulation()
+	{
+		cepCEPSimulation = new List<Vector3>();
 	}
 #endif
 }

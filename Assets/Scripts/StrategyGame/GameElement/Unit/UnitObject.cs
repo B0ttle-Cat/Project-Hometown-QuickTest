@@ -10,6 +10,8 @@ public partial class UnitObject : MonoBehaviour
 {
 	private UnitRuntimeData runtimeData;
 	private UnitStatsData statsData;
+	// TODO :: 데이터 정리하기
+
 
 	public UnitRuntimeData RuntimeData => runtimeData;
 	public UnitStatsData StatsData => statsData;
