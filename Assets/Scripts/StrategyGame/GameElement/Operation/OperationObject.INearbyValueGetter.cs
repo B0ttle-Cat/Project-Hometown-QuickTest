@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-[RequireComponent(typeof(NearbyElementSearching))]
+[RequireComponent(typeof(NearbySearching))]
 public partial class OperationObject : INearbySearcher, INearbySearcherAPI
 {
 
-	public NearbyElementSearching nearbySearcher;
+	public NearbySearching nearbySearcher;
 	private Vector3 searchCenterPosition;
 	private float searchViewRange;
 
@@ -20,9 +20,9 @@ public partial class OperationObject : INearbySearcher, INearbySearcherAPI
 
 	partial void InitNearby(in float baseRadius)
     {
-		if(!TryGetComponent<NearbyElementSearching>(out nearbySearcher))
+		if(!TryGetComponent<NearbySearching>(out nearbySearcher))
         {
-			nearbySearcher = gameObject.AddComponent<NearbyElementSearching>();
+			nearbySearcher = gameObject.AddComponent<NearbySearching>();
         }
 
 		SearcherAPI.Init(this);

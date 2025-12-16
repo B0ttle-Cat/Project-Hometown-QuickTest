@@ -28,7 +28,6 @@ public partial class OperationObject : MonoBehaviour  // Main
 		this.factionID = factionID;
 		this.teamName = teamName;
 	}
-
 	public void Init(in List<int> unitList, in float baseRadius)
 	{
 		InitOrganization(in unitList);

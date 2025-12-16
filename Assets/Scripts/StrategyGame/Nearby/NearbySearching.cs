@@ -6,7 +6,7 @@ using Sirenix.OdinInspector;
 
 using UnityEngine;
 
-public class NearbyElementSearching : MonoBehaviour, INearbySearcherAPI
+public class NearbySearching : MonoBehaviour, INearbySearcherAPI
 {
 	INearbySearcher thisSearcher;
 	Vector3 SearchCenter => thisSearcher.SearchCenter;
