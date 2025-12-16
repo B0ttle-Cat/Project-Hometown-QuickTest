@@ -107,14 +107,16 @@ public class CylinderArea : MonoBehaviour
 
 
 #if UNITY_EDITOR
-	[SerializeField, HorizontalGroup, LabelWidth(100)]
+	[SerializeField, ToggleGroup("showGizmo"), LabelWidth(100)]
+	private bool showGizmo;
+	[SerializeField, ToggleGroup("showGizmo"), LabelWidth(100)]
 	private Color gizmoColor = Color.cyan;
-	[SerializeField, ShowIf("@checkOverlapCollider"), HorizontalGroup(width: 0.25f), HideLabel]
-	private Color overlapGizmoColor = Color.red;
-	[SerializeField, ShowIf("@checkOverlapCollider"), HorizontalGroup(width: 0.25f), HideLabel]
-	private Color highlightGizmoColor = Color.yellow;
-	[SerializeField]
+	[SerializeField, ToggleGroup("showGizmo")]
 	private bool checkOverlapCollider;
+	[SerializeField, ShowIf("@checkOverlapCollider"), ToggleGroup("showGizmo"), HideLabel]
+	private Color overlapGizmoColor = Color.red;
+	[SerializeField, ShowIf("@checkOverlapCollider"), ToggleGroup("showGizmo"), HideLabel]
+	private Color highlightGizmoColor = Color.yellow;
 
 	Color TestCollider(out Collider[] overlappingColliders)
 	{
@@ -145,6 +147,8 @@ public class CylinderArea : MonoBehaviour
 
 	void OnDrawGizmos()
 	{
+		if (!showGizmo) return;
+
 		Collider[] colliders;
 		UnityEditor.Handles.color = TestCollider(out colliders);
 
