@@ -16,30 +16,34 @@ public static class StrategyElementFactory
 		Vector3 position = setterData.position;
 		Quaternion rotation = Quaternion.Euler(setterData.rotation);
 
-		UnitObject newUnit = Instantiate(unitKey, factionId, position, rotation, false);
+		UnitObject newUnit = Instantiate(unitKey, factionId, setterData.belongedOperation, position, rotation, false);
 		newUnit.Init(setterData);
-		SetOperationBelong(setterData.belongedOperation);
-		if (enterThis) AddCollector(newUnit);
-
+		if (enterThis)
+		{
+			AddCollector(newUnit);
+			SetOperationBelong(setterData.belongedOperation);
+		}
 		return newUnit;
 
 		void SetOperationBelong(int belongedOperation)
 		{
+			if (belongedOperation < 0) return;
+
 			var operation = StrategyManager.Collector.Find<OperationObject>(belongedOperation);
 			if (operation == null) return;
 
 			operation.AddUnitObject(newUnit);
 		}
 	}
-	public static UnitObject Instantiate(UnitKey unitKey, int factionID = -1, Vector3? position = null, Quaternion? rotation = null, bool enterThis = true)
+	public static UnitObject Instantiate(UnitKey unitKey, int factionID = -1, int belongedOperation = -1, Vector3? position = null, Quaternion? rotation = null, bool enterThis = true)
 	{
 		if (StrategyManager.Key2Unit.TryGetAsset(unitKey, out var info))
 		{
-			return Instantiate(info.UnitProfileObject, factionID, position, rotation, enterThis);
+			return Instantiate(info.UnitProfileObject, factionID, belongedOperation, position, rotation, enterThis);
 		}
 		return null;
 	}
-	public static UnitObject Instantiate(UnitProfileObject profile, int factionID = -1, Vector3? position = null, Quaternion? rotation = null, bool enterThis = true)
+	public static UnitObject Instantiate(UnitProfileObject profile, int factionID = -1, int belongedOperation = -1, Vector3? position = null, Quaternion? rotation = null, bool enterThis = true)
 	{
 		if (profile == null) return null;
 		var prefab = profile.prefab;
@@ -61,9 +65,20 @@ public static class StrategyElementFactory
 		if (enterThis)
 		{
 			AddCollector(unitObject);
+			SetOperationBelong(belongedOperation);
 		}
 
 		return unitObject;
+
+		void SetOperationBelong(int belongedOperation)
+		{
+			if (belongedOperation < 0) return;
+
+			var operation = StrategyManager.Collector.Find<OperationObject>(belongedOperation);
+			if (operation == null) return;
+
+			operation.AddUnitObject(unitObject);
+		}
 	}
 	private static void AddCollector(UnitObject unitObject)
 	{
@@ -104,8 +119,8 @@ public static class StrategyElementFactory
 
 		var newObject = new GameObject();
 		var newOperation = newObject.AddComponent<OperationObject>();
-
 		StrategyManager.Collector.Add<OperationObject>(newOperation);
+
 		newObject.name = $"OperationObject_{newOperation.OperationID}";
 		newObject.transform.position = sectorCenter;
 		if (string.IsNullOrWhiteSpace(teamName))
@@ -129,11 +144,10 @@ public static class StrategyElementFactory
 				spawnUnitIds.Add(unit.UnitID);
 			}
 		}
-
-
-		newOperation.Init(in spawnUnitIds, in radius);
+		newOperation.Init(in spawnUnitIds);
 		return newOperation;
 	}
+
 	public static void Destroy(OperationObject operation)
 	{
 		if (operation == null) return;

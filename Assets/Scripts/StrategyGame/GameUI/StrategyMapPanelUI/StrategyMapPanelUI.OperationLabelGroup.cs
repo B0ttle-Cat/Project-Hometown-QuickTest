@@ -282,7 +282,7 @@ public partial class StrategyMapPanelUI // OperationLabelGroup
 				if (operation == null) return;
 				if (FloatingPanelUI == null || FloatingPanelUI is not CenterFloatingPanelItemUI centerFloating) return;
 				
-				centerFloating.SetTargetInMap(operation.GetAllUnitTr.ToArray());
+				centerFloating.SetTargetInMap(operation.UnitOrganizationList.GetTransforms);
 			}
 			private void Operation_OnChangeMovementOrderState(OperationObject operation)
 			{

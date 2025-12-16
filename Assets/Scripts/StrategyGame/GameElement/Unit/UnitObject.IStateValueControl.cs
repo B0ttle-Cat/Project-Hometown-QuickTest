@@ -173,29 +173,6 @@ public partial class UnitObject : IStatsValueControl
 		}
 	}
 }
-public partial class UnitObject // UnitCaptureTag
-{
-	partial void InitCaptureTag()
-	{
-		if (StatsData.CaptureScore > 0)
-		{
-			if (UnitCaptureTag == null) UnitCaptureTag = GetComponentInChildren<CaptureTag>();
-			if (UnitCaptureTag == null) UnitCaptureTag = gameObject.AddComponent<CaptureTag>();
-
-			UnitCaptureTag.factionID = FactionID;
-			UnitCaptureTag.pointValue = StatsData.CaptureScore;
-		}
-		else
-		{
-			if (UnitCaptureTag != null)
-			{
-				Destroy(UnitCaptureTag);
-				UnitCaptureTag = null;
-			}
-		}
-	}
-
-}
 public partial class UnitObject : ICombatCommon, ICombatOffense, ICombatDefance
 {
 	public ICombatCommon ThisCombatStats => this;

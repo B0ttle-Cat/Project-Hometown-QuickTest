@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 
+using UnityEditor;
+
 using UnityEngine;
 
 public partial class UnitObject : ICombatHandler, ITargetableCombatant
@@ -43,7 +45,7 @@ public partial class UnitObject : ICombatHandler, ITargetableCombatant
 		isTargetInLimitAttackRange = false;
 		isTargetInActionRange = false;
 
-	
+
 	}
 	partial void DeinitCombat()
 	{
@@ -129,7 +131,7 @@ public partial class UnitObject : ICombatHandler, ITargetableCombatant
 		float maxActionRange = Mathf.Max(sqrCombatActionRange, sqrCombatAttackStartRange.y);
 		foreach (var targetable in detectingList)
 		{
-			if(targetable.IsNullRef()) continue;
+			if (targetable.IsNullRef()) continue;
 
 			Vector3 distance = targetable.Position - thisPosition;
 			float sqrDistance = distance.sqrMagnitude;
@@ -201,91 +203,43 @@ public partial class UnitObject // RangeGizmos
 		Vector3 center = transform.position;
 		center.y = transform.position.y;
 
-		// 색 정의 (원하시면 변경)
-		Color attackStartColor = new Color(1f, 0.2f, 0.2f, 0.9f); // 빨강 계열 (점선)
-		Color attackLimitColor = new Color(1f, 0.6f, 0.1f, 0.9f); // 주황 계열 (실선)
-		Color actionColor = new Color(0.2f, 1f, 0.3f, 0.9f);       // 녹색 (실선)
-		Color visionColor = new Color(0.2f, 0.8f, 1f, 0.9f);       // 시안 (실선)
+		// 색 정의
+		Color attackStartColor = new Color(1f, 0.2f, 0.2f, 0.9f); // 빨강 계열 
+		Color attackLimitColor = new Color(1f, 0.6f, 0.1f, 0.9f); // 주황 계열 
+		Color actionColor = new Color(0.2f, 1f, 0.3f, 0.9f);       // 녹색
+		Color visionColor = new Color(0.2f, 0.8f, 1f, 0.9f);       // 시안
 
-		const int segments = 128;
-
-		// combatAttackStartRange : Vector2(minRadius, maxRadius) -> 점선으로 그리기 (둘 다)
+		// combatAttackStartRange : Vector2(minRadius, maxRadius) -> 점선으로 그리기
 		if (combatAttackStartRange.x > 0f)
-			DrawCircleXZ(center, combatAttackStartRange.x, attackStartColor, dotted: true, segments: segments);
+			DrawCircleXZ(center, combatAttackStartRange.x, attackStartColor);
 		if (combatAttackStartRange.y > 0f)
-			DrawCircleXZ(center, combatAttackStartRange.y, attackStartColor, dotted: true, segments: segments);
+			DrawCircleXZ(center, combatAttackStartRange.y, attackStartColor);
 
-		// combatAttackLimitRange : Vector2(minRadius, maxRadius) -> 실선으로 그리기 (둘 다)
+		// combatAttackLimitRange : Vector2(minRadius, maxRadius) -> 실선으로 그리기
 		if (combatAttackLimitRange.x > 0f)
-			DrawCircleXZ(center, combatAttackLimitRange.x, attackLimitColor, dotted: false, segments: segments);
+			DrawCircleXZ(center, combatAttackLimitRange.x, attackLimitColor);
 		if (combatAttackLimitRange.y > 0f)
-			DrawCircleXZ(center, combatAttackLimitRange.y, attackLimitColor, dotted: false, segments: segments);
+			DrawCircleXZ(center, combatAttackLimitRange.y, attackLimitColor);
 
 		// action range (실선)
+		// ThisCombatStats가 UnitObject의 필드에 정의되어 있다고 가정
 		float combatActionRange = ThisCombatStats.ActionRange;
 		if (combatActionRange > 0f)
-			DrawCircleXZ(center, combatActionRange, actionColor, dotted: false, segments: segments);
+			DrawCircleXZ(center, combatActionRange, actionColor);
 
 		// vision range (실선)
 		float combatVisionRange = ThisCombatStats.VisionRange;
 		if (combatVisionRange > 0f)
-			DrawCircleXZ(center, combatVisionRange, visionColor, dotted: false, segments: segments);
+			DrawCircleXZ(center, combatVisionRange, visionColor);
 	}
 
-	// XZ 평면에 원을 그림. dotted = true 면 점선(세그먼트/갭) 형태로 그린다.
-	void DrawCircleXZ(Vector3 center, float radius, Color color, bool dotted = false, int segments = 64)
+	// XZ 평면에 원을 그림. dotted = true 면 Handles.DrawDottedLine을 사용한다.
+	void DrawCircleXZ(Vector3 center, float radius, Color color)
 	{
-		if (radius <= 0f || segments < 8) return;
+		if (radius <= 0f) return;
 
-		Gizmos.color = color;
-		int dashSegments = segments/24;       // 점선에서 그릴 연속 세그먼트 수
-		int gapSegments = segments/32;        // 점선에서 건너뛸 세그먼트 수
-
-		Vector3 prev = Vector3.zero;
-		Vector3 first = Vector3.zero;
-		bool hasPrev = false;
-
-		for (int i = 0 ; i <= segments ; i++)
-		{
-			float t = (float)i / segments;
-			float ang = t * Mathf.PI * 2f;
-			Vector3 p = new Vector3(Mathf.Cos(ang) * radius, 0f, Mathf.Sin(ang) * radius) + center;
-			// y는 center.y 로 이미 설정됨
-
-			if (!hasPrev)
-			{
-				first = p;
-				prev = p;
-				hasPrev = true;
-				continue;
-			}
-
-			if (dotted)
-			{
-				// 점선 패턴: segments을 작은 조각으로 나누어 일부만 그림
-				int patternIndex = i % (dashSegments + gapSegments);
-				if (patternIndex < dashSegments)
-				{
-					Gizmos.DrawLine(prev, p);
-				}
-			}
-			else
-			{
-				Gizmos.DrawLine(prev, p);
-			}
-
-			prev = p;
-		}
-
-		// 닫힌 루프 보장 (끝-시작 연결)
-		if (!dotted)
-		{
-			Gizmos.DrawLine(prev, first);
-		}
-		else
-		{
-			// 점선일 경우에도 마지막 구간이 그려져야 하면 이미 처리됐음.
-		}
+		Handles.color = color;
+		Handles.DrawWireDisc(center, Vector3.up, radius);
 	}
 }
 #endif

@@ -94,3 +94,28 @@ public partial class UnitObject : MonoBehaviour
 	}
 #endif
 }
+
+
+public partial class UnitObject // UnitCaptureTag
+{
+	partial void InitCaptureTag()
+	{
+		if (StatsData.CaptureScore > 0)
+		{
+			if (UnitCaptureTag == null) UnitCaptureTag = GetComponentInChildren<CaptureTag>();
+			if (UnitCaptureTag == null) UnitCaptureTag = gameObject.AddComponent<CaptureTag>();
+
+			UnitCaptureTag.factionID = FactionID;
+			UnitCaptureTag.pointValue = StatsData.CaptureScore;
+		}
+		else
+		{
+			if (UnitCaptureTag != null)
+			{
+				Destroy(UnitCaptureTag);
+				UnitCaptureTag = null;
+			}
+		}
+	}
+
+}

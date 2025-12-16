@@ -10,10 +10,10 @@ using UnityEngine;
 
 public class NearbySearching : MonoBehaviour, INearbySearcherAPI
 {
-	INearbySearcher thisSearcher;
-	Vector3 SearchCenter => thisSearcher.SearchCenter;
-	float SearchRange => thisSearcher.SearchRange;
-	int FactionID => thisSearcher.FactionID;
+	protected INearbySearcher thisSearcher;
+	protected Vector3 SearchCenter => thisSearcher.SearchCenter;
+	protected float SearchRange => thisSearcher.SearchRange;
+	protected int FactionID => thisSearcher.FactionID;
 	[ShowInInspector]
 	private INearbyElement[] currentNearbyElements;
 	private List<(INearbyElement element, float sqrDist)> tempList;
@@ -200,7 +200,7 @@ public class NearbySearching : MonoBehaviour, INearbySearcherAPI
 	}
 
 #if UNITY_EDITOR
-	void OnDrawGizmos()
+	protected virtual void OnDrawGizmos()
 	{
 		if (thisSearcher.IsNullRef()) return;
 		float range = SearchRange;

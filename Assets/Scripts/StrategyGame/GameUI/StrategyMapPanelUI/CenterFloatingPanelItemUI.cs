@@ -38,9 +38,9 @@ public class CenterFloatingPanelItemUI : FloatingPanelItemUI
 		targetsGroup = new HashSet<Transform>();
 	}
 
-	public void SetTargetInMap(Transform[] otherTargets)
+	public void SetTargetInMap(IEnumerable<Transform> otherTargets)
 	{
-		if (otherTargets == null || otherTargets.Length == 0) return;
+		if (otherTargets == null || otherTargets.Count() == 0) return;
 		foreach (var item in otherTargets)
 			SetTargetInMap(item);
 	}
@@ -51,9 +51,9 @@ public class CenterFloatingPanelItemUI : FloatingPanelItemUI
 			InitTarget(mapTarget);
 	}
 
-	public void RemoveTargetInMap(Transform[] otherTargets)
+	public void RemoveTargetInMap(IEnumerable<Transform> otherTargets)
 	{
-		if (otherTargets == null || otherTargets.Length == 0) return;
+		if (otherTargets == null || otherTargets.Count() == 0) return;
 		foreach (var item in otherTargets)
 			RemoveTargetInMap(item);
 	}

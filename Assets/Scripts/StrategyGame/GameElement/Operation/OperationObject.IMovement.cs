@@ -94,7 +94,7 @@ public partial class OperationObject : IMovement , ITargetableCombatant
 		int count = 0;
 		position = Vector3.zero;
 		velocity = Vector3.zero;
-		foreach (var item in GetAllUnitObj)
+		foreach (var item in UnitOrganizationList)
 		{
 			position += item.ThisMovement.CurrentPosition;
 			velocity += item.ThisMovement.CurrentVelocity;
@@ -116,7 +116,7 @@ public partial class OperationObject : IMovement , ITargetableCombatant
 	}
 	public void OnStayUpdate(in float deltaTime)
 	{
-		foreach (var unit in GetAllUnitObj)
+		foreach (var unit in UnitOrganizationList)
 		{
 			unit.ThisNodeMovement.OnStayUpdate(in deltaTime);
 		}
@@ -127,7 +127,7 @@ public partial class OperationObject : IMovement , ITargetableCombatant
 		moveVelocity = Vector3.zero;
 		smoothTime = 0.5f;
 
-		foreach (var unit in GetAllUnitObj)
+		foreach (var unit in UnitOrganizationList)
 		{
 			unit.ThisNodeMovement.OnMoveStart();
 		}
@@ -137,7 +137,7 @@ public partial class OperationObject : IMovement , ITargetableCombatant
 		moveVelocity = Vector3.zero;
 		smoothTime = 0.5f;
 
-		foreach (var unit in GetAllUnitObj)
+		foreach (var unit in UnitOrganizationList)
 		{
 			unit.ThisNodeMovement.OnMoveStop();
 		}
@@ -163,7 +163,7 @@ public partial class OperationObject : INodeMovement
 
 		UpdateMovementTransform();
 
-		foreach (var unit in GetAllUnitObj)
+		foreach (var unit in UnitOrganizationList)
 		{
 			unit.ThisNodeMovement.SetPositionAndVelocity(in position, in delteMove, in velocity, in deltaTime);
 		}

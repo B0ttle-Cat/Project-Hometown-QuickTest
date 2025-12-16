@@ -55,11 +55,9 @@ public class OperationFiniteStateMachine : FiniteStateMachine<OperationFSMType>
 		#endregion
 		protected virtual bool SomeUnitStateIsCombat()
 		{
-			var unitList = operation.GetAllUnitObj;
-			int length = unitList.Count;
-			for (int i = 0 ; i < length ; i++)
+			var unitList = operation.UnitOrganizationList;
+			foreach (var unit in unitList)
 			{
-				var unit = unitList[i];
 				if (unit == null || unit is not ICombatHandler combat) continue;
 
 				if (combat.IsCombatState)
@@ -97,11 +95,9 @@ public class OperationFiniteStateMachine : FiniteStateMachine<OperationFSMType>
 
 		private void OnChangeCombat()
 		{
-			var unitList = operation.GetAllUnitObj;
-			int length = unitList.Count;
-			for (int i = 0 ; i < length ; i++)
+			var unitList = operation.UnitOrganizationList;
+			foreach (var unit in unitList)
 			{
-				var unit = unitList[i];
 				if (unit == null || unit is not ICombatHandler combat) continue;
 
 				if (!combat.IsRootCombatState)
@@ -142,11 +138,9 @@ public class OperationFiniteStateMachine : FiniteStateMachine<OperationFSMType>
 			ITargetableCombatant target = FindNearTarget();
 			if (target == null) return;
 
-			var unitList = operation.GetAllUnitObj;
-			int length = unitList == null ? 0 : unitList.Count;
-			for (int i = 0 ; i < length ; i++)
+			var unitList = operation.UnitOrganizationList;
+			foreach (var unit in unitList)
 			{
-				var unit = unitList[i];
 				if (unit == null) continue;
 				if (unit is not ICombatHandler combat) continue;
 
@@ -174,11 +168,9 @@ public class OperationFiniteStateMachine : FiniteStateMachine<OperationFSMType>
 		}
 		private void ClearRootTarget()
 		{
-			var unitList = operation.GetAllUnitObj;
-			int length = unitList == null ? 0 : unitList.Count;
-			for (int i = 0 ; i < length ; i++)
+			var unitList = operation.UnitOrganizationList;
+			foreach (var unit in unitList)
 			{
-				var unit = unitList[i];
 				if (unit == null) continue;
 				if (unit is not ICombatHandler combat) continue;
 

@@ -28,17 +28,20 @@ public partial class OperationObject : MonoBehaviour  // Main
 		this.factionID = factionID;
 		this.teamName = teamName;
 	}
-	public void Init(in List<int> unitList, in float baseRadius)
+	public void Init(in List<int> unitList)
 	{
 		InitOrganization(in unitList);
+	}
+	public void InitOther()
+	{
 		InitMovement();
-		InitNearby(in baseRadius);
+		InitNearby();
 		InitFSM();
 	}
 	partial void InitOrganization(in List<int> unitList);
 	partial void InitMovement();
 	partial void InitFSM();
-	partial void InitNearby(in float baseRadius);
+	partial void InitNearby();
 
 	public void DeInit()
 	{
@@ -62,26 +65,31 @@ public partial class OperationObject // StatsData_old
 		computeFrame = thisFrame;
 		moveSpeed = ComputeMoveSpeed();
 		searchViewRange = ComputeViewRange();
+		searchActionRange = ComputeActionRange();
 		searchCenterPosition = ComputeCenter();
 	}
 
 	private float ComputeMoveSpeed()
 	{
-		return GetAllUnitObj.Count == 0 ? 0 : GetAllUnitObj.Select(i => i.StatsData.MovementSpeed).Average();
+		return UnitOrganizationList.Count == 0 ? 0 : UnitOrganizationList.Select(i => i.StatsData.MovementSpeed).Average();
 	}
 	private float ComputeViewRange()
 	{
-		return GetAllUnitObj.Count == 0 ? 0 : GetAllUnitObj.Select(i => i.StatsData.VisionRange).Max();
+		return UnitOrganizationList.Count == 0 ? 0 : UnitOrganizationList.Select(i => i.StatsData.VisionRange).Max();
+	}
+	private float ComputeActionRange()
+	{
+		return UnitOrganizationList.Count == 0 ? 0 : UnitOrganizationList.Select(i => i.StatsData.ActionRange).Max();
 	}
 	private Vector3 ComputeCenter()
 	{
-		int length = GetAllUnitObj.Count;
-		if(length < 1) return transform.position;
+		int length = UnitOrganizationList.Count;
+		if(length == 0) return transform.position;
 
-		Bounds bounds = new Bounds(GetAllUnitObj[0].ThisMovement.CurrentPosition,Vector3.zero);
-        for (int i = 1 ; i < length ; i++)
+		Bounds bounds = new Bounds(UnitOrganizationList.First().ThisMovement.CurrentPosition,Vector3.zero);
+        foreach(var unit in UnitOrganizationList)
         {
-			bounds.Encapsulate(GetAllUnitObj[i].ThisMovement.CurrentPosition);
+			bounds.Encapsulate(unit.ThisMovement.CurrentPosition);
 		}
 
 		return bounds.center;

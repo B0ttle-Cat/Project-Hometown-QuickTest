@@ -17,11 +17,13 @@ public partial class OperationObject
 
 	private Vector3 searchCenterPosition;
 	private float searchViewRange;
+	private float searchActionRange;
 
 
-	partial void InitNearby(in float baseRadius)
+	partial void InitNearby()
     {
 		viewRangeSearcher = new OperationViewRangeSearcher(this);
+		actionRangeSearcher = new OperationActionRangeSearcher(this);
 	}
 
     partial void DeInitNearby()
@@ -84,7 +86,7 @@ public partial class OperationObject
 		public INearbySearcher ThisSearcher => this;
 		public INearbySearcherAPI SearcherAPI => searcherAPI;
 		Vector3 INearbySearcher.SearchCenter => thisOperation.searchCenterPosition;
-		float INearbySearcher.SearchRange => thisOperation.searchViewRange + thisOperation.operationRange;
+		float INearbySearcher.SearchRange => thisOperation.searchActionRange + thisOperation.operationRange;
 		int INearbySearcher.FactionID => thisOperation.factionID;
 	}
 }
