@@ -22,13 +22,13 @@ public class OperationFiniteStateMachine : FiniteStateMachine<OperationFSMType>
 	private abstract class OperationState : BaseState
 	{
 		protected readonly OperationObject operation;
-		protected readonly INearbySearcherAPI nearbySearcher;
+		protected readonly INearbySearcherAPI viewSearcherAPI;
 		protected readonly OperationFiniteStateMachine operationFsm;
 
 		protected OperationState(OperationObject operation, OperationFiniteStateMachine fsm, OperationFSMType type) : base(fsm, type)
 		{
 			this.operation = operation;
-			nearbySearcher = operation.SearcherAPI;
+			viewSearcherAPI = operation.ViewSearcherAPI;
 			operationFsm = fsm;
 		}
 		#region
@@ -155,8 +155,8 @@ public class OperationFiniteStateMachine : FiniteStateMachine<OperationFSMType>
 			}
 			ITargetableCombatant FindNearTarget()
 			{
-				if (nearbySearcher == null) return null;
-				var nearUnits = nearbySearcher.GetNearbyItemsType<UnitObject>();
+				if (viewSearcherAPI.IsNullRef()) return null;
+				var nearUnits = viewSearcherAPI.GetNearbyItemsType<UnitObject>();
 				if (nearUnits == null) return null;
 
 				int operationFactionID = operation.FactionID;

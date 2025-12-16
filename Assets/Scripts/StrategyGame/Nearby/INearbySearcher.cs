@@ -14,10 +14,11 @@ public interface INearbySearcher
 public interface INearbySearcherAPI
 {
 	void Init(INearbySearcher searcher);
+	void Deinit();
 	//void DeInit();
 	INearbyElement GetNearbyItem(Func<INearbyElement, bool> func);
-	IEnumerable<INearbyElement> GetNearbyItems(Func<INearbyElement, bool> func);
+	IEnumerable<INearbyElement> GetNearbyItems(Func<INearbyElement, bool> func = null);
 	T GetNearbyItemType<T>(Func<T, bool> func = null) where T : class, INearbyElement;
 	IEnumerable<T> GetNearbyItemsType<T>(Func<T, bool> func = null) where T : class, INearbyElement;
-	void UpdateNearby(HashSet<INearbyElement> allElements);
+	void UpdateNearby(IEnumerable<INearbyElement> searchingElementList);
 }

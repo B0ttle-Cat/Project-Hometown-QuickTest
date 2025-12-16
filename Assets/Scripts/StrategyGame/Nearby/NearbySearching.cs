@@ -4,6 +4,8 @@ using System.Linq;
 
 using Sirenix.OdinInspector;
 
+using UnityEditor;
+
 using UnityEngine;
 
 public class NearbySearching : MonoBehaviour, INearbySearcherAPI
@@ -13,74 +15,107 @@ public class NearbySearching : MonoBehaviour, INearbySearcherAPI
 	float SearchRange => thisSearcher.SearchRange;
 	int FactionID => thisSearcher.FactionID;
 	[ShowInInspector]
-	private List<INearbyElement> nearbyElements;
-
+	private INearbyElement[] nearbyElements;
 	private List<(INearbyElement element, float sqrDist)> tempList;
+	private int nearbyCount;
 
 	public void Init(INearbySearcher searcher)
 	{
 		thisSearcher = searcher;
-		nearbyElements = new List<INearbyElement>();
-		tempList = new List<(INearbyElement, float)>();
+		nearbyElements = new INearbyElement[0];
+		tempList = new();
+		nearbyCount = 0;
 	}
 
 	public void Deinit()
 	{
 		thisSearcher = null;
 		nearbyElements = null;
-		tempList = null;
 	}
 
-	
+	#region INearbySearcherAPI
 	INearbyElement INearbySearcherAPI.GetNearbyItem(Func<INearbyElement, bool> func)
+	{
+		if (thisSearcher.IsNullRef() || func == null) return null;
+
+		return OnGetNearbyItem(func);
+	}
+	IEnumerable<INearbyElement> INearbySearcherAPI.GetNearbyItems(Func<INearbyElement, bool> func)
 	{
 		if (thisSearcher.IsNullRef()) return null;
 
-		foreach (var item in nearbyElements)
+		return OnGetNearbyItems(func);
+	}
+	T INearbySearcherAPI.GetNearbyItemType<T>(Func<T, bool> func)
+	{
+		if (thisSearcher.IsNullRef()) return null;
+
+		return OnGetNearbyItemType<T>(func);
+	}
+	IEnumerable<T> INearbySearcherAPI.GetNearbyItemsType<T>(Func<T, bool> func)
+	{
+		if (thisSearcher.IsNullRef()) return null;
+
+		return OnGetNearbyItemsType<T>(func);
+	}
+	void INearbySearcherAPI.UpdateNearby(IEnumerable<INearbyElement> searchingElementList)
+	{
+		if (thisSearcher.IsNullRef()) return;
+
+		OnUpdateNearby(searchingElementList);
+	}
+	#endregion
+
+	protected virtual INearbyElement OnGetNearbyItem(Func<INearbyElement, bool> func)
+	{
+		for (int i = 0 ; i < nearbyCount ; i++)
 		{
-			if (func == null || func.Invoke(item))
+			INearbyElement item = nearbyElements[i];
+			if (item.IsNullRef()) continue;
+
+			if (func.Invoke(item))
 			{
 				return item;
 			}
 		}
 		return null;
 	}
-	IEnumerable<INearbyElement> INearbySearcherAPI.GetNearbyItems(Func<INearbyElement, bool> func)
-	{
-		if (thisSearcher.IsNullRef()) return null;
 
+	protected virtual IEnumerable<INearbyElement> OnGetNearbyItems(Func<INearbyElement, bool> func)
+	{
 		if (func == null)
-			return nearbyElements;
+			return nearbyElements.Take(nearbyCount).Where(item => item.IsNotNullRef());
 		else
-			return nearbyElements.Where(t => (func.Invoke(t)));
+			return nearbyElements.Take(nearbyCount).Where(item => item.IsNotNullRef() && (func.Invoke(item)));
 	}
-	T INearbySearcherAPI.GetNearbyItemType<T>(Func<T, bool> func)
-	{
-		if (thisSearcher.IsNullRef()) return null;
 
-		foreach (var item in nearbyElements)
+	protected virtual T OnGetNearbyItemType<T>(Func<T, bool> func) where T : class, INearbyElement
+	{
+		for (int i = 0 ; i < nearbyCount ; i++)
 		{
-			if (item is T t && (func == null || func.Invoke(t)))
+			INearbyElement item = nearbyElements[i];
+			if (item.IsNullRef() || item is not T t) continue;
+
+			if (func == null || func.Invoke(t))
 			{
 				return t;
 			}
 		}
 		return null;
 	}
-	IEnumerable<T> INearbySearcherAPI.GetNearbyItemsType<T>(Func<T, bool> func)
+
+	protected virtual IEnumerable<T> OnGetNearbyItemsType<T>(Func<T, bool> func) where T : class, INearbyElement
 	{
-		if (func == null)
-			return nearbyElements.Where(n => n is not null and T).Select(n => n as T);
-		else
-			return nearbyElements.Where(n => n is not null and T).Select(n => n as T).Where(t => (func.Invoke(t)));
+		return nearbyElements.Take(nearbyCount)
+			.Where(item => item.IsNotNullRef() && item is T t && (func == null || func.Invoke(t)))
+			.Select(item => (T)item);
 	}
-	void INearbySearcherAPI.UpdateNearby(HashSet<INearbyElement> allElements)
+
+	protected virtual void OnUpdateNearby(IEnumerable<INearbyElement> searchingElementList)
 	{
-		if (thisSearcher.IsNullRef()) return;
+		nearbyCount = 0;
 
-		nearbyElements.Clear();
-
-		if (allElements == null || allElements.Count == 0) return;
+		if (searchingElementList == null || searchingElementList.Count() == 0) return;
 
 		Vector3 center = SearchCenter;
 		float sqrRange = SearchRange;
@@ -88,9 +123,9 @@ public class NearbySearching : MonoBehaviour, INearbySearcherAPI
 
 		tempList.Clear();
 
-		foreach (var item in allElements)
+		foreach (var item in searchingElementList)
 		{
-			if (item == null) continue;
+			if (item.IsNullRef()) continue;
 
 			if (FactionID == item.FactionID) continue;
 
@@ -100,23 +135,34 @@ public class NearbySearching : MonoBehaviour, INearbySearcherAPI
 			if (sqrDist <= sqrRange)
 			{
 				tempList.Add((item, sqrDist));
+				nearbyCount++;
 			}
 		}
 
-		int tempCount = tempList.Count;
-		if (tempCount == 0) return;
-
-		tempList.Sort((a, b) => a.sqrDist.CompareTo(b.sqrDist));	
-
-		for (int i = 0 ; i < tempCount ; i++)
+		if (nearbyCount == 0)
 		{
-			nearbyElements.Add(tempList[i].element);
+			if (nearbyElements.Length > 0)
+			{
+				Array.Resize(ref nearbyElements, 0);
+			}
+			return;
+		}
+		if (nearbyElements.Length < nearbyCount)
+		{
+			Array.Resize(ref nearbyElements, nearbyCount);
 		}
 
+		tempList.Sort((a, b) => a.sqrDist.CompareTo(b.sqrDist));
+
+		for (int i = 0 ; i < nearbyCount ; i++)
+		{
+			nearbyElements[i] = tempList[i].element;
+		}
 		tempList.Clear();
 	}
-	
 
+
+#if UNITY_EDITOR
 	void OnDrawGizmos()
 	{
 		if (thisSearcher.IsNullRef()) return;
@@ -124,17 +170,8 @@ public class NearbySearching : MonoBehaviour, INearbySearcherAPI
 		if (range <= 0) return;
 		Vector3 center = SearchCenter;
 
-		Gizmos.color = Color.red;
-		float step = 2f * Mathf.PI / 10;
-		// 첫 점
-		Vector3 prev = center + new Vector3(Mathf.Cos(0f) * range, 0f, Mathf.Sin(0f) * range);
-
-		for (int i = 1 ; i <= 10 ; i++)
-		{
-			float angle = i * step;
-			Vector3 curr = center + new Vector3(Mathf.Cos(angle) * range, 0f, Mathf.Sin(angle) * range);
-			Gizmos.DrawLine(prev, curr);
-			prev = curr;
-		}
+		Handles.color = Color.red;
+		Handles.DrawWireDisc(center, Vector3.up, range);
 	}
+#endif
 }

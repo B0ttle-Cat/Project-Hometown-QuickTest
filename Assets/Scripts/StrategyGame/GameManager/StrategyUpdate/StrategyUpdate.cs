@@ -180,7 +180,7 @@ namespace StrategyManagerModule
 				(UpdateLogicSort.거점_버프계산, null),
 				(UpdateLogicSort.유닛_보급충전, null),
 
-				(UpdateLogicSort.NearbyUpdate, new StrategyUpdate_NearbyUpdate(this)),
+				(UpdateLogicSort.NearbyUpdate, new StrategyUpdate_OperationNearbyUpdate(this)),
 				(UpdateLogicSort.세력_감지목록_업데이트, new StrategyUpdate_FactionDetectListUpdate(this)),
 				(UpdateLogicSort.유닛_CombatTarget_업데이트, new StrategyUpdate_UnitCombatTargetUpdate(this)),
 				(UpdateLogicSort.각종_상태_업데이트,  new StrategyUpdate_FSMUpdater(this)),
@@ -257,6 +257,9 @@ namespace StrategyManagerModule
 			}
 		}
 	}
+
+
+
 	public abstract class StrategyUpdateSubClass<T> : IStrategyUpdater, IList<T> where T : StrategyUpdateSubClass<T>.UpdateLogic
 	{
 		protected StrategyUpdate thisUpdater;
@@ -489,10 +492,8 @@ namespace StrategyManagerModule
 				}
 			}
 		}
-
 	}
-
-	public partial class StrategyUpdate
+    public partial class StrategyUpdate
 	{
 		public class StrategyUpdate_ElementDestroyer : StrategyUpdateSubClass<StrategyUpdate_ElementDestroyer.ElementDestroyer>
 		{
