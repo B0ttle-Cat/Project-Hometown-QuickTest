@@ -9,7 +9,7 @@ public partial class UnitObject : ICombatHandler, ITargetableCombatant
 {
 	public ICombatHandler ThisCombatHandler => this;
 	bool ICombatHandler.IsCombatState => FSMController.CurrentStateType is UnitMainFSMType.Chasing or UnitMainFSMType.Fighting;
-	bool ICombatHandler.IsRootCombatState { get => isOperationCombatState; set => isOperationCombatState = value; }
+	bool ICombatHandler.IsOperationCombatState { get => HasOperation && isOperationCombatState; set => isOperationCombatState = value; }
 
 	private Collider hitCollider;
 
@@ -51,8 +51,6 @@ public partial class UnitObject : ICombatHandler, ITargetableCombatant
 	{
 		currentCombatTarget = null;
 		OnChangeCurrentCombatTarget = null;
-
-
 	}
 	Collider IHitableCombatant.HitCollider => hitCollider;
 	Vector3 ITargetableCombatant.Position => ThisMovement.CurrentPosition;
@@ -64,11 +62,11 @@ public partial class UnitObject : ICombatHandler, ITargetableCombatant
 	Vector2 ICombatHandler.AttackStartRange => combatAttackStartRange;
 	Vector2 ICombatHandler.AttackLimitRange => combatAttackLimitRange;
 
-	ITargetableCombatant ICombatHandler.CurrentTarget { get => currentCombatTarget; }
+	ITargetableCombatant ICombatHandler.CurrentTarget { get => currentCombatTarget.IsNotNullRef() ? currentCombatTarget : rootCurrentCombatTarget; set => rootCurrentCombatTarget = value; }
 	ITargetableCombatant ICombatHandler.OperationCurrentTarget { get => rootCurrentCombatTarget; set => rootCurrentCombatTarget = value; }
 	bool ICombatHandler.TargetInStartAttackRange => ThisCombatHandler.HasCurrentTarget && isTargetInStartAttackRange;
 	bool ICombatHandler.TargetInLimitAttackRange => ThisCombatHandler.HasCurrentTarget && isTargetInLimitAttackRange;
-	bool ICombatHandler.TargetInActionRange => ThisCombatHandler.HasCurrentTarget && isTargetInActionRange;
+	bool ICombatHandler.TargetInActionRange => (ThisCombatHandler.HasOperationCurrentTarget && isOperationCombatState) || (ThisCombatHandler.HasCurrentTarget && isTargetInActionRange);
 	void ICombatHandler.UpdateParameters()
 	{
 
@@ -90,9 +88,9 @@ public partial class UnitObject : ICombatHandler, ITargetableCombatant
 		sqrCombatActionRange = combatActionRange * combatActionRange;
 		sqrCombatVisionRange = combatVisionRange * combatVisionRange;
 
-		if (currentCombatTarget.IsNotNullRef())
+		if (ThisCombatHandler.HasCurrentTarget)
 		{
-			float sqrDistance = (currentCombatTarget.Position - ThisCombatHandler.Position).sqrMagnitude;
+			float sqrDistance = (ThisCombatHandler.CurrentTarget.Position - ThisCombatHandler.Position).sqrMagnitude;
 
 			isTargetInStartAttackRange = sqrCombatAttackStartMinRange <= sqrDistance && sqrDistance <= sqrCombatAttackStartMaxRange;
 			isTargetInLimitAttackRange = sqrCombatAttackLimitMinRange <= sqrDistance && sqrDistance <= sqrCombatAttackLimitMaxRange;
@@ -100,15 +98,15 @@ public partial class UnitObject : ICombatHandler, ITargetableCombatant
 		}
 		else
 		{
-			currentCombatTarget = null;
+			ThisCombatHandler.CurrentTarget = null;
 		}
 	}
 	bool ICombatHandler.IsKeepingTargetAllowed()
 	{
 
-		if (currentCombatTarget.IsNullRef()) return false;
+		if (!ThisCombatHandler.HasCurrentTarget) return false;
 
-		Vector3 distance = currentCombatTarget.Position - ThisCombatHandler.Position;
+		Vector3 distance = ThisCombatHandler.CurrentTarget.Position - ThisCombatHandler.Position;
 		float sqrDistance = distance.sqrMagnitude;
 		float sqrCombatAttackLimitMinRange = combatAttackLimitRange.x;
 		float sqrCombatAttackLimitMaxRange = combatAttackLimitRange.y;
@@ -122,6 +120,13 @@ public partial class UnitObject : ICombatHandler, ITargetableCombatant
 	}
 	bool ICombatHandler.SearchingNewTarget(out ITargetableCombatant newTarget)
 	{
+		// TODO:: Operation 과 Unit 의 적 탐지 및 선택 로직 수정.....
+		// Unit 에도 NearbySearcher 가 필요해....
+		if (ThisCombatHandler.IsOperationCombatState && ThisCombatHandler.HasOperationCurrentTarget)
+		{
+
+		}
+
 		newTarget = null;
 		var detectingList = Faction.DetectedList.TargetableType;
 		if (detectingList == null || detectingList.Count() == 0) return false;
@@ -149,24 +154,24 @@ public partial class UnitObject : ICombatHandler, ITargetableCombatant
 		{
 			ClearCombatTarget();
 		}
-		else if (currentCombatTarget.IsNullRef() || currentCombatTarget.ThisElement.ID != newTarget.ThisElement.ID)
+		else if (ThisCombatHandler.CurrentTarget.IsNullRef() || ThisCombatHandler.CurrentTarget.ThisElement.ID != newTarget.ThisElement.ID)
 		{
 			SetCombatTarget(newTarget);
 		}
 	}
 	void ClearCombatTarget()
 	{
-		if (currentCombatTarget.IsNullRef()) return;
+		if (!ThisCombatHandler.HasCurrentTarget) return;
+		ThisCombatHandler.CurrentTarget = null;
 
-		currentCombatTarget = null;
-		OnChangeCurrentCombatTarget?.Invoke(null);
+		OnChangeCurrentCombatTarget?.Invoke(ThisCombatHandler.CurrentTarget);
 	}
 	void SetCombatTarget(in ITargetableCombatant newTarget)
 	{
-		currentCombatTarget = newTarget;
-		if (currentCombatTarget.IsNullRef()) return;
+		ThisCombatHandler.CurrentTarget = newTarget;
+		if (!ThisCombatHandler.HasCurrentTarget) return;
 
-		float sqrDistance = (currentCombatTarget.Position - ThisCombatHandler.Position).sqrMagnitude;
+		float sqrDistance = (ThisCombatHandler.CurrentTarget.Position - ThisCombatHandler.Position).sqrMagnitude;
 		float sqrCombatAttackStartMinRange = combatAttackStartRange.x;
 		float sqrCombatAttackStartMaxRange = combatAttackStartRange.y;
 		float sqrCombatAttackLimitMinRange = combatAttackLimitRange.x;
@@ -175,7 +180,7 @@ public partial class UnitObject : ICombatHandler, ITargetableCombatant
 		isTargetInLimitAttackRange = sqrCombatAttackLimitMinRange <= sqrDistance && sqrDistance <= sqrCombatAttackLimitMaxRange;
 		isTargetInActionRange = sqrDistance <= sqrCombatActionRange;
 
-		OnChangeCurrentCombatTarget?.Invoke(currentCombatTarget);
+		OnChangeCurrentCombatTarget?.Invoke(ThisCombatHandler.CurrentTarget);
 	}
 }
 

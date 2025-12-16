@@ -445,7 +445,7 @@ public static class FactionAPI
 	}
 	public static bool IsHostileBetween(Faction factionA, Faction factionB)
 	{
-		return StrategyManager.FactionRelation.GetRelationType(factionA, factionB) == FactionRelationType.Hostile;
+		return StrategyManager.FactionRelation.GetRelationType(factionA, factionB) == FactionRelationType.Enemy;
 	}
 	public static bool IsNeutralBetween(Faction factionA, Faction factionB)
 	{
@@ -456,9 +456,9 @@ public static class FactionAPI
 	{
 		return StrategyManager.FactionRelation.GetRelationType(factionA, factionB) == FactionRelationType.Friendly;
 	}
-	public static bool IsHostileBetween(int factionA, int factionB)
+	public static bool IsEnemyBetween(int factionA, int factionB)
 	{
-		return StrategyManager.FactionRelation.GetRelationType(factionA, factionB) == FactionRelationType.Hostile;
+		return StrategyManager.FactionRelation.GetRelationType(factionA, factionB) == FactionRelationType.Enemy;
 	}
 	public static bool IsNeutralBetween(int factionA, int factionB)
 	{

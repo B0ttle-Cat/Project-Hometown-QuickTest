@@ -13,15 +13,15 @@ public interface ICombatHandler : ICombatCommon, IStrategyElement
 	Vector2 AttackStartRange { get; }
 	Vector2 AttackLimitRange { get; }
 	bool IsCombatState { get; }
-	ITargetableCombatant CurrentTarget { get; }
-	bool HasCurrentTarget => CurrentTarget != null;
+	ITargetableCombatant CurrentTarget { get; set; }
+	bool HasCurrentTarget => CurrentTarget.IsNotNullRef() || HasOperationCurrentTarget;
 	bool TargetInStartAttackRange { get; }
 	bool TargetInLimitAttackRange { get; }
 	bool TargetInActionRange { get; }
 
-	bool IsRootCombatState { get; set; }
+	bool IsOperationCombatState { get; set; }
 	ITargetableCombatant OperationCurrentTarget { get; set; }
-	bool HasOperationCurrentTarget => OperationCurrentTarget != null;
+	bool HasOperationCurrentTarget => OperationCurrentTarget.IsNotNullRef();
 
 	event Action<ITargetableCombatant> OnChangeCurrentCombatTarget;
 	void UpdateParameters();

@@ -292,7 +292,14 @@ public interface INavMovement : IMovement
 			{
 				if (path.error)
 				{
-					Debug.LogError("Path Error:" + path.errorLog);
+					if(TempMovePath == null)
+					{
+						Debug.LogError("Path Error:" + path.errorLog);
+					}
+					else
+					{
+						Debug.LogWarning("Path Warning:" + path.errorLog);
+					}
 					return;
 				}
 				var abPath = path as ABPath;

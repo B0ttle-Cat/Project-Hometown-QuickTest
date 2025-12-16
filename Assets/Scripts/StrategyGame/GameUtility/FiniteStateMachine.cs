@@ -116,9 +116,15 @@ public abstract class FiniteStateMachine<T> : MonoBehaviour, IFSMInterface<T>, I
 	public virtual bool IsCanStateUpdate() { return true; }
 	public void StateUpdate(in float deltaTime)
 	{
-		if (currentState == null || stateList == null) return;
+#if UNITY_EDITOR
 		if (testPause) return;
+#endif
+		if (currentState == null || stateList == null) return;
 
+		OnStateUpdate(in deltaTime);
+	}
+	protected virtual void OnStateUpdate(in float deltaTime)
+	{
 		T prevState = currentState.ThisType;
 		T nextState = currentState.StateUpdate(in deltaTime);
 		if (!prevState.Equals(nextState))

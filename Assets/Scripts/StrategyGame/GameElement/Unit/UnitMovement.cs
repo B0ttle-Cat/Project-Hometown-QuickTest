@@ -233,7 +233,7 @@ public partial class UnitMovement : INavMovement
 	private Vector3 lastTargetPosition;
 	bool INavMovement.IsMovableState()
 	{
-		return CcombatController.CurrentTarget != null
+		return CcombatController.HasCurrentTarget
 			&& FsmController.CurrentStateType == UnitMainFSMType.Chasing;
 	}
 	bool INavMovement.IsChangeTargetPositionCheck()

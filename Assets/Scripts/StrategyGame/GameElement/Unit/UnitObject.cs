@@ -95,7 +95,6 @@ public partial class UnitObject : MonoBehaviour
 #endif
 }
 
-
 public partial class UnitObject // UnitCaptureTag
 {
 	partial void InitCaptureTag()

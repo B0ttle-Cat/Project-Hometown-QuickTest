@@ -10,7 +10,7 @@ public enum FactionRelationType
 	[LabelText("우호")]
 	Friendly = 1,
 	[LabelText("적대")]
-	Hostile = 2,
+	Enemy = 2,
 }
 namespace StrategyManagerModule
 {

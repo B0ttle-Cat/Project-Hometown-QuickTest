@@ -79,6 +79,22 @@ public class NearbySearching : MonoBehaviour, INearbySearcherAPI
 		if (thisSearcher.IsNullRef()) return null;
 		return OnOutRageThisFrame();
 	}
+	int INearbySearcherAPI.NearbyCount()
+	{
+		return currentNearbyElements.Length;
+	}
+
+	bool INearbySearcherAPI.HasNearby(INearbyElement nearby)
+	{
+		if(nearby.IsNullRef()) return false;
+		int length = currentNearbyElements.Length;
+        for (int i = 0 ; i < length ; i++)
+        {
+			var item = currentNearbyElements[i];
+			if (item == nearby) return true;
+		}
+		return false;
+    }
 	#endregion
 
 	protected virtual INearbyElement OnGetNearbyItem(Func<INearbyElement, bool> func)
@@ -104,7 +120,7 @@ public class NearbySearching : MonoBehaviour, INearbySearcherAPI
 			return currentNearbyElements.Take(nearbyCount).Where(item => item.IsNotNullRef() && (func.Invoke(item)));
 	}
 
-	protected virtual T OnGetNearbyItemType<T>(Func<T, bool> func) where T : class, INearbyElement
+	protected virtual T OnGetNearbyItemType<T>(Func<T, bool> func) where T : class, IStrategyElement
 	{
 		for (int i = 0 ; i < nearbyCount ; i++)
 		{
@@ -119,7 +135,7 @@ public class NearbySearching : MonoBehaviour, INearbySearcherAPI
 		return null;
 	}
 
-	protected virtual IEnumerable<T> OnGetNearbyItemsType<T>(Func<T, bool> func) where T : class, INearbyElement
+	protected virtual IEnumerable<T> OnGetNearbyItemsType<T>(Func<T, bool> func) where T : class, IStrategyElement
 	{
 		return currentNearbyElements.Take(nearbyCount)
 			.Where(item => item.IsNotNullRef() && item is T t && (func == null || func.Invoke(t)))

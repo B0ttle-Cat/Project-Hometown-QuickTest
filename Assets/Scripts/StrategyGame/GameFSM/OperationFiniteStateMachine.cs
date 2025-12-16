@@ -9,9 +9,13 @@ public enum OperationFSMType
 [RequireComponent(typeof(OperationObject))]
 public class OperationFiniteStateMachine : FiniteStateMachine<OperationFSMType>
 {
+	private OperationObject operation;
+	private INearbySearcherAPI actionSearcherAPI;
+	private ITargetableCombatant nearActionTarget;
 	public override IState<OperationFSMType>[] GetStateList()
 	{
-		OperationObject operation = GetComponent<OperationObject>();
+		this.operation = GetComponent<OperationObject>();
+		actionSearcherAPI = operation.ActionSearcherAPI;
 
 		return new IState<OperationFSMType>[]
 		{
@@ -19,16 +23,30 @@ public class OperationFiniteStateMachine : FiniteStateMachine<OperationFSMType>
 			new CombatState(operation, this, OperationFSMType.Combat),
 		};
 	}
+
+	protected override void OnStateUpdate(in float deltaTime)
+	{
+		if (operation == null || actionSearcherAPI.IsNullRef())
+		{
+			nearActionTarget = null;
+			return;
+		}
+
+		nearActionTarget = actionSearcherAPI.NearbyCount() <= 0 
+			? null 
+			: actionSearcherAPI.GetNearbyItemType<ITargetableCombatant>(
+				target => FactionAPI.IsEnemyBetween(operation.FactionID, target.FactionID));
+
+		base.OnStateUpdate(deltaTime);
+	}
 	private abstract class OperationState : BaseState
 	{
 		protected readonly OperationObject operation;
-		protected readonly INearbySearcherAPI viewSearcherAPI;
 		protected readonly OperationFiniteStateMachine operationFsm;
 
 		protected OperationState(OperationObject operation, OperationFiniteStateMachine fsm, OperationFSMType type) : base(fsm, type)
 		{
 			this.operation = operation;
-			viewSearcherAPI = operation.ViewSearcherAPI;
 			operationFsm = fsm;
 		}
 		#region
@@ -53,19 +71,11 @@ public class OperationFiniteStateMachine : FiniteStateMachine<OperationFSMType>
 
 		}
 		#endregion
-		protected virtual bool SomeUnitStateIsCombat()
+		protected virtual bool SomthingEnterActionRange()
 		{
-			var unitList = operation.UnitOrganizationList;
-			foreach (var unit in unitList)
-			{
-				if (unit == null || unit is not ICombatHandler combat) continue;
-
-				if (combat.IsCombatState)
-				{
-					return true;
-				}
-			}
-			return false;
+			if (operationFsm == null) return false;
+			if (operationFsm.nearActionTarget.IsNullRef()) return false;
+			return true;
 		}
 	}
 	private class IdleState : OperationState
@@ -76,35 +86,11 @@ public class OperationFiniteStateMachine : FiniteStateMachine<OperationFSMType>
 		}
 		protected override OperationFSMType OnStateUpdate(in float deltaTime)
 		{
-			if (SomeUnitStateIsCombat())
+			if (SomthingEnterActionRange())
 			{
 				return OperationFSMType.Combat;
 			}
 			return OperationFSMType.Idle;
-		}
-
-		protected override bool SomeUnitStateIsCombat()
-		{
-			bool toCombat = base.SomeUnitStateIsCombat();
-			if (toCombat)
-			{
-				OnChangeCombat();
-			}
-			return toCombat;
-		}
-
-		private void OnChangeCombat()
-		{
-			var unitList = operation.UnitOrganizationList;
-			foreach (var unit in unitList)
-			{
-				if (unit == null || unit is not ICombatHandler combat) continue;
-
-				if (!combat.IsRootCombatState)
-				{
-					combat.IsRootCombatState = true;
-				}
-			}
 		}
 	}
 	private class CombatState : OperationState
@@ -114,15 +100,15 @@ public class OperationFiniteStateMachine : FiniteStateMachine<OperationFSMType>
 		}
 		protected override void OnStateEnter()
 		{
-			SetRootTarget();
+			SendOpNearTarget();
 		}
 		protected override void OnStateExit()
 		{
-			ClearRootTarget();
+			SendClearOpTarget();
 		}
 		protected override OperationFSMType OnStateUpdate(in float deltaTime)
 		{
-			if (SomeUnitStateIsCombat())
+			if (SomthingEnterActionRange())
 			{
 				return OperationFSMType.Combat;
 			}
@@ -130,43 +116,10 @@ public class OperationFiniteStateMachine : FiniteStateMachine<OperationFSMType>
 		}
 		protected override void OnAliveUpdate(in float deltaTime)
 		{
-			SetRootTarget();
+			SendOpNearTarget();
 		}
 
-		private void SetRootTarget()
-		{
-			ITargetableCombatant target = FindNearTarget();
-			if (target == null) return;
-
-			var unitList = operation.UnitOrganizationList;
-			foreach (var unit in unitList)
-			{
-				if (unit == null) continue;
-				if (unit is not ICombatHandler combat) continue;
-
-				combat.IsRootCombatState = true;
-				combat.OperationCurrentTarget = target;
-			}
-			ITargetableCombatant FindNearTarget()
-			{
-				if (viewSearcherAPI.IsNullRef()) return null;
-				var nearUnits = viewSearcherAPI.GetNearbyItemsType<UnitObject>();
-				if (nearUnits == null) return null;
-
-				int operationFactionID = operation.FactionID;
-				foreach (var unit in nearUnits)
-				{
-					if (unit == null) continue;
-					if (unit is not ITargetableCombatant target) continue;
-					if (target.FactionID != operationFactionID)
-					{
-						return target;
-					}
-				}
-				return null;
-			}
-		}
-		private void ClearRootTarget()
+		private void SendOpNearTarget()
 		{
 			var unitList = operation.UnitOrganizationList;
 			foreach (var unit in unitList)
@@ -174,7 +127,19 @@ public class OperationFiniteStateMachine : FiniteStateMachine<OperationFSMType>
 				if (unit == null) continue;
 				if (unit is not ICombatHandler combat) continue;
 
-				combat.IsRootCombatState = false;
+				combat.IsOperationCombatState = true;
+				combat.OperationCurrentTarget = operationFsm.nearActionTarget;
+			}
+		}
+		private void SendClearOpTarget()
+		{
+			var unitList = operation.UnitOrganizationList;
+			foreach (var unit in unitList)
+			{
+				if (unit == null) continue;
+				if (unit is not ICombatHandler combat) continue;
+
+				combat.IsOperationCombatState = false;
 				combat.OperationCurrentTarget = null;
 			}
 		}

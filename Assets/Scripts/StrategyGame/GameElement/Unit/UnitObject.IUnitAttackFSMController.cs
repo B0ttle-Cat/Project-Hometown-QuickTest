@@ -1,18 +1,18 @@
 ﻿using UnityEngine;
 
-public interface IUnitAttackFSMController : IFSMController<UnitAttackFSMType>
+public interface IIFSMControllerAttack : IFSMController<UnitAttackFSMType>
 {
-	IUnitAttackFSMController AttackController { get; }
+	IIFSMControllerAttack AttackController { get; }
 	IUnitAttackState AttackState { get; }
 }
 
 
 
 [UnityEngine.RequireComponent(typeof(UnitAttackFiniteStateMachine))]
-public partial class UnitObject : IUnitAttackFSMController
+public partial class UnitObject : IIFSMControllerAttack
 {
 	private IUnitAttackState unitAttackState;
-	public IUnitAttackFSMController AttackController => this;
+	public IIFSMControllerAttack AttackController => this;
 	public IUnitAttackState AttackState => unitAttackState;
 	IFSMController<UnitAttackFSMType> IFSMController<UnitAttackFSMType>.FSMController => this;
 	IFSMInterface<UnitAttackFSMType> IFSMController<UnitAttackFSMType>.FSMInterface { get => unitAttackState; set { } }
