@@ -111,9 +111,6 @@ public partial class OperationObject // Organization
 			if(unitObject is IOperationBelonger belonger){
 				belonger.SetOperationBelong(this);
 			}
-			if(unitObject is INearbyElement nearby){
-				AddIgnoreNearbyList(nearby);
-			}
 			onChange = true;
 		}
 
@@ -142,10 +139,6 @@ public partial class OperationObject // Organization
 				{
 					belonger.RelaseOperationBelong();
 				}
-				if (unitObject is INearbyElement nearby)
-				{
-					RemoveIgnoreNearbyList(nearby);
-				}
 				onChange = true;
 			}
 		}
@@ -172,10 +165,6 @@ public partial class OperationObject // Organization
 				if (unit is IOperationBelonger belonger)
 				{
 					belonger.RelaseOperationBelong();
-				}
-				if (unit is INearbyElement nearby)
-				{
-					RemoveIgnoreNearbyList(nearby);
 				}
 				if (withDestroy)
 				{

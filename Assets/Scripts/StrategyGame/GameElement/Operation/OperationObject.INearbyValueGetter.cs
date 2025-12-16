@@ -1,62 +1,71 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using UnityEngine;
 
-[RequireComponent(typeof(NearbySearcher))]
-public partial class OperationObject : INearbySearcherValueGetter
+[RequireComponent(typeof(NearbyElementSearching))]
+public partial class OperationObject : INearbySearcher, INearbySearcherAPI
 {
-	// TODO :: INearbySearcherValueGetter // INearbySearcher 걔선
 
+	public NearbyElementSearching nearbySearcher;
+	private Vector3 searchCenterPosition;
+	private float searchViewRange;
 
-	private float searcherRange;
-	public INearbySearcher Searcher { get; set; }
-	public float SearcherRange
-	{
-		get => searcherRange;
-		set
-		{
-			if (!Mathf.Approximately(searcherRange, value))
-			{
-				searcherRange = value;
-			}
-		}
-	}
-	private HashSet<INearbyElement> ignoreNearbyList;
+	public INearbySearcher ThisSearcher => this;
+	public INearbySearcherAPI SearcherAPI => nearbySearcher;
+	Vector3 INearbySearcher.SearchCenter => searchCenterPosition;
+	float INearbySearcher.SearchRange => searchViewRange + OperationRadius;
+	int INearbySearcher.FactionID => factionID;
+
 
 	partial void InitNearby(in float baseRadius)
-	{
-		if (!TryGetComponent<NearbySearcher>(out var nearbySearcher))
+    {
+		if(!TryGetComponent<NearbyElementSearching>(out nearbySearcher))
+        {
+			nearbySearcher = gameObject.AddComponent<NearbyElementSearching>();
+        }
+
+		SearcherAPI.Init(this);
+		StrategyManager.Collector.Add<INearbySearcher>(this);
+	}
+
+    partial void DeInitNearby()
+    {
+		if (nearbySearcher != null)
 		{
-			nearbySearcher = gameObject.AddComponent<NearbySearcher>();
+			nearbySearcher.Deinit();
+			nearbySearcher = null;
 		}
-		nearbySearcher.BaseRadius = baseRadius;
-		Searcher = nearbySearcher;
-		Searcher.Init(this);
-		ignoreNearbyList = new HashSet<INearbyElement>();
+		StrategyManager.Collector.Remove<INearbySearcher>(this);
+	}
 
-		StrategyManager.Collector.Add<INearbySearcherValueGetter>(this);
-	}
-	partial void DeInitNearby()
-	{
-		if (Searcher == null) return;
-		Searcher.DeInit();
-		Searcher = null;
-		ignoreNearbyList?.Clear();
+    void INearbySearcherAPI.Init(INearbySearcher searcher)
+    {
+		SearcherAPI.Init(searcher);
+    }
 
-		StrategyManager.Collector.Remove<INearbySearcherValueGetter>(this);
-	}
-	private void AddIgnoreNearbyList(INearbyElement item)
-	{
-		ignoreNearbyList ??= new HashSet<INearbyElement>();
-		ignoreNearbyList.Add(item);
-	}
-	private void RemoveIgnoreNearbyList(INearbyElement item)
-	{
-		if (ignoreNearbyList == null) return;
-		ignoreNearbyList.Remove(item);
-	}
-	HashSet<INearbyElement> INearbySearcherValueGetter.GetIgnoreList()
-	{
-		return ignoreNearbyList ??= new HashSet<INearbyElement>();
-	}
+    INearbyElement INearbySearcherAPI.GetNearbyItem(Func<INearbyElement, bool> func)
+    {
+        return SearcherAPI.GetNearbyItem(func);
+    }
+
+    IEnumerable<INearbyElement> INearbySearcherAPI.GetNearbyItems(Func<INearbyElement, bool> func)
+    {
+        return SearcherAPI.GetNearbyItems(func);
+    }
+
+    T INearbySearcherAPI.GetNearbyItemType<T>(Func<T, bool> func)
+    {
+        return SearcherAPI.GetNearbyItemType(func);
+    }
+
+    IEnumerable<T> INearbySearcherAPI.GetNearbyItemsType<T>(Func<T, bool> func)
+    {
+        return SearcherAPI.GetNearbyItemsType(func);
+    }
+
+    void INearbySearcherAPI.UpdateNearby(HashSet<INearbyElement> allElements)
+    {
+		SearcherAPI.UpdateNearby(allElements);
+    }
 }

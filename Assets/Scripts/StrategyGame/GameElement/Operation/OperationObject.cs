@@ -10,15 +10,18 @@ public partial class OperationObject : MonoBehaviour  // Main
 	private string teamName;
 	[SerializeField]
 	private int factionID;
+	private float operationRange = 5;
 	public OperationObject This => this;
 	public int OperationID => operationID;
 	public string TeamName => teamName;
 	public int FactionID => factionID;
+	public float OperationRadius => operationRange;
 	internal void Awake()
 	{
 		this.operationID = -1;
 		this.factionID = -1;
 		this.teamName = "";
+		operationRange = 5;
 	}
 	internal void Init(int factionID, string teamName)
 	{
@@ -59,8 +62,8 @@ public partial class OperationObject // StatsData_old
 		if (computeFrame == thisFrame) return;
 		computeFrame = thisFrame;
 		moveSpeed = ComputeMoveSpeed();
-
-		SearcherRange = ComputeViewRange();
+		searchViewRange = ComputeViewRange();
+		searchCenterPosition = ComputeCenter();
 	}
 
 	private float ComputeMoveSpeed()
@@ -70,6 +73,19 @@ public partial class OperationObject // StatsData_old
 	private float ComputeViewRange()
 	{
 		return GetAllUnitObj.Count == 0 ? 0 : GetAllUnitObj.Select(i => i.StatsData.VisionRange).Max();
+	}
+	private Vector3 ComputeCenter()
+	{
+		int length = GetAllUnitObj.Count;
+		if(length < 1) return transform.position;
+
+		Bounds bounds = new Bounds(GetAllUnitObj[0].ThisMovement.CurrentPosition,Vector3.zero);
+        for (int i = 1 ; i < length ; i++)
+        {
+			bounds.Encapsulate(GetAllUnitObj[i].ThisMovement.CurrentPosition);
+		}
+
+		return bounds.center;
 	}
 }
 public partial class OperationObject : IStrategyElement, IStrategyElementDestroyer

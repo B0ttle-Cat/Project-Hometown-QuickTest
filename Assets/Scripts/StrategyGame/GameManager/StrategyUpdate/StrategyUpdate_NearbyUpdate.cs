@@ -15,22 +15,21 @@ namespace StrategyManagerModule
 			}
 			protected override void Dispose()
 			{
-				StrategyManager.Collector.RemoveChangeListener<INearbySearcherValueGetter>(OnChangeElement);
+				StrategyManager.Collector.RemoveChangeListener<INearbySearcherAPI>(OnChangeElement);
 				StrategyManager.Collector.RemoveChangeListener<INearbyElement>(OnChangeElement);
 				serchTargets.Clear();
 				serchTargets = null;
 			}
 			protected override void Start()
 			{
-				StrategyManager.Collector.AddChangeListener<INearbySearcherValueGetter>(OnChangeElement, true);
+				StrategyManager.Collector.AddChangeListener<INearbySearcherAPI>(OnChangeElement, true);
 				StrategyManager.Collector.AddChangeListener<INearbyElement>(OnChangeElement, true);
 			}
 			private void OnChangeElement(object element, bool added)
 			{
 				if (element == null) return;
-				else if (element is INearbySearcherValueGetter valueGetter)
+				else if (element is INearbySearcherAPI searcher)
 				{
-					INearbySearcher searcher = valueGetter.Searcher;
 					if (added)
 					{
 						this.Add(new NearbyUpdate(searcher, this));
@@ -61,9 +60,9 @@ namespace StrategyManagerModule
 
 			public class NearbyUpdate : UpdateLogic
 			{
-				public readonly INearbySearcher searcher;
+				public readonly INearbySearcherAPI searcher;
 				private readonly HashSet<INearbyElement> allElements;
-				public NearbyUpdate(INearbySearcher searcher, StrategyUpdate_NearbyUpdate thisSubClass) : base(thisSubClass)
+				public NearbyUpdate(INearbySearcherAPI searcher, StrategyUpdate_NearbyUpdate thisSubClass) : base(thisSubClass)
 				{
 					this.searcher = searcher;
 					allElements = thisSubClass.serchTargets;
@@ -76,6 +75,7 @@ namespace StrategyManagerModule
 				protected override void OnUpdate(in float deltaTime)
 				{
 					if (searcher.IsNullRef()) return;
+
 					searcher.UpdateNearby(allElements);
 				}
 			}

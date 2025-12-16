@@ -22,17 +22,14 @@ public class OperationFiniteStateMachine : FiniteStateMachine<OperationFSMType>
 	private abstract class OperationState : BaseState
 	{
 		protected readonly OperationObject operation;
-		protected readonly INearbySearcher nearbySearcher;
+		protected readonly INearbySearcherAPI nearbySearcher;
 		protected readonly OperationFiniteStateMachine operationFsm;
 
 		protected OperationState(OperationObject operation, OperationFiniteStateMachine fsm, OperationFSMType type) : base(fsm, type)
 		{
 			this.operation = operation;
+			nearbySearcher = operation.SearcherAPI;
 			operationFsm = fsm;
-			if (operation is INearbySearcherValueGetter searcherValueGetter)
-			{
-				nearbySearcher = searcherValueGetter.Searcher;
-			}
 		}
 		#region
 		protected override void OnDispose()

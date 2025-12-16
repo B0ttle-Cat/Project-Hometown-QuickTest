@@ -100,7 +100,6 @@ public static class StrategyElementFactory
 		var organizations = spawnTroopsInfo.organizations;
 		int length = organizations == null ? 0 : organizations.Length;
 		Vector3 sectorCenter = sector.transform.position;
-		float radius = 5f;
 
 
 		var newObject = new GameObject();
@@ -114,6 +113,7 @@ public static class StrategyElementFactory
 			teamName = $"{newOperation.OperationID}";
 		}
 		newOperation.Init(spawnTroopsInfo.factionID, teamName);
+		float radius = newOperation.OperationRadius;
 
 
 		List<int> spawnUnitIds = new List<int>(length);

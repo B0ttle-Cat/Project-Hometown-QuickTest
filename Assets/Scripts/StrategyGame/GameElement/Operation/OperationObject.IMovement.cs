@@ -55,7 +55,7 @@ public partial class OperationObject : IMovement , ITargetableCombatant
 	}
 	Vector3 IMovement.CurrentVelocity => moveVelocity;
 	Vector3 IMovement.NextMovePosition { get; set; }
-	public float CurrentRadius => 0f;
+	float IMovement.CurrentRadius => OperationRadius;
 	float IMovement.SmoothTime => smoothTime;
 	float IMovement.MaxSpeed => moveSpeed;
 	int IMovement.MovementIndex { get => movementIndex; set => movementIndex = value; }

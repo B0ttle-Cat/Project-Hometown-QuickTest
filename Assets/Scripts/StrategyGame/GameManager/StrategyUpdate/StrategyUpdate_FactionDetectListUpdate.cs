@@ -71,12 +71,10 @@ namespace StrategyManagerModule
 						for (int i = 0 ; i < length ; i++)
 						{
 							var item = items[i];
-							if (item is not INearbySearcherValueGetter searcherValueGetter) break; // 내가 원하는 타입이 아니기 때문이 이번 List를 버린다.
-							if (searcherValueGetter.FactionID != thisFactionID) continue;
-							var searcher = searcherValueGetter.Searcher;
-							if (searcher == null) continue;
+							if (item is not INearbySearcher searcher) break; // 내가 원하는 타입이 아니기 때문이 이번 List를 버린다.
+							if (searcher.IsNullRef() || searcher.SearcherAPI.IsNullRef() || searcher.FactionID != thisFactionID) continue;
 
-							var nearbyItems = searcher.GetNearbyItemsType<INearbyElement>(i => i.FactionID != thisFactionID);
+							var nearbyItems = searcher.SearcherAPI.GetNearbyItemsType<INearbyElement>(i => i.FactionID != thisFactionID);
 							foreach (var target in nearbyItems)
 							{
 								faction.AddDetect(target as IStrategyElement);
