@@ -1,10 +1,12 @@
-﻿using static StrategyManagerModule.StrategyUpdate.StrategyUpdate_FactionDetectListUpdate;
+﻿using System;
+
 
 namespace StrategyManagerModule
 {
 	public partial class StrategyUpdate
 	{
-		public class StrategyUpdate_FactionDetectListUpdate : StrategyUpdateSubClass<DetectListUpdate>
+		[Obsolete("OperationNearbyUpdate 에서 해결함", true)]
+		public class StrategyUpdate_FactionDetectListUpdate : StrategyUpdateSubClass<StrategyUpdate_FactionDetectListUpdate.DetectListUpdate>
 		{
 			public StrategyUpdate_FactionDetectListUpdate(StrategyUpdate updater) : base(updater)
 			{

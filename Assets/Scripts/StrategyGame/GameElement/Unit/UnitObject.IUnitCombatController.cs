@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Linq;
 
 using UnityEngine;
 
-public partial class UnitObject : ICombatHandler, INearbyElement, ITargetableCombatant
+public partial class UnitObject : ICombatHandler, ITargetableCombatant
 {
 	public ICombatHandler ThisCombatHandler => this;
 	bool ICombatHandler.IsCombatState => FSMController.CurrentStateType is UnitMainFSMType.Chasing or UnitMainFSMType.Fighting;
@@ -42,20 +43,19 @@ public partial class UnitObject : ICombatHandler, INearbyElement, ITargetableCom
 		isTargetInLimitAttackRange = false;
 		isTargetInActionRange = false;
 
-		StrategyManager.Collector.Add<INearbyElement>(this);
+	
 	}
 	partial void DeinitCombat()
 	{
 		currentCombatTarget = null;
 		OnChangeCurrentCombatTarget = null;
 
-		StrategyManager.Collector.Remove<INearbyElement>(this);
+
 	}
 	Collider IHitableCombatant.HitCollider => hitCollider;
 	Vector3 ITargetableCombatant.Position => ThisMovement.CurrentPosition;
 	Vector3 ITargetableCombatant.HitTargetPosition => hitCollider == null ? ThisMovement.CurrentPosition + Vector3.up : hitCollider.bounds.center;
 	public ITargetableCombatant TargetableObject => this;
-	float INearbyElement.Radius => ThisMovement.CurrentRadius;
 
 	Vector3 ICombatHandler.Position => ThisMovement.CurrentPosition;
 	Vector3 ICombatHandler.AttackStartPosition => ThisMovement.CurrentPosition + Vector3.up;
@@ -121,15 +121,16 @@ public partial class UnitObject : ICombatHandler, INearbyElement, ITargetableCom
 	bool ICombatHandler.SearchingNewTarget(out ITargetableCombatant newTarget)
 	{
 		newTarget = null;
-		var detectingList = Faction.DetectingList;
-		if (detectingList == null || detectingList.Count == 0) return false;
+		var detectingList = Faction.DetectedList.TargetableType;
+		if (detectingList == null || detectingList.Count() == 0) return false;
 
 		Vector3 thisPosition = ThisCombatHandler.Position;
 		float minDistance = float.MaxValue;
 		float maxActionRange = Mathf.Max(sqrCombatActionRange, sqrCombatAttackStartRange.y);
-		foreach (var item in detectingList)
+		foreach (var targetable in detectingList)
 		{
-			if (item is not ITargetableCombatant targetable) continue;
+			if(targetable.IsNullRef()) continue;
+
 			Vector3 distance = targetable.Position - thisPosition;
 			float sqrDistance = distance.sqrMagnitude;
 			if (sqrDistance < minDistance && sqrDistance <= maxActionRange)
@@ -176,6 +177,20 @@ public partial class UnitObject : ICombatHandler, INearbyElement, ITargetableCom
 	}
 }
 
+public partial class UnitObject : INearbyElement
+{
+	partial void InitNearby()
+	{
+		StrategyManager.Collector.Add<INearbyElement>(this);
+	}
+	partial void DeinitNearby()
+	{
+		StrategyManager.Collector.Remove<INearbyElement>(this);
+	}
+	Vector3 INearbyElement.Position => ThisMovement.CurrentPosition;
+	float INearbyElement.Radius => ThisMovement.CurrentRadius;
+
+}
 #if UNITY_EDITOR
 
 public partial class UnitObject // RangeGizmos

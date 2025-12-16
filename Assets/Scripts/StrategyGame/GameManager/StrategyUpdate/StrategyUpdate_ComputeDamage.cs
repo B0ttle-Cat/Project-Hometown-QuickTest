@@ -10,14 +10,14 @@
 
 			protected override void Dispose()
 			{
-				StrategyManager.Collector.RemoveChangeListener<CombatUtility.DamageCommander>(OnChangeValue);
+				StrategyManager.Collector.RemoveChangeListener<DamageCommander>(OnChangeValue);
 			}
 			protected override void Start()
 			{
-				StrategyManager.Collector.AddChangeListener<CombatUtility.DamageCommander>(OnChangeValue, true);
+				StrategyManager.Collector.AddChangeListener<DamageCommander>(OnChangeValue, true);
 			}
 
-			private void OnChangeValue(CombatUtility.DamageCommander commander, bool added)
+			private void OnChangeValue(DamageCommander commander, bool added)
 			{
 				if (commander == null) return;
 				if (added)
@@ -28,9 +28,9 @@
 
 			public class ComputeDamage : UpdateLogic
 			{
-				public readonly CombatUtility.DamageCommander commander;
+				public readonly DamageCommander commander;
 
-				public ComputeDamage(CombatUtility.DamageCommander commander, StrategyUpdateSubClass<ComputeDamage> thisSubClass) : base(thisSubClass)
+				public ComputeDamage(DamageCommander commander, StrategyUpdateSubClass<ComputeDamage> thisSubClass) : base(thisSubClass)
 				{
 					this.commander = commander;
 				}

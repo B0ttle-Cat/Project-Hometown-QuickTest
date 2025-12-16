@@ -54,6 +54,7 @@ public partial class UnitObject : MonoBehaviour
 		InitOperationObject();
 		InitVisibility();
 		InitFSM();
+		InitNearby();
 		InitCombat();
 		InitAttack();
 	}
@@ -67,18 +68,22 @@ public partial class UnitObject : MonoBehaviour
 	partial void InitVisibility();
 	partial void InitOperationObject();
 	partial void InitFSM();
+	partial void InitNearby();
 	partial void InitCombat();
 	partial void InitAttack();
+
 	public void Deinit()
 	{
 		DeselectSelf();
 		DeinitFSM();
+		DeinitNearby();
 		DeinitCombat();
 		DeinitMovement();
 		DeinitAttack();
 	}
 	partial void DeselectSelf();
 	partial void DeinitFSM();
+	partial void DeinitNearby();
 	partial void DeinitCombat();
 	partial void DeinitMovement();
 	partial void DeinitAttack();

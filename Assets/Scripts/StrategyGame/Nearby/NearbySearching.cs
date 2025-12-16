@@ -15,22 +15,28 @@ public class NearbySearching : MonoBehaviour, INearbySearcherAPI
 	float SearchRange => thisSearcher.SearchRange;
 	int FactionID => thisSearcher.FactionID;
 	[ShowInInspector]
-	private INearbyElement[] nearbyElements;
+	private INearbyElement[] currentNearbyElements;
 	private List<(INearbyElement element, float sqrDist)> tempList;
+	private HashSet<INearbyElement> enterRangeThisFrameList;
+	private HashSet<INearbyElement> exitRangeThisFrameList;
 	private int nearbyCount;
 
 	public void Init(INearbySearcher searcher)
 	{
 		thisSearcher = searcher;
-		nearbyElements = new INearbyElement[0];
+		currentNearbyElements = new INearbyElement[0];
 		tempList = new();
 		nearbyCount = 0;
+		enterRangeThisFrameList = new();
+		exitRangeThisFrameList = new();
 	}
 
 	public void Deinit()
 	{
 		thisSearcher = null;
-		nearbyElements = null;
+		currentNearbyElements = null;
+		enterRangeThisFrameList = null;
+		exitRangeThisFrameList = null;
 	}
 
 	#region INearbySearcherAPI
@@ -61,8 +67,17 @@ public class NearbySearching : MonoBehaviour, INearbySearcherAPI
 	void INearbySearcherAPI.UpdateNearby(IEnumerable<INearbyElement> searchingElementList)
 	{
 		if (thisSearcher.IsNullRef()) return;
-
 		OnUpdateNearby(searchingElementList);
+	}
+	HashSet<INearbyElement> INearbySearcherAPI.EnterRageThisFrame()
+	{
+		if (thisSearcher.IsNullRef()) return null;
+		return OnEnterRageThisFrame();
+	}
+	HashSet<INearbyElement> INearbySearcherAPI.ExitRageThisFrame()
+	{
+		if (thisSearcher.IsNullRef()) return null;
+		return OnOutRageThisFrame();
 	}
 	#endregion
 
@@ -70,7 +85,7 @@ public class NearbySearching : MonoBehaviour, INearbySearcherAPI
 	{
 		for (int i = 0 ; i < nearbyCount ; i++)
 		{
-			INearbyElement item = nearbyElements[i];
+			INearbyElement item = currentNearbyElements[i];
 			if (item.IsNullRef()) continue;
 
 			if (func.Invoke(item))
@@ -84,16 +99,16 @@ public class NearbySearching : MonoBehaviour, INearbySearcherAPI
 	protected virtual IEnumerable<INearbyElement> OnGetNearbyItems(Func<INearbyElement, bool> func)
 	{
 		if (func == null)
-			return nearbyElements.Take(nearbyCount).Where(item => item.IsNotNullRef());
+			return currentNearbyElements.Take(nearbyCount).Where(item => item.IsNotNullRef());
 		else
-			return nearbyElements.Take(nearbyCount).Where(item => item.IsNotNullRef() && (func.Invoke(item)));
+			return currentNearbyElements.Take(nearbyCount).Where(item => item.IsNotNullRef() && (func.Invoke(item)));
 	}
 
 	protected virtual T OnGetNearbyItemType<T>(Func<T, bool> func) where T : class, INearbyElement
 	{
 		for (int i = 0 ; i < nearbyCount ; i++)
 		{
-			INearbyElement item = nearbyElements[i];
+			INearbyElement item = currentNearbyElements[i];
 			if (item.IsNullRef() || item is not T t) continue;
 
 			if (func == null || func.Invoke(t))
@@ -106,20 +121,27 @@ public class NearbySearching : MonoBehaviour, INearbySearcherAPI
 
 	protected virtual IEnumerable<T> OnGetNearbyItemsType<T>(Func<T, bool> func) where T : class, INearbyElement
 	{
-		return nearbyElements.Take(nearbyCount)
+		return currentNearbyElements.Take(nearbyCount)
 			.Where(item => item.IsNotNullRef() && item is T t && (func == null || func.Invoke(t)))
 			.Select(item => (T)item);
 	}
 
 	protected virtual void OnUpdateNearby(IEnumerable<INearbyElement> searchingElementList)
 	{
+		enterRangeThisFrameList.Clear();
+		exitRangeThisFrameList.Clear();
+		for (int i = 0 ; i < nearbyCount ; i++)
+		{
+			// 이전에 근처에 있던 모든 요소를 '이번 프레임에 나갔을 수 있는 목록'에 추가합니다.
+			exitRangeThisFrameList.Add(currentNearbyElements[i]);
+		}
+
 		nearbyCount = 0;
 
 		if (searchingElementList == null || searchingElementList.Count() == 0) return;
 
 		Vector3 center = SearchCenter;
-		float sqrRange = SearchRange;
-		sqrRange *= sqrRange;
+		float searchRange = SearchRange;
 
 		tempList.Clear();
 
@@ -129,38 +151,53 @@ public class NearbySearching : MonoBehaviour, INearbySearcherAPI
 
 			if (FactionID == item.FactionID) continue;
 
+			float radius = searchRange + item.Radius;
+
 			Vector3 delta = center - item.Position;
 			float sqrDist = delta.sqrMagnitude;
 
-			if (sqrDist <= sqrRange)
+			if (sqrDist <= radius * radius)
 			{
-				tempList.Add((item, sqrDist));
 				nearbyCount++;
+				tempList.Add((item, sqrDist));
 			}
 		}
 
 		if (nearbyCount == 0)
 		{
-			if (nearbyElements.Length > 0)
+			if (currentNearbyElements.Length > 0)
 			{
-				Array.Resize(ref nearbyElements, 0);
+				Array.Resize(ref currentNearbyElements, 0);
 			}
 			return;
 		}
-		if (nearbyElements.Length < nearbyCount)
+		if (currentNearbyElements.Length < nearbyCount)
 		{
-			Array.Resize(ref nearbyElements, nearbyCount);
+			Array.Resize(ref currentNearbyElements, nearbyCount);
 		}
 
 		tempList.Sort((a, b) => a.sqrDist.CompareTo(b.sqrDist));
 
 		for (int i = 0 ; i < nearbyCount ; i++)
 		{
-			nearbyElements[i] = tempList[i].element;
+			var item= tempList[i].element;
+			currentNearbyElements[i] = item;
+
+			if (!exitRangeThisFrameList.Remove(item))
+			{
+				enterRangeThisFrameList.Add(item);
+			}
 		}
 		tempList.Clear();
 	}
-
+	protected virtual HashSet<INearbyElement> OnEnterRageThisFrame()
+	{
+		return enterRangeThisFrameList;
+	}
+	protected virtual HashSet<INearbyElement> OnOutRageThisFrame()
+	{
+		return exitRangeThisFrameList;
+	}
 
 #if UNITY_EDITOR
 	void OnDrawGizmos()

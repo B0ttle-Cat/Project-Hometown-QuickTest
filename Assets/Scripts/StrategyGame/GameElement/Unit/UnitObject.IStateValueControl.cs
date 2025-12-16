@@ -202,7 +202,7 @@ public partial class UnitObject : ICombatCommon, ICombatOffense, ICombatDefance
 	public ICombatOffense ThisOffense => this;
 	public ICombatDefance ThisDefance => this;
 
-	public void TakeDamage(int damage, CombatUtility.DamageFlag flag)
+	public void TakeDamage(int damage, DamageCommander.DamageFlag flag)
 	{
 		int currentDurability = ThisCombatStats.CurrentDurability;
 		currentDurability -= damage;

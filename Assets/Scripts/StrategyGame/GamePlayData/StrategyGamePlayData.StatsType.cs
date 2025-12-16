@@ -3,7 +3,7 @@
 public partial class StrategyGamePlayData // StatsType
 {
 	/// <summary>
-	/// 피해량 계싼에 대한 건 <see cref="CombatUtility.DamageCommander"/>확인
+	/// 피해량 계싼에 대한 건 <see cref="DamageCommander"/>확인
 	/// </summary>
 	public enum StatsType : ushort // 0 ~ 65,535
 	{

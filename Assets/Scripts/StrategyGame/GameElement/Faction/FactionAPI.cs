@@ -12,6 +12,11 @@ public static class FactionAPI
 	public static bool IsNotAlive(this Faction faction)
 		=> !faction.IsAlive();
 
+
+	public static Faction ID2Object(int factionID)
+	{
+		return StrategyManager.Collector.Find<Faction>(factionID);
+	}
 	#region Unit Count
 	public static void API_UnitCounter(this Faction faction, int value)
 	{
@@ -391,24 +396,46 @@ public static class FactionAPI
 	{
 		if (faction == null || faction.IsNotAlive()) return false;
 
-		return faction.DetectingList.Add(target);
+		return faction.DetectedList.Add(target);
+	}
+	public static bool AddDetects(this Faction faction, IEnumerable<IStrategyElement> targets)
+	{
+		if (faction == null || faction.IsNotAlive()) return false;
+
+		bool change = false;
+		foreach (var target in targets)
+		{
+			change = faction.DetectedList.Add(target) || change;
+		}
+		return change;
 	}
 	public static bool RemoveDetect(this Faction faction, IStrategyElement target)
 	{
 		if (faction == null || faction.IsNotAlive()) return false;
 
-		return faction.DetectingList.Remove(target);
+		return faction.DetectedList.Remove(target);
+	}
+	public static bool RemoveDetects(this Faction faction, IEnumerable<IStrategyElement> targets)
+	{
+		if (faction == null || faction.IsNotAlive()) return false;
+
+		bool change = false;
+		foreach (var target in targets)
+		{
+			change = faction.DetectedList.Remove(target) || change;
+		}
+		return change;
 	}
 	public static bool HasDetected(this Faction faction, IStrategyElement target)
 	{
 		if (faction == null || faction.IsNotAlive()) return false;
 
-		return faction.DetectingList.Contains(target);
+		return faction.DetectedList.Contains(target);
 	}
 	public static void ClearDetect(this Faction faction)
 	{
 		if (faction == null || faction.IsNotAlive()) return;
-		faction.DetectingList.Clear();
+		faction.DetectedList.Clear();
 	}
 	#endregion
 

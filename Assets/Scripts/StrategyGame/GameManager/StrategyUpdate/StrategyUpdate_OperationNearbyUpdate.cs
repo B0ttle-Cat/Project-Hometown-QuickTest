@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-using static StrategyManagerModule.StrategyUpdate.StrategyUpdate_OperationNearbyUpdate;
+﻿using static StrategyManagerModule.StrategyUpdate.StrategyUpdate_OperationNearbyUpdate;
 
 namespace StrategyManagerModule
 {
@@ -8,22 +6,16 @@ namespace StrategyManagerModule
 	{
 		public class StrategyUpdate_OperationNearbyUpdate : StrategyUpdateSubClass<OperationNearbyUpdate>
 		{
-			private HashSet<INearbyElement> serchTargets;
 			public StrategyUpdate_OperationNearbyUpdate(StrategyUpdate updater) : base(updater)
 			{
-				serchTargets = new HashSet<INearbyElement>();
 			}
 			protected override void Dispose()
 			{
 				StrategyManager.Collector.RemoveChangeListener<OperationObject>(OnChangeElement);
-				StrategyManager.Collector.RemoveChangeListener<INearbyElement>(OnChangeElement);
-				serchTargets.Clear();
-				serchTargets = null;
 			}
 			protected override void Start()
 			{
 				StrategyManager.Collector.AddChangeListener<OperationObject>(OnChangeElement, true);
-				StrategyManager.Collector.AddChangeListener<INearbyElement>(OnChangeElement, true);
 			}
 			private void OnChangeElement(object element, bool added)
 			{
@@ -40,11 +32,6 @@ namespace StrategyManagerModule
 						if (findIndex < 0) return;
 						this.RemoveAt(findIndex);
 					}
-				}
-				else if (element is INearbyElement serchTarget)
-				{
-					if (added) serchTargets.Add(serchTarget);
-					else serchTargets.Remove(serchTarget);
 				}
 			}
 			protected override void Update(in float deltaTime)
@@ -66,20 +53,34 @@ namespace StrategyManagerModule
 				{
 					var item = this[i];
 					if (item == null) continue;
+					item.ExitViewUpdate();
+				}
+				for (int i = 0 ; i < length ; i++)
+				{
+					var item = this[i];
+					if (item == null) continue;
+					item.EnterViewUpdate();
+				}
+				for (int i = 0 ; i < length ; i++)
+				{
+					var item = this[i];
+					if (item == null) continue;
 					item.ActionUpdate();
 				}
 			}
 			public class OperationNearbyUpdate : UpdateLogic
 			{
 				public readonly OperationObject operation;
-				public INearbySearcher viewSearcher => operation == null ? null : operation.ViewSearcher;
-				public INearbySearcher actionSearcher => operation == null ? null : operation.ActionSearcher;
+				public readonly Faction faction;
+				private readonly BaseList<INearbyElement> allNearbyElements;
+				public INearbySearcher ViewSearcher => operation == null ? null : operation.ViewSearcher;
+				public INearbySearcher ActionSearcher => operation == null ? null : operation.ActionSearcher;
 
-				private readonly HashSet<INearbyElement> allElements;
 				public OperationNearbyUpdate(OperationObject operation, StrategyUpdate_OperationNearbyUpdate thisSubClass) : base(thisSubClass)
 				{
 					this.operation = operation;
-					allElements = thisSubClass.serchTargets;
+					faction = FactionAPI.ID2Object(operation.FactionID);
+					allNearbyElements = StrategyManager.Collector.GetList<INearbyElement>();
 				}
 
 				protected override void OnDispose()
@@ -93,13 +94,32 @@ namespace StrategyManagerModule
 
 				public void ViewUpdate()
 				{
-					if (viewSearcher.IsNullRef()) return;
-					viewSearcher.SearcherAPI.UpdateNearby(allElements);
+					if (ViewSearcher.IsNullRef()) return;
+					ViewSearcher.SearcherAPI.UpdateNearby(allNearbyElements);
+				}
+				public void ExitViewUpdate()
+				{
+					if (faction == null || ViewSearcher.IsNullRef()) return;
+					faction.RemoveDetects(ViewSearcher.SearcherAPI.ExitRageThisFrame());
+				}
+				public void EnterViewUpdate()
+				{
+					if (faction == null || ViewSearcher.IsNullRef()) return;
+					faction.AddDetects(ViewSearcher.SearcherAPI.EnterRageThisFrame());
 				}
 				public void ActionUpdate()
 				{
-					if (actionSearcher.IsNullRef()) return;
-					actionSearcher.SearcherAPI.UpdateNearby(viewSearcher.SearcherAPI.GetNearbyItems());
+					if (ActionSearcher.IsNullRef()) return;
+
+					if(faction == null)
+					{
+						if (ViewSearcher.IsNullRef()) return;
+						ActionSearcher.SearcherAPI.UpdateNearby(ViewSearcher.SearcherAPI.GetNearbyItems());
+					}
+					else
+					{
+						ActionSearcher.SearcherAPI.UpdateNearby(faction.DetectedList.NearbyType);
+					}
 				}
 			}
 		}

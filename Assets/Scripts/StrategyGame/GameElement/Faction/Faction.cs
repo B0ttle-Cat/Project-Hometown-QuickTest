@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 using Sirenix.OdinInspector;
@@ -29,14 +30,14 @@ public partial class Faction : IEquatable<Faction>, IDisposable
 		);
 		availableUnitKeyList = data.AvailableUnitKeyList();
 
-		detectingList = new HashSet<IStrategyElement>();
+		detectedList = new ();
 	}
 	public void Dispose()
 	{
 		factionIcon = null;
 		defaultUnitPrefab = null;
 		availableUnitKeyList = null;
-		detectingList = null;
+		detectedList = null;
 	}
 
 	private string factionName;
@@ -49,7 +50,7 @@ public partial class Faction : IEquatable<Faction>, IDisposable
 	private StatsList factionStats;
 	private List<UnitKey> availableUnitKeyList;
 
-	private HashSet<IStrategyElement> detectingList;
+	private ElementSet detectedList;
 
 	[ShowInInspector]
 	public string FactionName => factionName;
@@ -63,7 +64,7 @@ public partial class Faction : IEquatable<Faction>, IDisposable
 	public StatsList FactionStats => factionStats;
 	public List<UnitKey> AvailableUnitKeyList => availableUnitKeyList;
 
-	public HashSet<IStrategyElement> DetectingList => detectingList;
+	public ElementSet DetectedList => detectedList;
 
 	public static bool TryFindFaction(string factionName, out Faction find)
 	{
@@ -114,4 +115,77 @@ public partial class Faction : IStrategyElement
 	void IStrategyStartGame.OnStopGame()
 	{
 	}
+
+}
+public partial class Faction // ElementSet
+{
+	public class ElementSet : ISet<IStrategyElement>, IDisposable
+	{
+		private readonly HashSet<IStrategyElement> elementList = new HashSet<IStrategyElement>();
+		private readonly HashSet<ITargetableCombatant> targetableList = new HashSet<ITargetableCombatant>();
+		private readonly HashSet<INearbyElement> nearbyList = new HashSet<INearbyElement>();
+		public IEnumerable<ITargetableCombatant> TargetableType => targetableList;
+		public IEnumerable<INearbyElement> NearbyType => nearbyList;
+		public int Count => elementList.Count;
+		public ElementSet() { } 
+		public ElementSet(IEnumerable<IStrategyElement> detectedList) 
+		{
+			foreach (var detected in detectedList)
+			{
+				Add(detected);
+			}
+		}
+		public void Dispose()
+		{
+			Clear();
+		}
+		
+		#region 자주사용하는 함수
+		public bool Add(IStrategyElement item)
+		{
+			if (elementList.Add(item))
+			{
+				if (item is INearbyElement nearby) nearbyList.Add(nearby);
+				if (item is ITargetableCombatant target) targetableList.Add(target);
+				return true;
+			}
+			return false;
+		}
+		public bool Remove(IStrategyElement item)
+		{
+			if (elementList.Remove(item))
+			{
+				if (item is INearbyElement nearby) nearbyList.Remove(nearby);
+				if (item is ITargetableCombatant target) targetableList.Remove(target);
+				return true;
+			}
+			return false;
+		}
+		public void Clear()
+		{
+			elementList.Clear();
+			nearbyList.Clear();
+			targetableList.Clear();
+		}
+		public bool Contains(IStrategyElement item) => elementList.Contains(item);
+		#endregion
+	
+		#region ISet<T>
+		bool ICollection<IStrategyElement>.IsReadOnly => false;
+		public void CopyTo(IStrategyElement[] array, int arrayIndex) => elementList.CopyTo(array, arrayIndex);
+		public void ExceptWith(IEnumerable<IStrategyElement> other) => elementList.ExceptWith(other);
+		public void IntersectWith(IEnumerable<IStrategyElement> other) => elementList.IntersectWith(other);
+		public bool IsProperSubsetOf(IEnumerable<IStrategyElement> other) => elementList.IsProperSubsetOf(other);
+		public bool IsProperSupersetOf(IEnumerable<IStrategyElement> other) => elementList.IsProperSupersetOf(other);
+		public bool IsSubsetOf(IEnumerable<IStrategyElement> other) => elementList.IsSubsetOf(other);
+		public bool IsSupersetOf(IEnumerable<IStrategyElement> other) => elementList.IsSupersetOf(other);
+		public bool Overlaps(IEnumerable<IStrategyElement> other) => elementList.Overlaps(other);
+		public bool SetEquals(IEnumerable<IStrategyElement> other) => elementList.SetEquals(other);
+		public void SymmetricExceptWith(IEnumerable<IStrategyElement> other) => elementList.SymmetricExceptWith(other);
+		public void UnionWith(IEnumerable<IStrategyElement> other) => elementList.UnionWith(other);
+		void ICollection<IStrategyElement>.Add(IStrategyElement item) => Add(item);
+        IEnumerator<IStrategyElement> IEnumerable<IStrategyElement>.GetEnumerator()	=> elementList.GetEnumerator();
+		IEnumerator IEnumerable.GetEnumerator() => elementList.GetEnumerator();
+		#endregion
+    }
 }

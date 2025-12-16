@@ -181,7 +181,7 @@ namespace StrategyManagerModule
 				(UpdateLogicSort.유닛_보급충전, null),
 
 				(UpdateLogicSort.NearbyUpdate, new StrategyUpdate_OperationNearbyUpdate(this)),
-				(UpdateLogicSort.세력_감지목록_업데이트, new StrategyUpdate_FactionDetectListUpdate(this)),
+				//(UpdateLogicSort.세력_감지목록_업데이트, new StrategyUpdate_FactionDetectListUpdate(this)),
 				(UpdateLogicSort.유닛_CombatTarget_업데이트, new StrategyUpdate_UnitCombatTargetUpdate(this)),
 				(UpdateLogicSort.각종_상태_업데이트,  new StrategyUpdate_FSMUpdater(this)),
 

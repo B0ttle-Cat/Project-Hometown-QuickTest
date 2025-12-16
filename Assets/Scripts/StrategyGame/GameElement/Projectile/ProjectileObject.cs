@@ -392,7 +392,7 @@ public partial class ProjectileObject : IProjectileHit
 		float projectileDamageFactor = 1f;
 		if (!CombatUtility.CheckChance(CombatUtility.CalculateHitChance(offense, defance)))
 		{
-			new CombatUtility.DamageCommander(offense, defance, projectileDamageFactor, CombatUtility.DamageFlag.Miss);
+			new DamageCommander(offense, defance, projectileDamageFactor, DamageCommander.DamageFlag.Miss);
 			return;
 		}
 
@@ -412,18 +412,18 @@ public partial class ProjectileObject : IProjectileHit
 				{
 					piercingCount += baseDifference + 1;
 					// 관통됨 2회의 데미지를 준다.
-					new CombatUtility.DamageCommander(offense, defance, projectileDamageFactor, CombatUtility.DamageFlag.Hit | CombatUtility.DamageFlag.Pierce);
-					new CombatUtility.DamageCommander(offense, defance, projectileDamageFactor, CombatUtility.DamageFlag.Hit | CombatUtility.DamageFlag.Pierce);
+					new DamageCommander(offense, defance, projectileDamageFactor, DamageCommander.DamageFlag.Hit | DamageCommander.DamageFlag.Pierce);
+					new DamageCommander(offense, defance, projectileDamageFactor, DamageCommander.DamageFlag.Hit | DamageCommander.DamageFlag.Pierce);
 				}
 				else if (baseDifference == 0)
 				{
 					piercingCount += 1;
-					new CombatUtility.DamageCommander(offense, defance, projectileDamageFactor, CombatUtility.DamageFlag.Hit | CombatUtility.DamageFlag.Pierce);
+					new DamageCommander(offense, defance, projectileDamageFactor, DamageCommander.DamageFlag.Hit | DamageCommander.DamageFlag.Pierce);
 				}
 				else
 				{
 					piercingCount = int.MaxValue;
-					new CombatUtility.DamageCommander(offense, defance, projectileDamageFactor, CombatUtility.DamageFlag.Hit | CombatUtility.DamageFlag.Pierce);
+					new DamageCommander(offense, defance, projectileDamageFactor, DamageCommander.DamageFlag.Hit | DamageCommander.DamageFlag.Pierce);
 				}
 				return piercingCount;
 			}
@@ -438,7 +438,7 @@ public partial class ProjectileObject : IProjectileHit
 		}
 		else
 		{
-			new CombatUtility.DamageCommander(offense, defance, projectileDamageFactor, CombatUtility.DamageFlag.Hit);
+			new DamageCommander(offense, defance, projectileDamageFactor, DamageCommander.DamageFlag.Hit);
 			HitableDeath(offense, defance);
 		}
 	}
