@@ -36,8 +36,6 @@ public partial class OperationObject : IMovement , ITargetableCombatant
     private Action onStartMove;
     private Action onEndedMove;
 
-	private Collider collider;
-
     public IMovement ThisMovement => this;
 
 	public Seeker ThisSeeker => seeker;

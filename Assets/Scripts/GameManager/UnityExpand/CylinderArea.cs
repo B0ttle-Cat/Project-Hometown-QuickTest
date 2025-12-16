@@ -146,7 +146,7 @@ public class CylinderArea : MonoBehaviour
 	void OnDrawGizmos()
 	{
 		Collider[] colliders;
-		Gizmos.color = TestCollider(out colliders);
+		UnityEditor.Handles.color = TestCollider(out colliders);
 
 		var center = Center;
 		var axis = Axis.normalized;
@@ -156,8 +156,8 @@ public class CylinderArea : MonoBehaviour
 		var p1 = center + axis * h;
 		var p2 = center - axis * h;
 
-		DrawCircle(p1, axis, r);
-		DrawCircle(p2, axis, r);
+		UnityEditor.Handles.DrawWireDisc(p1, axis, r);
+		UnityEditor.Handles.DrawWireDisc(p2, axis, r);
 
 		Vector3 dir = Vector3.Cross(axis, Vector3.up);
 		if (dir.sqrMagnitude < 0.001f)
@@ -165,65 +165,23 @@ public class CylinderArea : MonoBehaviour
 		dir.Normalize();
 
 		var dir2 = Vector3.Cross(axis, dir).normalized;
-		Gizmos.DrawLine(p1 + dir * r, p2 + dir * r);
-		Gizmos.DrawLine(p1 - dir * r, p2 - dir * r);
-		Gizmos.DrawLine(p1 + dir2 * r, p2 + dir2 * r);
-		Gizmos.DrawLine(p1 - dir2 * r, p2 - dir2 * r);
+		UnityEditor.Handles.DrawLine(p1 + dir * r, p2 + dir * r);
+		UnityEditor.Handles.DrawLine(p1 - dir * r, p2 - dir * r);
+		UnityEditor.Handles.DrawLine(p1 + dir2 * r, p2 + dir2 * r);
+		UnityEditor.Handles.DrawLine(p1 - dir2 * r, p2 - dir2 * r);
 
 		// 3) 겹친 콜라이더 노랑 표시
-		Gizmos.color = highlightGizmoColor;
+		UnityEditor.Handles.color = highlightGizmoColor;
 		foreach (var col in colliders)
 		{
 			if (col == null) continue;
-			Gizmos.DrawWireCube(col.bounds.center, col.bounds.size);
+			UnityEditor.Handles.DrawWireCube(col.bounds.center, col.bounds.size);
 		}
-	}
-
-	void DrawCylinderGizmo(CylinderArea cyl, Color col)
-	{
-		Gizmos.color = col;
-		var center = cyl.Center;
-		var axis = cyl.Axis.normalized;
-		var h = cyl.ScaledHeight * 0.5f;
-		var r = cyl.ScaledRadius;
-
-		var p1 = center + axis * h;
-		var p2 = center - axis * h;
-
-		DrawCircle(p1, axis, r);
-		DrawCircle(p2, axis, r);
-
-		Vector3 dir = Vector3.Cross(axis, Vector3.up);
-		if (dir.sqrMagnitude < 0.001f)
-			dir = Vector3.Cross(axis, Vector3.right);
-		dir.Normalize();
-
-		Vector3 dir2 = Vector3.Cross(axis, dir).normalized;
-		Gizmos.DrawLine(p1 + dir * r, p2 + dir * r);
-		Gizmos.DrawLine(p1 - dir * r, p2 - dir * r);
-		Gizmos.DrawLine(p1 + dir2 * r, p2 + dir2 * r);
-		Gizmos.DrawLine(p1 - dir2 * r, p2 - dir2 * r);
 	}
 	void DrawCircle(Vector3 center, Vector3 normal, float radius)
 	{
-		const int seg = 32;
-		var axis = normal.normalized;
-
-		Vector3 ref1 = Vector3.Cross(axis, Vector3.up);
-		if (ref1.sqrMagnitude < 0.001f)
-			ref1 = Vector3.Cross(axis, Vector3.right);
-		ref1.Normalize();
-
-		var ref2 = Vector3.Cross(axis, ref1).normalized;
-
-		Vector3 prev = center + ref1 * radius;
-		for (int i = 1 ; i <= seg ; i++)
-		{
-			float t = (float)i / seg * Mathf.PI * 2f;
-			Vector3 next = center + (ref1 * Mathf.Cos(t) + ref2 * Mathf.Sin(t)) * radius;
-			Gizmos.DrawLine(prev, next);
-			prev = next;
-		}
+		UnityEditor.Handles.DrawWireDisc(center, normal, radius);
 	}
+
 #endif
 }

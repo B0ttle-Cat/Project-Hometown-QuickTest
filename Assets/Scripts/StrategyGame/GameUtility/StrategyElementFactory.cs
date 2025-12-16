@@ -145,6 +145,7 @@ public static class StrategyElementFactory
 			}
 		}
 		newOperation.Init(in spawnUnitIds);
+		newOperation.InitOther();
 		return newOperation;
 	}
 
