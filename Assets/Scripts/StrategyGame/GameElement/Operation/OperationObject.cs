@@ -54,7 +54,7 @@ public partial class OperationObject : MonoBehaviour  // Main
 	partial void DeinitFSM();
 	partial void DeInitNearby();
 }
-public partial class OperationObject // StatsData_old
+public partial class OperationObject // StatsData
 {
 	int computeFrame = -1;
 	public void ComputeOperationValue()

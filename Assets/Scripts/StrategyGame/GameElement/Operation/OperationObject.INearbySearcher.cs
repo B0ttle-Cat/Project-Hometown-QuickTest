@@ -6,7 +6,7 @@ using UnityEngine;
 
 
 [RequireComponent(typeof(NearbySearching))]
-public partial class OperationObject
+public partial class OperationObject // INearbySearcher
 {
 	private OperationVisionRangeSearcher visionRangeSearcher;
 	private OperationActionRangeSearcher actionRangeSearcher;

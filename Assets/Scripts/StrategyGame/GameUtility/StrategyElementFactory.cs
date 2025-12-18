@@ -178,8 +178,6 @@ public static class StrategyElementFactory
 			}
 		}
 	}
-
-
 	public static async Awaitable<ProjectileObject[]> Instantiate(StrategyStartSetterData.ProjectileData setterData, bool enterThis = true)
 	{
 		var projectilKey = setterData.projectilKey;
@@ -208,7 +206,6 @@ public static class StrategyElementFactory
 		}
 		return null;
 	}
-
 	public static async Awaitable<ProjectileObject[]> Instantiate(ProjectileProfileObject profile, ICombatHandler order, ITargetableCombatant target, int newCount = 1, bool enterThis = true)
 	{
 		GameObject prefab = profile.prefab;
@@ -262,6 +259,5 @@ public static class StrategyElementFactory
 			}
 		});
 	}
-
 	#endregion
 }

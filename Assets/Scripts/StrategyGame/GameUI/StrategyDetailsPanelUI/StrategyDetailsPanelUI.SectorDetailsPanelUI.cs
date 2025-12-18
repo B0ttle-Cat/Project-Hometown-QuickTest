@@ -376,18 +376,18 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 			void OnChangeStatsData(SectorData.MainStats.Data data)
 			{
 				UpdateFillRectUI();
-				UpdateStatePanel("StatsData_old KeyValue", "Base StatsData_old", selectSector.CurrStatsList?.GetValueList());
+				UpdateStatePanel("StatsData KeyValue", "Base StatsData", selectSector.CurrStatsList?.GetValueList());
 			}
 			void OnChangeFacilitiesData(SectorData.Facilities.Data data)
 			{
 				UpdateFillRectUI();
-				UpdateStatePanel("StatsData_old KeyValue", "Facilities StatsData_old",
+				UpdateStatePanel("StatsData KeyValue", "Facilities StatsData",
 					selectSector.SectorStatsGroup.GetValueList(SectorObject.StatsGroupName_Facilities));
 			}
 			void OnChangeSupportData(SectorData.Support.Data data)
 			{
 				UpdateFillRectUI();
-				UpdateStatePanel("StatsData_old KeyValue", "Support StatsData_old",
+				UpdateStatePanel("StatsData KeyValue", "Support StatsData",
 					selectSector.SectorStatsGroup.GetValueList(SectorObject.StatsGroupName_Support));
 			}
 			void UpdateFillRectUI()
@@ -435,7 +435,7 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 				}
 				else
 				{
-					string pairKey = "StatsData_old Info";
+					string pairKey = "StatsData Info";
 					string label = StrategyManager.Key2Name.GetAsset(key.ToString());
 					string text =  $"{(value>=0?"+":"-")}{value.ToString()}{SuffixStatsType(key)}";
 					var newItem = NewLabelTextUI(pairKey, label, text, parent);
@@ -547,7 +547,7 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 				}
 				else
 				{
-					string pairKey = "StatsData_old Info";
+					string pairKey = "StatsData Info";
 					string label = StrategyManager.Key2Name.GetAsset(key.ToString());
 					string text =  $"{(value>=0?"+":"-")}{value.ToString()}{SuffixStatsType(key)}";
 					var newItem = NewLabelTextUI(pairKey,label, text, parent);
@@ -784,7 +784,7 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 				}
 				else
 				{
-					string pairKey = "StatsData_old Info";
+					string pairKey = "StatsData Info";
 					string label = StrategyManager.Key2Name.GetAsset(key.ToString());
 					string text =  $"{(value>=0?"+":"-")}{value.ToString()}{SuffixStatsType(key)}";
 					var newItem = NewLabelTextUI(pairKey, label, text, parent);
