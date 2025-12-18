@@ -107,9 +107,24 @@ public record UnitStatsData
 	[Serializable]
 	public record Range
 	{
+		[HideIf("@true")]
 		public Vector4 AttackRange;
 		public float ActionRange;
 		public float VisionRange;
+#if UNITY_EDITOR
+		[ShowInInspector]
+		public Vector2 AttackRangeLimit
+		{
+			get => new(AttackRange[0], AttackRange[3]);
+			set { AttackRange[0] = value.x; AttackRange[3] = value.y; }
+		}
+		[ShowInInspector,MinMaxSlider("AttackRangeLimit", true)]
+		public Vector2 AttackRangeStart
+		{
+			get => new(AttackRange[1], AttackRange[2]);
+			set { AttackRange[1] = value.x; AttackRange[2] = value.y; }
+		}
+#endif
 	}
 	public float AttackRangeLimitMin => range.AttackRange.x;
 	public float AttackRangeStartMin => range.AttackRange.y;

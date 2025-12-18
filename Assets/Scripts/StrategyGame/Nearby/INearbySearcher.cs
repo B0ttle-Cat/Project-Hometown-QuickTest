@@ -9,6 +9,7 @@ public interface INearbySearcher
 	INearbySearcherAPI SearcherAPI { get; }
 	Vector3 SearchCenter { get; }
 	float SearchRange { get; }
+	float SearchMinRange => 0f;
 	int FactionID { get; }
 }
 public interface INearbySearcherAPI

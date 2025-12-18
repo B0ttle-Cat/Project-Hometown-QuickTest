@@ -49,7 +49,7 @@ namespace StrategyManagerModule
 
 					combatController.UpdateParameters();
 
-					if (combatController.IsKeepingTargetAllowed()) return;
+					if (combatController.IsInAttackRange()) return;
 
 					combatController.ChangeCombatTarget(combatController.SearchingNewTarget(out var newTarget)
 						? newTarget : null);

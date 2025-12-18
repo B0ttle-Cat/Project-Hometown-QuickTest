@@ -29,6 +29,7 @@ public partial class OperationObject
     partial void DeInitNearby()
     {
 		viewRangeSearcher?.Dispose();
+		actionRangeSearcher?.Dispose();
 	}
 
     public class OperationViewRangeSearcher : IViewRangeSearcher , IDisposable
@@ -43,8 +44,10 @@ public partial class OperationObject
 			{
 				nearbySearching = thisOperation.gameObject.AddComponent<ViewRangeSearching>();
 			}
+#if UNITY_EDITOR
+			nearbySearching.debugThickness = 5;
+#endif
 			searcherAPI = nearbySearching;
-
 			searcherAPI.Init(this);
 		}
 		public void Dispose()
@@ -72,8 +75,10 @@ public partial class OperationObject
 			{
 				nearbySearching = thisOperation.gameObject.AddComponent<ActionRangeSearching>();
 			}
+#if UNITY_EDITOR
+			nearbySearching.debugThickness = 5;
+#endif
 			searcherAPI = nearbySearching;
-
 			searcherAPI.Init(this);
 		}
 		public void Dispose()

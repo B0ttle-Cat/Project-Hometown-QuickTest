@@ -2,16 +2,16 @@
 
 using UnityEngine;
 
-public interface IViewRangeSearcher : INearbySearcher
+public interface IAttackStartRangeSearcher : INearbySearcher
 {
 
 }
-public class ViewRangeSearching : NearbySearching
+public class AttackStartRangeSearching : NearbySearching
 {
 #if UNITY_EDITOR
 	[ShowInInspector]
 	public float debugThickness { get; set; } = 2;
-	public Color debugColor { get; set; } = new Color(0.2f, 0.8f, 1f, 0.9f);
+	public Color debugColor { get; set; } = new Color(1f, 0.2f, 0.2f, 0.9f);
 	protected override void OnDrawGizmos()
 	{
 		if (thisSearcher.IsNullRef()) return;

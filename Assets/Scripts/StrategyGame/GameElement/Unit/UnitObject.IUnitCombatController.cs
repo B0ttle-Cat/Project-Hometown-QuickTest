@@ -101,7 +101,7 @@ public partial class UnitObject : ICombatHandler, ITargetableCombatant
 			ThisCombatHandler.CurrentTarget = null;
 		}
 	}
-	bool ICombatHandler.IsKeepingTargetAllowed()
+	bool ICombatHandler.IsInAttackRange()
 	{
 
 		if (!ThisCombatHandler.HasCurrentTarget) return false;
@@ -126,7 +126,7 @@ public partial class UnitObject : ICombatHandler, ITargetableCombatant
 		{
 
 		}
-
+			
 		newTarget = null;
 		var detectingList = Faction.DetectedList.TargetableType;
 		if (detectingList == null || detectingList.Count() == 0) return false;
@@ -184,20 +184,7 @@ public partial class UnitObject : ICombatHandler, ITargetableCombatant
 	}
 }
 
-public partial class UnitObject : INearbyElement
-{
-	partial void InitNearby()
-	{
-		StrategyManager.Collector.Add<INearbyElement>(this);
-	}
-	partial void DeinitNearby()
-	{
-		StrategyManager.Collector.Remove<INearbyElement>(this);
-	}
-	Vector3 INearbyElement.Position => ThisMovement.CurrentPosition;
-	float INearbyElement.Radius => ThisMovement.CurrentRadius;
 
-}
 #if UNITY_EDITOR
 
 public partial class UnitObject // RangeGizmos

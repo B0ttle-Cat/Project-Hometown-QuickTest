@@ -25,7 +25,7 @@ public interface ICombatHandler : ICombatCommon, IStrategyElement
 
 	event Action<ITargetableCombatant> OnChangeCurrentCombatTarget;
 	void UpdateParameters();
-	bool IsKeepingTargetAllowed();
+	bool IsInAttackRange();
 	bool SearchingNewTarget(out ITargetableCombatant newTarget);
 	void ChangeCombatTarget(in ITargetableCombatant newTarget);
 }

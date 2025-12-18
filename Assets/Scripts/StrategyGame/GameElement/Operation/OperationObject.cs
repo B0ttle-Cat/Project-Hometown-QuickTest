@@ -86,13 +86,23 @@ public partial class OperationObject // StatsData_old
 		int length = UnitOrganizationList.Count;
 		if(length == 0) return transform.position;
 
-		Bounds bounds = new Bounds(UnitOrganizationList.First().ThisMovement.CurrentPosition,Vector3.zero);
+		BoundsShape.Sphere? bounds = null;
         foreach(var unit in UnitOrganizationList)
         {
-			bounds.Encapsulate(unit.ThisMovement.CurrentPosition);
-		}
+			if(unit == null) continue;
+			var unitMove = unit.ThisMovement;
+			if(unitMove.IsNullRef()) continue;
 
-		return bounds.center;
+			if (bounds.HasValue)
+			{
+				bounds.Value.Encapsulate(unitMove.CurrentPosition);
+			}
+			else
+			{
+				bounds = new BoundsShape.Sphere(unitMove.CurrentPosition, unitMove.CurrentRadius);
+			}
+		}
+		return bounds?.center ?? transform.position;
 	}
 }
 public partial class OperationObject : IStrategyElement, IStrategyElementDestroyer
