@@ -284,9 +284,9 @@ MonoBehaviour:
       belongedOperation: -1
       visiteSectorID: 0
       durability: 2147483647
-      position: {x: 0, y: 0, z: 10}
-      rotation: {x: 0, y: 0, z: 0}
-      showEdit: 0
+      position: {x: -25, y: 0, z: 0}
+      rotation: {x: -0, y: 0, z: 0}
+      showEdit: 1
     operationDatas:
     - teamName: OP-007
       factionID: 0

@@ -45,11 +45,10 @@ public interface IState<T> where T : Enum
 	public T StateUpdate(in float deltaTime);
 }
 
-public abstract class FiniteStateMachine<T> : MonoBehaviour, IFSMInterface<T>, IFSMUpdater , IStrategyStartGame where T : Enum
+public abstract class FiniteStateMachine<T> : MonoBehaviour, IFSMInterface<T>, IFSMUpdater where T : Enum
 {
-	[ShowInInspector]
+	[ShowInInspector,HideIf("@currentState == null")]
 	public T CurrentStateType => currentState == null ? default : currentState.ThisType;
-	[ShowInInspector]
 	private IState<T> currentState;
 
 	[SerializeField]
@@ -59,14 +58,6 @@ public abstract class FiniteStateMachine<T> : MonoBehaviour, IFSMInterface<T>, I
 	private Action<T> onStateEnterCallback;
 	private Action<T> onStateExitCallback;
 
-	void IStrategyStartGame.OnStartGame()
-	{
-		StrategyManager.Collector.Add<IFSMUpdater>(this);
-	}
-	void IStrategyStartGame.OnStopGame()
-	{
-		StrategyManager.Collector.Remove<IFSMUpdater>(this);
-	}
 	public void InitState(Action<T> onStateEnterCallback, Action<T> onStateExitCallback, T initState, params IState<T>[] state)
 	{
 		this.onStateEnterCallback += onStateEnterCallback;
@@ -81,10 +72,14 @@ public abstract class FiniteStateMachine<T> : MonoBehaviour, IFSMInterface<T>, I
 		}
 		currentState = null;
 		ForceChangeImmediate(initState);
+
+		StrategyManager.Collector.Add<IFSMUpdater>(this);
 	}
 	public abstract IState<T>[] GetStateList();
 	public void DeinitState()
 	{
+		StrategyManager.Collector.Remove<IFSMUpdater>(this);
+
 		onStateEnterCallback = null;
 		onStateExitCallback = null;
 

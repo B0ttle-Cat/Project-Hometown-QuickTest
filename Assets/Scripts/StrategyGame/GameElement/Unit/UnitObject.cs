@@ -16,7 +16,7 @@ public partial class UnitObject : MonoBehaviour
 	private UnitRuntimeData runtimeData;
 	[SerializeField, ToggleGroup("EditUnitData")]
 	private UnitInstanceData instanceData;
-	
+
 	public UnitRuntimeData RuntimeData => runtimeData;
 	public UnitStatsData StatsData => statsData;
 	public UnitInstanceData InstanceData => instanceData;
@@ -31,7 +31,7 @@ public partial class UnitObject : MonoBehaviour
 	{
 		get => StrategyManager.IsNotReadyScene ? null : StrategyManager.Collector.Find<Faction>(FactionID);
 	}
-    public void Init(UnitProfileObject data, int factionID = -1)
+	public void Init(UnitProfileObject data, int factionID = -1)
 	{
 		statsData = new UnitStatsData(data);
 		runtimeData = new UnitRuntimeData(statsData);
@@ -47,7 +47,7 @@ public partial class UnitObject : MonoBehaviour
 	}
 	public void InitOther()
 	{
-		InitLife();		   
+		InitLife();
 		InitDebugRender();
 		InitCaptureTag();
 		InitMovement();
@@ -75,12 +75,14 @@ public partial class UnitObject : MonoBehaviour
 	public void Deinit()
 	{
 		DeselectSelf();
+		DeinitCaptureTag();
 		DeinitFSM();
 		DeinitNearby();
 		DeinitCombat();
 		DeinitMovement();
 		DeinitAttack();
 	}
+	partial void DeinitCaptureTag();
 	partial void DeselectSelf();
 	partial void DeinitFSM();
 	partial void DeinitNearby();
@@ -98,8 +100,7 @@ public partial class UnitObject // UnitCaptureTag
 			if (UnitCaptureTag == null) UnitCaptureTag = GetComponentInChildren<CaptureTag>();
 			if (UnitCaptureTag == null) UnitCaptureTag = gameObject.AddComponent<CaptureTag>();
 
-			UnitCaptureTag.factionID = FactionID;
-			UnitCaptureTag.pointValue = StatsData.CaptureScore;
+			UnitCaptureTag.Init(FactionID, StatsData.CaptureScore);
 		}
 		else
 		{
@@ -110,5 +111,13 @@ public partial class UnitObject // UnitCaptureTag
 			}
 		}
 	}
-
+	partial void DeinitCaptureTag()
+	{
+		if (UnitCaptureTag != null)
+		{
+			UnitCaptureTag.Deinit();
+			Destroy(UnitCaptureTag);
+			UnitCaptureTag = null;
+		}
+	}
 }

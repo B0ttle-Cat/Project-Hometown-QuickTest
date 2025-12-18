@@ -86,6 +86,7 @@ public class CenterFloatingPanelItemUI : FloatingPanelItemUI
 
 		foreach (var item in targetsGroup)
 		{
+			if (item.IsNullRef()) continue; 
 			if (!item.gameObject.activeInHierarchy) continue;
 
 			Vector3 screen = camera.WorldToScreenPoint(item.position);

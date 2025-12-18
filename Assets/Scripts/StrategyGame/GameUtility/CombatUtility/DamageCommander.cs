@@ -32,6 +32,7 @@ public class DamageCommander : IDisposable
 	{
 		this.offense = offense;
 		this.defance = defance;
+		this.projectileDemageFactor = projectileDemageFactor;
 		this.flag = flag;
 
 		totalDamage = 0;

@@ -1,34 +1,27 @@
 ﻿using UnityEngine;
 
-public class CaptureTag : MonoBehaviour , IStrategyStartGame
+public class CaptureTag : MonoBehaviour
 {
 	[Header("Info")]
-	public int factionID;
-	public int pointValue;
+	[SerializeField]
+	private int factionID = -1;
+	[SerializeField]
+	private int pointValue = 0;
 
-	private bool isAdd = false;
+	public int FactionID => factionID;
+	public int PointValue => pointValue;
 
-    void IStrategyStartGame.OnStartGame()
+    public void Init(int factionID, int pointValue)
 	{
-		isAdd = true;
+		this.factionID = factionID;
+		this.pointValue = pointValue;
 		StrategyManager.Collector.Add(this);
-	}
 
-    void IStrategyStartGame.OnStopGame()
+	}
+	public void Deinit()
 	{
-		if (isAdd)
-		{
-			isAdd = false;
-			StrategyManager.Collector.Remove(this);
-		}
-	}
-
-    public void OnDestroy()
-    {
-		if (isAdd)
-		{
-			isAdd = false;
-			StrategyManager.Collector.Remove(this);
-		}
+		this.factionID = -1;
+		this.pointValue = 0;
+		StrategyManager.Collector.Remove(this);
 	}
 }

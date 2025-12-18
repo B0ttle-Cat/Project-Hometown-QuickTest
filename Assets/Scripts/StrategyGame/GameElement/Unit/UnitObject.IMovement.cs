@@ -33,7 +33,7 @@ public partial class UnitObject // Movement
 	{
 		get
 		{
-			if (unitMovement == null)
+			if (unitMovement.IsNullRef())
 			{
 				unitMovement = GetComponent<UnitMovement>();
 				unitMovement.Init(this);
@@ -45,7 +45,7 @@ public partial class UnitObject // Movement
 	{
 		get
 		{
-			if (unitMovement == null)
+			if (unitMovement.IsNullRef())
 			{
 				unitMovement = GetComponent<UnitMovement>();
 				unitMovement.Init(this);

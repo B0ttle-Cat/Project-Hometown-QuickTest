@@ -27,8 +27,12 @@ public static class BoundsShape
 			return $"Center: {m_Center.ToString(format, formatProvider)}, Radius: {m_Radius.ToString(format, formatProvider)}";
 		}
 
-		public void Encapsulate(Vector3 point) { float dist = Vector3.Distance(m_Center, point); if (dist > m_Radius) m_Radius = dist; }
-		public void Encapsulate(Sphere sphere) { float dist = Vector3.Distance(m_Center, sphere.m_Center) + sphere.m_Radius; if (dist > m_Radius) m_Radius = dist; }
+		public void Encapsulate(Vector3 point, float radius) { 
+			float dist = Vector3.Distance(m_Center, point) + radius; 
+			if (dist > m_Radius) m_Radius = dist;
+		}
+		public void Encapsulate(Vector3 point) => Encapsulate(point, 0);
+		public void Encapsulate(Sphere sphere) => Encapsulate(sphere.center, sphere.radius);
 		public void Expand(float amount) => m_Radius += amount * 0.5f;
 		public bool Intersects(Sphere bounds) => Vector3.Distance(m_Center, bounds.m_Center) <= (m_Radius + bounds.m_Radius);
 		public bool Contains(Vector3 point) => Vector3.Distance(m_Center, point) <= m_Radius;

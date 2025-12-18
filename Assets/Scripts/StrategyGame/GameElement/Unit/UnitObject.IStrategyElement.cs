@@ -48,6 +48,11 @@ public partial class UnitObject : IStrategyElementDestroyer
 
 	public void DamageDeath()
 	{
+		if(HasOperation)
+		{
+			Operation.RemoveUnitObject(this);
+		}
+
 		ThisDestroyer.OnReservationDestroy();
 	}
 	public void DestroyWithOperation()

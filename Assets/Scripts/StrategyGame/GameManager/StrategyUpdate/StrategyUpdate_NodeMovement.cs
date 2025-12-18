@@ -67,7 +67,7 @@ namespace StrategyManagerModule
 
 				protected override void OnUpdate(in float deltaTime)
 				{
-					if (thisMovement == null || thisMovement.ParentMovement != null)
+					if (thisMovement.IsNullRef() || thisMovement.ParentMovement != null)
 					{
 						return;
 					}

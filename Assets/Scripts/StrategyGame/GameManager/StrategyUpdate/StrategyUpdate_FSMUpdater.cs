@@ -101,7 +101,12 @@ namespace StrategyManagerModule
 
 				protected override void OnUpdate(in float deltaTime)
 				{
-					if (fsm == null || !fsm.IsCanStateUpdate()) return;
+					if (fsm.IsNullRef())
+					{
+						return; 
+					}
+
+					if (!fsm.IsCanStateUpdate()) return;
 					fsm.StateUpdate(in deltaTime);
 				}
 			}

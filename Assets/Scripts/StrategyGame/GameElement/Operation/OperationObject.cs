@@ -42,7 +42,6 @@ public partial class OperationObject : MonoBehaviour  // Main
 	partial void InitMovement();
 	partial void InitFSM();
 	partial void InitNearby();
-
 	public void DeInit()
 	{
 		DeInitOrganization();
@@ -81,33 +80,29 @@ public partial class OperationObject // StatsData_old
 	{
 		return UnitOrganizationList.Count == 0 ? 0 : UnitOrganizationList.Select(i => i.StatsData.ActionRange).Max();
 	}
-	private (Vector3, float)  ComputeCenter()
+	private (Vector3, float) ComputeCenter()
 	{
 		int length = UnitOrganizationList.Count;
-		if(length == 0) return (transform.position, 0f);
-
-		BoundsShape.Sphere? bounds = null;
-        foreach(var unit in UnitOrganizationList)
-        {
-			if(unit == null) continue;
-			var unitMove = unit.ThisMovement;
-			if(unitMove.IsNullRef()) continue;
-
-			if (bounds.HasValue)
-			{
-				bounds.Value.Encapsulate(unitMove.CurrentPosition);
-			}
-			else
-			{
-				bounds = new BoundsShape.Sphere(unitMove.CurrentPosition, unitMove.CurrentRadius);
-			}
-		}
-
-		if(bounds.HasValue)
+		if (length == 0) return (transform.position, 0f);
+		Vector3 sumPosition = Vector3.zero; int validCount = 0;
+		foreach (var unit in UnitOrganizationList)
 		{
-			return (bounds.Value.center, bounds.Value.radius);
+			if (unit == null) continue;
+			var unitMove = unit.ThisMovement;
+			if (unitMove.IsNullRef()) continue;
+			sumPosition += unitMove.CurrentPosition; validCount++;
 		}
-		return (transform.position, 0f);
+		if (validCount == 0) return (transform.position, 0f);
+		Vector3 center = sumPosition / validCount; float maxDistance = 0f;
+		foreach (var unit in UnitOrganizationList)
+		{
+			if (unit == null) continue;
+			var unitMove = unit.ThisMovement;
+			if (unitMove.IsNullRef()) continue;
+			float distWithRadius = Vector3.Distance(center, unitMove.CurrentPosition) + unitMove.CurrentRadius;
+			if (distWithRadius > maxDistance) maxDistance = distWithRadius;
+		}
+		return (center, maxDistance);
 	}
 }
 public partial class OperationObject : IStrategyElement, IStrategyElementDestroyer
@@ -159,7 +154,6 @@ public partial class OperationObject : ISelectable
 	{
 		(this as ISelectable).SelfDeselect();
 	}
-
 	void ISelectable.OnSelect()
 	{
 

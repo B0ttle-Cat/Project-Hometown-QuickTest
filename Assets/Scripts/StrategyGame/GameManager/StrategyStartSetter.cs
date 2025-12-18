@@ -82,25 +82,43 @@ namespace StrategyManagerModule
 			var data = strategyStartSetterData.ReadonlyData();
 			var sectors = data.sectorDatas;
 
-			int cbLength = allSector.Length;
+			int sectorLength = allSector.Length;
 			int dataLength = sectors.Length;
 
 			var list = collector.GetList<SectorObject>();
-			for (int i = 0 ; i < cbLength ; i++)
+			for (int i = 0 ; i < dataLength ; i++)
 			{
-				SectorObject sector = allSector[i];
-
-				string cbName =  sector.gameObject.name;
-				for (int j = 0 ; j < dataLength ; j++)
+				var sectorData = sectors[i];
+				SectorObject sector = null;
+				for (int j = 0 ; j < sectorLength ; j++)
 				{
-					var cbData = sectors[j];
-					if (cbName == cbData.profileData.sectorName)
+					SectorObject tempSector = allSector[j];
+					if (tempSector == null) continue;
+
+					string sectorName =  tempSector.gameObject.name;
+					if (sectorName == sectorData.profileData.sectorName)
 					{
-						sector.Init(cbData);
+						allSector[j] = null;
+						sector = tempSector;
+						tempSector.Init(sectorData);
 						break;
 					}
 				}
+				if(sector == null)
+				{
+					Debug.LogError($"현재 씬에서 SectorData({i}: {sectorData.profileData.sectorName})와 동일한 이름을 가진 SectorObject 가 없습니다.");
+					continue;
+				}
 				list.Add(sector);
+			}
+
+
+			for (int j = 0 ; j < sectorLength ; j++)
+			{
+				SectorObject tempSector = allSector[j];
+				if (tempSector == null) continue;
+
+				Debug.LogError($"SectorData 가 없는 SectorObject 가 있습니다: {tempSector.gameObject.name}");
 			}
 		}
 		internal async Awaitable OnStartSetter_Unit()

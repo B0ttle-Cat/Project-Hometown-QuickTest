@@ -21,12 +21,29 @@ namespace StrategyManagerModule
 			protected override void Dispose()
 			{
 				captureTagList = null;
+				StrategyManager.Collector.RemoveChangeListener<SectorObject>(OnChangeSectorObject);
 				StrategyManager.Collector.RemoveChangeListener<CaptureTag>(OnChangeCaptureTag);
 			}
 
 			protected override void Start()
 			{
+				StrategyManager.Collector.AddChangeListener<SectorObject>(OnChangeSectorObject, true);
 				StrategyManager.Collector.AddChangeListener<CaptureTag>(OnChangeCaptureTag, true);
+			}
+			private void OnChangeSectorObject(SectorObject item, bool added)
+			{
+				if (item == null) return;
+
+				if (added)
+				{
+					this.Add(new CaptureUpdate(item, this));
+				}
+				else
+				{
+					int findIndex = this.FindIndex(f=>f.sector == item);
+					if (findIndex < 0) return;
+					this.RemoveAt(findIndex);
+				}
 			}
 			private void OnChangeCaptureTag(CaptureTag item, bool added)
 			{
@@ -158,7 +175,7 @@ namespace StrategyManagerModule
 					public int faactionID;
 					public float progress;
 				}
-				public CaptureUpdate(StrategyUpdate_CaptureUpdate thisSubClass, SectorObject sector) : base(thisSubClass)
+				public CaptureUpdate(SectorObject sector, StrategyUpdate_CaptureUpdate thisSubClass) : base(thisSubClass)
 				{
 					this.sector = sector;
 					this.sectorArea = sector.GetComponentInChildren<CylinderArea>(true);
@@ -324,9 +341,9 @@ namespace StrategyManagerModule
 					{
 						if (!sectorArea.IsOverlap(tag.transform.position)) continue;
 
-						if (!dict.ContainsKey(tag.factionID)) dict[tag.factionID] = 0;
-						dict[tag.factionID] += Mathf.Max(0, tag.pointValue);
-						total += Mathf.Max(0, tag.pointValue);
+						if (!dict.ContainsKey(tag.FactionID)) dict[tag.FactionID] = 0;
+						dict[tag.FactionID] += Mathf.Max(0, tag.PointValue);
+						total += Mathf.Max(0, tag.PointValue);
 					}
 					return (dict, total);
 				}
