@@ -127,8 +127,8 @@ public class OperationFiniteStateMachine : FiniteStateMachine<OperationFSMType>
 				if (unit == null) continue;
 				if (unit is not ICombatHandler combat) continue;
 
-				combat.IsOperationCombatState = true;
-				combat.OperationCurrentTarget = operationFsm.nearActionTarget;
+				// combat.IsOperationCombatState = true;
+				// combat.OperationCurrentTarget = operationFsm.nearActionTarget;
 			}
 		}
 		private void SendClearOpTarget()
@@ -139,8 +139,8 @@ public class OperationFiniteStateMachine : FiniteStateMachine<OperationFSMType>
 				if (unit == null) continue;
 				if (unit is not ICombatHandler combat) continue;
 
-				combat.IsOperationCombatState = false;
-				combat.OperationCurrentTarget = null;
+				// combat.IsOperationCombatState = false;
+				// combat.OperationCurrentTarget = null;
 			}
 		}
 	}

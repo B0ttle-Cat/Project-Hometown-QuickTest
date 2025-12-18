@@ -14,20 +14,27 @@ public interface ICombatHandler : ICombatCommon, IStrategyElement
 	Vector2 AttackLimitRange { get; }
 	bool IsCombatState { get; }
 	ITargetableCombatant CurrentTarget { get; set; }
-	bool HasCurrentTarget => CurrentTarget.IsNotNullRef() || HasOperationCurrentTarget;
+	bool HasCurrentTarget => CurrentTarget.IsNotNullRef();
+	[Obsolete("remove", true)]
 	bool TargetInStartAttackRange { get; }
+	[Obsolete("remove", true)]
 	bool TargetInLimitAttackRange { get; }
-	bool TargetInActionRange { get; }
 
+	[Obsolete("remove", true)]
 	bool IsOperationCombatState { get; set; }
+	[Obsolete("remove", true)]
 	ITargetableCombatant OperationCurrentTarget { get; set; }
+	[Obsolete("remove", true)]
 	bool HasOperationCurrentTarget => OperationCurrentTarget.IsNotNullRef();
 
-	event Action<ITargetableCombatant> OnChangeCurrentCombatTarget;
+	[Obsolete("remove", true)]
 	void UpdateParameters();
-	bool IsInAttackRange();
+	bool SomthingInActionRange();
+	bool SomthingInAttackRange();
+	bool HasKeepAttackTarget();
 	bool SearchingNewTarget(out ITargetableCombatant newTarget);
 	void ChangeCombatTarget(in ITargetableCombatant newTarget);
+	event Action<ITargetableCombatant> OnChangeCurrentCombatTarget;
 }
 public interface ICombatCommon : IStatsValueControl, IStrategyElement
 {

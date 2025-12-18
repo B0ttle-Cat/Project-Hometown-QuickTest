@@ -4,23 +4,23 @@ using UnityEngine;
 
 public partial class UnitObject : INearbyElement // And INearbySearcher
 {
-	UnitViewRangeSearcher viewRangeSearcher;
+	UnitVisionRangeSearcher visionRangeSearcher;
 	UnitActionRangeSearcher actionRangeSearcher;
 	UnitAttackStartRangeSearcher attackStartRangeSearcher;
 	UnitAttackLimitRangeSearcher attackLimitRangeSearcher;
 
-	public INearbySearcher ViewSearcher => viewRangeSearcher;
+	public INearbySearcher VisionSearcher => visionRangeSearcher;
 	public INearbySearcher ActionSearcher => actionRangeSearcher;
 	public INearbySearcher AttackStartSearcher => attackStartRangeSearcher;
 	public INearbySearcher AttackLimitSearcher => attackLimitRangeSearcher;
 
-	public INearbySearcherAPI ViewSearcherAPI => viewRangeSearcher.SearcherAPI;
+	public INearbySearcherAPI VisionSearcherAPI => visionRangeSearcher.SearcherAPI;
 	public INearbySearcherAPI ActionSearcherAPI => actionRangeSearcher.SearcherAPI;
 	public INearbySearcherAPI AttackStartSearcherAPI => attackStartRangeSearcher.SearcherAPI;
 	public INearbySearcherAPI AttackLimitSearcherAPI => attackLimitRangeSearcher.SearcherAPI;
 	partial void InitNearby()
 	{
-		viewRangeSearcher = new UnitViewRangeSearcher(this);
+		visionRangeSearcher = new UnitVisionRangeSearcher(this);
 		actionRangeSearcher = new UnitActionRangeSearcher(this);
 		attackStartRangeSearcher = new UnitAttackStartRangeSearcher(this);
 		attackLimitRangeSearcher = new UnitAttackLimitRangeSearcher(this);
@@ -29,7 +29,7 @@ public partial class UnitObject : INearbyElement // And INearbySearcher
 	}
 	partial void DeinitNearby()
 	{
-		viewRangeSearcher?.Dispose();
+		visionRangeSearcher?.Dispose();
 		actionRangeSearcher?.Dispose();
 		attackStartRangeSearcher?.Dispose();
 		attackLimitRangeSearcher?.Dispose();
@@ -39,76 +39,66 @@ public partial class UnitObject : INearbyElement // And INearbySearcher
 	Vector3 INearbyElement.Position => ThisMovement.CurrentPosition;
 	float INearbyElement.Radius => ThisMovement.CurrentRadius;
 
-	public abstract class UnitNearbySearcher<T> : IDisposable where T : NearbySearching
+	public abstract class UnitNearbySearcher<T> : INearbySearcher, IDisposable where T : NearbySearching
 	{
 		protected readonly UnitObject ThisUnit;
-		protected readonly INearbySearcherAPI searcherAPI;
+		protected readonly T nearbySearching;
+		public INearbySearcher ThisSearcher => this;
+		public INearbySearcherAPI SearcherAPI => nearbySearching;
+		int INearbySearcher.FactionID => ThisUnit.FactionID;
+		bool INearbySearcher.IsEnable => ThisUnit.HasOperation && ThisUnit.enabled;
 		public UnitNearbySearcher(UnitObject unitObject)
 		{
 			this.ThisUnit = unitObject;
 
-			if (!unitObject.TryGetComponent<T>(out var nearbySearching))
+			if (!unitObject.TryGetComponent<T>(out nearbySearching))
 			{
 				nearbySearching = unitObject.gameObject.AddComponent<T>();
 			}
-			searcherAPI = nearbySearching;
+			SearcherAPI.Init(this);
+
+			StrategyManager.Collector.Add<T>(nearbySearching);
 		}
 		public void Dispose()
 		{
-			if (searcherAPI.IsNotNullRef())
+			if (nearbySearching.IsNullRef())
 			{
-				searcherAPI.Deinit();
+				StrategyManager.Collector.Add<T>(nearbySearching);
 			}
 		}
 	}
-	public class UnitViewRangeSearcher : UnitNearbySearcher<ViewRangeSearching>, IViewRangeSearcher
+	public class UnitVisionRangeSearcher : UnitNearbySearcher<VisionRangeSearching>, IVisionRangeSearcher
 	{
-		public UnitViewRangeSearcher(UnitObject unitObject) : base(unitObject)
+		public UnitVisionRangeSearcher(UnitObject unitObject) : base(unitObject)
 		{
-			searcherAPI.Init(this);
 		}
-		public INearbySearcher ThisSearcher => this;
-		public INearbySearcherAPI SearcherAPI => searcherAPI;
 		Vector3 INearbySearcher.SearchCenter => ThisUnit.ThisCombatHandler.Position;
 		float INearbySearcher.SearchRange => ThisUnit.ThisCombatHandler.VisionRange + ThisUnit.ThisMovement.CurrentRadius;
-		int INearbySearcher.FactionID => ThisUnit.FactionID;
 	}
 	public class UnitActionRangeSearcher : UnitNearbySearcher<ActionRangeSearching>, IActionRangeSearcher
 	{
 		public UnitActionRangeSearcher(UnitObject unitObject) : base(unitObject)
 		{
-			searcherAPI.Init(this);
 		}
-		public INearbySearcher ThisSearcher => this;
-		public INearbySearcherAPI SearcherAPI => searcherAPI;
 		Vector3 INearbySearcher.SearchCenter => ThisUnit.ThisCombatHandler.Position;
 		float INearbySearcher.SearchRange => ThisUnit.ThisCombatHandler.ActionRange + ThisUnit.ThisMovement.CurrentRadius;
-		int INearbySearcher.FactionID => ThisUnit.FactionID;
 	}
 	public class UnitAttackStartRangeSearcher : UnitNearbySearcher<ActionRangeSearching>, IActionRangeSearcher
 	{
 		public UnitAttackStartRangeSearcher(UnitObject unitObject) : base(unitObject)
 		{
-			searcherAPI.Init(this);
 		}
-		public INearbySearcher ThisSearcher => this;
-		public INearbySearcherAPI SearcherAPI => searcherAPI;
 		Vector3 INearbySearcher.SearchCenter => ThisUnit.ThisCombatHandler.Position;
 		float INearbySearcher.SearchRange => ThisUnit.ThisCombatHandler.AttackStartRange.y + ThisUnit.ThisMovement.CurrentRadius;
 		float INearbySearcher.SearchMinRange => ThisUnit.ThisCombatHandler.AttackStartRange.x + ThisUnit.ThisMovement.CurrentRadius;
-		int INearbySearcher.FactionID => ThisUnit.FactionID;
 	}
 	public class UnitAttackLimitRangeSearcher : UnitNearbySearcher<ActionRangeSearching>, IActionRangeSearcher
 	{
 		public UnitAttackLimitRangeSearcher(UnitObject unitObject) : base(unitObject)
 		{
-			searcherAPI.Init(this);
 		}
-		public INearbySearcher ThisSearcher => this;
-		public INearbySearcherAPI SearcherAPI => searcherAPI;
 		Vector3 INearbySearcher.SearchCenter => ThisUnit.ThisCombatHandler.Position;
 		float INearbySearcher.SearchRange => ThisUnit.ThisCombatHandler.AttackLimitRange.y + ThisUnit.ThisMovement.CurrentRadius;
 		float INearbySearcher.SearchMinRange => ThisUnit.ThisCombatHandler.AttackLimitRange.x + ThisUnit.ThisMovement.CurrentRadius;
-		int INearbySearcher.FactionID => ThisUnit.FactionID;
 	}
 }

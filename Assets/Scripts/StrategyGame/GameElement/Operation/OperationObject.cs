@@ -64,7 +64,7 @@ public partial class OperationObject // StatsData_old
 		if (computeFrame == thisFrame) return;
 		computeFrame = thisFrame;
 		moveSpeed = ComputeMoveSpeed();
-		searchViewRange = ComputeViewRange();
+		searchVisionRange = ComputeVisionRange();
 		searchActionRange = ComputeActionRange();
 		searchCenterPosition = ComputeCenter();
 	}
@@ -73,7 +73,7 @@ public partial class OperationObject // StatsData_old
 	{
 		return UnitOrganizationList.Count == 0 ? 0 : UnitOrganizationList.Select(i => i.StatsData.MovementSpeed).Average();
 	}
-	private float ComputeViewRange()
+	private float ComputeVisionRange()
 	{
 		return UnitOrganizationList.Count == 0 ? 0 : UnitOrganizationList.Select(i => i.StatsData.VisionRange).Max();
 	}

@@ -47,9 +47,7 @@ namespace StrategyManagerModule
 				{
 					if (unitObject == null) return;
 
-					combatController.UpdateParameters();
-
-					if (combatController.IsInAttackRange()) return;
+					if (combatController.HasKeepAttackTarget()) return;
 
 					combatController.ChangeCombatTarget(combatController.SearchingNewTarget(out var newTarget)
 						? newTarget : null);

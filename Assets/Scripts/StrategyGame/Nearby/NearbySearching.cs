@@ -8,14 +8,17 @@ using UnityEditor;
 
 using UnityEngine;
 
+
 public class NearbySearching : MonoBehaviour, INearbySearcherAPI
 {
 	protected INearbySearcher thisSearcher;
-	protected Vector3 SearchCenter => thisSearcher.SearchCenter;
-	protected float SearchRange => thisSearcher.SearchRange;
-	protected float SearchMinRange => thisSearcher.SearchMinRange;
+	protected Vector3 SearchCenter => thisSearcher.IsNullRef() ? transform.position : thisSearcher.SearchCenter;
+	protected float SearchRange => thisSearcher.IsNullRef() ? 0 : thisSearcher.SearchRange;
+	protected float SearchMinRange => thisSearcher.IsNullRef() ? 0 : thisSearcher.SearchMinRange;
+
 	public const float CutMinRange = 0.0001f;
-	protected int FactionID => thisSearcher.FactionID;
+	public int FactionID => thisSearcher.IsNullRef() ? -1 : thisSearcher.FactionID;
+	public bool IsEnable => thisSearcher.IsNullRef() ? false : thisSearcher.IsEnable;
 
 	[ShowInInspector]
 	protected INearbyElement[] currentNearbyElements;
@@ -24,6 +27,7 @@ public class NearbySearching : MonoBehaviour, INearbySearcherAPI
 	protected HashSet<INearbyElement> exitRangeThisFrameList;
 	protected int nearbyCount;
 
+	private float lastUpdateFrame;
 	public void Init(INearbySearcher searcher)
 	{
 		thisSearcher = searcher;
@@ -32,6 +36,8 @@ public class NearbySearching : MonoBehaviour, INearbySearcherAPI
 		nearbyCount = 0;
 		enterRangeThisFrameList = new();
 		exitRangeThisFrameList = new();
+
+		lastUpdateFrame = 0;
 	}
 
 	public void Deinit()
@@ -40,6 +46,8 @@ public class NearbySearching : MonoBehaviour, INearbySearcherAPI
 		currentNearbyElements = null;
 		enterRangeThisFrameList = null;
 		exitRangeThisFrameList = null;
+
+		lastUpdateFrame = 0;
 	}
 
 	#region INearbySearcherAPI
@@ -67,10 +75,27 @@ public class NearbySearching : MonoBehaviour, INearbySearcherAPI
 
 		return OnGetNearbyItemsType<T>(func);
 	}
-	void INearbySearcherAPI.UpdateNearby(IEnumerable<INearbyElement> searchingElementList)
+	void INearbySearcherAPI.OnNearbySearching(IEnumerable<INearbyElement> searchingElementList, bool immediately)
+	{
+		int updateFrame = Time.frameCount;
+		if (immediately || lastUpdateFrame != updateFrame)
+		{
+			if (thisSearcher.IsNullRef()) return;
+
+			lastUpdateFrame = updateFrame;
+			OnNearbySearching(searchingElementList);
+		}
+	}
+	void INearbySearcherAPI.ClearSearching()
 	{
 		if (thisSearcher.IsNullRef()) return;
-		OnUpdateNearby(searchingElementList);
+
+		if (nearbyCount == 0) return;
+		currentNearbyElements = new INearbyElement[0];
+		enterRangeThisFrameList.Clear();
+		exitRangeThisFrameList.Clear();
+		tempList.Clear();
+		nearbyCount = 0;
 	}
 	HashSet<INearbyElement> INearbySearcherAPI.EnterRageThisFrame()
 	{
@@ -84,20 +109,20 @@ public class NearbySearching : MonoBehaviour, INearbySearcherAPI
 	}
 	int INearbySearcherAPI.NearbyCount()
 	{
-		return currentNearbyElements.Length;
+		return nearbyCount;
 	}
 
 	bool INearbySearcherAPI.HasNearby(INearbyElement nearby)
 	{
-		if(nearby.IsNullRef()) return false;
+		if (nearby.IsNullRef()) return false;
 		int length = currentNearbyElements.Length;
-        for (int i = 0 ; i < length ; i++)
-        {
+		for (int i = 0 ; i < length ; i++)
+		{
 			var item = currentNearbyElements[i];
 			if (item == nearby) return true;
 		}
 		return false;
-    }
+	}
 	#endregion
 
 	protected virtual INearbyElement OnGetNearbyItem(Func<INearbyElement, bool> func)
@@ -107,7 +132,7 @@ public class NearbySearching : MonoBehaviour, INearbySearcherAPI
 			INearbyElement item = currentNearbyElements[i];
 			if (item.IsNullRef()) continue;
 
-			if (func.Invoke(item))
+			if (func == null || func.Invoke(item))
 			{
 				return item;
 			}
@@ -145,7 +170,7 @@ public class NearbySearching : MonoBehaviour, INearbySearcherAPI
 			.Select(item => (T)item);
 	}
 
-	private void OnUpdateNearby(IEnumerable<INearbyElement> searchingElementList)
+	private void OnNearbySearching(IEnumerable<INearbyElement> searchingElementList)
 	{
 		enterRangeThisFrameList.Clear();
 		exitRangeThisFrameList.Clear();
@@ -169,7 +194,7 @@ public class NearbySearching : MonoBehaviour, INearbySearcherAPI
 		foreach (var item in searchingElementList)
 		{
 			if (NearbyCheck(in item, in center, in searchRange, in searchMinRange, out float sqrDist))
-			{ 
+			{
 				tempList.Add((item, sqrDist));
 			}
 		}
@@ -233,15 +258,26 @@ public class NearbySearching : MonoBehaviour, INearbySearcherAPI
 	}
 
 #if UNITY_EDITOR
+
+	[ShowInInspector]
+	public float debugThickness { get; set; } = 2;
+	[ShowInInspector]
+	public Color debugColor { get; set; } = new Color(0.2f, 0.8f, 1f, 0.9f);
+
 	protected virtual void OnDrawGizmos()
 	{
 		if (thisSearcher.IsNullRef()) return;
 		float range = SearchRange;
-		if (range <= 0) return;
+		float minRange = SearchMinRange;
 		Vector3 center = SearchCenter;
 
-		UnityEditor.Handles.color = Color.red;
-		UnityEditor.Handles.DrawWireDisc(center, Vector3.up, range);
+
+		UnityEditor.Handles.color = debugColor;
+		UnityEditor.Handles.DrawWireDisc(center, Vector3.up, range, debugThickness);
+		if (minRange >= CutMinRange)
+		{
+			UnityEditor.Handles.DrawWireDisc(center, Vector3.up, minRange, debugThickness);
+		}
 	}
 #endif
 }

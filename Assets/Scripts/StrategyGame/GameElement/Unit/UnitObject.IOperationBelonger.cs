@@ -5,7 +5,9 @@ using UnityEngine;
 public partial class UnitObject : IOperationBelonger
 {
 	[HideInEditorMode, FoldoutGroup("Operation", VisibleIf = "HasOperation"), InlineProperty, HideLabel]
-	public OperationObject operationObject;
+	[SerializeField]
+	private OperationObject operationObject;
+	public OperationObject Operation => operationObject;
 	public int OperationID => operationObject == null ? -1 : operationObject.OperationID;
 	public bool HasOperation => OperationID >= 0;
 	public Vector3 OperationOffset { get; set; }

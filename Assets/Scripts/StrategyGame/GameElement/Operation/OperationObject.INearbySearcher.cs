@@ -8,90 +8,80 @@ using UnityEngine;
 [RequireComponent(typeof(NearbySearching))]
 public partial class OperationObject
 {
-	private OperationViewRangeSearcher viewRangeSearcher;
+	private OperationVisionRangeSearcher visionRangeSearcher;
 	private OperationActionRangeSearcher actionRangeSearcher;
-	public INearbySearcher ViewSearcher => viewRangeSearcher;
+	public INearbySearcher VisionSearcher => visionRangeSearcher;
 	public INearbySearcher ActionSearcher => actionRangeSearcher;
-	public INearbySearcherAPI ViewSearcherAPI => viewRangeSearcher.SearcherAPI;
+	public INearbySearcherAPI ViewSearcherAPI => visionRangeSearcher.SearcherAPI;
 	public INearbySearcherAPI ActionSearcherAPI => actionRangeSearcher.SearcherAPI;
 
 	private Vector3 searchCenterPosition;
-	private float searchViewRange;
+	private float searchVisionRange;
 	private float searchActionRange;
 
 
 	partial void InitNearby()
     {
-		viewRangeSearcher = new OperationViewRangeSearcher(this);
+		visionRangeSearcher = new OperationVisionRangeSearcher(this);
 		actionRangeSearcher = new OperationActionRangeSearcher(this);
 	}
 
     partial void DeInitNearby()
     {
-		viewRangeSearcher?.Dispose();
+		visionRangeSearcher?.Dispose();
 		actionRangeSearcher?.Dispose();
 	}
 
-    public class OperationViewRangeSearcher : IViewRangeSearcher , IDisposable
-    {
-        readonly OperationObject thisOperation;
-		readonly INearbySearcherAPI searcherAPI;
-		public OperationViewRangeSearcher(OperationObject thisOperation)
-        {
-            this.thisOperation = thisOperation;
-
-			if (!thisOperation.TryGetComponent<ViewRangeSearching>(out var nearbySearching))
-			{
-				nearbySearching = thisOperation.gameObject.AddComponent<ViewRangeSearching>();
-			}
-#if UNITY_EDITOR
-			nearbySearching.debugThickness = 5;
-#endif
-			searcherAPI = nearbySearching;
-			searcherAPI.Init(this);
-		}
-		public void Dispose()
-		{
-			if (searcherAPI.IsNotNullRef())
-			{
-				searcherAPI.Deinit();
-			}
-		}
-		public INearbySearcher  ThisSearcher => this;
-		public INearbySearcherAPI SearcherAPI => searcherAPI;
-		Vector3 INearbySearcher.SearchCenter => thisOperation.searchCenterPosition;
-		float INearbySearcher.SearchRange => thisOperation.searchViewRange + thisOperation.operationRange;
-		int INearbySearcher.FactionID => thisOperation.factionID;
-	}
-	public class OperationActionRangeSearcher : IActionRangeSearcher, IDisposable
+	public class OperationNearbySearcher<T> : INearbySearcher, IDisposable where T : NearbySearching
 	{
-		readonly OperationObject thisOperation;
-		readonly INearbySearcherAPI searcherAPI;
-		public OperationActionRangeSearcher(OperationObject thisOperation)
+		protected readonly OperationObject thisOperation;
+		protected readonly T nearbySearching;
+		public INearbySearcher ThisSearcher => this;
+		public INearbySearcherAPI SearcherAPI => nearbySearching;
+		int INearbySearcher.FactionID => thisOperation.factionID;
+		bool INearbySearcher.IsEnable => thisOperation.enabled;
+
+		public OperationNearbySearcher(OperationObject thisOperation)
 		{
 			this.thisOperation = thisOperation;
 
-			if (!thisOperation.TryGetComponent<ActionRangeSearching>(out var nearbySearching))
+			if (!thisOperation.TryGetComponent<T>(out nearbySearching))
 			{
-				nearbySearching = thisOperation.gameObject.AddComponent<ActionRangeSearching>();
+				nearbySearching = thisOperation.gameObject.AddComponent<T>();
 			}
-#if UNITY_EDITOR
-			nearbySearching.debugThickness = 5;
-#endif
-			searcherAPI = nearbySearching;
-			searcherAPI.Init(this);
+
+			SearcherAPI.Init(this);
+
+			StrategyManager.Collector.Add<T>(nearbySearching);
 		}
 		public void Dispose()
 		{
-			if (searcherAPI.IsNotNullRef())
+			if (nearbySearching.IsNullRef())
 			{
-				searcherAPI.Deinit();
+				StrategyManager.Collector.Add<T>(nearbySearching);
 			}
 		}
-		public INearbySearcher ThisSearcher => this;
-		public INearbySearcherAPI SearcherAPI => searcherAPI;
+	}
+	public class OperationVisionRangeSearcher : OperationNearbySearcher<VisionRangeSearching>, IVisionRangeSearcher
+    {
+        public OperationVisionRangeSearcher(OperationObject thisOperation) : base(thisOperation)
+        {
+#if UNITY_EDITOR
+			(SearcherAPI as NearbySearching).debugThickness = 5;
+#endif
+		}
+		Vector3 INearbySearcher.SearchCenter => thisOperation.searchCenterPosition;
+		float INearbySearcher.SearchRange => thisOperation.searchVisionRange + thisOperation.operationRange;
+	}
+	public class OperationActionRangeSearcher : OperationNearbySearcher<ActionRangeSearching>, IActionRangeSearcher
+	{
+		public OperationActionRangeSearcher(OperationObject thisOperation) : base(thisOperation)
+		{
+#if UNITY_EDITOR
+			(SearcherAPI as NearbySearching).debugThickness = 5;
+#endif
+		}
 		Vector3 INearbySearcher.SearchCenter => thisOperation.searchCenterPosition;
 		float INearbySearcher.SearchRange => thisOperation.searchActionRange + thisOperation.operationRange;
-		int INearbySearcher.FactionID => thisOperation.factionID;
 	}
 }

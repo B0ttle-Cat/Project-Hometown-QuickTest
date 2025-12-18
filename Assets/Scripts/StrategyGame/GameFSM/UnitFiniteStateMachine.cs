@@ -46,17 +46,17 @@ public class UnitFiniteStateMachine : FiniteStateMachine<UnitMainFSMType>
 		{
 		}
 		#endregion
-		protected virtual bool NextStateIsFighting()
+		protected virtual bool SomthingInAttackRange()
 		{
-			return combatController.TargetInStartAttackRange;
+			return combatController.SomthingInAttackRange();
 		}
-		protected virtual bool NextStateIsChasing()
+		protected virtual bool SomthingInActionRange()
 		{
-			if (combatController.TargetInActionRange)
+			if (combatController.SomthingInActionRange())
 			{
 				return true;
 			}
-			else if(unitObject.HasOperation && unitObject.operationObject.FsmFlag.HasFlag(OperationObject.FSMFlag.Combat))
+			else if(unitObject.HasOperation && unitObject.Operation.FsmFlag.HasFlag(OperationObject.FSMFlag.Combat))
 			{
 				return true;
 			}
@@ -69,9 +69,9 @@ public class UnitFiniteStateMachine : FiniteStateMachine<UnitMainFSMType>
 
 		protected override UnitMainFSMType OnStateUpdate(in float deltaTime)
 		{
-			if (NextStateIsChasing())
+			if (SomthingInActionRange())
 			{
-				if (NextStateIsFighting())
+				if (SomthingInAttackRange())
 				{
 					return UnitMainFSMType.Fighting;
 				}
@@ -86,19 +86,19 @@ public class UnitFiniteStateMachine : FiniteStateMachine<UnitMainFSMType>
 	
 		protected override UnitMainFSMType OnStateUpdate(in float deltaTime)
 		{
-			if (NextStateIsFighting())
+			if (SomthingInActionRange())
 			{
-				return UnitMainFSMType.Fighting;
-			}
-			else if (NextStateIsChasing())
-			{
-				return UnitMainFSMType.Chasing;
+				if (SomthingInAttackRange())
+				{
+					return UnitMainFSMType.Fighting;
+				}
+				else return UnitMainFSMType.Chasing;
 			}
 			else return UnitMainFSMType.Idle;
 		}
-		protected override bool NextStateIsFighting()
+		protected override bool SomthingInAttackRange()
 		{
-			return combatController.TargetInLimitAttackRange;
+			return combatController.SomthingInAttackRange();
 		}
 	}
 	private class ChasingState : UnitState
@@ -107,9 +107,9 @@ public class UnitFiniteStateMachine : FiniteStateMachine<UnitMainFSMType>
 	
 		protected override UnitMainFSMType OnStateUpdate(in float deltaTime)
 		{
-			if (NextStateIsChasing())
+			if (SomthingInActionRange())
 			{
-				if (NextStateIsFighting())
+				if (SomthingInAttackRange())
 				{
 					return UnitMainFSMType.Fighting;
 				}

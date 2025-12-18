@@ -87,12 +87,6 @@ public partial class UnitObject : MonoBehaviour
 	partial void DeinitCombat();
 	partial void DeinitMovement();
 	partial void DeinitAttack();
-#if UNITY_EDITOR
-	void OnDrawGizmos()
-	{
-		OnDrawGizmos_Range();
-	}
-#endif
 }
 
 public partial class UnitObject // UnitCaptureTag

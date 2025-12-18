@@ -5,7 +5,7 @@ namespace StrategyManagerModule
 {
 	public partial class StrategyUpdate
 	{
-		[Obsolete("OperationNearbyUpdate 에서 해결함", true)]
+		[Obsolete("NearbyUpdate 에서 해결함", true)]
 		public class StrategyUpdate_FactionDetectListUpdate : StrategyUpdateSubClass<StrategyUpdate_FactionDetectListUpdate.DetectListUpdate>
 		{
 			public StrategyUpdate_FactionDetectListUpdate(StrategyUpdate updater) : base(updater)

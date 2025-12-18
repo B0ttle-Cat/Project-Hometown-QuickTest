@@ -9,7 +9,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(Seeker))]
 [RequireComponent(typeof(SimpleSmoothModifier))]
-public partial class OperationObject : IMovement , ITargetableCombatant
+public partial class OperationObject : IMovement
 {
 	[FoldoutGroup("INodeMovement"), ShowInInspector, ReadOnly]
 	private Vector3 movePosition;
@@ -68,9 +68,6 @@ public partial class OperationObject : IMovement , ITargetableCombatant
 	Action<float> IMovement.OnChangeMoveProgress { get => onMoveProgress; set => onMoveProgress = value; }
 	Action IMovement.OnStartMove { get => onStartMove; set => onStartMove = value; }
 	Action IMovement.OnEndedMove { get => onEndedMove; set => onEndedMove = value; }
-	Vector3 ITargetableCombatant.Position => movePosition;
-	Vector3 ITargetableCombatant.HitTargetPosition => movePosition + Vector3.up;
-	Collider IHitableCombatant.HitCollider => null;
 
     partial void InitMovement()
 	{

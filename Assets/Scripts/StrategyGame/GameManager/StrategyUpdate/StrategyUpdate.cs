@@ -35,8 +35,9 @@ namespace StrategyManagerModule
 			세력_자원갱신시작,
 			세력_자원갱신종료,
 
-			NearbyUpdate,
-			세력_감지목록_업데이트,
+			VisionNearbyUpdate,
+			ActionNearbyUpdate,
+			AttackNearbyUpdate,
 			각종_상태_업데이트,         // 전체 FSM Update 진행
 
 			유닛_CombatTarget_업데이트,
@@ -179,16 +180,16 @@ namespace StrategyManagerModule
 				(UpdateLogicSort.거점_시설보급, null),
 				(UpdateLogicSort.거점_버프계산, null),
 				(UpdateLogicSort.유닛_보급충전, null),
-
-				(UpdateLogicSort.NearbyUpdate, new StrategyUpdate_OperationNearbyUpdate(this)),
-				//(UpdateLogicSort.세력_감지목록_업데이트, new StrategyUpdate_FactionDetectListUpdate(this)),
-				(UpdateLogicSort.유닛_CombatTarget_업데이트, new StrategyUpdate_UnitCombatTargetUpdate(this)),
-				(UpdateLogicSort.각종_상태_업데이트,  new StrategyUpdate_FSMUpdater(this)),
-
 				(UpdateLogicSort.유닛_기본변수갱신, null),
 				(UpdateLogicSort.유닛_버프계산,  new StrategyUpdate_UnitBuff(this)),
-
 				(UpdateLogicSort.작전_기본변수_갱신, new StrategyUpdate_OperationUpdate(this)),
+
+				(UpdateLogicSort.VisionNearbyUpdate, new StrategyUpdate_VisionNearbyUpdate(this)),
+				(UpdateLogicSort.ActionNearbyUpdate, new StrategyUpdate_ActionNearbyUpdate(this)),
+				(UpdateLogicSort.AttackNearbyUpdate, new StrategyUpdate_AttackNearbyUpdate(this)),
+				(UpdateLogicSort.각종_상태_업데이트,  new StrategyUpdate_FSMUpdater(this)),
+				(UpdateLogicSort.유닛_CombatTarget_업데이트, new StrategyUpdate_UnitCombatTargetUpdate(this)),
+
 
 				(UpdateLogicSort.유닛_노드_이동,  new StrategyUpdate_NodeMovement(this)),
 				(UpdateLogicSort.유닛_추격_이동,  new StrategyUpdate_NavMovement(this)),
