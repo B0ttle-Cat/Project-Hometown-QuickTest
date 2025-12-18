@@ -26,10 +26,10 @@ public partial class UnitObject : IStatsValueControl
 			StatsType.유닛_점령점수 => StatsData.CaptureScore,
 
 			// --- 🔭 Range (범위) Properties ---
-			StatsType.유닛_공격범위_종료최소_c => (int)(StatsData.AttackRangeLimitMin * FLOAT_TO_INT_MULTIPLIER), // float -> int 변환
-			StatsType.유닛_공격범위_시작최소_c => (int)(StatsData.AttackRangeStartMin * FLOAT_TO_INT_MULTIPLIER), // float -> int 변환
-			StatsType.유닛_공격범위_시작최대_c => (int)(StatsData.AttackRangeStartMax * FLOAT_TO_INT_MULTIPLIER), // float -> int 변환
-			StatsType.유닛_공격범위_종료최대_c => (int)(StatsData.AttackRangeLimitMax * FLOAT_TO_INT_MULTIPLIER), // float -> int 변환
+			StatsType.유닛_공격범위_종료최소_c => (int)(StatsData.AttackLimitRangeMin * FLOAT_TO_INT_MULTIPLIER), // float -> int 변환
+			StatsType.유닛_공격범위_시작최소_c => (int)(StatsData.AttackStartRangeMin * FLOAT_TO_INT_MULTIPLIER), // float -> int 변환
+			StatsType.유닛_공격범위_시작최대_c => (int)(StatsData.AttackStartRangeMax * FLOAT_TO_INT_MULTIPLIER), // float -> int 변환
+			StatsType.유닛_공격범위_종료최대_c => (int)(StatsData.AttackLimitRangeMax * FLOAT_TO_INT_MULTIPLIER), // float -> int 변환
 			StatsType.유닛_행동범위_c => (int)(StatsData.ActionRange * FLOAT_TO_INT_MULTIPLIER), // float -> int 변환
 			StatsType.유닛_시야범위_c => (int)(StatsData.VisionRange * FLOAT_TO_INT_MULTIPLIER), // float -> int 변환
 
@@ -93,10 +93,10 @@ public partial class UnitObject : IStatsValueControl
 			StatsType.유닛_점령점수 => StatsData.CaptureScore * INT_TO_FLOAT_DIVISOR,
 
 			// --- 🔭 Range (범위) Properties ---
-			StatsType.유닛_공격범위_종료최소_c => StatsData.AttackRangeLimitMin,
-			StatsType.유닛_공격범위_시작최소_c => StatsData.AttackRangeStartMin,
-			StatsType.유닛_공격범위_시작최대_c => StatsData.AttackRangeStartMax,
-			StatsType.유닛_공격범위_종료최대_c => StatsData.AttackRangeLimitMax,
+			StatsType.유닛_공격범위_종료최소_c => StatsData.AttackLimitRangeMin,
+			StatsType.유닛_공격범위_시작최소_c => StatsData.AttackStartRangeMin,
+			StatsType.유닛_공격범위_시작최대_c => StatsData.AttackStartRangeMax,
+			StatsType.유닛_공격범위_종료최대_c => StatsData.AttackLimitRangeMax,
 			StatsType.유닛_행동범위_c => StatsData.ActionRange, 
 			StatsType.유닛_시야범위_c => StatsData.VisionRange, 
 

@@ -73,10 +73,10 @@ public interface ICombatCommon : IStatsValueControl, IStrategyElement
 	float AttackCostPower => GetStatsValue(StatsType.유닛_공격소모_전력);
 
 	// 🔭 범위 스탯 (Range)
-	float AttackRangeLimitMin => GetStatsValuePrecent(StatsType.유닛_공격범위_종료최소_c);
-	float AttackRangeStartMin => GetStatsValuePrecent(StatsType.유닛_공격범위_시작최소_c);
-	float AttackRangeStartMax => GetStatsValuePrecent(StatsType.유닛_공격범위_시작최대_c);
-	float AttackRangeLimitMax => GetStatsValuePrecent(StatsType.유닛_공격범위_종료최대_c);
+	float AttackLimitRangeMin => GetStatsValuePrecent(StatsType.유닛_공격범위_종료최소_c);
+	float AttackStartRangeMin => GetStatsValuePrecent(StatsType.유닛_공격범위_시작최소_c);
+	float AttackStartRangeMax => GetStatsValuePrecent(StatsType.유닛_공격범위_시작최대_c);
+	float AttackLimitRangeMax => GetStatsValuePrecent(StatsType.유닛_공격범위_종료최대_c);
 	float ActionRange => GetStatsValuePrecent(StatsType.유닛_행동범위_c);
 	float VisionRange => GetStatsValuePrecent(StatsType.유닛_시야범위_c);
 }

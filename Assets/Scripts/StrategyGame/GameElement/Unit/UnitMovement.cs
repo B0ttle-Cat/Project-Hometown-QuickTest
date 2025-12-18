@@ -278,7 +278,7 @@ public partial class UnitMovement : INavMovement
 		ThisNavMovement.SetMovePath(CallbackSetMovePath, lastTargetPosition);
 		void CallbackSetMovePath()
 		{
-			CutPathFromEnd(movePath, CcombatController.AttackRangeStartMax - 0.01f, false);
+			CutPathFromEnd(movePath, CcombatController.AttackStartRangeMax - 0.01f, false);
 
 			var delta = target.Position - lastTargetPosition;
 			float sqrDistance  = delta.sqrMagnitude;

@@ -113,23 +113,23 @@ public record UnitStatsData
 		public float VisionRange;
 #if UNITY_EDITOR
 		[ShowInInspector]
-		public Vector2 AttackRangeLimit
+		public Vector2 AttackLimitRange
 		{
 			get => new(AttackRange[0], AttackRange[3]);
 			set { AttackRange[0] = value.x; AttackRange[3] = value.y; }
 		}
-		[ShowInInspector,MinMaxSlider("AttackRangeLimit", true)]
-		public Vector2 AttackRangeStart
+		[ShowInInspector,MinMaxSlider("AttackLimitRange", true)]
+		public Vector2 AttackStartRange
 		{
 			get => new(AttackRange[1], AttackRange[2]);
 			set { AttackRange[1] = value.x; AttackRange[2] = value.y; }
 		}
 #endif
 	}
-	public float AttackRangeLimitMin => range.AttackRange.x;
-	public float AttackRangeStartMin => range.AttackRange.y;
-	public float AttackRangeStartMax => range.AttackRange.z;
-	public float AttackRangeLimitMax => range.AttackRange.w;
+	public float AttackLimitRangeMin => range.AttackRange.x;
+	public float AttackStartRangeMin => range.AttackRange.y;
+	public float AttackStartRangeMax => range.AttackRange.z;
+	public float AttackLimitRangeMax => range.AttackRange.w;
 	public float ActionRange => range.ActionRange;
 	public float VisionRange => range.VisionRange;
 

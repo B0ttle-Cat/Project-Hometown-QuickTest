@@ -83,22 +83,22 @@ public partial class UnitObject : INearbyElement // And INearbySearcher
 		Vector3 INearbySearcher.SearchCenter => ThisUnit.ThisCombatHandler.Position;
 		float INearbySearcher.SearchRange => ThisUnit.ThisCombatHandler.ActionRange + ThisUnit.ThisMovement.CurrentRadius;
 	}
-	public class UnitAttackStartRangeSearcher : UnitNearbySearcher<ActionRangeSearching>, IActionRangeSearcher
+	public class UnitAttackStartRangeSearcher : UnitNearbySearcher<AttackStartRangeSearching>, IActionRangeSearcher
 	{
 		public UnitAttackStartRangeSearcher(UnitObject unitObject) : base(unitObject)
 		{
 		}
 		Vector3 INearbySearcher.SearchCenter => ThisUnit.ThisCombatHandler.Position;
-		float INearbySearcher.SearchRange => ThisUnit.ThisCombatStats.AttackRangeStartMax + ThisUnit.ThisMovement.CurrentRadius;
-		float INearbySearcher.SearchMinRange => ThisUnit.ThisCombatStats.AttackRangeStartMin + ThisUnit.ThisMovement.CurrentRadius;
+		float INearbySearcher.SearchRange => ThisUnit.ThisCombatStats.AttackStartRangeMax + ThisUnit.ThisMovement.CurrentRadius;
+		float INearbySearcher.SearchMinRange => ThisUnit.ThisCombatStats.AttackStartRangeMin + ThisUnit.ThisMovement.CurrentRadius;
 	}
-	public class UnitAttackLimitRangeSearcher : UnitNearbySearcher<ActionRangeSearching>, IActionRangeSearcher
+	public class UnitAttackLimitRangeSearcher : UnitNearbySearcher<AttackLimitRangeSearching>, IActionRangeSearcher
 	{
 		public UnitAttackLimitRangeSearcher(UnitObject unitObject) : base(unitObject)
 		{
 		}
 		Vector3 INearbySearcher.SearchCenter => ThisUnit.ThisCombatHandler.Position;
-		float INearbySearcher.SearchRange => ThisUnit.ThisCombatStats.AttackRangeLimitMax + ThisUnit.ThisMovement.CurrentRadius;
-		float INearbySearcher.SearchMinRange => ThisUnit.ThisCombatStats.AttackRangeLimitMin + ThisUnit.ThisMovement.CurrentRadius;
+		float INearbySearcher.SearchRange => ThisUnit.ThisCombatStats.AttackLimitRangeMax + ThisUnit.ThisMovement.CurrentRadius;
+		float INearbySearcher.SearchMinRange => ThisUnit.ThisCombatStats.AttackLimitRangeMin + ThisUnit.ThisMovement.CurrentRadius;
 	}
 }

@@ -69,12 +69,7 @@ public partial class UnitObject : ICombatHandler, ITargetableCombatant
 		UpdateTarget();
 		void UpdateTarget()
 		{
-			if (!ActionSearcherAPI.HasNearbySomthing())
-			{
-				return;
-			}
-
-			newCombatActionTarget = ActionSearcherAPI.GetNearbyItemType<ITargetableCombatant>();
+			newCombatActionTarget = (HasOperation ? Operation.ActionSearcherAPI : ActionSearcherAPI).GetNearbyItemType<ITargetableCombatant>();
 
 			if (AttackStartSearcherAPI.HasNearbySomthing())
 			{
