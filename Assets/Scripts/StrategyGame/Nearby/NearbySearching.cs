@@ -18,6 +18,7 @@ public class NearbySearching : MonoBehaviour, INearbySearcherAPI
 
 	public const float CutMinRange = 0.0001f;
 	public int FactionID => thisSearcher.IsNullRef() ? -1 : thisSearcher.FactionID;
+	[ShowInInspector]
 	public bool IsEnable => thisSearcher.IsNullRef() ? false : thisSearcher.IsEnable;
 
 	[ShowInInspector]
@@ -262,11 +263,12 @@ public class NearbySearching : MonoBehaviour, INearbySearcherAPI
 	[ShowInInspector]
 	public float debugThickness { get; set; } = 2;
 	[ShowInInspector]
-	public Color debugColor { get; set; } = new Color(0.2f, 0.8f, 1f, 0.9f);
+	public Color debugColor { get; set; } = Color.gray;
 
 	protected virtual void OnDrawGizmos()
 	{
 		if (thisSearcher.IsNullRef()) return;
+		if (!IsEnable) return;
 		float range = SearchRange;
 		float minRange = SearchMinRange;
 		Vector3 center = SearchCenter;

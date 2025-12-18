@@ -15,7 +15,8 @@ public partial class OperationObject
 	public INearbySearcherAPI ViewSearcherAPI => visionRangeSearcher.SearcherAPI;
 	public INearbySearcherAPI ActionSearcherAPI => actionRangeSearcher.SearcherAPI;
 
-	private Vector3 searchCenterPosition;
+	private Vector3 searchGroupCenter;
+	private float searchGroupRadius;
 	private float searchVisionRange;
 	private float searchActionRange;
 
@@ -70,8 +71,8 @@ public partial class OperationObject
 			(SearcherAPI as NearbySearching).debugThickness = 5;
 #endif
 		}
-		Vector3 INearbySearcher.SearchCenter => thisOperation.searchCenterPosition;
-		float INearbySearcher.SearchRange => thisOperation.searchVisionRange + thisOperation.operationRange;
+		Vector3 INearbySearcher.SearchCenter => thisOperation.searchGroupCenter;
+		float INearbySearcher.SearchRange => thisOperation.searchVisionRange + thisOperation.searchGroupRadius;
 	}
 	public class OperationActionRangeSearcher : OperationNearbySearcher<ActionRangeSearching>, IActionRangeSearcher
 	{
@@ -81,7 +82,7 @@ public partial class OperationObject
 			(SearcherAPI as NearbySearching).debugThickness = 5;
 #endif
 		}
-		Vector3 INearbySearcher.SearchCenter => thisOperation.searchCenterPosition;
-		float INearbySearcher.SearchRange => thisOperation.searchActionRange + thisOperation.operationRange;
+		Vector3 INearbySearcher.SearchCenter => thisOperation.searchGroupCenter;
+		float INearbySearcher.SearchRange => thisOperation.searchActionRange + thisOperation.searchGroupRadius;
 	}
 }

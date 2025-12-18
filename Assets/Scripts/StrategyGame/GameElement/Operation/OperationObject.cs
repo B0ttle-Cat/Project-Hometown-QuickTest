@@ -10,18 +10,18 @@ public partial class OperationObject : MonoBehaviour  // Main
 	private string teamName;
 	[SerializeField]
 	private int factionID;
-	private float operationRange = 5;
+	private float operationRadius = 5;
 	public OperationObject This => this;
 	public int OperationID => operationID;
 	public string TeamName => teamName;
 	public int FactionID => factionID;
-	public float OperationRadius => operationRange;
+	public float OperationRadius => operationRadius;
 	internal void Awake()
 	{
 		this.operationID = -1;
 		this.factionID = -1;
 		this.teamName = "";
-		operationRange = 5;
+		operationRadius = 5;
 	}
 	internal void Init(int factionID, string teamName)
 	{
@@ -66,7 +66,7 @@ public partial class OperationObject // StatsData_old
 		moveSpeed = ComputeMoveSpeed();
 		searchVisionRange = ComputeVisionRange();
 		searchActionRange = ComputeActionRange();
-		searchCenterPosition = ComputeCenter();
+		(searchGroupCenter, searchGroupRadius) = ComputeCenter();
 	}
 
 	private float ComputeMoveSpeed()
@@ -81,10 +81,10 @@ public partial class OperationObject // StatsData_old
 	{
 		return UnitOrganizationList.Count == 0 ? 0 : UnitOrganizationList.Select(i => i.StatsData.ActionRange).Max();
 	}
-	private Vector3 ComputeCenter()
+	private (Vector3, float)  ComputeCenter()
 	{
 		int length = UnitOrganizationList.Count;
-		if(length == 0) return transform.position;
+		if(length == 0) return (transform.position, 0f);
 
 		BoundsShape.Sphere? bounds = null;
         foreach(var unit in UnitOrganizationList)
@@ -102,7 +102,12 @@ public partial class OperationObject // StatsData_old
 				bounds = new BoundsShape.Sphere(unitMove.CurrentPosition, unitMove.CurrentRadius);
 			}
 		}
-		return bounds?.center ?? transform.position;
+
+		if(bounds.HasValue)
+		{
+			return (bounds.Value.center, bounds.Value.radius);
+		}
+		return (transform.position, 0f);
 	}
 }
 public partial class OperationObject : IStrategyElement, IStrategyElementDestroyer

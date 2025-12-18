@@ -46,7 +46,7 @@ public partial class UnitObject : INearbyElement // And INearbySearcher
 		public INearbySearcher ThisSearcher => this;
 		public INearbySearcherAPI SearcherAPI => nearbySearching;
 		int INearbySearcher.FactionID => ThisUnit.FactionID;
-		bool INearbySearcher.IsEnable => ThisUnit.HasOperation && ThisUnit.enabled;
+		bool INearbySearcher.IsEnable => ThisUnit.enabled;
 		public UnitNearbySearcher(UnitObject unitObject)
 		{
 			this.ThisUnit = unitObject;
@@ -72,6 +72,7 @@ public partial class UnitObject : INearbyElement // And INearbySearcher
 		public UnitVisionRangeSearcher(UnitObject unitObject) : base(unitObject)
 		{
 		}
+		bool INearbySearcher.IsEnable => !ThisUnit.HasOperation && ThisUnit.enabled;
 		Vector3 INearbySearcher.SearchCenter => ThisUnit.ThisCombatHandler.Position;
 		float INearbySearcher.SearchRange => ThisUnit.ThisCombatHandler.VisionRange + ThisUnit.ThisMovement.CurrentRadius;
 	}
@@ -80,6 +81,7 @@ public partial class UnitObject : INearbyElement // And INearbySearcher
 		public UnitActionRangeSearcher(UnitObject unitObject) : base(unitObject)
 		{
 		}
+		bool INearbySearcher.IsEnable => !ThisUnit.HasOperation && ThisUnit.enabled;
 		Vector3 INearbySearcher.SearchCenter => ThisUnit.ThisCombatHandler.Position;
 		float INearbySearcher.SearchRange => ThisUnit.ThisCombatHandler.ActionRange + ThisUnit.ThisMovement.CurrentRadius;
 	}
