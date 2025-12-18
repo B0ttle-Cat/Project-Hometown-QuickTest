@@ -55,7 +55,7 @@
 		var constructing = slot.constructing;
 
 		constructing.facilitiesKey = facilitiesKey;
-		constructing.constructTime = 10; // facilitiesKey 를 통해 올바른 값을 가져온다.
+		constructing.constructTime = 10; // facilityKey 를 통해 올바른 값을 가져온다.
 		constructing.duration = constructing.constructTime;
 
 		slot.constructing = constructing;

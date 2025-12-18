@@ -108,11 +108,11 @@ public class UnitProfileObject : ScriptableObject
 		// 유닛_인력, 유닛_물자, 유닛_전력은 '배치 비용'에 해당합니다.
 		stats.GetCost.DeploymentCostPersonnel = 1;
 		stats.GetCost.DeploymentCostMaterial = 1;
-		stats.GetCost.DeploymentCostPower = 1;
+		stats.GetCost.DeploymentCostElectric = 1;
 
 		// 유닛_공격소모_물자, 유닛_공격소모_전력은 '공격 비용'에 해당합니다.
 		stats.GetCost.AttackCostMaterial = 1;
-		stats.GetCost.AttackCostPower = 1;
+		stats.GetCost.AttackCostElectric = 1;
 
 		// --- 🛡️ Common (공통) ---
 		stats.GetCommon.MaxDurability = 1000;      // 유닛_최대내구도

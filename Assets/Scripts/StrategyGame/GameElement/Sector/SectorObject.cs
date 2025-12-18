@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using Sirenix.OdinInspector;
 
@@ -7,8 +8,8 @@ using StrategyManagerModule;
 using UnityEngine;
 
 using static StrategyGamePlayData;
-using static StrategyGamePlayData.SectorData;
-using static StrategyGamePlayData.SectorData.Support;
+//using static StrategyGamePlayData.SectorData;
+//using static StrategyGamePlayData.SectorData.Support;
 
 using SectorData = StrategyGamePlayData.SectorData;
 
@@ -16,16 +17,22 @@ using SectorData = StrategyGamePlayData.SectorData;
 public partial class SectorObject : MonoBehaviour
 {
 	[SerializeField, BoxGroup("Main")]
+	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
 	private SectorData.Profile profile;
 	[SerializeField, BoxGroup("Main")]
+	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
 	private SectorData.MainStats mainStats;
 	[SerializeField, BoxGroup("Main")]
+	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
 	private SectorData.Facilities facilities;
 	[SerializeField, BoxGroup("Main")]
+	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
 	private SectorData.Support support;
 	[SerializeField, BoxGroup("Main")]
+	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
 	private SectorData.Capture capture;
 	[SerializeField, BoxGroup("Main")]
+	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
 	private StatsGroup sectorStatsGroup;
 	// 카메라에서 보이는지 판단하는 기능
 	private CameraVisibilityGroup visibilityGroup;
@@ -84,7 +91,7 @@ public partial class SectorObject : MonoBehaviour
 
 		StatsList FindStatsList_Facilities(string facilitiesKey)
 		{
-			// TODO:: facilitiesKey 를 사용해 Table 에서 값 가져와기
+			// TODO:: facilityKey 를 사용해 Table 에서 값 가져와기
 			return null;
 		}
 		StatsList FindStatsList_Support(SupportType type, int point)
@@ -110,18 +117,29 @@ public partial class SectorObject : MonoBehaviour
 }
 public partial class SectorObject // Getter
 {
+	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
 	public SectorData.Profile Profile => profile;
+	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
 	public SectorData.Capture Capture => capture;
+	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
 	public SectorData.MainStats Stats => mainStats;
+	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
 	public SectorData.Facilities Facilities => facilities;
+	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
 	public SectorData.Support Support => support;
+	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
 	public ref readonly SectorData.Profile.Data ProfileData => ref profile.ReadonlyData();
+	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
 	public ref readonly SectorData.Capture.Data CaptureData => ref capture.ReadonlyData();
+	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
 	public ref readonly SectorData.MainStats.Data StatsData => ref mainStats.ReadonlyData();
+	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
 	public ref readonly SectorData.Facilities.Data FacilitiesData => ref facilities.ReadonlyData();
+	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
 	public ref readonly SectorData.Support.Data SupportData => ref support.ReadonlyData();
-
+	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
 	public StatsList CurrStatsList => ProfileData.GetStatsList();
+	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
 	public StatsGroup SectorStatsGroup => sectorStatsGroup ??= new StatsGroup();
 	public const string StatsGroupName_MainStats = "MainStats";
 	public const string StatsGroupName_Facilities = "Facilities_";

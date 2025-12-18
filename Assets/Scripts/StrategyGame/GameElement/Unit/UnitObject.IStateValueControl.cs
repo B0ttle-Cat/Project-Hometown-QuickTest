@@ -14,9 +14,9 @@ public partial class UnitObject : IStatsValueControl
 			// --- 💸 Cost (비용) Properties ---
 			StatsType.유닛_인력 => StatsData.DeploymentCostPersonnel,
 			StatsType.유닛_물자 => StatsData.DeploymentCostMaterial,
-			StatsType.유닛_전력 => StatsData.DeploymentCostPower,
+			StatsType.유닛_전력 => StatsData.DeploymentCostElectric,
 			StatsType.유닛_공격소모_물자 => StatsData.AttackCostMaterial,
-			StatsType.유닛_공격소모_전력 => StatsData.AttackCostPower,
+			StatsType.유닛_공격소모_전력 => StatsData.AttackCostElectric,
 
 			// --- 🛡️ Common (공통) Properties ---
 			StatsType.유닛_최대내구도 => StatsData.MaxDurability,
@@ -81,9 +81,9 @@ public partial class UnitObject : IStatsValueControl
 			// --- 💸 Cost (비용) Properties ---
 			StatsType.유닛_인력 => StatsData.DeploymentCostPersonnel * INT_TO_FLOAT_DIVISOR,
 			StatsType.유닛_물자 => StatsData.DeploymentCostMaterial * INT_TO_FLOAT_DIVISOR,
-			StatsType.유닛_전력 => StatsData.DeploymentCostPower * INT_TO_FLOAT_DIVISOR,
+			StatsType.유닛_전력 => StatsData.DeploymentCostElectric * INT_TO_FLOAT_DIVISOR,
 			StatsType.유닛_공격소모_물자 => StatsData.AttackCostMaterial * INT_TO_FLOAT_DIVISOR,
-			StatsType.유닛_공격소모_전력 => StatsData.AttackCostPower * INT_TO_FLOAT_DIVISOR,
+			StatsType.유닛_공격소모_전력 => StatsData.AttackCostElectric * INT_TO_FLOAT_DIVISOR,
 
 			// --- 🛡️ Common (공통) Properties ---
 			StatsType.유닛_최대내구도 => StatsData.MaxDurability * INT_TO_FLOAT_DIVISOR,

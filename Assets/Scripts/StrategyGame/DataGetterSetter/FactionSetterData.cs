@@ -18,14 +18,14 @@
 //		public GameObject defaultUnitPrefab;
 //	}
 
-//	public Info capture;
+//	public Info _capture;
 
-//	public override void SetValue(Info capture)
+//	public override void SetValue(Info _capture)
 //	{			
 //	}
 
 //	public override Info ReadonlyData()
 //	{
-//		return capture;
+//		return _capture;
 //	}
 //}

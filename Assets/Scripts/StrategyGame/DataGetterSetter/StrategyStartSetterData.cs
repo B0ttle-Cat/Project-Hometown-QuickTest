@@ -67,7 +67,6 @@ namespace StrategyManagerModule
 		{
 			[FoldoutGroup("@factionName")]
 			public string factionName;
-
 			[FoldoutGroup("@factionName")]
 			public Color factionColor;
 			[FoldoutGroup("@factionName")]

@@ -184,7 +184,7 @@
 		// ========== ========== ========== ========== ==========
 	}
 
-	public enum FacilitiesKey
+	public enum FacilityKey
 	{
 		None = 0,
 		// 중립 시설 (0010 ~ 0999)
@@ -213,7 +213,6 @@
 		Facilities_라,
 		Facilities_마,
 	}
-
 
 	public enum ProjectileKey : ushort
 	{
@@ -282,4 +281,10 @@
 		EMP충격_대형,
 	}
 
+
+	// 각 섹터에 적용될 환경 값
+	public enum EnvironmentalKey
+	{
+
+	}
 }

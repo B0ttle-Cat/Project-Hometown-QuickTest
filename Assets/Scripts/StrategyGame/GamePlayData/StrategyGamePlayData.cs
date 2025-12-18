@@ -308,9 +308,11 @@ public partial class StrategyGamePlayData // Mission Info
 public partial class StrategyGamePlayData // Play Content Info
 {
 	[Serializable]
+	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
 	public class SectorData
 	{
 		[Serializable]
+		[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
 		public class Profile : GamePlayData<Profile.Data>
 		{
 			public Profile(Data data) : base(data) { }
@@ -347,6 +349,7 @@ public partial class StrategyGamePlayData // Play Content Info
 			}
 		}
 		[Serializable]
+		[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
 		public class Capture : GamePlayData<Capture.Data>
 		{
 			public Capture(Data data) : base(data) { }
@@ -370,6 +373,7 @@ public partial class StrategyGamePlayData // Play Content Info
 			}
 		}
 		[Serializable]
+		[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
 		public class MainStats : GamePlayData<MainStats.Data>
 		{
 			public MainStats(Data data) : base(data) { }
@@ -405,6 +409,7 @@ public partial class StrategyGamePlayData // Play Content Info
 				}
 			}
 		}
+		[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
 		[Serializable]
 		public class Facilities : GamePlayData<Facilities.Data>
 		{
@@ -440,6 +445,7 @@ public partial class StrategyGamePlayData // Play Content Info
 				}
 			}
 		}
+		[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
 		[Serializable]
 		public class Support : GamePlayData<Support.Data>
 		{
@@ -478,6 +484,7 @@ public partial class StrategyGamePlayData // Play Content Info
 		}
 	}
 	[Serializable]
+	[Obsolete("UnitStatsData/UnitInstanceData/UnitRuntimeData 를 사용할것", true)]
 	public class UnitData
 	{
 		[Serializable]
@@ -629,9 +636,11 @@ public partial class StrategyGamePlayData // Play Content Info
 		}
 	}
 	[Serializable]
+	[Obsolete("", true)]
 	public class ProjectileData
 	{
 		[Serializable]
+		[Obsolete("", true)]
 		public class Profile : GamePlayData<Profile.Data>
 		{
 			public Profile(Data data) : base(data) { }
@@ -649,6 +658,7 @@ public partial class StrategyGamePlayData // Play Content Info
 		}
 
 		[Serializable]
+		[Obsolete("", true)]
 		public class Stats : GamePlayData<Stats.Data>
 		{
 			public Stats(Data data) : base(data) { }
@@ -668,6 +678,7 @@ public partial class StrategyGamePlayData // Play Content Info
 		}
 
 		[Serializable]
+		[Obsolete("", true)]
 		public class Tracking : GamePlayData<Tracking.Data>
 		{
 			public Tracking(Data data) : base(data) { }

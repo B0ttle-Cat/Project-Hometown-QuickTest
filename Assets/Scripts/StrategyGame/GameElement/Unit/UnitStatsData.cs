@@ -76,16 +76,16 @@ public record UnitStatsData
 	{
 		public int DeploymentCostPersonnel;
 		public int DeploymentCostMaterial;
-		public int DeploymentCostPower;
+		public int DeploymentCostElectric;
 
 		public int AttackCostMaterial;
-		public int AttackCostPower;
+		public int AttackCostElectric;
 	}
 	public int DeploymentCostPersonnel => cost.DeploymentCostPersonnel;
 	public int DeploymentCostMaterial => cost.DeploymentCostMaterial;
-	public int DeploymentCostPower => cost.DeploymentCostPower;
+	public int DeploymentCostElectric => cost.DeploymentCostElectric;
 	public int AttackCostMaterial => cost.AttackCostMaterial;
-	public int AttackCostPower => cost.AttackCostPower;
+	public int AttackCostElectric => cost.AttackCostElectric;
 
 	// --- 🛡️ Common (공통) Properties ---
 	[Serializable]
