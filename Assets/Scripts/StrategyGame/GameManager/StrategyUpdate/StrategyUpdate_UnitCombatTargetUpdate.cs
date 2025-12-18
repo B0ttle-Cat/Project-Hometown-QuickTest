@@ -49,8 +49,7 @@ namespace StrategyManagerModule
 
 					if (combatController.HasKeepAttackTarget()) return;
 
-					combatController.ChangeCombatTarget(combatController.SearchingNewTarget(out var newTarget)
-						? newTarget : null);
+					combatController.UpdateNewNearbyTarget();
 				}
 			}
 		}

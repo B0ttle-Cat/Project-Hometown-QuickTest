@@ -89,8 +89,8 @@ public partial class UnitObject : INearbyElement // And INearbySearcher
 		{
 		}
 		Vector3 INearbySearcher.SearchCenter => ThisUnit.ThisCombatHandler.Position;
-		float INearbySearcher.SearchRange => ThisUnit.ThisCombatHandler.AttackStartRange.y + ThisUnit.ThisMovement.CurrentRadius;
-		float INearbySearcher.SearchMinRange => ThisUnit.ThisCombatHandler.AttackStartRange.x + ThisUnit.ThisMovement.CurrentRadius;
+		float INearbySearcher.SearchRange => ThisUnit.ThisCombatStats.AttackRangeStartMax + ThisUnit.ThisMovement.CurrentRadius;
+		float INearbySearcher.SearchMinRange => ThisUnit.ThisCombatStats.AttackRangeStartMin + ThisUnit.ThisMovement.CurrentRadius;
 	}
 	public class UnitAttackLimitRangeSearcher : UnitNearbySearcher<ActionRangeSearching>, IActionRangeSearcher
 	{
@@ -98,7 +98,7 @@ public partial class UnitObject : INearbyElement // And INearbySearcher
 		{
 		}
 		Vector3 INearbySearcher.SearchCenter => ThisUnit.ThisCombatHandler.Position;
-		float INearbySearcher.SearchRange => ThisUnit.ThisCombatHandler.AttackLimitRange.y + ThisUnit.ThisMovement.CurrentRadius;
-		float INearbySearcher.SearchMinRange => ThisUnit.ThisCombatHandler.AttackLimitRange.x + ThisUnit.ThisMovement.CurrentRadius;
+		float INearbySearcher.SearchRange => ThisUnit.ThisCombatStats.AttackRangeLimitMax + ThisUnit.ThisMovement.CurrentRadius;
+		float INearbySearcher.SearchMinRange => ThisUnit.ThisCombatStats.AttackRangeLimitMin + ThisUnit.ThisMovement.CurrentRadius;
 	}
 }

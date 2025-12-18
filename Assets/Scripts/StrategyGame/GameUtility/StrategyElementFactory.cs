@@ -183,8 +183,7 @@ public static class StrategyElementFactory
 		int newCount = setterData.count;
 		if (newCount == 0) return null;
 
-
-		var newProjectiles = await Instantiate(null,null,projectilKey, newCount, false);
+		var newProjectiles = await Instantiate(projectilKey, null,null, newCount, false);
 
 		for (int i = 0 ; i < newCount ; i++)
 		{
@@ -198,16 +197,16 @@ public static class StrategyElementFactory
 		}
 		return newProjectiles;
 	}
-	public static async Awaitable<ProjectileObject[]> Instantiate(ICombatHandler order, ITargetableCombatant target, ProjectileKey projectileKey, int newCount = 1, bool enterThis = true)
+	public static async Awaitable<ProjectileObject[]> Instantiate(ProjectileKey projectileKey, ICombatHandler order, ITargetableCombatant target, int newCount = 1, bool enterThis = true)
 	{
 		if (StrategyManager.Key2Projectile.TryGetAsset(projectileKey, out var info))
 		{
-			return await Instantiate(order, target, info.ProjectileProfileObject, newCount, enterThis);
+			return await Instantiate(info.ProjectileProfileObject, order, target, newCount, enterThis);
 		}
 		return null;
 	}
 
-	public static async Awaitable<ProjectileObject[]> Instantiate(ICombatHandler order, ITargetableCombatant target, ProjectileProfileObject profile, int newCount = 1, bool enterThis = true)
+	public static async Awaitable<ProjectileObject[]> Instantiate(ProjectileProfileObject profile, ICombatHandler order, ITargetableCombatant target, int newCount = 1, bool enterThis = true)
 	{
 		GameObject prefab = profile.prefab;
 		ProjectileObject projectilePrefab = prefab.GetComponent<ProjectileObject>();

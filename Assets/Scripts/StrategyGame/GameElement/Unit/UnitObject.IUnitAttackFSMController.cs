@@ -72,10 +72,10 @@ public partial class UnitObject : IIFSMControllerAttack
 	private async void AttackState_OnAttackTiming(int count)
 	{
 		if (this is not ICombatHandler unitCombat || unitCombat == null) return;
-		ITargetableCombatant target  = unitCombat.CurrentTarget;
+		ITargetableCombatant target  = unitCombat.AttackTarget;
 		if (target == null) return;
 
-		var projectiles = await StrategyElementFactory.Instantiate(this, target, StatsData.ProjectileKey, count);
+		var projectiles = await StrategyElementFactory.Instantiate(StatsData.ProjectileKey, this, target, count);
 	}
 
 	private void ThisCombatController_OnChangeCurrentCombatTarget(ITargetableCombatant obj)

@@ -233,8 +233,7 @@ public partial class UnitMovement : INavMovement
 	private Vector3 lastTargetPosition;
 	bool INavMovement.IsMovableState()
 	{
-		return CcombatController.HasCurrentTarget
-			&& FsmController.CurrentStateType == UnitMainFSMType.Chasing;
+		return CcombatController.HasCurrentTarget && FsmController.CurrentStateType == UnitMainFSMType.Chasing;
 	}
 	bool INavMovement.IsChangeTargetPositionCheck()
 	{
@@ -279,7 +278,7 @@ public partial class UnitMovement : INavMovement
 		ThisNavMovement.SetMovePath(CallbackSetMovePath, lastTargetPosition);
 		void CallbackSetMovePath()
 		{
-			CutPathFromEnd(movePath, CcombatController.AttackStartRange.y - 0.01f, false);
+			CutPathFromEnd(movePath, CcombatController.AttackRangeStartMax - 0.01f, false);
 
 			var delta = target.Position - lastTargetPosition;
 			float sqrDistance  = delta.sqrMagnitude;

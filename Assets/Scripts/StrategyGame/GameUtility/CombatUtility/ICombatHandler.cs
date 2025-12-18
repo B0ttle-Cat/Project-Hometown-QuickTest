@@ -10,30 +10,33 @@ public interface ICombatHandler : ICombatCommon, IStrategyElement
 	Transform transform { get; }
 	Vector3 Position { get; }
 	Vector3 AttackStartPosition { get; }
-	Vector2 AttackStartRange { get; }
-	Vector2 AttackLimitRange { get; }
 	bool IsCombatState { get; }
-	ITargetableCombatant CurrentTarget { get; set; }
-	bool HasCurrentTarget => CurrentTarget.IsNotNullRef();
-	[Obsolete("remove", true)]
-	bool TargetInStartAttackRange { get; }
-	[Obsolete("remove", true)]
-	bool TargetInLimitAttackRange { get; }
+	ITargetableCombatant ActionTarget { get; }
+	ITargetableCombatant AttackTarget { get; }
+	bool HasActionTarget => ActionTarget.IsNotNullRef();
+	bool HasAttackTarget => AttackTarget.IsNotNullRef();
+	ITargetableCombatant CurrentTarget => (HasAttackTarget ? AttackTarget : (HasActionTarget ? ActionTarget : null));
+	bool HasCurrentTarget => HasActionTarget || HasActionTarget;
+	//[Obsolete("remove", true)]
+	//bool TargetInStartAttackRange { get; }
+	//[Obsolete("remove", true)]
+	//bool TargetInLimitAttackRange { get; }
+	//
+	//[Obsolete("remove", true)]
+	//bool IsOperationCombatState { get; set; }
+	//[Obsolete("remove", true)]
+	//ITargetableCombatant OperationCurrentTarget { get; set; }
+	//[Obsolete("remove", true)]
+	//bool HasOperationCurrentTarget => OperationCurrentTarget.IsNotNullRef();
 
-	[Obsolete("remove", true)]
-	bool IsOperationCombatState { get; set; }
-	[Obsolete("remove", true)]
-	ITargetableCombatant OperationCurrentTarget { get; set; }
-	[Obsolete("remove", true)]
-	bool HasOperationCurrentTarget => OperationCurrentTarget.IsNotNullRef();
-
-	[Obsolete("remove", true)]
-	void UpdateParameters();
+	//[Obsolete("remove", true)]
+	//void UpdateParameters();
 	bool SomthingInActionRange();
 	bool SomthingInAttackRange();
 	bool HasKeepAttackTarget();
-	bool SearchingNewTarget(out ITargetableCombatant newTarget);
-	void ChangeCombatTarget(in ITargetableCombatant newTarget);
+	void UpdateNewNearbyTarget();
+	//void ChangeCombatAttackTarget(in ITargetableCombatant newTarget);
+	//void ChangeCombatActionTarget(in ITargetableCombatant newTarget);
 	event Action<ITargetableCombatant> OnChangeCurrentCombatTarget;
 }
 public interface ICombatCommon : IStatsValueControl, IStrategyElement
