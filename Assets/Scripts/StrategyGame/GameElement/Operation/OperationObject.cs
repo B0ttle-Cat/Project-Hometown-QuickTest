@@ -143,6 +143,11 @@ public partial class OperationObject : IStrategyElement, IStrategyElementDestroy
 		ThisDestroyer.IsDestroy = true;
 		StrategyElementFactory.Destroy(this);
 	}
+	private void EmptyUnitDestory()
+	{
+		ThisDestroyer.OnReservationDestroy();
+	}
+
 	private void ControllerDestory()
 	{
 		ThisDestroyer.OnReservationDestroy();

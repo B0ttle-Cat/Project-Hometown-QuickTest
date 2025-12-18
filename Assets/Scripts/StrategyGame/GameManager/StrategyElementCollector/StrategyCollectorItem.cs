@@ -59,11 +59,12 @@ namespace StrategyManagerModule
 		}
 
 		// Add / Remove
-		public virtual bool Add(T item)
+		public virtual bool Add(T item, Action beforeCallback = null)
 		{
 			if (item == null) return false;
 			if (Items.Contains(item)) return false;
 			Items.Add(item);
+			beforeCallback?.Invoke();
 			Invoke(item, true);
 			return true;
 		}
@@ -295,7 +296,7 @@ namespace StrategyManagerModule
 			}
 		}
 
-		public override bool Add(T item)
+		public override bool Add(T item, Action beforeCallback = null)
 		{
 			if (item == null) return false;
 			if (Items.Contains(item)) return false;
@@ -303,6 +304,7 @@ namespace StrategyManagerModule
 			item.ID = AcquireID();
 			Items.Add(item);
 			item.InStrategyCollector();
+			beforeCallback?.Invoke();
 			Invoke(item, true);
 			return true;
 		}
@@ -434,13 +436,14 @@ namespace StrategyManagerModule
 			}
 		}
 
-		public override bool Add(T item)
+		public override bool Add(T item, Action beforeCallback = null)
 		{
 			if (item == null) return false;
 			if (Items.Contains(item)) return false;
 
 			Items.Add(item);
 			item.InStrategyCollector();
+			beforeCallback?.Invoke();
 			Invoke(item, true);
 			return true;
 		}

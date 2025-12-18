@@ -5,8 +5,8 @@
 	void IOperationController.DeleteThis()
 	{
 		// 스스로에게 파괴 명령
-		RelaseAndDestroyAllUnit();
 		ControllerDestory();
+		RelaseAndDestroyAllUnit();
 	}
 
 	void IOperationController.OnMovementOrder_AvailableType(out bool execute, out bool pause, out bool cancel)

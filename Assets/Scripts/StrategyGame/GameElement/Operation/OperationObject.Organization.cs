@@ -75,6 +75,10 @@ public partial class OperationObject // Organization
 		enableChangeCallback = callback;
 		bool onChange = UnitOrganizationList.Remove(unitObject);
 		enableChangeCallback = true;
+		if(UnitOrganizationList.Count == 0)
+		{
+			EmptyUnitDestory();
+		}
 		return onChange;
 	}
 	/// <summary>
@@ -84,6 +88,7 @@ public partial class OperationObject // Organization
 	{
 		if(UnitOrganizationList == null) return;
 		UnitOrganizationList.Clear(withDestroy);
+		EmptyUnitDestory();
 	}
 	public void RelaseAndDestroyAllUnit()
 	{

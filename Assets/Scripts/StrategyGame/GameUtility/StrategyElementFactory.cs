@@ -57,7 +57,7 @@ public static class StrategyElementFactory
 			return null;
 		}
 		unitObject.Init(profile, factionID);
-		newObject.name = $"{profile.displayName}_{unitObject.UnitID:00}";
+		unitObject.name = $"{profile.displayName}";
 		if (StrategyManager.Collector.TryFind<Faction>(factionID, out var faction))
 		{
 			faction.API_UnitCounter(profile.stats.DeploymentCostPersonnel);
@@ -82,8 +82,11 @@ public static class StrategyElementFactory
 	}
 	private static void AddCollector(UnitObject unitObject)
 	{
-		unitObject.InitOther();
-		StrategyManager.Collector.Add<UnitObject>(unitObject);
+		StrategyManager.Collector.Add<UnitObject>(unitObject, () =>
+		{
+			unitObject.InitOther();
+			unitObject.name = $"{unitObject.name}_{unitObject.UnitID:00}";
+		});
 	}
 	public static void Destroy(UnitObject unitObject)
 	{
@@ -168,7 +171,7 @@ public static class StrategyElementFactory
 			ProjectileObject projectilePrefab = prefab.GetComponent<ProjectileObject>();
 
 			StrategyManager.Pooling.ReadyPoolCount<ProjectileObject>(prefab, newCount, NewInstantiateProjectile);
-		
+
 			async Awaitable<ProjectileObject[]> NewInstantiateProjectile(int instantCount)
 			{
 				return await GameObject.InstantiateAsync<ProjectileObject>(projectilePrefab, instantCount);
@@ -239,25 +242,25 @@ public static class StrategyElementFactory
 	}
 	private static void AddCollector(ICombatHandler order, ITargetableCombatant target, ProjectileObject projectile)
 	{
-		projectile.InitOther();
-		if (order != null && target != null)
+		StrategyManager.Pooling.Add<ProjectileObject>(projectile, () =>
 		{
-			projectile.SetTarget(order, target);
-		}
-		StrategyManager.Pooling.Add<ProjectileObject>(projectile);
+			projectile.InitOther();
+			if (order != null && target != null)
+			{
+				projectile.SetTarget(order, target);
+			}
+		});
 	}
 	private static void AddCollector(ICombatHandler order, ITargetableCombatant target, ProjectileObject[] projectiles)
 	{
-		int addCout = projectiles.Length;
-		for (int i = 0 ; i < addCout ; i++)
+		StrategyManager.Pooling.Add<ProjectileObject>(projectiles, (projectile) =>
 		{
-			projectiles[i].InitOther();
+			projectile.InitOther();
 			if (order != null && target != null)
 			{
-				projectiles[i].SetTarget(order, target);
+				projectile.SetTarget(order, target);
 			}
-		}
-		StrategyManager.Pooling.Add<ProjectileObject>(projectiles);
+		});
 	}
 
 	#endregion

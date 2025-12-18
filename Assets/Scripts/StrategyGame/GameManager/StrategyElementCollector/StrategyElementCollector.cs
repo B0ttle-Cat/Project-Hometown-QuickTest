@@ -167,7 +167,7 @@ namespace StrategyManagerModule
 		}
 
 		/// <summary>추가/제거용 API</summary>
-		public bool Add<T>(T item) where T : class
+		public bool Add<T>(T item, Action beforeCallback = null) where T : class
 		{
 			if (item == null) return false;
 
@@ -177,7 +177,7 @@ namespace StrategyManagerModule
 			Register(type);
 
 			var list = (stores[typeof(T)] as IElementStore<T>)?.List;
-			bool result = list.Add(item);
+			bool result = list.Add(item , beforeCallback);
 			return result;
 		}
 		public bool Remove<T>(T item) where T : class
