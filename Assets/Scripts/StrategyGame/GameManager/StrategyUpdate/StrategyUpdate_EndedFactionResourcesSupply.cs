@@ -1,10 +1,11 @@
-﻿using static StrategyManagerModule.StrategyUpdate.StrategyUpdate_EndedFactionResourcesSupply;
+﻿using System;
 
 namespace StrategyManagerModule
 {
 	public partial class StrategyUpdate
 	{
-		public class StrategyUpdate_EndedFactionResourcesSupply : StrategyUpdateSubClass<ResourcesSupply>
+		[Obsolete("StrategyUpdate_ResourcesSupply 를 사용", true)]
+		public class StrategyUpdate_EndedFactionResourcesSupply : StrategyUpdateSubClass<StrategyUpdate_EndedFactionResourcesSupply.ResourcesSupply>
 		{
 			public StrategyUpdate_EndedFactionResourcesSupply(StrategyUpdate updater) : base(updater)
 			{

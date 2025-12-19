@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+
+using UnityEngine;
 
 using static StrategyGamePlayData;
 
@@ -6,6 +8,7 @@ namespace StrategyManagerModule
 {
 	public partial class StrategyUpdate
 	{
+		[Obsolete("StrategyUpdate_ResourcesSupply 를 사용", true)]
 		public class StrategyUpdate_EndedSectorResourcesSupply : StrategyUpdateSubClass<StrategyUpdate_EndedSectorResourcesSupply.ResourcesSupply>
 		{
 			public StrategyUpdate_EndedSectorResourcesSupply(StrategyUpdate updater) : base(updater)
