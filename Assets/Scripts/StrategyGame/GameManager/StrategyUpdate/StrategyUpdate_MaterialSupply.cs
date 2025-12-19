@@ -36,9 +36,9 @@
 //		{
 //			private SectorObject sector;
 
-//			private const StatsType MaxType = StatsType.거점_재료_최대;
-//			private const StatsType SupplyType = StatsType.거점_재료_회복;
-//			private const StatsType CurrType = StatsType.거점_재료_현재;
+//			private const StatsType MaxType = StatsType.자원_재료_최대;
+//			private const StatsType SupplyType = StatsType.자원_재료_회복;
+//			private const StatsType CurrType = StatsType.자원_재료_현재;
 
 //			private const float resetResupplyTime = 10f;
 //			float currentResupplyTime; // 다음 보충까지 남은 시간.

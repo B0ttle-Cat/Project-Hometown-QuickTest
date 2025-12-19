@@ -170,11 +170,6 @@ namespace StrategyManagerModule
 				(UpdateLogicSort.거점_시설_건설,  new StrategyUpdate_ConstructUpdate(this)),
 
 				(UpdateLogicSort.자원갱신,  new StrategyUpdate_ResourcesSupply(this)),
-				//(UpdateLogicSort.세력_자원갱신시작,  new StrategyUpdate_StartFactionResourcesSupply(this)),
-				//(UpdateLogicSort.거점_자원갱신시작,  new StrategyUpdate_StartSectorResourcesSupply(this)),
-				//
-				//(UpdateLogicSort.거점_자원갱신종료,  new StrategyUpdate_EndedSectorResourcesSupply(this)),
-				//(UpdateLogicSort.세력_자원갱신종료,  new StrategyUpdate_EndedFactionResourcesSupply(this)),
 
 				(UpdateLogicSort.거점_시설보급, null),
 				(UpdateLogicSort.거점_버프계산, null),

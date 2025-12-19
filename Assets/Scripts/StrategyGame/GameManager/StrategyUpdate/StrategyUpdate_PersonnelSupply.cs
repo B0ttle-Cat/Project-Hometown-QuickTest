@@ -35,9 +35,9 @@
 //		public class ResourcesSupply : UpdateLogic
 //		{
 //			private SectorObject sector;
-//			private const StatsType MaxType = StatsType.거점_인력_최대;
-//			private const StatsType SupplyType = StatsType.거점_인력_회복;
-//			private const StatsType CurrType = StatsType.거점_인력_현재;
+//			private const StatsType MaxType = StatsType.자원_인력_최대;
+//			private const StatsType SupplyType = StatsType.자원_인력_회복;
+//			private const StatsType CurrType = StatsType.자원_인력_현재;
 			
 //			private const float resetResupplyTime = 1f;
 //			float currentResupplyTime; // 다음 보충까지 남은 시간.

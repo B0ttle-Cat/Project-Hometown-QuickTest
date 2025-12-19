@@ -76,28 +76,28 @@ public partial class SectorObject : IStrategyElement, IStrategyStartGame
 	}
 }
 
-public partial class SectorObject : IStatsValueControl
+public partial class SectorObject : IStatsValueControl , ISupplyStats
 {
 	public IStatsValueControl StatsValue => this;
 
-	public event Action<SectorObject> OnSupplyChange;
+	public Action<ISupplyStats> OnSupplyChange { get; set; }
 
 
 	int IStatsValueControl.GetStatsValue(StatsType type)
 	{
 		int baseValue = type switch
 		{
-			StatsType.거점_인력_최대   => StatsData.CapacityPersonnel,
-			StatsType.거점_인력_회복   => StatsData.RecoveryPersonnel,
-			StatsType.거점_인력_현재   => RuntimeData.LocalPersonnel,
+			StatsType.자원_인력_최대   => StatsData.CapacityPersonnel,
+			StatsType.자원_인력_회복   => StatsData.RecoveryPersonnel,
+			StatsType.자원_인력_현재   => RuntimeData.LocalPersonnel,
 
-			StatsType.거점_재료_최대   => StatsData.CapacityMaterial,
-			StatsType.거점_재료_회복   => StatsData.RecoveryMaterial,
-			StatsType.거점_재료_현재   => RuntimeData.LocalMaterial,
+			StatsType.자원_재료_최대   => StatsData.CapacityMaterial,
+			StatsType.자원_재료_회복   => StatsData.RecoveryMaterial,
+			StatsType.자원_재료_현재   => RuntimeData.LocalMaterial,
 
-			StatsType.거점_전력_최대   => StatsData.CapacityElectric,
-			StatsType.거점_전력_회복   => StatsData.RecoveryElectric,
-			StatsType.거점_전력_현재   => RuntimeData.LocalElectric,
+			StatsType.자원_전력_최대   => StatsData.CapacityElectric,
+			StatsType.자원_전력_회복   => StatsData.RecoveryElectric,
+			StatsType.자원_전력_현재   => RuntimeData.LocalElectric,
 
 			StatsType.시설_내구도_최대 => 0,
 			StatsType.시설_내구도_회복 => 0,
@@ -113,17 +113,17 @@ public partial class SectorObject : IStatsValueControl
 	{
 		float baseValue = type switch
 		{
-			StatsType.거점_인력_최대   => StatsData.CapacityPersonnel * 0.01f,
-			StatsType.거점_인력_회복   => StatsData.RecoveryPersonnel * 0.01f,
-			StatsType.거점_인력_현재   => RuntimeData.LocalPersonnel * 0.01f,
+			StatsType.자원_인력_최대   => StatsData.CapacityPersonnel * 0.01f,
+			StatsType.자원_인력_회복   => StatsData.RecoveryPersonnel * 0.01f,
+			StatsType.자원_인력_현재   => RuntimeData.LocalPersonnel * 0.01f,
 
-			StatsType.거점_재료_최대   => StatsData.CapacityMaterial * 0.01f,
-			StatsType.거점_재료_회복   => StatsData.RecoveryMaterial * 0.01f,
-			StatsType.거점_재료_현재   => RuntimeData.LocalMaterial * 0.01f,
+			StatsType.자원_재료_최대   => StatsData.CapacityMaterial * 0.01f,
+			StatsType.자원_재료_회복   => StatsData.RecoveryMaterial * 0.01f,
+			StatsType.자원_재료_현재   => RuntimeData.LocalMaterial * 0.01f,
 
-			StatsType.거점_전력_최대   => StatsData.CapacityElectric * 0.01f,
-			StatsType.거점_전력_회복   => StatsData.RecoveryElectric * 0.01f,
-			StatsType.거점_전력_현재   => RuntimeData.LocalElectric * 0.01f,
+			StatsType.자원_전력_최대   => StatsData.CapacityElectric * 0.01f,
+			StatsType.자원_전력_회복   => StatsData.RecoveryElectric * 0.01f,
+			StatsType.자원_전력_현재   => RuntimeData.LocalElectric * 0.01f,
 
 			StatsType.시설_내구도_최대 => 0,
 			StatsType.시설_내구도_회복 => 0,
@@ -138,17 +138,17 @@ public partial class SectorObject : IStatsValueControl
 	{
 		switch (type)
 		{
-			case StatsType.거점_인력_최대: StatsData.CapacityPersonnel = value; break;
-			case StatsType.거점_인력_회복: StatsData.RecoveryPersonnel = value; break;
-			case StatsType.거점_인력_현재: RuntimeData.LocalPersonnel = value; break;
+			case StatsType.자원_인력_최대: StatsData.CapacityPersonnel = value; break;
+			case StatsType.자원_인력_회복: StatsData.RecoveryPersonnel = value; break;
+			case StatsType.자원_인력_현재: RuntimeData.LocalPersonnel = value; break;
 
-			case StatsType.거점_재료_최대: StatsData.CapacityMaterial = value; break;
-			case StatsType.거점_재료_회복: StatsData.RecoveryMaterial = value; break;
-			case StatsType.거점_재료_현재: RuntimeData.LocalMaterial = value; break;
+			case StatsType.자원_재료_최대: StatsData.CapacityMaterial = value; break;
+			case StatsType.자원_재료_회복: StatsData.RecoveryMaterial = value; break;
+			case StatsType.자원_재료_현재: RuntimeData.LocalMaterial = value; break;
 
-			case StatsType.거점_전력_최대: StatsData.CapacityElectric = value; break;
-			case StatsType.거점_전력_회복: StatsData.RecoveryElectric = value; break;
-			case StatsType.거점_전력_현재: RuntimeData.LocalElectric = value; break;
+			case StatsType.자원_전력_최대: StatsData.CapacityElectric = value; break;
+			case StatsType.자원_전력_회복: StatsData.RecoveryElectric = value; break;
+			case StatsType.자원_전력_현재: RuntimeData.LocalElectric = value; break;
 
 			case StatsType.시설_내구도_최대: break;
 			case StatsType.시설_내구도_회복: break;
@@ -161,17 +161,17 @@ public partial class SectorObject : IStatsValueControl
 	{
 		switch (type)
 		{
-			case StatsType.거점_인력_최대: StatsData.CapacityPersonnel = Mathf.FloorToInt(valuePercent * 100); break;
-			case StatsType.거점_인력_회복: StatsData.RecoveryPersonnel = Mathf.FloorToInt(valuePercent * 100); break;
-			case StatsType.거점_인력_현재: RuntimeData.LocalPersonnel = Mathf.FloorToInt(valuePercent * 100); break;
+			case StatsType.자원_인력_최대: StatsData.CapacityPersonnel = Mathf.FloorToInt(valuePercent * 100); break;
+			case StatsType.자원_인력_회복: StatsData.RecoveryPersonnel = Mathf.FloorToInt(valuePercent * 100); break;
+			case StatsType.자원_인력_현재: RuntimeData.LocalPersonnel = Mathf.FloorToInt(valuePercent * 100); break;
 
-			case StatsType.거점_재료_최대: StatsData.CapacityMaterial = Mathf.FloorToInt(valuePercent * 100); break;
-			case StatsType.거점_재료_회복: StatsData.RecoveryMaterial = Mathf.FloorToInt(valuePercent * 100); break;
-			case StatsType.거점_재료_현재: RuntimeData.LocalMaterial = Mathf.FloorToInt(valuePercent * 100); break;
+			case StatsType.자원_재료_최대: StatsData.CapacityMaterial = Mathf.FloorToInt(valuePercent * 100); break;
+			case StatsType.자원_재료_회복: StatsData.RecoveryMaterial = Mathf.FloorToInt(valuePercent * 100); break;
+			case StatsType.자원_재료_현재: RuntimeData.LocalMaterial = Mathf.FloorToInt(valuePercent * 100); break;
 
-			case StatsType.거점_전력_최대: StatsData.CapacityElectric = Mathf.FloorToInt(valuePercent * 100); break;
-			case StatsType.거점_전력_회복: StatsData.RecoveryElectric = Mathf.FloorToInt(valuePercent * 100); break;
-			case StatsType.거점_전력_현재: RuntimeData.LocalElectric = Mathf.FloorToInt(valuePercent * 100); break;
+			case StatsType.자원_전력_최대: StatsData.CapacityElectric = Mathf.FloorToInt(valuePercent * 100); break;
+			case StatsType.자원_전력_회복: StatsData.RecoveryElectric = Mathf.FloorToInt(valuePercent * 100); break;
+			case StatsType.자원_전력_현재: RuntimeData.LocalElectric = Mathf.FloorToInt(valuePercent * 100); break;
 
 			case StatsType.시설_내구도_최대: break;
 			case StatsType.시설_내구도_회복: break;
@@ -190,13 +190,13 @@ public partial class SectorObject : IStatsValueControl
 			out int integerMaterial,
 			out int integerElectric);
 
-		integerPersonnel += StatsValue.GetStatsValue(StatsType.거점_인력_현재);
-		integerMaterial += StatsValue.GetStatsValue(StatsType.거점_재료_현재);
-		integerElectric += StatsValue.GetStatsValue(StatsType.거점_전력_현재);
+		integerPersonnel += StatsValue.GetStatsValue(StatsType.자원_인력_현재);
+		integerMaterial += StatsValue.GetStatsValue(StatsType.자원_재료_현재);
+		integerElectric += StatsValue.GetStatsValue(StatsType.자원_전력_현재);
 
-		StatsValue.SetStatsValue(StatsType.거점_인력_현재, integerPersonnel);
-		StatsValue.SetStatsValue(StatsType.거점_재료_현재, integerMaterial);
-		StatsValue.SetStatsValue(StatsType.거점_전력_현재, integerElectric);
+		StatsValue.SetStatsValue(StatsType.자원_인력_현재, integerPersonnel);
+		StatsValue.SetStatsValue(StatsType.자원_재료_현재, integerMaterial);
+		StatsValue.SetStatsValue(StatsType.자원_전력_현재, integerElectric);
 
 		OnSupplyChange.Invoke(this);
 	}

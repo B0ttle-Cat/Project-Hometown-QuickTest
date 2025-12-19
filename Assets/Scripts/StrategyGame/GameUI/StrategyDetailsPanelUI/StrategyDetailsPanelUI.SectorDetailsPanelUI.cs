@@ -224,7 +224,7 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 			{
 				int value = item.value;
 				int max = item.max;
-				KeyPair.FindPairChain<FillRectUIAndLabel>(fillRectName, out var fillRectUI);
+				KeyPair.FindPairChain<FillRectAndLabel>(fillRectName, out var fillRectUI);
 				if (fillRectUI == null) return;
 
 				if (max > 0)

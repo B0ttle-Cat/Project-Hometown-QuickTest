@@ -22,7 +22,7 @@ public static class FactionAPI
 	{
 		if (faction == null || faction.IsNotAlive()) return;
 
-		StatsValue nowValue = faction.FactionStats.GetValue(StatsType.세력_인력_현재);
+		StatsValue nowValue = faction.FactionStats.GetValue(StatsType.자원_인력_현재);
 		nowValue += value;
 		faction.FactionStats.SetValue(nowValue);
 	}
@@ -33,7 +33,7 @@ public static class FactionAPI
 	{
 		if (faction == null || faction.IsNotAlive()) return false;
 
-		StatsValue nowValue = faction.FactionStats.GetValue(StatsType.세력_물자_현재);
+		StatsValue nowValue = faction.FactionStats.GetValue(StatsType.자원_재료_현재);
 		return nowValue >= value;
 	}
 
@@ -41,7 +41,7 @@ public static class FactionAPI
 	{
 		if (faction.IsNotAlive()) return false;
 
-		StatsValue nowValue = faction.FactionStats.GetValue(StatsType.세력_전력_현재);
+		StatsValue nowValue = faction.FactionStats.GetValue(StatsType.자원_전력_현재);
 		return nowValue >= value;
 	}
 	#endregion
@@ -62,7 +62,7 @@ public static class FactionAPI
 		var sectorList = StrategyManager.Collector.GetList<SectorObject>();
 		var values = sectorList.Where(i => i.CaptureFaction == faction).Select(i => i.RuntimeData.LocalElectric).ToArray();
 
-		StatsValue totalValue = faction.FactionStats.GetValue(StatsType.세력_전력_현재);
+		StatsValue totalValue = faction.FactionStats.GetValue(StatsType.자원_전력_현재);
 		if (PayCostByCutDown(value, totalValue, values))
 		{
 			int total = 0;
@@ -85,8 +85,8 @@ public static class FactionAPI
 	{
 		if (faction == null || faction.IsNotAlive()) return;
 
-		StatsValue maxValue = faction.FactionStats.GetValue(StatsType.세력_물자_최대);
-		StatsValue nowValue = faction.FactionStats.GetValue(StatsType.세력_물자_현재);
+		StatsValue maxValue = faction.FactionStats.GetValue(StatsType.자원_재료_최대);
+		StatsValue nowValue = faction.FactionStats.GetValue(StatsType.자원_재료_현재);
 		if (nowValue >= maxValue) return;
 
 		nowValue += value;
@@ -98,8 +98,8 @@ public static class FactionAPI
 	{
 		if (faction == null || faction.IsNotAlive()) return;
 
-		StatsValue maxValue = faction.FactionStats.GetValue(StatsType.세력_전력_최대);
-		StatsValue nowValue = faction.FactionStats.GetValue(StatsType.세력_전력_현재);
+		StatsValue maxValue = faction.FactionStats.GetValue(StatsType.자원_전력_최대);
+		StatsValue nowValue = faction.FactionStats.GetValue(StatsType.자원_전력_현재);
 		if (nowValue >= maxValue) return;
 
 		nowValue += value;
@@ -113,8 +113,8 @@ public static class FactionAPI
 	{
 		if (faction == null || faction.IsNotAlive()) return true;
 
-		StatsValue maxValue = faction.FactionStats.GetValue(StatsType.세력_물자_최대);
-		StatsValue nowValue = faction.FactionStats.GetValue(StatsType.세력_물자_현재);
+		StatsValue maxValue = faction.FactionStats.GetValue(StatsType.자원_재료_최대);
+		StatsValue nowValue = faction.FactionStats.GetValue(StatsType.자원_재료_현재);
 		return nowValue >= maxValue;
 	}
 
@@ -122,8 +122,8 @@ public static class FactionAPI
 	{
 		if (faction == null || faction.IsNotAlive()) return true;
 
-		StatsValue maxValue = faction.FactionStats.GetValue(StatsType.세력_전력_최대);
-		StatsValue nowValue = faction.FactionStats.GetValue(StatsType.세력_전력_현재);
+		StatsValue maxValue = faction.FactionStats.GetValue(StatsType.자원_전력_최대);
+		StatsValue nowValue = faction.FactionStats.GetValue(StatsType.자원_전력_현재);
 		return nowValue >= maxValue;
 	}
 	#endregion

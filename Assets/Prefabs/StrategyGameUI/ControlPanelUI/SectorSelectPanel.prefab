@@ -332,7 +332,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2747837064313736287
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2382,7 +2382,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &163735347967874698
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2917,7 +2917,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3074189898629016443
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3408,7 +3408,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3815406446859693204
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4006,6 +4006,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Fill Rect
       objectReference: {fileID: 0}
+    - target: {fileID: 5126413108319421799, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5208070350384272659, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
       propertyPath: m_Color.a
       value: 1
@@ -4229,7 +4233,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5126413108319421799, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5208070350384272659, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
       propertyPath: m_Color.a
@@ -4452,6 +4456,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Fill Rect
       objectReference: {fileID: 0}
+    - target: {fileID: 5126413108319421799, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5208070350384272659, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
       propertyPath: m_Color.a
       value: 1
@@ -4672,6 +4680,10 @@ PrefabInstance:
     - target: {fileID: 5126413108319421799, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
       propertyPath: m_Name
       value: Fill Rect
+      objectReference: {fileID: 0}
+    - target: {fileID: 5126413108319421799, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5208070350384272659, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
       propertyPath: m_Color.a

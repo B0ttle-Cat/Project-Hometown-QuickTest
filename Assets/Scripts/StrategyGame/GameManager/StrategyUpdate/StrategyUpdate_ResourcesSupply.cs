@@ -96,11 +96,9 @@ namespace StrategyManagerModule
 				protected ResourcesSupply(StrategyUpdate_ResourcesSupply thisSubClass) : base(thisSubClass)
 				{
 				}
-
 				public abstract bool IsValid();
 				public bool IsInvalid() => !IsValid();
 			}
-
 			public class SectorResourcesSupply : ResourcesSupply
 			{
 				private readonly SectorObject sector;
@@ -156,9 +154,9 @@ namespace StrategyManagerModule
 				{
 					int depthCount = sector.StatsData.DistributionDepth + sector.RuntimeData.DistributionDepth;
 
-					int recoveryPersonnel = sector.StatsValue.GetStatsValue(StrategyGamePlayData.StatsType.거점_인력_회복);
-					int recoveryMaterial = sector.StatsValue.GetStatsValue(StrategyGamePlayData.StatsType.거점_재료_회복);
-					int recoveryElectric = sector.StatsValue.GetStatsValue(StrategyGamePlayData.StatsType.거점_전력_회복);
+					int recoveryPersonnel = sector.StatsValue.GetStatsValue(StrategyGamePlayData.StatsType.자원_인력_회복);
+					int recoveryMaterial = sector.StatsValue.GetStatsValue(StrategyGamePlayData.StatsType.자원_재료_회복);
+					int recoveryElectric = sector.StatsValue.GetStatsValue(StrategyGamePlayData.StatsType.자원_전력_회복);
 
 					if (depthCount <= 0)
 					{
@@ -198,8 +196,8 @@ namespace StrategyManagerModule
 					if (!supplyRequest.IsUpdateFlag()) return;
 					var factionSupply = factionSupplyRequest[sector.CaptureFaction];
 
-					int capacityPersonnel = sector.StatsValue.GetStatsValue(StrategyGamePlayData.StatsType.거점_인력_최대);
-					int localPersonnel = sector.StatsValue.GetStatsValue(StrategyGamePlayData.StatsType.거점_인력_현재);
+					int capacityPersonnel = sector.StatsValue.GetStatsValue(StrategyGamePlayData.StatsType.자원_인력_최대);
+					int localPersonnel = sector.StatsValue.GetStatsValue(StrategyGamePlayData.StatsType.자원_인력_현재);
 					float sectorPersonnel = supplyRequest.ReservationPersonnel;
 					float factionPersonnel = 0f;
 					SectorToFaction(in capacityPersonnel, in localPersonnel,
@@ -208,8 +206,8 @@ namespace StrategyManagerModule
 					factionSupply.ReservationPersonnel += factionPersonnel;
 
 
-					int capacityMaterial = sector.StatsValue.GetStatsValue(StrategyGamePlayData.StatsType.거점_재료_최대);
-					int localMaterial = sector.StatsValue.GetStatsValue(StrategyGamePlayData.StatsType.거점_재료_현재);
+					int capacityMaterial = sector.StatsValue.GetStatsValue(StrategyGamePlayData.StatsType.자원_재료_최대);
+					int localMaterial = sector.StatsValue.GetStatsValue(StrategyGamePlayData.StatsType.자원_재료_현재);
 					float sectorMaterial = supplyRequest.ReservationMaterial;
 					float factionMaterial = 0f;
 					SectorToFaction(in capacityMaterial, in localMaterial,
@@ -217,8 +215,8 @@ namespace StrategyManagerModule
 					supplyRequest.ReservationPersonnel = sectorMaterial;
 					factionSupply.ReservationPersonnel += factionMaterial;
 
-					int capacityElectric = sector.StatsValue.GetStatsValue(StrategyGamePlayData.StatsType.거점_전력_최대);
-					int localElectric = sector.StatsValue.GetStatsValue(StrategyGamePlayData.StatsType.거점_전력_현재);
+					int capacityElectric = sector.StatsValue.GetStatsValue(StrategyGamePlayData.StatsType.자원_전력_최대);
+					int localElectric = sector.StatsValue.GetStatsValue(StrategyGamePlayData.StatsType.자원_전력_현재);
 					float sectorElectric = supplyRequest.ReservationElectric;
 					float factionElectric = 0f;
 					SectorToFaction(in capacityElectric, in localElectric,

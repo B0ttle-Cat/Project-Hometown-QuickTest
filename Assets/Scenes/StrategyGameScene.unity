@@ -595,8 +595,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.HorizontalLayoutGroup
   m_Padding:
-    m_Left: 0
-    m_Right: 0
+    m_Left: 10
+    m_Right: 10
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 4
@@ -751,10 +751,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 81176058}
     m_Modifications:
     - target: {fileID: -7664107136684782167, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
-      propertyPath: bgAlpha
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: -7664107136684782167, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
       propertyPath: bgColor.a
       value: 0.5
       objectReference: {fileID: 0}
@@ -870,9 +866,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: FillRect
       objectReference: {fileID: 0}
-    - target: {fileID: 5208070350384272659, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
-      propertyPath: m_Color.a
-      value: 0.5
+    - target: {fileID: 5126413108319421799, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6799196330362347954, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
       propertyPath: m_Color.a
@@ -909,6 +905,10 @@ PrefabInstance:
     - target: {fileID: 8725691786621138088, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
       propertyPath: m_Padding.x
       value: 91.04176
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Color.a
+      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1055,8 +1055,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 81176058}
+  - component: {fileID: 81176059}
   m_Layer: 5
-  m_Name: Info_MaterialPoint
+  m_Name: MaterialFillRect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1083,6 +1084,20 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &81176059
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 81176057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e842670240830f49a6aedd94e5adbf3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FillRectUIAndLabel
+  label: {fileID: 810909375}
+  fillRectUI: {fileID: 897992648}
 --- !u!1 &91079546
 GameObject:
   m_ObjectHideFlags: 0
@@ -2003,8 +2018,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 128646698}
+  - component: {fileID: 128646699}
   m_Layer: 5
-  m_Name: Info_Sector
+  m_Name: SectorFillRect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2031,6 +2047,20 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &128646699
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 128646697}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e842670240830f49a6aedd94e5adbf3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FillRectUIAndLabel
+  label: {fileID: 1078031241}
+  fillRectUI: {fileID: 1686415511}
 --- !u!1 &140617534
 GameObject:
   m_ObjectHideFlags: 0
@@ -3906,7 +3936,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 331986541}
   toggleTransition: 1
   graphic: {fileID: 656030856}
-  m_Group: {fileID: 0}
+  m_Group: {fileID: 1081975520}
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -4531,7 +4561,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 388215296}
   toggleTransition: 1
   graphic: {fileID: 1511373505}
-  m_Group: {fileID: 0}
+  m_Group: {fileID: 1081975520}
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -5189,10 +5219,10 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1555327484}
-  - {fileID: 1234401990}
   - {fileID: 58857479}
   - {fileID: 4796101}
+  - {fileID: 1555327484}
+  - {fileID: 1234401990}
   m_Father: {fileID: 449196672}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -5342,7 +5372,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 492795969}
   toggleTransition: 1
   graphic: {fileID: 345949944}
-  m_Group: {fileID: 0}
+  m_Group: {fileID: 1081975520}
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -5438,8 +5468,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.HorizontalLayoutGroup
   m_Padding:
-    m_Left: 0
-    m_Right: 0
+    m_Left: 10
+    m_Right: 10
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 4
@@ -6801,8 +6831,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 724487841}
+  - component: {fileID: 724487842}
   m_Layer: 5
-  m_Name: Info_Manpower
+  m_Name: PersonnelFillRect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6829,6 +6860,20 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &724487842
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 724487840}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e842670240830f49a6aedd94e5adbf3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FillRectUIAndLabel
+  label: {fileID: 1209019072}
+  fillRectUI: {fileID: 1660895169}
 --- !u!1 &750597780
 GameObject:
   m_ObjectHideFlags: 0
@@ -7631,7 +7676,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 27.845, y: -11.49}
-  m_SizeDelta: {x: 55.69, y: 22.98}
+  m_SizeDelta: {x: 35.69, y: 22.98}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &810909375
 MonoBehaviour:
@@ -7721,7 +7766,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &810909376
@@ -7841,10 +7886,10 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 499270798}
-          m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-          m_MethodName: SetActive
-          m_Mode: 6
+        - m_Target: {fileID: 128646699}
+          m_TargetAssemblyTypeName: FillRectUIAndLabel, Assembly-CSharp
+          m_MethodName: OnShowLabel
+          m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -7857,10 +7902,10 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 499270798}
-          m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-          m_MethodName: SetActive
-          m_Mode: 6
+        - m_Target: {fileID: 128646699}
+          m_TargetAssemblyTypeName: FillRectUIAndLabel, Assembly-CSharp
+          m_MethodName: OnHideLabel
+          m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -8143,6 +8188,17 @@ MonoBehaviour:
   m_FlexibleWidth: 100000
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &897992648 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: -7664107136684782167, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
+  m_PrefabInstance: {fileID: 78481633}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46e693b41a4bfa44bbdbe3effa3f8262, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FillRectUI
 --- !u!1 &906578734
 GameObject:
   m_ObjectHideFlags: 0
@@ -9326,7 +9382,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1007553021}
   toggleTransition: 1
   graphic: {fileID: 1667190998}
-  m_Group: {fileID: 0}
+  m_Group: {fileID: 1081975520}
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -9565,7 +9621,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1053609877}
   toggleTransition: 1
   graphic: {fileID: 296199793}
-  m_Group: {fileID: 0}
+  m_Group: {fileID: 1081975520}
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -9629,7 +9685,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 36.765, y: -11.49}
-  m_SizeDelta: {x: 73.53, y: 22.98}
+  m_SizeDelta: {x: 53.53, y: 22.98}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1078031241
 MonoBehaviour:
@@ -9719,7 +9775,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &1078031242
@@ -9910,8 +9966,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1127782781}
   - component: {fileID: 1127782782}
+  - component: {fileID: 1127782783}
   m_Layer: 5
-  m_Name: PanelInfo
+  m_Name: MainFillRect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9937,7 +9994,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.000061035156, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1127782782
@@ -9966,6 +10023,21 @@ MonoBehaviour:
   m_ChildScaleWidth: 1
   m_ChildScaleHeight: 1
   m_ReverseArrangement: 0
+--- !u!114 &1127782783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1127782780}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17661c26fd3d8434aaea7c31a2f8d738, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StrategyResourcesView
+  personnel: {fileID: 724487842}
+  material: {fileID: 81176059}
+  electric: {fileID: 1946285818}
 --- !u!1 &1136198672
 GameObject:
   m_ObjectHideFlags: 0
@@ -10675,7 +10747,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 27.845, y: -11.49}
-  m_SizeDelta: {x: 55.69, y: 22.98}
+  m_SizeDelta: {x: 35.69, y: 22.98}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1209019072
 MonoBehaviour:
@@ -10765,7 +10837,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &1209019073
@@ -12447,8 +12519,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.HorizontalLayoutGroup
   m_Padding:
-    m_Left: 0
-    m_Right: 0
+    m_Left: 10
+    m_Right: 10
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 4
@@ -12869,8 +12941,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.HorizontalLayoutGroup
   m_Padding:
-    m_Left: 0
-    m_Right: 0
+    m_Left: 10
+    m_Right: 10
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 4
@@ -13576,10 +13648,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 724487841}
     m_Modifications:
     - target: {fileID: -7664107136684782167, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
-      propertyPath: bgAlpha
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: -7664107136684782167, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
       propertyPath: bgColor.a
       value: 0.5
       objectReference: {fileID: 0}
@@ -13695,9 +13763,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: FillRect
       objectReference: {fileID: 0}
-    - target: {fileID: 5208070350384272659, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
-      propertyPath: m_Color.a
-      value: 0.5
+    - target: {fileID: 5126413108319421799, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6799196330362347954, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
       propertyPath: m_Color.a
@@ -13735,6 +13803,10 @@ PrefabInstance:
       propertyPath: m_Padding.x
       value: 91.04176
       objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Color.a
+      value: 0.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -13745,6 +13817,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 397886940393712395, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
   m_PrefabInstance: {fileID: 1660895167}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1660895169 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: -7664107136684782167, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
+  m_PrefabInstance: {fileID: 1660895167}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46e693b41a4bfa44bbdbe3effa3f8262, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FillRectUI
 --- !u!1 &1667190996
 GameObject:
   m_ObjectHideFlags: 0
@@ -14130,10 +14213,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 128646698}
     m_Modifications:
     - target: {fileID: -7664107136684782167, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
-      propertyPath: bgAlpha
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: -7664107136684782167, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
       propertyPath: bgColor.a
       value: 0.5
       objectReference: {fileID: 0}
@@ -14156,10 +14235,6 @@ PrefabInstance:
     - target: {fileID: -7664107136684782167, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
       propertyPath: fillColor.r
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: -7664107136684782167, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
-      propertyPath: bgBrightness
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -7664107136684782167, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
       propertyPath: bgSaturation
@@ -14253,12 +14328,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: FillRect
       objectReference: {fileID: 0}
-    - target: {fileID: 5208070350384272659, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
-      propertyPath: m_Color.a
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5208070350384272659, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
-      propertyPath: m_Enabled
+    - target: {fileID: 5126413108319421799, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
+      propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6799196330362347954, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
@@ -14287,15 +14358,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7031273550108875670, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
       propertyPath: m_Color.b
-      value: 0
+      value: 0.7941177
       objectReference: {fileID: 0}
     - target: {fileID: 7031273550108875670, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
       propertyPath: m_Color.g
-      value: 0
+      value: 0.7941177
       objectReference: {fileID: 0}
     - target: {fileID: 7031273550108875670, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
       propertyPath: m_Color.r
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8492593299620564370, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
       propertyPath: m_Padding.z
@@ -14304,6 +14375,14 @@ PrefabInstance:
     - target: {fileID: 8725691786621138088, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
       propertyPath: m_Padding.x
       value: 91.04176
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Color.a
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -14315,6 +14394,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 397886940393712395, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
   m_PrefabInstance: {fileID: 1686415509}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1686415511 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: -7664107136684782167, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
+  m_PrefabInstance: {fileID: 1686415509}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46e693b41a4bfa44bbdbe3effa3f8262, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FillRectUI
 --- !u!4 &1689992988 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7324596390385222986, guid: 65b2fe5c02731a74dae76d0e92cc7e7c, type: 3}
@@ -15659,7 +15749,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 27.845, y: -11.49}
-  m_SizeDelta: {x: 55.69, y: 22.98}
+  m_SizeDelta: {x: 35.69, y: 22.98}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1903322101
 MonoBehaviour:
@@ -15749,7 +15839,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &1903322102
@@ -15895,8 +15985,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1946285817}
+  - component: {fileID: 1946285818}
   m_Layer: 5
-  m_Name: Info_ElectricPoint
+  m_Name: ElectricFillRect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15923,6 +16014,20 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1946285818
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1946285816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e842670240830f49a6aedd94e5adbf3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FillRectUIAndLabel
+  label: {fileID: 1903322101}
+  fillRectUI: {fileID: 5718835375040171155}
 --- !u!1001 &1959845627
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15993,6 +16098,7 @@ GameObject:
   - component: {fileID: 1962822530}
   - component: {fileID: 1962822526}
   - component: {fileID: 1962822529}
+  - component: {fileID: 1962822532}
   m_Layer: 5
   m_Name: MainPanelUI
   m_TagString: Untagged
@@ -16100,6 +16206,23 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 20
   m_TargetDisplay: 0
+--- !u!114 &1962822532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1962822524}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bacd6da23a603b74db81f585e8a41fd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KeyPairTarget
+  list:
+  - key: MainFillRect
+    target: {fileID: 1127782780}
+  - key: SectorFillRect
+    target: {fileID: 128646697}
 --- !u!1 &1994583500
 GameObject:
   m_ObjectHideFlags: 0
@@ -16564,10 +16687,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 1946285817}
     m_Modifications:
     - target: {fileID: -7664107136684782167, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
-      propertyPath: bgAlpha
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: -7664107136684782167, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
       propertyPath: bgColor.a
       value: 0.5
       objectReference: {fileID: 0}
@@ -16683,6 +16802,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FillRect
       objectReference: {fileID: 0}
+    - target: {fileID: 5126413108319421799, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6799196330362347954, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
       propertyPath: m_Color.a
       value: 0.5
@@ -16725,6 +16848,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 397886940393712395, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
   m_PrefabInstance: {fileID: 5718835375040171153}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &5718835375040171155 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: -7664107136684782167, guid: b307bdd90632d8443928c0e66165aae4, type: 3}
+  m_PrefabInstance: {fileID: 5718835375040171153}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46e693b41a4bfa44bbdbe3effa3f8262, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FillRectUI
 --- !u!1001 &7533463526043797607
 PrefabInstance:
   m_ObjectHideFlags: 0

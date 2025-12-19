@@ -6,23 +6,25 @@ using Sirenix.OdinInspector;
 
 using UnityEngine;
 
+using static StrategyManagerModule.StrategyUpdate;
+
 public partial class StrategyGamePlayData // StatsValue
 {
 	public static StatsType[] SectorCurrentStats =new StatsType[]
 	{
-		StatsType.거점_인력_현재,
-		StatsType.거점_재료_현재,
-		StatsType.거점_전력_현재,
+		StatsType.자원_인력_현재,
+		StatsType.자원_재료_현재,
+		StatsType.자원_전력_현재,
 	};
 
 	public static StatsType[] SectorSupplyStats_Max =new StatsType[]
 	{
-		StatsType.거점_인력_최대,
-		StatsType.거점_재료_최대,
-		StatsType.거점_전력_최대,
-		StatsType.거점_인력_회복,
-		StatsType.거점_재료_회복,
-		StatsType.거점_전력_회복,
+		StatsType.자원_인력_최대,
+		StatsType.자원_재료_최대,
+		StatsType.자원_전력_최대,
+		StatsType.자원_인력_회복,
+		StatsType.자원_재료_회복,
+		StatsType.자원_전력_회복,
 	};
 	/// StatsType 을 string 으로 표현할떄 붙어야 하는 접미사.
 	public static string SuffixStatsType(StatsType type) => type switch
@@ -185,18 +187,18 @@ public partial class StrategyGamePlayData // StatsValue
 			);
 		public static StatsList SectorStatsList => new StatsList(
 
-				new StatsValue(StatsType.거점_인력_최대, 100),
-				new StatsValue(StatsType.거점_재료_최대, 1000),
-				new StatsValue(StatsType.거점_전력_최대, 1000),
+				new StatsValue(StatsType.자원_인력_최대, 100),
+				new StatsValue(StatsType.자원_재료_최대, 1000),
+				new StatsValue(StatsType.자원_전력_최대, 1000),
 
-				new StatsValue(StatsType.거점_인력_회복, 5),
-				new StatsValue(StatsType.거점_재료_회복, 50),
-				new StatsValue(StatsType.거점_전력_회복, 50)
+				new StatsValue(StatsType.자원_인력_회복, 5),
+				new StatsValue(StatsType.자원_재료_회복, 50),
+				new StatsValue(StatsType.자원_전력_회복, 50)
 		);
 		public static StatsList SectorCurrentStatsList => new StatsList(
-				new StatsValue(StatsType.거점_인력_현재, 0),
-				new StatsValue(StatsType.거점_재료_현재, 0),
-				new StatsValue(StatsType.거점_전력_현재, 0)
+				new StatsValue(StatsType.자원_인력_현재, 0),
+				new StatsValue(StatsType.자원_재료_현재, 0),
+				new StatsValue(StatsType.자원_전력_현재, 0)
 		);
 		public void Invoke(in StatsValue statsValue)
 		{
@@ -622,4 +624,35 @@ public partial class StrategyGamePlayData // StatsValue
 		void SetStatsValuePrecent(StatsType type, float valuePercent);
 	}
 
+	public interface ISupplyStats : IStatsValueControl
+	{
+		public Action<ISupplyStats> OnSupplyChange { get; set; }
+		public void OnSupplyUpdate(SupplyRequest supplyRequest)
+		{
+			if (!supplyRequest.IsUpdateFlag()) return;
+
+			supplyRequest.ResetAndLeaveDecimal(
+				out int integerPersonnel,
+				out int integerMaterial,
+				out int integerElectric);
+
+			int maxPersonnel = StatsValue.GetStatsValue(StatsType.자원_인력_최대);
+			int maxMaterial = StatsValue.GetStatsValue(StatsType.자원_재료_최대);
+			int maxElectric = StatsValue.GetStatsValue(StatsType.자원_전력_최대);
+
+			integerPersonnel += StatsValue.GetStatsValue(StatsType.자원_인력_현재);
+			integerMaterial += StatsValue.GetStatsValue(StatsType.자원_재료_현재);
+			integerElectric += StatsValue.GetStatsValue(StatsType.자원_전력_현재);
+
+			if (maxPersonnel < integerPersonnel) integerPersonnel = maxPersonnel;
+			if (maxMaterial < integerMaterial) integerMaterial = maxMaterial;
+			if (maxElectric < integerElectric) integerElectric = maxElectric;
+
+			StatsValue.SetStatsValue(StatsType.자원_인력_현재, integerPersonnel);
+			StatsValue.SetStatsValue(StatsType.자원_재료_현재, integerMaterial);
+			StatsValue.SetStatsValue(StatsType.자원_전력_현재, integerElectric);
+
+			OnSupplyChange.Invoke(this);
+		}
+	}
 }

@@ -24,12 +24,12 @@ public partial class Faction : IEquatable<Faction>, IDisposable
 		enableResourcesSupply = data.enableResourcesSupply;
 
 		factionStats = new StatsList(new StatsValue(StatsType.세력_점령속도비율_c, data.captureSpeed),
-			new StatsValue(StatsType.세력_인력_최대, data.maxOperationPoint),
-			new StatsValue(StatsType.세력_인력_현재, data.currentOperationPoint),
-			new StatsValue(StatsType.세력_물자_최대, data.maxMaterialPoint),
-			new StatsValue(StatsType.세력_물자_현재, data.currentMaterialPoint),
-			new StatsValue(StatsType.세력_전력_최대, data.maxElectricPoint),
-			new StatsValue(StatsType.세력_전력_현재, data.currentElectricPoint)
+			new StatsValue(StatsType.자원_인력_최대, data.maxOperationPoint),
+			new StatsValue(StatsType.자원_인력_현재, data.currentOperationPoint),
+			new StatsValue(StatsType.자원_재료_최대, data.maxMaterialPoint),
+			new StatsValue(StatsType.자원_재료_현재, data.currentMaterialPoint),
+			new StatsValue(StatsType.자원_전력_최대, data.maxElectricPoint),
+			new StatsValue(StatsType.자원_전력_현재, data.currentElectricPoint)
 		);
 		availableUnitKeyList = data.AvailableUnitKeyList();
 
@@ -195,25 +195,24 @@ public partial class Faction // ElementSet
     }
 }
 
-public partial class Faction : IStatsValueControl
+public partial class Faction : IStatsValueControl, ISupplyStats
 {
-	public Action<Faction> OnSupplyChange;
-
 	public IStatsValueControl StatsValue => this;
+    public Action<ISupplyStats> OnSupplyChange { get; set; }
 
     int IStatsValueControl.GetStatsValue(StatsType type)
     {
 		int baseValue = type switch
         {
-            StatsType.세력_인력_최대 => 1,
-            StatsType.세력_인력_현재 => 1,
-            StatsType.세력_물자_최대 => 1,
-            StatsType.세력_물자_현재 => 1,
-            StatsType.세력_전력_최대 => 1,
-            StatsType.세력_전력_현재 => 1,
-            StatsType.세력_인력_회복률_c => 1,
-            StatsType.세력_물자_회복률_c => 1,
-            StatsType.세력_전력_회복률_c => 1,
+            StatsType.자원_인력_최대 => 1,
+            StatsType.자원_인력_현재 => 1,
+            StatsType.자원_재료_최대 => 1,
+            StatsType.자원_재료_현재 => 1,
+            StatsType.자원_전력_최대 => 1,
+            StatsType.자원_전력_현재 => 1,
+            StatsType.자원_인력_회복 => 1,
+            StatsType.자원_재료_회복 => 1,
+            StatsType.자원_전력_회복 => 1,
             StatsType.세력_점령속도비율_c => 1,
             _ => 0,
         } + factionStats.GetValue(type);
@@ -224,15 +223,15 @@ public partial class Faction : IStatsValueControl
 	{
 		int baseValue = type switch
 		{
-			StatsType.세력_인력_최대 => 1,
-			StatsType.세력_인력_현재 => 1,
-			StatsType.세력_물자_최대 => 1,
-			StatsType.세력_물자_현재 => 1,
-			StatsType.세력_전력_최대 => 1,
-			StatsType.세력_전력_현재 => 1,
-			StatsType.세력_인력_회복률_c => 1,
-			StatsType.세력_물자_회복률_c => 1,
-			StatsType.세력_전력_회복률_c => 1,
+			StatsType.자원_인력_최대 => 1,
+			StatsType.자원_인력_현재 => 1,
+			StatsType.자원_재료_최대 => 1,
+			StatsType.자원_재료_현재 => 1,
+			StatsType.자원_전력_최대 => 1,
+			StatsType.자원_전력_현재 => 1,
+			StatsType.자원_인력_회복 => 1,
+			StatsType.자원_재료_회복 => 1,
+			StatsType.자원_전력_회복 => 1,
 			StatsType.세력_점령속도비율_c => 1,
 			_ => 0,
 		} + factionStats.GetValue(type);
@@ -243,9 +242,9 @@ public partial class Faction : IStatsValueControl
 	{
 		switch(type)
 		{
-			case StatsType.세력_인력_현재: factionStats.SetValue(type, value); break;
-			case StatsType.세력_물자_현재: factionStats.SetValue(type, value); break;
-			case StatsType.세력_전력_현재: factionStats.SetValue(type, value); break;
+			case StatsType.자원_인력_현재: factionStats.SetValue(type, value); break;
+			case StatsType.자원_재료_현재: factionStats.SetValue(type, value); break;
+			case StatsType.자원_전력_현재: factionStats.SetValue(type, value); break;
 			default: factionStats.SetValue(type, value); break;
 		}
 	}
@@ -255,9 +254,9 @@ public partial class Faction : IStatsValueControl
 		int value = Mathf.FloorToInt(valuePercent * 100);
 		switch (type)
 		{
-			case StatsType.세력_인력_현재: factionStats.SetValue(type, value); break;
-			case StatsType.세력_물자_현재: factionStats.SetValue(type, value); break;
-			case StatsType.세력_전력_현재: factionStats.SetValue(type, value); break;
+			case StatsType.자원_인력_현재: factionStats.SetValue(type, value); break;
+			case StatsType.자원_재료_현재: factionStats.SetValue(type, value); break;
+			case StatsType.자원_전력_현재: factionStats.SetValue(type, value); break;
 			default: factionStats.SetValue(type, value); break;
 		}
 	}
@@ -272,21 +271,21 @@ public partial class Faction : IStatsValueControl
 			out int integerMaterial,
 			out int integerElectric);
 
-		int maxPersonnel = StatsValue.GetStatsValue(StatsType.거점_인력_최대);
-		int maxMaterial = StatsValue.GetStatsValue(StatsType.거점_재료_최대);
-		int maxElectric = StatsValue.GetStatsValue(StatsType.거점_전력_최대);
+		int maxPersonnel = StatsValue.GetStatsValue(StatsType.자원_인력_최대);
+		int maxMaterial = StatsValue.GetStatsValue(StatsType.자원_재료_최대);
+		int maxElectric = StatsValue.GetStatsValue(StatsType.자원_전력_최대);
 
-		integerPersonnel += StatsValue.GetStatsValue(StatsType.거점_인력_현재);
-		integerMaterial += StatsValue.GetStatsValue(StatsType.거점_재료_현재);
-		integerElectric += StatsValue.GetStatsValue(StatsType.거점_전력_현재);
+		integerPersonnel += StatsValue.GetStatsValue(StatsType.자원_인력_현재);
+		integerMaterial += StatsValue.GetStatsValue(StatsType.자원_재료_현재);
+		integerElectric += StatsValue.GetStatsValue(StatsType.자원_전력_현재);
 
 		if (maxPersonnel < integerPersonnel) integerPersonnel = maxPersonnel;
 		if (maxMaterial < integerMaterial) integerMaterial = maxMaterial;
 		if (maxElectric < integerElectric) integerElectric = maxElectric;
 
-		StatsValue.SetStatsValue(StatsType.거점_인력_현재, integerPersonnel);
-		StatsValue.SetStatsValue(StatsType.거점_재료_현재, integerMaterial);
-		StatsValue.SetStatsValue(StatsType.거점_전력_현재, integerElectric);
+		StatsValue.SetStatsValue(StatsType.자원_인력_현재, integerPersonnel);
+		StatsValue.SetStatsValue(StatsType.자원_재료_현재, integerMaterial);
+		StatsValue.SetStatsValue(StatsType.자원_전력_현재, integerElectric);
 
 		OnSupplyChange.Invoke(this);
 	}
