@@ -76,7 +76,7 @@ namespace StrategyManagerModule
 					this.sector = sector;
 					network = null;
 
-					if (StrategyManager.NodeNetwork.GetSectorNetwork(Sector, out network))
+					if (StrategyManager.Pathfinding.GetSectorNetwork(Sector, out network))
 					{
 						FindingNeighbors();
 					}
@@ -106,7 +106,7 @@ namespace StrategyManagerModule
 
 					if (network == null)
 					{
-						if (StrategyManager.NodeNetwork.GetSectorNetwork(Sector, out network))
+						if (StrategyManager.Pathfinding.GetSectorNetwork(Sector, out network))
 						{
 							FindingNeighbors();
 						}
@@ -120,25 +120,27 @@ namespace StrategyManagerModule
 						return;
 					}
 
-					var neigh = network.neighbors;
-					var list = thisSubClass;
-
-					neighborIndexs = new int[neigh.Count];
-
-					for (int i = 0 ; i < neigh.Count ; i++)
-					{
-						SectorObject targetSector = neigh[i].sector;
-						int found = -1;
-						for (int j = 0 ; j < list.Count ; j++)
-						{
-							if (list[j].sector == targetSector)
-							{
-								found = j;
-								break;
-							}
-						}
-						neighborIndexs[i] = found;
-					}
+					StrategyManager.Pathfinding.FindSectorNeighbors(sector, 0, out var neighbors);
+					
+					//var neigh = network.neighbors;
+					//var list = thisSubClass;
+					//
+					//neighborIndexs = new int[neigh.Count];
+					//
+					//for (int i = 0 ; i < neigh.Count ; i++)
+					//{
+					//	SectorObject targetSector = neigh[i].sector;
+					//	int found = -1;
+					//	for (int j = 0 ; j < list.Count ; j++)
+					//	{
+					//		if (list[j].sector == targetSector)
+					//		{
+					//			found = j;
+					//			break;
+					//		}
+					//	}
+					//	neighborIndexs[i] = found;
+					//}
 				}
 
 				// Start 이후 4회 연속으로 호출된다. 

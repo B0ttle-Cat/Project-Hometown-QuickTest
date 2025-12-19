@@ -25,7 +25,7 @@ public class StrategyManager : MonoBehaviour
 	public static StrategyTime Time => Manager == null ? null : Manager.time;
 	public static StrategyUpdate Updater => Manager == null ? null : Manager.updater;
 	public static StrategyMouseSelecter Selecter => Manager == null ? null : Manager.selecter;
-	public static StrategyPathfinding NodeNetwork => Manager == null ? null : Manager.nodeNetwork;
+	public static StrategyPathfinding Pathfinding => Manager == null ? null : Manager.pathfinding;
 	public static StrategyViewAndControlModeChanger ViewAndControl => Manager == null ? null : Manager.viewAndControl;
 	public static StrategyFactionRelation FactionRelation => Manager == null? null : Manager.factionRelation;
 	public static KeyPairDisplayName Key2Name => Manager == null || Manager.key2Name == null
@@ -58,7 +58,7 @@ public class StrategyManager : MonoBehaviour
 	private StrategyTime time;
 	private StrategyUpdate updater;
 	private StrategyMouseSelecter selecter;
-	private StrategyPathfinding nodeNetwork;
+	private StrategyPathfinding pathfinding;
 	private StrategyViewAndControlModeChanger viewAndControl;
 	private StrategyFactionRelation factionRelation;
 
@@ -80,7 +80,7 @@ public class StrategyManager : MonoBehaviour
 		statistics = GetComponentInChildren<StrategyStatistics>();
 		updater = GetComponentInChildren<StrategyUpdate>();
 		selecter = GetComponentInChildren<StrategyMouseSelecter>();
-		nodeNetwork = GetComponentInChildren<StrategyPathfinding>();
+		pathfinding = GetComponentInChildren<StrategyPathfinding>();
 		viewAndControl = GetComponentInChildren<StrategyViewAndControlModeChanger>();
 		factionRelation = GetComponentInChildren<StrategyFactionRelation>();
 	}
@@ -229,7 +229,7 @@ public class StrategyManager : MonoBehaviour
 		await setter.OnStartSetter_Sector();
 
 		// Sector Network 세팅
-		await setter.OnStartSetter_SectorNetwork(nodeNetwork);
+		await setter.OnStartSetter_SectorNetwork(pathfinding);
 
 		// Operation 세팅
 		await setter.OnStartSetter_Operation();

@@ -13,7 +13,7 @@ public static class FactionAPI
 		=> !faction.IsAlive();
 
 
-	public static Faction ID2Object(int factionID)
+	public static Faction ID2Faction(int factionID)
 	{
 		return StrategyManager.Collector.Find<Faction>(factionID);
 	}
@@ -22,7 +22,7 @@ public static class FactionAPI
 	{
 		if (faction == null || faction.IsNotAlive()) return;
 
-		StatsValue nowValue = faction.FactionStats.GetValue(StatsType.세력_병력_현재);
+		StatsValue nowValue = faction.FactionStats.GetValue(StatsType.세력_인력_현재);
 		nowValue += value;
 		faction.FactionStats.SetValue(nowValue);
 	}

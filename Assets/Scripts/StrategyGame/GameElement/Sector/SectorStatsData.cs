@@ -92,7 +92,7 @@ public record SectorRuntimeData
 	public int LocalElectric;
 	[FoldoutGroup("리소스")]
 	[LabelText("추가 분배 거리")]
-	public int DistributionAddDepth;
+	public int DistributionDepth;
 
 	[LabelText("상태이상")]
 	public StatusEffectsFlag Status;

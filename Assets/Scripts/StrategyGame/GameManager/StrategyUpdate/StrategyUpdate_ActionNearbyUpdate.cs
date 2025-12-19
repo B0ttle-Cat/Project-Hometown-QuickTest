@@ -50,7 +50,7 @@
 				{
 					this.searching = searching;
 
-					faction = FactionAPI.ID2Object(searching.FactionID);
+					faction = FactionAPI.ID2Faction(searching.FactionID);
 				}
 
 				protected override void OnDispose()
@@ -62,7 +62,7 @@
 				{
 					if (faction == null)
 					{
-						faction = FactionAPI.ID2Object(searching.FactionID);
+						faction = FactionAPI.ID2Faction(searching.FactionID);
 					}
 
 					if (faction == null || SearcherAPI.IsNullRef()) return;

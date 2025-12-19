@@ -163,7 +163,7 @@ public interface INodeMovement : IMovement
 				OnChangeMoveProgress?.Invoke(0);
 				return;
 			}
-			StrategyManager.NodeNetwork.FindNodePath(ThisSeeker, prevPoint, nextPoint, FindPath);
+			StrategyManager.Pathfinding.FindNodePath(ThisSeeker, prevPoint, nextPoint, FindPath);
 			void FindPath(Path path)
 			{
 				if (path.error)
@@ -287,7 +287,7 @@ public interface INavMovement : IMovement
 				callback?.Invoke();
 				return;
 			}
-			StrategyManager.NodeNetwork.FindNavPath(ThisSeeker, prevPoint, nextPoint, FindPath);
+			StrategyManager.Pathfinding.FindNavPath(ThisSeeker, prevPoint, nextPoint, FindPath);
 			void FindPath(Path path)
 			{
 				if (path.error)

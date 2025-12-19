@@ -45,27 +45,19 @@ namespace StrategyManagerModule
 		{
 			public SectorObject sector;
 			public Vector3 position;
-			public List<Neighbor> neighbors;
+			public HashSet<SectorObject> neighbors;
 
 			public SectorNetwork(SectorObject sector)
 			{
 				this.sector = sector;
 				position = sector.transform.position;
-				neighbors = new List<Neighbor>();
+				neighbors = new HashSet<SectorObject>();
 			}
 
-			public readonly struct Neighbor
-			{
-				public readonly SectorObject sector;
-				public Neighbor(SectorObject sector)
-				{
-					this.sector = sector;
-				}
-			}
 
 			public void AddNeighbor(SectorObject sectorObject)
 			{
-				neighbors.Add(new Neighbor(sectorObject));
+				neighbors.Add(sectorObject);
 			}
 		}
 		private Dictionary<SectorObject, SectorNetwork> sectorNetworkList;
@@ -257,5 +249,46 @@ namespace StrategyManagerModule
 			GraphMask graphMask = GraphMask.FromGraphName("MainRecastGraph");
 			thisSeeker.StartPath(prevPoint, nextPoint, findPath);
 		}
-	} 
+
+		public void FindSectorNeighbors(SectorObject sector, int depthCount, out Dictionary<int, HashSet<SectorObject>> result)
+		{
+			result = new Dictionary<int, HashSet<SectorObject>>();
+			if (sector.IsNullRef())
+			{
+				return;
+			}
+			if (depthCount <= 0)
+			{
+				result.Add(0, new() { sector });
+				return;
+			}
+			HashSet<SectorObject> findingNode = new HashSet<SectorObject>(){};
+			HashSet<SectorObject> nextNode = new HashSet<SectorObject>(){sector};
+
+			while (depthCount < 0 || nextNode == null || nextNode.Count == 0)
+			{
+				foreach (SectorObject node in nextNode)
+				{
+					if (findingNode.Add(node))
+					{
+						if(!result.ContainsKey(depthCount))
+						{
+							result.Add(depthCount, new HashSet<SectorObject>());
+						}
+						result[depthCount].Add(node);
+
+						if (depthCount == 0) continue;
+						if (sectorNetworkList.TryGetValue(node, out var network))
+						{
+							foreach (var item in network.neighbors)
+							{
+								nextNode.Add(item);
+							}
+						}
+					}
+				}
+				depthCount--;
+			}
+		}
+	}
 }

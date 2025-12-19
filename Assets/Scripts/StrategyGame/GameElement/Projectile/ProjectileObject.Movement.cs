@@ -20,7 +20,7 @@ public partial class ProjectileObject : IProjectileMovement
 	}
 	partial void DeinitMovment()
 	{
-		movement.Deinit();
+        if(movement.IsNotNullRef())movement.Deinit();
 		movement = null;
 	}
 

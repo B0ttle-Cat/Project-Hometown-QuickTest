@@ -75,7 +75,7 @@
 //					TempData.SetTrigger(key, UpdateLogicSort.세력_자원갱신종료);
 //					if (TempData.TryGetValue<TempSupplyValue>(FactionTempSupplyValueKey(elementID), out var tempValue))
 //					{
-//						tempValue.material += curr;
+//						tempValue.reservationMaterial += curr;
 //						tempValue.manpowerMax += max;
 //					}
 //				}

@@ -1,10 +1,13 @@
-﻿using Sirenix.OdinInspector;
+﻿using System;
+
+using Sirenix.OdinInspector;
 
 using StrategyManagerModule;
 
 using UnityEngine;
 
 using static StrategyGamePlayData;
+using static StrategyManagerModule.StrategyUpdate;
 
 //using static StrategyGamePlayData.SectorData;
 //using static StrategyGamePlayData.SectorData.Support;
@@ -76,6 +79,9 @@ public partial class SectorObject : IStrategyElement, IStrategyStartGame
 public partial class SectorObject : IStatsValueControl
 {
 	public IStatsValueControl StatsValue => this;
+
+	public event Action<SectorObject> OnSupplyChange;
+
 
 	int IStatsValueControl.GetStatsValue(StatsType type)
 	{
@@ -172,5 +178,26 @@ public partial class SectorObject : IStatsValueControl
 			case StatsType.시설_내구도_현재: break;
 			default: break;
 		}
+	}
+
+
+	public void OnSupplyUpdate(SupplyRequest supplyRequest)
+	{
+		if (!supplyRequest.IsUpdateFlag()) return;
+
+		supplyRequest.ResetAndLeaveDecimal(
+			out int integerPersonnel,
+			out int integerMaterial,
+			out int integerElectric);
+
+		integerPersonnel += StatsValue.GetStatsValue(StatsType.거점_인력_현재);
+		integerMaterial += StatsValue.GetStatsValue(StatsType.거점_재료_현재);
+		integerElectric += StatsValue.GetStatsValue(StatsType.거점_전력_현재);
+
+		StatsValue.SetStatsValue(StatsType.거점_인력_현재, integerPersonnel);
+		StatsValue.SetStatsValue(StatsType.거점_재료_현재, integerMaterial);
+		StatsValue.SetStatsValue(StatsType.거점_전력_현재, integerElectric);
+
+		OnSupplyChange.Invoke(this);
 	}
 }

@@ -322,7 +322,7 @@ namespace StrategyManagerModule
 					float Delta(int faction, in float deltaTime)
 					{
 						Faction deltaFaction = StrategyManager.Collector.Find<Faction>(faction);
-						float captureSpeed = deltaFaction == null ? 1 : Mathf.Max(deltaFaction.FactionStats.GetValue(StrategyGamePlayData.StatsType.세력_점령속도비율).Value, 0.1f);
+						float captureSpeed = deltaFaction == null ? 1 : Mathf.Max(deltaFaction.FactionStats.GetValue(StrategyGamePlayData.StatsType.세력_점령속도비율_c).Value, 0.1f);
 						float delta = (captureSpeed / captureTime) * deltaTime;
 						return delta;
 					}

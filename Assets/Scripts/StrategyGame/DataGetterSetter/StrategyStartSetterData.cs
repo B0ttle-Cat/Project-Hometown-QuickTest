@@ -77,6 +77,8 @@ namespace StrategyManagerModule
 			[FoldoutGroup("@factionName/StatsData")] public int requireOperationPoint;
 			[FoldoutGroup("@factionName/StatsData")] public int currentOperationPoint;
 			[Space]
+			[FoldoutGroup("@factionName/StatsData")] public bool enableResourcesSupply;
+			[Space]
 			[FoldoutGroup("@factionName/StatsData")] public int maxMaterialPoint;
 			[FoldoutGroup("@factionName/StatsData")] public int currentMaterialPoint;
 			[Space]

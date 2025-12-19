@@ -47,34 +47,46 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d82bbf2c5d767348a29fc6784ffc047, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SectorObject
-  profile:
-    _data:
-      sectorName: 
-      environmentalKey: 
-      effects: 0
-      currentStats:
-        values: []
-  mainStats:
-    _data:
-      stats:
-        values: []
-  facilities:
-    _data:
-      slotData: []
-  support:
-    _data:
-      supportPoint: 0
+  sectorStatsData:
+    SectorName: 
+    CapacityPersonnel: 0
+    RecoveryPersonnel: 0
+    CapacityMaterial: 0
+    RecoveryMaterial: 0
+    CapacityElectric: 0
+    RecoveryElectric: 0
+    DistributionDepth: 0
+    CycleTime: 0
+    FactionCapacityPersonnel: 0
+    FactionCapacityMaterial: 0
+    FactionCapacityElectric: 0
+    CaptureTimeRequired: 0
+    EnvironmentalKey: 0
+    PermanentStatus: 0
+  sectorRuntimeData:
+    LocalPersonnel: 0
+    LocalMaterial: 0
+    LocalElectric: 0
+    DistributionAddDepth: 0
+    Status: 0
+    capture:
+      CaptureFactionID: -1
+      CaptureProgress: 0
+    facilitiesInfo:
+    - FacilityKey: 0
+      ConstructionProgress: 0
+    - FacilityKey: 0
+      ConstructionProgress: 0
+    - FacilityKey: 0
+      ConstructionProgress: 0
+    - FacilityKey: 0
+      ConstructionProgress: 0
+    support:
+      remainingPoint: 0
       offensivePoint: 0
       defensivePoint: 0
       supplyPoint: 0
-      facilitiesPoint: 0
-  capture:
-    _data:
-      captureFactionID: 0
-      captureProgress: 0
-      captureTime: 0
-  sectorStatsGroup:
-    values: []
+      facilityPoint: 0
 --- !u!114 &3338242986635090369
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -147,10 +159,11 @@ MonoBehaviour:
   height: 5
   heightPivot: 0
   axisDirection: 1
+  showGizmo: 0
   gizmoColor: {r: 0, g: 1, b: 1, a: 1}
+  checkOverlapCollider: 0
   overlapGizmoColor: {r: 1, g: 0, b: 0, a: 1}
   highlightGizmoColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  checkOverlapCollider: 0
 --- !u!1 &8262306400016143932
 GameObject:
   m_ObjectHideFlags: 0
