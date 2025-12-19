@@ -94,7 +94,7 @@ namespace StrategyManagerModule
 				protected override void OnUpdate(in float deltaTime)
 				{
 					if (sector == null || !sector.isActiveAndEnabled) return;
-					if (sector.CaptureData.captureFactionID < 0) return;
+					if (sector.RuntimeData.CaptureFactionID < 0) return;
 
 					(int curr, int max, int supply, bool isUpdate) electric = Update_EtchOther(in sector, ref electricPlanner, in deltaTime, 1f);
 					(int curr, int max, int supply, bool isUpdate) material = Update_EtchOther(in sector, ref materialPlanner, in deltaTime, 1f);
@@ -122,7 +122,7 @@ namespace StrategyManagerModule
 						};
 						tempData.SetValue(SectorTempSupplyValueKey(sector), sectorTempSupplyValue, UpdateLogicSort.거점_자원갱신종료);
 
-						int factionID = sector.CaptureData.captureFactionID;
+						int factionID = sector.RuntimeData.CaptureFactionID;
 						key = $"{factionID}_ResourcesSupply";
 						tempData.SetTrigger(key, UpdateLogicSort.세력_자원갱신종료);
 						if (tempData.TryGetValue<TempSupplyValue>(FactionTempSupplyValueKey(factionID), out var tempFactionValue))
@@ -134,9 +134,9 @@ namespace StrategyManagerModule
 					#region Update EtchOther
 					static (int curr, int max, int supply, bool isUpdate) Update_EtchOther(in SectorObject sector, ref SupplyPlanner planner, in float deltaTime, float supplyFactor = 1f)
 					{
-						int max = sector.SectorStatsGroup.GetValue(planner.MaxType);
-						int supply = sector.SectorStatsGroup.GetValue(planner.SupplyType);
-						int curr = sector.CurrStatsList.GetValue(planner.CurrType);
+						int max = sector.StatsValue.GetStatsValue(planner.MaxType);
+						int supply = sector.StatsValue.GetStatsValue(planner.SupplyType);
+						int curr = sector.StatsValue.GetStatsValue(planner.CurrType);
 						float resetResupplyTime = planner.ResetResupplyTime;
 						float supplement = planner.Supplement;
 						float currentResupplyTime = planner.CurrentResupplyTime;

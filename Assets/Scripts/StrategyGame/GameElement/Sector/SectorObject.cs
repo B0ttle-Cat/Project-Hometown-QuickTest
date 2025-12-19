@@ -1,272 +1,59 @@
-﻿using System;
-using System.Collections.Generic;
-
-using Sirenix.OdinInspector;
+﻿using Sirenix.OdinInspector;
 
 using StrategyManagerModule;
 
 using UnityEngine;
 
 using static StrategyGamePlayData;
+
 //using static StrategyGamePlayData.SectorData;
 //using static StrategyGamePlayData.SectorData.Support;
 
-using SectorData = StrategyGamePlayData.SectorData;
 
 [RequireComponent(typeof(CameraVisibilityGroupInStrategy))]
 public partial class SectorObject : MonoBehaviour
 {
-	[SerializeField, BoxGroup("Main")]
-	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
-	private SectorData.Profile profile;
-	[SerializeField, BoxGroup("Main")]
-	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
-	private SectorData.MainStats mainStats;
-	[SerializeField, BoxGroup("Main")]
-	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
-	private SectorData.Facilities facilities;
-	[SerializeField, BoxGroup("Main")]
-	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
-	private SectorData.Support support;
-	[SerializeField, BoxGroup("Main")]
-	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
-	private SectorData.Capture capture;
-	[SerializeField, BoxGroup("Main")]
-	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
-	private StatsGroup sectorStatsGroup;
+#if UNITY_EDITOR
+	[ShowInInspector, ToggleGroup("EditData", GroupName = "EditData")]
+	bool EditData { get; set; } = false;
+#endif
+	[SerializeField, ToggleGroup("EditData")]
+	private SectorStatsData sectorStatsData;
+	[SerializeField, ToggleGroup("EditData")]
+	private SectorRuntimeData sectorRuntimeData;
+
+	public SectorStatsData StatsData => sectorStatsData;
+	public SectorRuntimeData RuntimeData => sectorRuntimeData;
+
 	// 카메라에서 보이는지 판단하는 기능
 	private CameraVisibilityGroup visibilityGroup;
 
-    public void Awake()
+	public void Awake()
 	{
 		visibilityGroup = GetComponent<CameraVisibilityGroupInStrategy>();
 	}
 	public void Init(in StrategyStartSetterData.SectorData data)
 	{
-		if (profile == null) profile = new SectorData.Profile(data.profileData.Copy());
-		else profile.SetData(data.profileData.Copy());
-
-		if (mainStats == null) mainStats = new SectorData.MainStats(data.mainStatsData.Copy());
-		else mainStats.SetData(data.mainStatsData.Copy());
-
-		if (facilities == null) facilities = new SectorData.Facilities(data.facilitiesStatsData.Copy());
-		else facilities.SetData(data.facilitiesStatsData.Copy());
-
-		if (support == null) support = new SectorData.Support(data.supportStatsData.Copy());
-		else support.SetData(data.supportStatsData.Copy());
-
-		if (capture == null) capture = new SectorData.Capture(new()
-		{
-			captureFactionID = -1,
-			captureProgress = 1,
-			captureTime = data.captureTime,
-		});
-		InitStateGroup();
-	}
-	private void InitStateGroup()
-	{
-		sectorStatsGroup = new StatsGroup();
-		ref readonly MainStats.Data mainData = ref mainStats.ReadonlyData();
-		ref readonly Facilities.Data facilitiesData =  ref facilities.ReadonlyData();
-		ref readonly Support.Data supportData = ref support.ReadonlyData();
-
-		// 기본 스텟 설정
-		SetStatsList_MainStats(mainData.GetStatsList());
-		// 구조물 스텟 설정
-		var slots = facilitiesData.slotData;
-		int length = slots.Length;
-        for (int i = 0 ; i < length ; i++)
-        {
-			var slot = slots[i];
-			var facilitiesKey = slot.facilitiesKey;
-			if (string.IsNullOrWhiteSpace(facilitiesKey)) continue;
-			SetStatsList_Facilities(i, FindStatsList_Facilities(facilitiesKey));
-		}
-
-		// 지원 스텟 설정
-		SetStatsList_Support(SupportType.Offensive, FindStatsList_Support(SupportType.Offensive, supportData.offensivePoint));
-		SetStatsList_Support(SupportType.Defensive, FindStatsList_Support(SupportType.Defensive, supportData.defensivePoint));
-		SetStatsList_Support(SupportType.Supply, FindStatsList_Support(SupportType.Supply, supportData.supplyPoint));
-		SetStatsList_Support(SupportType.Facilities, FindStatsList_Support(SupportType.Facilities, supportData.facilitiesPoint));
-
-		StatsList FindStatsList_Facilities(string facilitiesKey)
-		{
-			// TODO:: facilityKey 를 사용해 Table 에서 값 가져와기
-			return null;
-		}
-		StatsList FindStatsList_Support(SupportType type, int point)
-		{
-			string key = $"{type}_{point}";
-			// TODO:: key 를 사용해 Table 에서 값 가져와기
-			return null;
-		}
+		sectorStatsData = new SectorStatsData(data);
+		sectorRuntimeData = new SectorRuntimeData(data);
 	}
 	public void Init(in StrategyStartSetterData.CaptureData data)
 	{
-		SectorData.Capture.Data initData = new ()
-		{
-			captureFactionID = StrategyManager.Collector.TryFind<Faction>(data.captureFactionID, out var find) ? find.FactionID : -1,
-			captureProgress = data.captureProgress,
-
-			captureTime = capture == null ? 0 :  CaptureData.captureTime,
-		};
-
-		if (capture == null) capture = new SectorData.Capture(initData);
-		else capture.SetData(initData);
+		sectorRuntimeData.InitCaptureData(data);
 	}
 }
 public partial class SectorObject // Getter
 {
-	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
-	public SectorData.Profile Profile => profile;
-	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
-	public SectorData.Capture Capture => capture;
-	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
-	public SectorData.MainStats Stats => mainStats;
-	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
-	public SectorData.Facilities Facilities => facilities;
-	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
-	public SectorData.Support Support => support;
-	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
-	public ref readonly SectorData.Profile.Data ProfileData => ref profile.ReadonlyData();
-	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
-	public ref readonly SectorData.Capture.Data CaptureData => ref capture.ReadonlyData();
-	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
-	public ref readonly SectorData.MainStats.Data StatsData => ref mainStats.ReadonlyData();
-	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
-	public ref readonly SectorData.Facilities.Data FacilitiesData => ref facilities.ReadonlyData();
-	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
-	public ref readonly SectorData.Support.Data SupportData => ref support.ReadonlyData();
-	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
-	public StatsList CurrStatsList => ProfileData.GetStatsList();
-	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]
-	public StatsGroup SectorStatsGroup => sectorStatsGroup ??= new StatsGroup();
-	public const string StatsGroupName_MainStats = "MainStats";
-	public const string StatsGroupName_Facilities = "Facilities_";
-	public const string StatsGroupName_Support = "Support_";
-	public const string StatsGroupName_StatusEffect = "StatusEffect_";
-	public bool TryGetStatsListInGroup(string groupName, out StatsList statsList)
-	{
-		return SectorStatsGroup.TryGetList(groupName, out statsList);
-	}
-	public void SetStatsListInGroup(string groupName, StatsList statsList)
-	{
-		SectorStatsGroup.SetList(groupName, statsList);
-	}
-	public List<string> GetStatsKeyListInGroup(string startsWith = "", string endsWith = "")
-	{
-		return SectorStatsGroup.GetkeyList(startsWith, endsWith);
-	}
-	public bool TryGetStatsList_MainStats( out StatsList statsList)
-	{
-		return TryGetStatsListInGroup(StatsGroupName_MainStats, out statsList);
-	}
-	public bool TryGetStatsList_Facilities(int slotIndex, out StatsList statsList)
-	{
-		return TryGetStatsListInGroup($"{StatsGroupName_Facilities}{slotIndex}", out statsList);
-	}
-	public bool TryGetStatsList_Support(SupportType supportType, out StatsList statsList)
-	{
-		return TryGetStatsListInGroup($"{StatsGroupName_Support}{supportType}", out statsList);
-	}
-	public bool TryGetStatsList_StatusEffec(string effectKey,out StatsList statsList)
-	{
-		return TryGetStatsListInGroup($"{StatsGroupName_StatusEffect}{effectKey}", out statsList);
-	}
-	private void SetStatsList_MainStats(StatsList statsList)
-	{
-		SetStatsListInGroup(StatsGroupName_MainStats, statsList);
-	}
-	private void SetStatsList_Facilities(int slotIndex, StatsList statsList)
-	{
-		SetStatsListInGroup($"{StatsGroupName_Facilities}{slotIndex}", statsList);
-	}
-	private void SetStatsList_Support(SupportType supportType, StatsList statsList)
-	{
-		SetStatsListInGroup($"{StatsGroupName_Support}{supportType}", statsList);
-	}
-	private void SetStatsList_StatusEffec(string effectKey, StatsList statsList)
-	{
-		SetStatsListInGroup($"{StatsGroupName_StatusEffect}{effectKey}", statsList);
-	}
-	public string SectorName => ProfileData.sectorName;
+	public string SectorName => StatsData.SectorName;
 	public Faction CaptureFaction => StrategyManager.Collector.Find<Faction>(CaptureFactionID);
-	public int CaptureFactionID => CaptureData.captureFactionID;
-	public float CaptureProgress => CaptureData.captureProgress;
-
-	public (int value, int max) GetDurability()
-	{
-		const StatsType CurrType = StatsType.거점_내구도_현재;
-		const StatsType MaxType = StatsType.거점_내구도_최대;
-		//const StatsType supplyType = StatsType.거점_인력_회복;
-
-		var currMain = CurrStatsList.GetValue(statsType: CurrType);
-		var maxMain = SectorStatsGroup.GetValue(MaxType);
-		//var supplyMain = CurrStatsList.GetValue(supplyType);
-
-		return (currMain.Value, maxMain.Value);
-	}
-	public (int value, int max) GetManpower()
-	{
-		const StatsType CurrType = StatsType.거점_인력_현재;
-		const StatsType MaxType = StatsType.거점_인력_최대;
-		//const StatsType supplyType = StatsType.거점_인력_회복;
-
-		var currMain = CurrStatsList.GetValue(statsType: CurrType);
-		var maxMain = SectorStatsGroup.GetValue(MaxType);
-		//var supplyMain = CurrStatsList.GetValue(supplyType);
-
-		return (currMain.Value, maxMain.Value);
-	}
-	public (int value, int max, int supply) GetMaterial()
-	{
-		const StatsType CurrType = StatsType.거점_재료_현재;
-		const StatsType MaxType = StatsType.거점_재료_최대;
-		const StatsType SupplyType = StatsType.거점_재료_회복;
-
-		var currMain = CurrStatsList.GetValue(statsType: CurrType);
-		var maxMain = SectorStatsGroup.GetValue(MaxType);
-		var supplyMain = SectorStatsGroup.GetValue(SupplyType);
-
-		return (currMain.Value, maxMain.Value, supplyMain.Value);
-	}
-	public (int value, int max, int supply) GetElectric()
-	{
-		const StatsType CurrType = StatsType.거점_전력_현재;
-		const StatsType MaxType = StatsType.거점_전력_최대;
-		const StatsType SupplyType = StatsType.거점_전력_회복;
-
-		var currMain = CurrStatsList.GetValue(statsType: CurrType);
-		var maxMain = SectorStatsGroup.GetValue(MaxType);
-		var supplyMain = SectorStatsGroup.GetValue(SupplyType);
-
-		return (currMain.Value, maxMain.Value, supplyMain.Value);
-	}
-	public void SetCaptureData(int factionID, float progress)
-	{
-		ref var data = ref capture.RefData();
-		data.captureFactionID = factionID;
-		data.captureProgress = progress;
-		capture.Invoke();
-	}
-	public void SetManpower(int value)
-	{
-		CurrStatsList.SetValue(StatsType.거점_인력_현재, value);
-	}
-	public void SetMaterial(int value)
-	{
-		CurrStatsList.SetValue(StatsType.거점_재료_현재, value);
-	}
-	public void SetElectric(int value)
-	{
-		CurrStatsList.SetValue(StatsType.거점_전력_현재, value);
-	}
+	public int CaptureFactionID => RuntimeData.CaptureFactionID;
+	public float CaptureProgress => RuntimeData.CaptureProgress;
 }
 public partial class SectorObject : IStrategyElement, IStrategyStartGame
 {
 	public IStrategyElement ThisElement => this;
 	public bool IsInCollector { get; set; }
-    int IStrategyElement.ID { get; set; }
+	int IStrategyElement.ID { get; set; }
 	public int SectorID => ThisElement.ID;
 
 	public void InStrategyCollector()
@@ -286,6 +73,104 @@ public partial class SectorObject : IStrategyElement, IStrategyStartGame
 	}
 }
 
-public partial class SectorObject // ThisRendering
+public partial class SectorObject : IStatsValueControl
 {
+	public IStatsValueControl StatsValue => this;
+
+	int IStatsValueControl.GetStatsValue(StatsType type)
+	{
+		int baseValue = type switch
+		{
+			StatsType.거점_인력_최대   => StatsData.CapacityPersonnel,
+			StatsType.거점_인력_회복   => StatsData.RecoveryPersonnel,
+			StatsType.거점_인력_현재   => RuntimeData.LocalPersonnel,
+
+			StatsType.거점_재료_최대   => StatsData.CapacityMaterial,
+			StatsType.거점_재료_회복   => StatsData.RecoveryMaterial,
+			StatsType.거점_재료_현재   => RuntimeData.LocalMaterial,
+
+			StatsType.거점_전력_최대   => StatsData.CapacityElectric,
+			StatsType.거점_전력_회복   => StatsData.RecoveryElectric,
+			StatsType.거점_전력_현재   => RuntimeData.LocalElectric,
+
+			StatsType.시설_내구도_최대 => 0,
+			StatsType.시설_내구도_회복 => 0,
+			StatsType.시설_내구도_현재 => 0,
+
+			_ => 0
+		};
+
+		return baseValue;
+	}
+
+	float IStatsValueControl.GetStatsValuePrecent(StatsType type)
+	{
+		float baseValue = type switch
+		{
+			StatsType.거점_인력_최대   => StatsData.CapacityPersonnel * 0.01f,
+			StatsType.거점_인력_회복   => StatsData.RecoveryPersonnel * 0.01f,
+			StatsType.거점_인력_현재   => RuntimeData.LocalPersonnel * 0.01f,
+
+			StatsType.거점_재료_최대   => StatsData.CapacityMaterial * 0.01f,
+			StatsType.거점_재료_회복   => StatsData.RecoveryMaterial * 0.01f,
+			StatsType.거점_재료_현재   => RuntimeData.LocalMaterial * 0.01f,
+
+			StatsType.거점_전력_최대   => StatsData.CapacityElectric * 0.01f,
+			StatsType.거점_전력_회복   => StatsData.RecoveryElectric * 0.01f,
+			StatsType.거점_전력_현재   => RuntimeData.LocalElectric * 0.01f,
+
+			StatsType.시설_내구도_최대 => 0,
+			StatsType.시설_내구도_회복 => 0,
+			StatsType.시설_내구도_현재 => 0,
+
+			_ => 0
+		};
+		return baseValue;
+	}
+
+	void IStatsValueControl.SetStatsValue(StatsType type, int value)
+	{
+		switch (type)
+		{
+			case StatsType.거점_인력_최대: StatsData.CapacityPersonnel = value; break;
+			case StatsType.거점_인력_회복: StatsData.RecoveryPersonnel = value; break;
+			case StatsType.거점_인력_현재: RuntimeData.LocalPersonnel = value; break;
+
+			case StatsType.거점_재료_최대: StatsData.CapacityMaterial = value; break;
+			case StatsType.거점_재료_회복: StatsData.RecoveryMaterial = value; break;
+			case StatsType.거점_재료_현재: RuntimeData.LocalMaterial = value; break;
+
+			case StatsType.거점_전력_최대: StatsData.CapacityElectric = value; break;
+			case StatsType.거점_전력_회복: StatsData.RecoveryElectric = value; break;
+			case StatsType.거점_전력_현재: RuntimeData.LocalElectric = value; break;
+
+			case StatsType.시설_내구도_최대: break;
+			case StatsType.시설_내구도_회복: break;
+			case StatsType.시설_내구도_현재: break;
+			default: break;
+		}
+	}
+
+	void IStatsValueControl.SetStatsValuePrecent(StatsType type, float valuePercent)
+	{
+		switch (type)
+		{
+			case StatsType.거점_인력_최대: StatsData.CapacityPersonnel = Mathf.FloorToInt(valuePercent * 100); break;
+			case StatsType.거점_인력_회복: StatsData.RecoveryPersonnel = Mathf.FloorToInt(valuePercent * 100); break;
+			case StatsType.거점_인력_현재: RuntimeData.LocalPersonnel = Mathf.FloorToInt(valuePercent * 100); break;
+
+			case StatsType.거점_재료_최대: StatsData.CapacityMaterial = Mathf.FloorToInt(valuePercent * 100); break;
+			case StatsType.거점_재료_회복: StatsData.RecoveryMaterial = Mathf.FloorToInt(valuePercent * 100); break;
+			case StatsType.거점_재료_현재: RuntimeData.LocalMaterial = Mathf.FloorToInt(valuePercent * 100); break;
+
+			case StatsType.거점_전력_최대: StatsData.CapacityElectric = Mathf.FloorToInt(valuePercent * 100); break;
+			case StatsType.거점_전력_회복: StatsData.RecoveryElectric = Mathf.FloorToInt(valuePercent * 100); break;
+			case StatsType.거점_전력_현재: RuntimeData.LocalElectric = Mathf.FloorToInt(valuePercent * 100); break;
+
+			case StatsType.시설_내구도_최대: break;
+			case StatsType.시설_내구도_회복: break;
+			case StatsType.시설_내구도_현재: break;
+			default: break;
+		}
+	}
 }

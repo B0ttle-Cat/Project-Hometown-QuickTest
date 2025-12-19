@@ -96,7 +96,7 @@ namespace StrategyManagerModule
 					if (tempSector == null) continue;
 
 					string sectorName =  tempSector.gameObject.name;
-					if (sectorName == sectorData.profileData.sectorName)
+					if (sectorName == sectorData.SectorName)
 					{
 						allSector[j] = null;
 						sector = tempSector;
@@ -106,7 +106,7 @@ namespace StrategyManagerModule
 				}
 				if(sector == null)
 				{
-					Debug.LogError($"현재 씬에서 SectorData({i}: {sectorData.profileData.sectorName})와 동일한 이름을 가진 SectorObject 가 없습니다.");
+					Debug.LogError($"현재 씬에서 SectorData({i}: {sectorData.SectorName})와 동일한 이름을 가진 SectorObject 가 없습니다.");
 					continue;
 				}
 				list.Add(sector);

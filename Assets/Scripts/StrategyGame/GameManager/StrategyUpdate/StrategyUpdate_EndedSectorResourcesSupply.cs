@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 
+using static StrategyGamePlayData;
+
 namespace StrategyManagerModule
 {
 	public partial class StrategyUpdate
@@ -57,19 +59,15 @@ namespace StrategyManagerModule
 
 					if (tempValue.electricIsUpdate)
 					{
-						sector.SetElectric(Mathf.Clamp(tempValue.electric, 0, tempValue.electricMax));
+						sector.StatsValue.SetStatsValue(StatsType.거점_전력_현재, Mathf.Clamp(tempValue.electric, 0, tempValue.electricMax));
 					}
 					if (tempValue.materialIsUpdate)
 					{
-						sector.SetElectric(Mathf.Clamp(tempValue.material, 0, tempValue.materialMax));
+						sector.StatsValue.SetStatsValue(StatsType.거점_전력_현재, Mathf.Clamp(tempValue.material, 0, tempValue.materialMax));
 					}
 					if (tempValue.manpowerIsUpdate)
 					{
-						sector.SetElectric(Mathf.Clamp(tempValue.manpower, 0, tempValue.manpowerMax));
-					}
-					if (tempValue.electricIsUpdate || tempValue.materialIsUpdate || tempValue.manpowerIsUpdate)
-					{
-						sector.Stats.Invoke();
+						sector.StatsValue.SetStatsValue(StatsType.거점_전력_현재, Mathf.Clamp(tempValue.manpower, 0, tempValue.manpowerMax));
 					}
 				}
 			}

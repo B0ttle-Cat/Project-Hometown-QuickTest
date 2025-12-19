@@ -74,15 +74,15 @@ namespace StrategyManagerModule
 		private void DrawSectorLabel(StrategyStartSetterData.SectorData sector)
 		{
 			// 실제 씬 오브젝트 찾기 (씬에 존재한다고 가정)
-			var obj = GameObject.Find("Map/"+sector.profileData.sectorName);
+			var obj = GameObject.Find("Map/"+sector.SectorName);
 			if (obj == null)
 				return;
-			DrawLabel(obj.transform.position, sector.profileData.sectorName, Color.black);
+			DrawLabel(obj.transform.position, sector.SectorName, Color.black);
 		}
 		private void DrawCapture(StrategyStartSetterData.CaptureData captureData, StrategyStartSetterData.SectorData[] sectorDatas, StrategyStartSetterData.FactionData[] factionDatas)
 		{
 			// 실제 씬 오브젝트 찾기 (씬에 존재한다고 가정)
-			string sectorName = sectorDatas[captureData.captureSectorID].profileData.sectorName;
+			string sectorName = sectorDatas[captureData.captureSectorID].SectorName;
 			var obj = GameObject.Find("Map/"+sectorName);
 			if (obj == null) return;
 			// 점령 세력 색상 추출
@@ -97,12 +97,12 @@ namespace StrategyManagerModule
 			if (!target.onShowSectorLink) return;
 
 			// A와 B 섹터 위치 추출
-			var sectorA = data.sectorDatas.FirstOrDefault(s => s.profileData.sectorName == net.sectorA);
-			var sectorB = data.sectorDatas.FirstOrDefault(s => s.profileData.sectorName == net.sectorB);
+			var sectorA = data.sectorDatas.FirstOrDefault(s => s.SectorName == net.sectorA);
+			var sectorB = data.sectorDatas.FirstOrDefault(s => s.SectorName == net.sectorB);
 
 			// 실제 씬 오브젝트 찾기 (씬에 존재한다고 가정)
-			var objA = GameObject.Find("Map/"+sectorA.profileData.sectorName);
-			var objB = GameObject.Find("Map/"+sectorB.profileData.sectorName);
+			var objA = GameObject.Find("Map/"+sectorA.SectorName);
+			var objB = GameObject.Find("Map/"+sectorB.SectorName);
 
 			if (objA == null || objB == null)
 				return;

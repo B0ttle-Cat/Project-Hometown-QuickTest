@@ -75,11 +75,13 @@ public partial class StrategyGamePlayData // StatsType
 		[LabelText("거점_전력_회복 (10초당)")]
 		거점_전력_회복            = 2021,
 		거점_전력_현재            = 2022,
+		#endregion
 
-		거점_내구도_최대          = 2030,
+		#region 시설물
 		[LabelText("거점_내구도_회복 (10초당)")]
-		거점_내구도_회복          = 2031,
-		거점_내구도_현재          = 2032,
+		시설_내구도_최대          = 3000,
+		시설_내구도_회복          = 3001,
+		시설_내구도_현재          = 3002,
 		#endregion
 
 		#region 세력_능력치	   	        

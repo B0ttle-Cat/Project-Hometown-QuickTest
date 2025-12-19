@@ -2,8 +2,6 @@
 
 using Sirenix.OdinInspector;
 
-using TMPro;
-
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -137,10 +135,10 @@ public partial class StrategyControlPanelUI // SectorSelectPanel
 			}
 			protected override void OnBeforeChangeValue()
 			{
-				Value.Profile.RemoveListener(OnChangeProfile);
-				Value.Stats.RemoveListener(OnChangeStats);
-				Value.Facilities.RemoveListener(OnChangeFacilities);
-				Value.Support.RemoveListener(OnChangeSupport);
+				//Value.Profile.RemoveListener(OnChangeProfile);
+				//Value.Stats.RemoveListener(OnChangeStats);
+				//Value.Facilities.RemoveListener(OnChangeFacilities);
+				//Value.Support.RemoveListener(OnChangeSupport);
 
 				onShowDetail = null;
 				onDeployUniqueUnit = null;
@@ -150,15 +148,15 @@ public partial class StrategyControlPanelUI // SectorSelectPanel
 			}
 			protected override void OnAfterChangeValue()
 			{
-				Value.Profile.AddListener(OnChangeProfile);
-				Value.Stats.AddListener(OnChangeStats);
-				Value.Facilities.AddListener(OnChangeFacilities);
-				Value.Support.AddListener(OnChangeSupport);
-
-				OnChangeProfile(Value.ProfileData);
-				OnChangeStats(Value.StatsData);
-				OnChangeFacilities(Value.FacilitiesData);
-				OnChangeSupport(Value.SupportData);
+				//Value.Profile.AddListener(OnChangeProfile);
+				//Value.Stats.AddListener(OnChangeStats);
+				//Value.Facilities.AddListener(OnChangeFacilities);
+				//Value.Support.AddListener(OnChangeSupport);
+				//
+				//OnChangeProfile(Value.ProfileData);
+				//OnChangeStats(Value.StatsData);
+				//OnChangeFacilities(Value.FacilitiesData);
+				//OnChangeSupport(Value.SupportData);
 
 				onShowDetail = () => Value.Controller.OnShowUI_DetailUI();
 				onDeployUniqueUnit = () => Value.Controller.OnControlButton_DeployUniqueUnit();
@@ -166,25 +164,25 @@ public partial class StrategyControlPanelUI // SectorSelectPanel
 				onPlanningOperationMovements = () => Value.Controller.OnControlButton_SpawnOperation();
 				onUseFacilitiesSkill = () => Value.Controller.OnControlButton_UseFacilitiesSkill();
 			}
-			private void OnChangeProfile(StrategyGamePlayData.SectorData.Profile.Data data)
-			{
-				KeyPair
-					.FindPairChain<TMP_Text>("Name", out var name)
-					.FindPairChain("IconParent", out GameObject iconParent)
-					.FindPairChain("IconSample", out GameObject iconSample)
-					;
-
-				if (name != null) name.text = data.sectorName;
-
-				if (iconParent != null && iconSample != null)
-				{
-					SetIconList(iconParent.transform, iconSample, data.effects);
-				}
-				else
-				{
-					ClearIcon();
-				}
-			}
+			//private void OnChangeProfile(StrategyGamePlayData.SectorData.Profile.Data data)
+			//{
+			//	KeyPair
+			//		.FindPairChain<TMP_Text>("Name", out var name)
+			//		.FindPairChain("IconParent", out GameObject iconParent)
+			//		.FindPairChain("IconSample", out GameObject iconSample)
+			//		;
+			//
+			//	if (name != null) name.text = data.sectorName;
+			//
+			//	if (iconParent != null && iconSample != null)
+			//	{
+			//		SetIconList(iconParent.transform, iconSample, data.effects);
+			//	}
+			//	else
+			//	{
+			//		ClearIcon();
+			//	}
+			//}
 			private void ClearIcon()
 			{
 				if (iconList == null) return;
@@ -224,25 +222,25 @@ public partial class StrategyControlPanelUI // SectorSelectPanel
 				}
 			}
 
-			private void OnChangeStats(StrategyGamePlayData.SectorData.MainStats.Data data)
-			{
-				UpdateFillRectUI();
-			}
-			private void OnChangeFacilities(StrategyGamePlayData.SectorData.Facilities.Data data)
-			{
-				UpdateFillRectUI();
-			}
-			private void OnChangeSupport(StrategyGamePlayData.SectorData.Support.Data data)
-			{
-				UpdateFillRectUI();
-			}
-			private void UpdateFillRectUI()
-			{
-				SetFillRectUI("Fill Durability", Value.GetDurability());
-				SetFillRectUI("Fill Operation", Value.GetManpower());
-				SetFillRectUI("Fill Material", Value.GetMaterial());
-				SetFillRectUI("Fill Electric", Value.GetElectric());
-			}
+			//private void OnChangeStats(StrategyGamePlayData.SectorData.MainStats.Data data)
+			//{
+			//	UpdateFillRectUI();
+			//}
+			//private void OnChangeFacilities(StrategyGamePlayData.SectorData.Facilities.Data data)
+			//{
+			//	UpdateFillRectUI();
+			//}
+			//private void OnChangeSupport(StrategyGamePlayData.SectorData.Support.Data data)
+			//{
+			//	UpdateFillRectUI();
+			//}
+			//private void UpdateFillRectUI()
+			//{
+			//	SetFillRectUI("Fill Durability", Value.GetDurability());
+			//	SetFillRectUI("Fill Operation", Value.GetManpower());
+			//	SetFillRectUI("Fill Material", Value.GetMaterial());
+			//	SetFillRectUI("Fill Electric", Value.GetElectric());
+			//}
 			private void SetFillRectUI(string fillRectName, (int value, int max, int supply) item)
 			{
 				int value = item.value;

@@ -139,7 +139,7 @@ public partial class UnitObject : IStatsValueControl
 		} + RuntimeData.DynamicKeyStatsList.GetValue(type) * INT_TO_FLOAT_DIVISOR;
 	}
 
-	void IStatsValueControl.SetRuntimeDataValue(StatsType type, int value)
+	void IStatsValueControl.SetStatsValue(StatsType type, int value)
 	{
 		// RuntimeData는 클래스 필드로 접근 가능하다고 가정합니다.
 		switch (type)
@@ -156,7 +156,7 @@ public partial class UnitObject : IStatsValueControl
 		}
 	}
 
-	void IStatsValueControl.SetRuntimeDataValuePrecent(StatsType type, float valuePercent)
+	void IStatsValueControl.SetStatsValuePrecent(StatsType type, float valuePercent)
     {
 		// RuntimeData는 클래스 필드로 접근 가능하다고 가정합니다.
 		switch (type)
@@ -183,7 +183,7 @@ public partial class UnitObject : ICombatCommon, ICombatOffense, ICombatDefance
 	{
 		int currentDurability = ThisCombatStats.CurrentDurability;
 		currentDurability -= damage;
-		ThisCombatStats.SetRuntimeDataValue(StatsType.유닛_현재내구도, currentDurability);
+		ThisCombatStats.SetStatsValue(StatsType.유닛_현재내구도, currentDurability);
 
 		// Show Demage Effect
 

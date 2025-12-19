@@ -60,216 +60,139 @@ MonoBehaviour:
         unitKey: 1100
         endUnitKey: 1420
     sectorDatas:
-    - profileData:
-        sectorName: Sector_00
-        environmentalKey: 
-        effects: 0
-        currentStats:
-          values:
-          - statsType: 2032
-            value: 500
-          - statsType: 2002
-            value: 0
-          - statsType: 2012
-            value: 0
-          - statsType: 2022
-            value: 0
-      mainStatsData:
-        stats:
-          values:
-          - statsType: 2030
-            value: 500
-          - statsType: 2000
-            value: 100
-          - statsType: 2010
-            value: 1000
-          - statsType: 2020
-            value: 1000
-          - statsType: 2031
-            value: 5
-          - statsType: 2001
-            value: 5
-          - statsType: 2011
-            value: 50
-          - statsType: 2021
-            value: 50
-      captureTime: 0
-      facilitiesStatsData:
-        slotData: []
-      supportStatsData:
-        supportPoint: 0
-        offensivePoint: 0
-        defensivePoint: 0
-        supplyPoint: 0
-        facilitiesPoint: 0
-    - profileData:
-        sectorName: Sector_01
-        environmentalKey: 
-        effects: 0
-        currentStats:
-          values:
-          - statsType: 2032
-            value: 500
-          - statsType: 2002
-            value: 0
-          - statsType: 2012
-            value: 0
-          - statsType: 2022
-            value: 0
-      mainStatsData:
-        stats:
-          values:
-          - statsType: 2030
-            value: 500
-          - statsType: 2000
-            value: 100
-          - statsType: 2010
-            value: 1000
-          - statsType: 2020
-            value: 1000
-          - statsType: 2031
-            value: 5
-          - statsType: 2001
-            value: 5
-          - statsType: 2011
-            value: 50
-          - statsType: 2021
-            value: 50
-      captureTime: 0
-      facilitiesStatsData:
-        slotData: []
-      supportStatsData:
-        supportPoint: 0
-        offensivePoint: 0
-        defensivePoint: 0
-        supplyPoint: 0
-        facilitiesPoint: 0
-    - profileData:
-        sectorName: Sector_02
-        environmentalKey: 
-        effects: 0
-        currentStats:
-          values:
-          - statsType: 2032
-            value: 500
-          - statsType: 2002
-            value: 0
-          - statsType: 2012
-            value: 0
-          - statsType: 2022
-            value: 0
-      mainStatsData:
-        stats:
-          values:
-          - statsType: 2030
-            value: 500
-          - statsType: 2000
-            value: 100
-          - statsType: 2010
-            value: 1000
-          - statsType: 2020
-            value: 1000
-          - statsType: 2031
-            value: 5
-          - statsType: 2001
-            value: 5
-          - statsType: 2011
-            value: 50
-          - statsType: 2021
-            value: 50
-      captureTime: 0
-      facilitiesStatsData:
-        slotData: []
-      supportStatsData:
-        supportPoint: 0
-        offensivePoint: 0
-        defensivePoint: 0
-        supplyPoint: 0
-        facilitiesPoint: 0
-    - profileData:
-        sectorName: Sector_03
-        environmentalKey: 
-        effects: 0
-        currentStats:
-          values:
-          - statsType: 2032
-            value: 500
-          - statsType: 2002
-            value: 0
-          - statsType: 2012
-            value: 0
-          - statsType: 2022
-            value: 0
-      mainStatsData:
-        stats:
-          values:
-          - statsType: 2030
-            value: 500
-          - statsType: 2000
-            value: 100
-          - statsType: 2010
-            value: 1000
-          - statsType: 2020
-            value: 1000
-          - statsType: 2031
-            value: 5
-          - statsType: 2001
-            value: 5
-          - statsType: 2011
-            value: 50
-          - statsType: 2021
-            value: 50
-      captureTime: 0
-      facilitiesStatsData:
-        slotData: []
-      supportStatsData:
-        supportPoint: 0
-        offensivePoint: 0
-        defensivePoint: 0
-        supplyPoint: 0
-        facilitiesPoint: 0
-    - profileData:
-        sectorName: Sector_04
-        environmentalKey: 
-        effects: 0
-        currentStats:
-          values:
-          - statsType: 2032
-            value: 500
-          - statsType: 2002
-            value: 0
-          - statsType: 2012
-            value: 0
-          - statsType: 2022
-            value: 0
-      mainStatsData:
-        stats:
-          values:
-          - statsType: 2030
-            value: 500
-          - statsType: 2000
-            value: 100
-          - statsType: 2010
-            value: 1000
-          - statsType: 2020
-            value: 1000
-          - statsType: 2031
-            value: 5
-          - statsType: 2001
-            value: 5
-          - statsType: 2011
-            value: 50
-          - statsType: 2021
-            value: 50
-      captureTime: 0
-      facilitiesStatsData:
-        slotData: []
-      supportStatsData:
-        supportPoint: 0
-        offensivePoint: 0
-        defensivePoint: 0
-        supplyPoint: 0
-        facilitiesPoint: 0
+    - sectorName: Sector_00
+      CapacityPersonnel: 20
+      RecoveryPersonnel: 2
+      LocalPersonnel: 2
+      CapacityMaterial: 200
+      RecoveryMaterial: 100
+      LocalMaterial: 100
+      CapacityElectric: 200
+      RecoveryElectric: 100
+      LocalElectric: 100
+      DistributionDepth: 0
+      CycleTime: 60
+      FactionCapacityPersonnel: 10
+      FactionCapacityMaterial: 50
+      FactionCapacityElectric: 50
+      facilitiesInfo:
+      - FacilityKey: 0
+        ConstructionProgress: 0
+      - FacilityKey: 0
+        ConstructionProgress: 0
+      - FacilityKey: 0
+        ConstructionProgress: 0
+      - FacilityKey: 0
+        ConstructionProgress: 0
+      remainingPoint: 0
+      offensivePoint: 0
+      defensivePoint: 0
+      supplyPoint: 0
+      facilityPoint: 0
+      CaptureTimeRequired: 10
+      EnvironmentalKey: 0
+      PermanentStatus: 0
+      DynamicStatus: 0
+    - sectorName: Sector_01
+      CapacityPersonnel: 20
+      RecoveryPersonnel: 2
+      LocalPersonnel: 2
+      CapacityMaterial: 200
+      RecoveryMaterial: 100
+      LocalMaterial: 100
+      CapacityElectric: 200
+      RecoveryElectric: 100
+      LocalElectric: 100
+      DistributionDepth: 0
+      CycleTime: 60
+      FactionCapacityPersonnel: 10
+      FactionCapacityMaterial: 50
+      FactionCapacityElectric: 50
+      facilitiesInfo: []
+      remainingPoint: 0
+      offensivePoint: 0
+      defensivePoint: 0
+      supplyPoint: 0
+      facilityPoint: 0
+      CaptureTimeRequired: 10
+      EnvironmentalKey: 0
+      PermanentStatus: 0
+      DynamicStatus: 0
+    - sectorName: Sector_02
+      CapacityPersonnel: 20
+      RecoveryPersonnel: 2
+      LocalPersonnel: 2
+      CapacityMaterial: 200
+      RecoveryMaterial: 100
+      LocalMaterial: 100
+      CapacityElectric: 200
+      RecoveryElectric: 100
+      LocalElectric: 100
+      DistributionDepth: 0
+      CycleTime: 60
+      FactionCapacityPersonnel: 10
+      FactionCapacityMaterial: 50
+      FactionCapacityElectric: 50
+      facilitiesInfo: []
+      remainingPoint: 0
+      offensivePoint: 0
+      defensivePoint: 0
+      supplyPoint: 0
+      facilityPoint: 0
+      CaptureTimeRequired: 10
+      EnvironmentalKey: 0
+      PermanentStatus: 0
+      DynamicStatus: 0
+    - sectorName: Sector_03
+      CapacityPersonnel: 20
+      RecoveryPersonnel: 2
+      LocalPersonnel: 2
+      CapacityMaterial: 200
+      RecoveryMaterial: 100
+      LocalMaterial: 100
+      CapacityElectric: 200
+      RecoveryElectric: 100
+      LocalElectric: 100
+      DistributionDepth: 0
+      CycleTime: 60
+      FactionCapacityPersonnel: 10
+      FactionCapacityMaterial: 50
+      FactionCapacityElectric: 50
+      facilitiesInfo: []
+      remainingPoint: 0
+      offensivePoint: 0
+      defensivePoint: 0
+      supplyPoint: 0
+      facilityPoint: 0
+      CaptureTimeRequired: 10
+      EnvironmentalKey: 0
+      PermanentStatus: 0
+      DynamicStatus: 0
+    - sectorName: Sector_04
+      CapacityPersonnel: 0
+      RecoveryPersonnel: 0
+      LocalPersonnel: 0
+      CapacityMaterial: 0
+      RecoveryMaterial: 0
+      LocalMaterial: 0
+      CapacityElectric: 0
+      RecoveryElectric: 0
+      LocalElectric: 0
+      DistributionDepth: 0
+      CycleTime: 0
+      FactionCapacityPersonnel: 0
+      FactionCapacityMaterial: 0
+      FactionCapacityElectric: 0
+      facilitiesInfo: []
+      remainingPoint: 0
+      offensivePoint: 0
+      defensivePoint: 0
+      supplyPoint: 0
+      facilityPoint: 0
+      CaptureTimeRequired: 0
+      EnvironmentalKey: 0
+      PermanentStatus: 0
+      DynamicStatus: 0
     unitDatas:
     - unitKey: 2100
       factionID: 0
@@ -286,7 +209,7 @@ MonoBehaviour:
       durability: 2147483647
       position: {x: -25, y: 0, z: 0}
       rotation: {x: -0, y: 0, z: 0}
-      showEdit: 1
+      showEdit: 0
     operationDatas:
     - teamName: OP-007
       factionID: 0

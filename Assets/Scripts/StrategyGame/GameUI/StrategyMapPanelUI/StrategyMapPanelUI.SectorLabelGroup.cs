@@ -207,10 +207,10 @@ public partial class StrategyMapPanelUI // SectorLabelGroup
 				}
 
 				if (selectButton != null) selectButton.onClick.RemoveAllListeners();
-				if (Sector != null)
-				{
-					Sector.SectorStatsGroup.RemoveListener(OnChangeStatsGroup, OnChangeStatsGroup);
-				}
+				//if (Sector != null)
+				//{
+				//	Sector.SectorStatsGroup.RemoveListener(OnChangeStatsGroup, OnChangeStatsGroup);
+				//}
 			}
 
 			protected override void Visible()
@@ -220,20 +220,20 @@ public partial class StrategyMapPanelUI // SectorLabelGroup
 					panel.AddTarget(Sector);
 				}
 
-				labelText.text = Sector.ProfileData.sectorName;
+				labelText.text = Sector.StatsData.SectorName;
 
 				selectButton.onClick.RemoveAllListeners();
 				selectButton.onClick.AddListener(() => StrategyManager.Selecter.OnSystemSelectObject(Sector));
-				if (Sector != null)
-				{
-					Sector.SectorStatsGroup.AddListener(OnChangeStatsGroup, OnChangeStatsGroup);
-				}
+				//if (Sector != null)
+				//{
+				//	Sector.SectorStatsGroup.AddListener(OnChangeStatsGroup, OnChangeStatsGroup);
+				//}
 			}
 
 			public void OnChangeStatsGroup(string changeKey)
 			{
 				if (string.IsNullOrWhiteSpace(changeKey)) return;
-				if (!changeKey.StartsWith(SectorObject.StatsGroupName_MainStats)) return;
+				//if (!changeKey.StartsWith(SectorObject.StatsGroupName_MainStats)) return;
 				ChangeIconList();
 			}
 			public void ChangeIconList()
@@ -247,19 +247,19 @@ public partial class StrategyMapPanelUI // SectorLabelGroup
 					iconlist ??= new List<GameObject>();
 					iconlist.Clear();
 
-					var keyList = Sector.GetStatsKeyListInGroup(SectorObject.StatsGroupName_StatusEffect);
-					int substringCount = SectorObject.StatsGroupName_StatusEffect.Length;
-					foreach (string key in keyList)
-					{
-						string iconKey = $"Icon_status_effect_{key.Substring(substringCount)}";
-						if (StrategyManager.Key2Sprite.TryGetAsset(iconKey, out var sprite) && sprite != null)
-						{
-							KeyPair.FindPairChainAndCopy<Image>("Icon", iconParent, out var iconImage);
-							iconImage.sprite = sprite;
-							iconlist.Add(iconImage.gameObject);
-							iconImage.gameObject.SetActive(true);
-						}
-					}
+					//var keyList = Sector.GetStatsKeyListInGroup(SectorObject.StatsGroupName_StatusEffect);
+					//int substringCount = SectorObject.StatsGroupName_StatusEffect.Length;
+					//foreach (string key in keyList)
+					//{
+					//	string iconKey = $"Icon_status_effect_{key.Substring(substringCount)}";
+					//	if (StrategyManager.Key2Sprite.TryGetAsset(iconKey, out var sprite) && sprite != null)
+					//	{
+					//		KeyPair.FindPairChainAndCopy<Image>("Icon", iconParent, out var iconImage);
+					//		iconImage.sprite = sprite;
+					//		iconlist.Add(iconImage.gameObject);
+					//		iconImage.gameObject.SetActive(true);
+					//	}
+					//}
 				}
 			}
 		}

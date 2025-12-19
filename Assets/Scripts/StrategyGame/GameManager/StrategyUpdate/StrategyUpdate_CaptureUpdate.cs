@@ -68,8 +68,6 @@ namespace StrategyManagerModule
 					SectorObject sector = update.sector;
 					if (sector == null || !sector.isActiveAndEnabled) continue;
 
-					var captureData = sector.CaptureData;
-
 					int oldFaction = update.ownerFactionID;
 					float oldProgress = update.captureProgress;
 
@@ -84,10 +82,8 @@ namespace StrategyManagerModule
 
 					if (oldFaction != nextFaction || changeProgress)
 					{
-						var data = captureData;
-						data.captureFactionID = nextFaction;
-						data.captureProgress = nextProgress;
-						sector.Capture.SetData(data);
+						sector.RuntimeData.CaptureFactionID = nextFaction;
+						sector.RuntimeData.CaptureProgress = nextProgress;
 					}
 					if (changeProgress)
 					{
@@ -182,14 +178,13 @@ namespace StrategyManagerModule
 					this.sectorColor = sector.GetComponentInChildren<SectorColor>(true);
 					if (sectorColor == null) sectorColor = sector.gameObject.AddComponent<SectorColor>();
 					captureTagList = thisSubClass.captureTagList;
-					var data = sector.CaptureData;
 
-					this.captureTime = Mathf.Max(data.captureTime, 1f);
+					this.captureTime = Mathf.Max(sector.StatsData.CaptureTimeRequired, 1f);
 
-					this.ownerFactionID = data.captureFactionID;
+					this.ownerFactionID = sector.RuntimeData.CaptureFactionID;
 					this.dominantFactionID = ownerFactionID;
 					this.topPointFactionID = ownerFactionID;
-					this.captureProgress = data.captureProgress;
+					this.captureProgress = sector.RuntimeData.CaptureProgress;
 
 					factionProgress = new FactionProgress((ownerFactionID, captureProgress));
 

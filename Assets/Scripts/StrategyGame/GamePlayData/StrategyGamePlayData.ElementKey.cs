@@ -1,4 +1,6 @@
-﻿public partial class StrategyGamePlayData // ElementKey
+﻿using Sirenix.OdinInspector;
+
+public partial class StrategyGamePlayData // ElementKey
 {
 	public enum UnitKey : ushort // 0 ~ 65,535
 	{
@@ -188,6 +190,7 @@
 	{
 		None = 0,
 		// 중립 시설 (0010 ~ 0999)
+		[LabelText("==========중립시설==========")]
 		중립시설           = 10,
 		역장발생기,              // 사용시 일정 시간동안 중립 역장(보호막) 생성
 		은폐장발생기,            // 사용시 일정 시간동안 주변의 유닛을 감춘다.
@@ -195,16 +198,19 @@
 
 		// 완충 번호 (1000 ~ 1099)
 		// 기계 종족 시설 (1100 ~ 1499)
+		[LabelText("==========기계시설==========")]
 		기계시설          = 1100,
 		// 이하 
 
 		// 완충 번호 (1500 ~ 1599)
 		// 인류 시설 (1600 ~ 1999)
+		[LabelText("==========인류시설==========")]
 		인류시설          = 1600,
 		// 이하 
 
 		// 완충 번호 (2000 ~ 2099)
 		// 고유 시설 (2100 ~ 9999)
+		[LabelText("==========고유시설==========")]
 		UniqueFacilities          = 2100,
 		// 이하 각종 고유 사설(기계/중립/인류 포함) 기입
 		Facilities_가,
@@ -285,6 +291,6 @@
 	// 각 섹터에 적용될 환경 값
 	public enum EnvironmentalKey
 	{
-
+		일반,
 	}
 }

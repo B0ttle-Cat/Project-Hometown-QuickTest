@@ -10,7 +10,6 @@ public partial class StrategyGamePlayData // StatsValue
 {
 	public static StatsType[] SectorCurrentStats =new StatsType[]
 	{
-		StatsType.거점_내구도_현재,
 		StatsType.거점_인력_현재,
 		StatsType.거점_재료_현재,
 		StatsType.거점_전력_현재,
@@ -18,7 +17,6 @@ public partial class StrategyGamePlayData // StatsValue
 
 	public static StatsType[] SectorSupplyStats_Max =new StatsType[]
 	{
-		StatsType.거점_내구도_최대,
 		StatsType.거점_인력_최대,
 		StatsType.거점_재료_최대,
 		StatsType.거점_전력_최대,
@@ -186,19 +184,16 @@ public partial class StrategyGamePlayData // StatsValue
 				new StatsValue(StatsType.유닛_공격범위_종료최대_c)
 			);
 		public static StatsList SectorStatsList => new StatsList(
-				new StatsValue(StatsType.거점_내구도_최대, 500),
 
 				new StatsValue(StatsType.거점_인력_최대, 100),
 				new StatsValue(StatsType.거점_재료_최대, 1000),
 				new StatsValue(StatsType.거점_전력_최대, 1000),
 
-				new StatsValue(StatsType.거점_내구도_회복, 5),
 				new StatsValue(StatsType.거점_인력_회복, 5),
 				new StatsValue(StatsType.거점_재료_회복, 50),
 				new StatsValue(StatsType.거점_전력_회복, 50)
 		);
 		public static StatsList SectorCurrentStatsList => new StatsList(
-				new StatsValue(StatsType.거점_내구도_현재, 500),
 				new StatsValue(StatsType.거점_인력_현재, 0),
 				new StatsValue(StatsType.거점_재료_현재, 0),
 				new StatsValue(StatsType.거점_전력_현재, 0)
@@ -623,8 +618,8 @@ public partial class StrategyGamePlayData // StatsValue
 		public IStatsValueControl StatsValue { get; }
 		int GetStatsValue(StatsType type);
 		float GetStatsValuePrecent(StatsType type);
-		public void SetRuntimeDataValue(StatsType type, int value);
-		void SetRuntimeDataValuePrecent(StatsType type, float valuePercent);
+		public void SetStatsValue(StatsType type, int value);
+		void SetStatsValuePrecent(StatsType type, float valuePercent);
 	}
 
 }

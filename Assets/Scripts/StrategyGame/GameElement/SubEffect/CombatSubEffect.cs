@@ -14,11 +14,11 @@ public abstract class CombatSubEffect : SubEffectObject, ICombatOffense
 	{
         return 0;
 	}
-	void IStatsValueControl.SetRuntimeDataValue(StrategyGamePlayData.StatsType type, int value)
+	void IStatsValueControl.SetStatsValue(StrategyGamePlayData.StatsType type, int value)
     {
 
     }
-    public void SetRuntimeDataValuePrecent(StatsType type, float valuePercent)
+    public void SetStatsValuePrecent(StatsType type, float valuePercent)
     {
         
     }

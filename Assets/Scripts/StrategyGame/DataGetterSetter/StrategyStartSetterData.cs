@@ -7,6 +7,7 @@ using Sirenix.OdinInspector.Editor;
 
 using UnityEngine;
 
+using static SectorRuntimeData;
 using static StrategyGamePlayData;
 using static StrategyManagerModule.StrategyMissionTree;
 
@@ -135,54 +136,119 @@ namespace StrategyManagerModule
 		[Serializable]
 		public struct SectorData
 		{
+			[FoldoutGroup("@SectorName"), SerializeField]
+			[ValueDropdown("SectorObjectListInScene", AppendNextDrawer = true)]
+			private string sectorName;
+			public string SectorName { get { return sectorName; } }
+
+			[BoxGroup("@SectorName/Local리소스/인력")]
+			[HorizontalGroup("@SectorName/Local리소스/인력/H"), HideLabel,SuffixLabel("최대 수용량", Overlay = true)]
+			public int CapacityPersonnel;
+			[HorizontalGroup("@SectorName/Local리소스/인력/H"), HideLabel,SuffixLabel("분당 회복량", Overlay = true)]
+			public int RecoveryPersonnel;
+			[HorizontalGroup("@SectorName/Local리소스/인력/H"), HideLabel,SuffixLabel("현지 수량", Overlay = true)]
+			public int LocalPersonnel;
+
+			[BoxGroup("@SectorName/Local리소스/재료")]
+			[HorizontalGroup("@SectorName/Local리소스/재료/H"), HideLabel,SuffixLabel("최대 수용량", Overlay = true)]
+			public int CapacityMaterial;
+			[HorizontalGroup("@SectorName/Local리소스/재료/H"), HideLabel,SuffixLabel("분당 회복량", Overlay = true)]
+			public int RecoveryMaterial;
+			[HorizontalGroup("@SectorName/Local리소스/재료/H"), HideLabel,SuffixLabel("현지 수량", Overlay = true)]
+			public int LocalMaterial;
+
+			[BoxGroup("@SectorName/Local리소스/전력")]
+			[HorizontalGroup("@SectorName/Local리소스/전력/H"), HideLabel,SuffixLabel("최대 수용량", Overlay = true)]
+			public int CapacityElectric;
+			[HorizontalGroup("@SectorName/Local리소스/전력/H"), HideLabel,SuffixLabel("분당 회복량", Overlay = true)]
+			public int RecoveryElectric;
+			[HorizontalGroup("@SectorName/Local리소스/전력/H"), HideLabel,SuffixLabel("현지 수량", Overlay = true)]
+			public int LocalElectric;
+
+			[FoldoutGroup("@SectorName/Local리소스")]
+			[LabelText("기본 분배 거리")]
+			public int DistributionDepth;
+			[FoldoutGroup("@SectorName/Local리소스")]
+			[LabelText("추가 분배 거리")]
+			public int DistributionAddDepth;
+			[FoldoutGroup("@SectorName/Local리소스")]
+			[LabelText("회복 및 분배 주기(초)")]
+			public float CycleTime;
+
+			[FoldoutGroup("@SectorName/Faction리소스")]
+			[LabelText("인력 수용량")]
+			public int FactionCapacityPersonnel;
+
+			[FoldoutGroup("@SectorName/Faction리소스")]
+			[LabelText("재료 수용량")]
+			public int FactionCapacityMaterial;
+
+			[FoldoutGroup("@SectorName/Faction리소스")]
+			[LabelText("전력 수용량")]
+			public int FactionCapacityElectric;
+
+			[FoldoutGroup("@SectorName/FacilityInfo")]
+			[ListDrawerSettings(ShowFoldout = false)]
+			public FacilityInfo[] facilitiesInfo;
+
+			[FoldoutGroup("@SectorName/Support Point"),LabelText("잔여 지원 점수")]
+			public int remainingPoint;
+			[FoldoutGroup("@SectorName/Support Point"),LabelText("공격 지원 점수")]
+			public int offensivePoint;
+			[FoldoutGroup("@SectorName/Support Point"),LabelText("방어 지원 점수")]
+			public int defensivePoint;
+			[FoldoutGroup("@SectorName/Support Point"),LabelText("보급 지원 점수")]
+			public int supplyPoint;
+			[FoldoutGroup("@SectorName/Support Point"),LabelText("시설 지원 점수")]
+			public int facilityPoint;
+
+			[FoldoutGroup("@SectorName")]
+			[LabelText("구역 확보에 필요한 시간")]
+			public float CaptureTimeRequired;
+			[FoldoutGroup("@SectorName")]
+			[LabelText("구역 환경 키")]
+			public EnvironmentalKey EnvironmentalKey;
+			[FoldoutGroup("@SectorName")]
+			[LabelText("영구 적용 효과")]
+			[FoldoutGroup("@SectorName")]
+			public StatusEffectsFlag PermanentStatus;
+			[FoldoutGroup("@SectorName")]
+			[LabelText("동적 적용 효과")]
+			public StatusEffectsFlag DynamicStatus;
 #if UNITY_EDITOR
-			private string GroupName => profileData.sectorName;
-			[FoldoutGroup("@GroupName")]
-			[ShowInInspector, InlineButton("PushData"), InlineButton("PullData"), PropertyOrder(-99)]
-			[LabelWidth(50)]
-			private SectorObject Target { get; set; }
-			private void PullData()
+			private ValueDropdownList<string> SectorObjectListInScene()
 			{
-				if (Target == null) return;
-				profileData = Target.ProfileData.Copy();
-				mainStatsData = Target.StatsData.Copy();
-				facilitiesStatsData = Target.FacilitiesData.Copy();
-				supportStatsData = Target.SupportData.Copy();
-				captureTime = Target.CaptureData.captureTime;
-
-				profileData.sectorName = Target.gameObject.name;
-			}
-			private void PushData()
-			{
-				if (Target == null) return;
-				Target.Profile.SetData(profileData.Copy(), true);
-				Target.Stats.SetData(mainStatsData.Copy(), true);
-				Target.Facilities.SetData(facilitiesStatsData.Copy(), true);
-				Target.Support.SetData(supportStatsData.Copy(), true);
-
-				var captureData =  Target.CaptureData;
-				captureData.captureTime = captureTime;
-				Target.Capture.SetData(captureData, true);
+				ValueDropdownList<string> list = new ValueDropdownList<string>();
+				SectorObject[] objects = GameObject.FindObjectsByType<SectorObject>(FindObjectsSortMode.None);
+				foreach (var obj in objects) { list.Add(obj.gameObject.name, obj.gameObject.name); }
+				if (list.Count == 0) { list.Add("Empty", ""); }
+				return list;
 			}
 
-			[ButtonGroup("@GroupName/Button"), PropertyOrder(-98)]
-			private void ResetDetulsStats()
+			[FoldoutGroup("@SectorName")]
+			[Button("리소스 값 초기화"), PropertyOrder(-1)]
+			private void SetDefault()
 			{
-				profileData.currentStats = StatsList.SectorCurrentStatsList;
-				mainStatsData.stats = StatsList.SectorStatsList;
+				CapacityPersonnel = 20;
+				CapacityMaterial = 200;
+				CapacityElectric = 200;
+
+				RecoveryPersonnel = 2;
+				RecoveryMaterial = 100;
+				RecoveryElectric = 100;
+
+				LocalPersonnel = 2;
+				LocalMaterial = 100;
+				LocalElectric = 100;
+
+				FactionCapacityPersonnel = 10;
+				FactionCapacityMaterial = 50;
+				FactionCapacityElectric = 50;
+
+				DistributionDepth = 0;
+				CycleTime = 60;
 			}
 #endif
-			[FoldoutGroup("@GroupName")]
-			[InlineProperty, HideLabel, TitleGroup("@GroupName/Profile")]
-			public StrategyGamePlayData.SectorData.Profile.Data profileData;
-			[InlineProperty, HideLabel, FoldoutGroup("@GroupName/MainStats")]
-			public StrategyGamePlayData.SectorData.MainStats.Data mainStatsData;
-			[FoldoutGroup("@GroupName/MainStats")]
-			public float captureTime;
-			[InlineProperty, HideLabel, FoldoutGroup("@GroupName/Facilities")]
-			public StrategyGamePlayData.SectorData.Facilities.Data facilitiesStatsData;
-			[InlineProperty, HideLabel, FoldoutGroup("@GroupName/Support")]
-			public StrategyGamePlayData.SectorData.Support.Data supportStatsData;
 		}
 		[Serializable]
 		public struct UnitData
@@ -280,7 +346,7 @@ namespace StrategyManagerModule
 					return list;
 				}
 
-				var items = bases.Select(x => x.profileData.sectorName).ToList();
+				var items = bases.Select(x => x.SectorName).ToList();
 				list.Add("", -1);
 				for (int i = 0 ; i < items.Count ; i++)
 				{
@@ -378,7 +444,7 @@ namespace StrategyManagerModule
 				}
 				return false;
 			}
-			private bool ShowProfileObject => unitKey == UnitKey.None;		   
+			private bool ShowProfileObject => unitKey == UnitKey.None;
 			private void OnValueChanged_factionID()
 			{
 				belongedOperation = -1;
@@ -524,7 +590,7 @@ namespace StrategyManagerModule
 					return list;
 				}
 
-				var items = bases.Select(x => x.profileData.sectorName).ToList();
+				var items = bases.Select(x => x.SectorName).ToList();
 				list.Add("", -1);
 				for (int i = 0 ; i < items.Count ; i++)
 				{
@@ -570,7 +636,7 @@ namespace StrategyManagerModule
 					return list;
 				}
 
-				var items = bases.Select(x => x.profileData.sectorName).ToList();
+				var items = bases.Select(x => x.SectorName).ToList();
 				list.Add("", -1);
 				for (int i = 0 ; i < items.Count ; i++)
 				{
@@ -643,7 +709,7 @@ namespace StrategyManagerModule
 					return list;
 				}
 
-				var items = bases.Select(x => x.profileData.sectorName).ToList();
+				var items = bases.Select(x => x.SectorName).ToList();
 				list.Add("", -1);
 				for (int i = 0 ; i < items.Count ; i++)
 				{

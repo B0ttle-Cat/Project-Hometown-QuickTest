@@ -1,4 +1,6 @@
-﻿public partial class SectorObject : ISectorController
+﻿using static StrategyGamePlayData;
+
+public partial class SectorObject : ISectorController
 {
 	public SectorObject This => this;
 	public ISectorController Controller => this;
@@ -36,32 +38,19 @@
     void ISectorController.OnControlButton_UseFacilitiesSkill()
 	{
 	}
-	void ISectorController.OnFacilitiesConstruct_Finish(int slotIndex, string facilitiesKey)
+	void ISectorController.OnFacilitiesConstruct_Finish(int slotIndex, FacilityKey facilityKey)
 	{
-		var data = FacilitiesData;
-		var slot = data.slotData[slotIndex];
-		var constructing = slot.constructing;
-		constructing.Clear();
-
-		slot.constructing = constructing;
-		data.slotData[slotIndex] = slot;
-
-		Facilities.SetData(data);
+		var data = RuntimeData.FacilitiesInfo;
+		var slot = data[slotIndex];
+		slot.FacilityKey = facilityKey;
+		slot.ConstructionProgress = 1;
 	}
-	void ISectorController.OnFacilitiesConstruct_Start(int slotIndex, string facilitiesKey)
+	void ISectorController.OnFacilitiesConstruct_Start(int slotIndex, FacilityKey facilityKey)
 	{
-		var data = FacilitiesData;
-		var slot = data.slotData[slotIndex];
-		var constructing = slot.constructing;
-
-		constructing.facilitiesKey = facilitiesKey;
-		constructing.constructTime = 10; // facilityKey 를 통해 올바른 값을 가져온다.
-		constructing.duration = constructing.constructTime;
-
-		slot.constructing = constructing;
-		data.slotData[slotIndex] = slot;
-
-		Facilities.SetData(data);
+		var data = RuntimeData.FacilitiesInfo;
+		var slot = data[slotIndex];
+		slot.FacilityKey = facilityKey;
+		slot.ConstructionProgress = 0;
 	}
 
     void ISectorController.OnHideUI_SelectUI()

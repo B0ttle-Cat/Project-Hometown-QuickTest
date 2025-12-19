@@ -1,6 +1,11 @@
 ﻿using System;
+using System.Linq;
 
 using Sirenix.OdinInspector;
+
+using StrategyManagerModule;
+
+using UnityEngine;
 
 using static StrategyGamePlayData;
 
@@ -9,65 +14,103 @@ public record SectorStatsData
 {
 	public string SectorName;
 
-	[LabelText("최대 내구도")]
-	public int MaxDurability;
+	[BoxGroup("Local리소스/인력")]
+	[HorizontalGroup("Local리소스/인력/H"), HideLabel,SuffixLabel("최대 수용량", Overlay = true)]
+	public int CapacityPersonnel;
+	[HorizontalGroup("Local리소스/인력/H"), HideLabel,SuffixLabel("분당 회복량", Overlay = true)]
+	public int RecoveryPersonnel;
 
-	[BoxGroup("Personnel 인력")]
-	[HorizontalGroup("Personnel/H"), HideLabel,SuffixLabel("최대 한도", Overlay = true)]
-	public int MaxPersonnel;
-	[HorizontalGroup("Personnel/H"), HideLabel,SuffixLabel("획득 점수", Overlay = true)]
-	public int PointPersonnel;
+	[BoxGroup("Local리소스/재료")]
+	[HorizontalGroup("Local리소스/재료/H"), HideLabel,SuffixLabel("최대 수용량", Overlay = true)]
+	public int CapacityMaterial;
+	[HorizontalGroup("Local리소스/재료/H"), HideLabel,SuffixLabel("분당 회복량", Overlay = true)]
+	public int RecoveryMaterial;
 
-	[BoxGroup("Material 재료")]
-	[HorizontalGroup("Material/H"), HideLabel,SuffixLabel("최대 한도", Overlay = true)]
-	public int MaxMaterial;
-	[HorizontalGroup("Material/H"), HideLabel,SuffixLabel("획득 점수", Overlay = true)]
-	public int PointMaterial;
+	[BoxGroup("Local리소스/전력")]
+	[HorizontalGroup("Local리소스/전력/H"), HideLabel,SuffixLabel("최대 수용량", Overlay = true)]
+	public int CapacityElectric;
+	[HorizontalGroup("Local리소스/전력/H"), HideLabel,SuffixLabel("분당 회복량", Overlay = true)]
+	public int RecoveryElectric;
 
-	[BoxGroup("Electric 전력")]
-	[HorizontalGroup("Electric/H"), HideLabel,SuffixLabel("최대 한도", Overlay = true)]
-	public int MaxElectric;
-	[HorizontalGroup("Electric/H"), HideLabel,SuffixLabel("획득 점수", Overlay = true)]
-	public int PointElectric;
+	[FoldoutGroup("Local리소스")]
+	[LabelText("기본 분배 거리")]
+	public int DistributionDepth;
+	[FoldoutGroup("Local리소스")]
+	[LabelText("회복 및 분배 주기(초)")]
+	public float CycleTime;
 
+	[FoldoutGroup("Faction리소스")]
+	[LabelText("인력 수용량")]
+	public int FactionCapacityPersonnel;
+
+	[FoldoutGroup("Faction리소스")]
+	[LabelText("재료 수용량")]
+	public int FactionCapacityMaterial;
+
+	[FoldoutGroup("Faction리소스")]
+	[LabelText("전력 수용량")]
+	public int FactionCapacityElectric;
+
+	[LabelText("구역 확보에 필요한 시간")]
+	public float CaptureTimeRequired;
 	[LabelText("구역 환경 키")]
 	public EnvironmentalKey EnvironmentalKey;
-	[LabelText("영구 적용 효과")]
+	[LabelText("구역 영구 상태이상")]
 	public StatusEffectsFlag PermanentStatus;
 
-	public float CaptureTimeRequired;
-
-	public int FacilitieSlotCount;
+	public SectorStatsData(StrategyStartSetterData.SectorData data)
+	{
+		this.SectorName = data.SectorName;
+		this.CapacityPersonnel = data.CapacityPersonnel;
+		this.RecoveryPersonnel = data.RecoveryPersonnel;
+		this.CapacityMaterial = data.CapacityMaterial;
+		this.RecoveryMaterial = data.RecoveryMaterial;
+		this.CapacityElectric = data.CapacityElectric;
+		this.RecoveryElectric = data.RecoveryElectric;
+		this.DistributionDepth = data.DistributionDepth;
+		this.CycleTime = data.CycleTime;
+		this.FactionCapacityPersonnel = data.FactionCapacityPersonnel;
+		this.FactionCapacityMaterial = data.FactionCapacityMaterial;
+		this.FactionCapacityElectric = data.FactionCapacityElectric;
+		this.CaptureTimeRequired = data.CaptureTimeRequired;
+		this.EnvironmentalKey = data.EnvironmentalKey;
+		this.PermanentStatus = data.PermanentStatus;
+	}
 }
 
 [Serializable]
 public record SectorRuntimeData
 {
-	[LabelText("현재 내구도")]
-	public int CurrentDurability;
+	[FoldoutGroup("리소스")]
+	[LabelText("현지 인력량")]
+	public int LocalPersonnel;
+	[FoldoutGroup("리소스")]
+	[LabelText("현지 재료량")]
+	public int LocalMaterial;
+	[FoldoutGroup("리소스")]
+	[LabelText("현지 전력량")]
+	public int LocalElectric;
+	[FoldoutGroup("리소스")]
+	[LabelText("추가 분배 거리")]
+	public int DistributionAddDepth;
 
-	[LabelText("현재 인력")]
-	public int CurrentPersonnel;
-	[LabelText("현재 재료")]
-	public int CurrentMaterial;
-	[LabelText("현재 전력")]
-	public int CurrentElectric;
 	[LabelText("상태이상")]
 	public StatusEffectsFlag Status;
 
+	[SerializeField]
+	[FoldoutGroup("점령 정보"), InlineProperty, HideLabel]
 	private Capture capture;
-	private Facilities facilities;
+	[SerializeField]
+	[FoldoutGroup("시설물 정보"), ListDrawerSettings(ShowFoldout = false)]
+	private FacilityInfo[] facilitiesInfo;
+	[SerializeField]
+	[FoldoutGroup("지원 점수 정보"), InlineProperty, HideLabel]
 	private Support support;
-
-	public Capture GetCapture;
-	public Facilities GetFacilities;
-	public Support GetSupport;
-
 
 	public SectorRuntimeData()
 	{
 		capture = new();
-		facilities = new Facilities();
+		facilitiesInfo = new FacilityInfo[0];
 		support = new();
 	}
 
@@ -77,42 +120,29 @@ public record SectorRuntimeData
 		public int CaptureFactionID;
 		public float CaptureProgress;
 
-        public Capture()
-        {
+		public Capture()
+		{
 			CaptureFactionID = -1;
 			CaptureProgress = 0f;
 		}
-    }
-	public int CaptureFactionID { get { return capture.CaptureFactionID;} set { capture.CaptureFactionID = value; } }
+	}
+	public int CaptureFactionID { get { return capture.CaptureFactionID; } set { capture.CaptureFactionID = value; } }
 	public float CaptureProgress { get { return capture.CaptureProgress; } set { capture.CaptureProgress = value; } }
 	[Serializable]
-	public record Facilities
+	public record FacilityInfo
 	{
-		public FacilityKey[] facilityKey;
-		public float[] progress;
-
-		public (FacilityKey Key,float Progress) this[int index]
+		[HorizontalGroup, HideLabel]
+		public FacilityKey FacilityKey;
+		[HorizontalGroup, HideLabel, Range(0f,1f)]
+		public float ConstructionProgress;
+		public FacilityInfo()
 		{
-			get
-			{
-				return (facilityKey[index], progress[index]);
-			}
-			set 
-			{
-				(facilityKey[index], progress[index]) = value;
-			}
-		}
-		public Facilities()
-		{
-			facilityKey = new FacilityKey[0];
-			progress = new float [0];
+			FacilityKey = FacilityKey.None;
+			ConstructionProgress = 0;
 		}
 	}
-	public (FacilityKey Key, float Progress) FacilityKey(int index) => facilities[index];
-	public void SetFacility(int index, FacilityKey key, float progress) => facilities[index] = (key,progress);
-	public void SetFacilityKey(int index, FacilityKey key) => facilities[index] = (key, facilities[index].Progress);
-	public void SetFacilityProgress(int index, float progress) => facilities[index] = (facilities[index].Key, progress);
-
+	public FacilityInfo[] FacilitiesInfo { get { return facilitiesInfo; } set { facilitiesInfo = value; } }
+	public int FacilitiesCount => facilitiesInfo == null ? 0 : facilitiesInfo.Length;
 	[Serializable]
 	public record Support
 	{
@@ -123,18 +153,47 @@ public record SectorRuntimeData
 		public int supplyPoint;
 		public int facilityPoint;
 
-        public Support()
-        {
+		public Support()
+		{
 			remainingPoint = 0;
 			offensivePoint = 0;
 			defensivePoint = 0;
 			supplyPoint = 0;
 			facilityPoint = 0;
 		}
-    }
+	}
 	public int RemainingPoint { get { return support.remainingPoint; } set { support.remainingPoint = value; } }
 	public int OffensivePoint { get { return support.offensivePoint; } set { support.offensivePoint = value; } }
 	public int DefensivePoint { get { return support.defensivePoint; } set { support.defensivePoint = value; } }
 	public int SupplyPoint { get { return support.supplyPoint; } set { support.supplyPoint = value; } }
 	public int FacilityPoint { get { return support.facilityPoint; } set { support.facilityPoint = value; } }
+
+	public SectorRuntimeData(StrategyStartSetterData.SectorData data)
+	{
+		this.LocalPersonnel = data.LocalPersonnel;
+		this.LocalMaterial = data.LocalMaterial;
+		this.LocalElectric = data.LocalElectric;
+		this.Status = data.DynamicStatus;
+		this.capture = new Capture();
+		this.facilitiesInfo = data.facilitiesInfo == null
+			? new FacilityInfo[0]
+			: data.facilitiesInfo.Select(id => new FacilityInfo
+			{
+				ConstructionProgress = id.ConstructionProgress,
+				FacilityKey = id.FacilityKey
+			}).ToArray();
+		this.support = new Support
+		{
+			remainingPoint = data.remainingPoint,
+			offensivePoint = data.offensivePoint,
+			defensivePoint = data.defensivePoint,
+			supplyPoint = data.supplyPoint,
+			facilityPoint = data.facilityPoint
+		};
+	}
+	public void InitCaptureData(StrategyStartSetterData.CaptureData data)
+	{
+		CaptureFactionID = data.captureFactionID;
+		CaptureProgress = data.captureProgress;
+	}
 }

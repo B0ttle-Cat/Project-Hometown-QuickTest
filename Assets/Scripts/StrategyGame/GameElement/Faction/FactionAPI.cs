@@ -52,7 +52,7 @@ public static class FactionAPI
 		if (faction == null || faction.IsNotAlive()) return;
 
 		var sectorList = StrategyManager.Collector.GetList<SectorObject>();
-		var values = sectorList.Where(i => i.CaptureFaction == faction).Select(i => i.GetElectric().value).ToArray();
+		var values = sectorList.Where(i => i.CaptureFaction == faction).Select(i => i.RuntimeData.LocalElectric).ToArray();
 	}
 
 	public static void API_PayForElectric(this Faction faction, int value)
@@ -60,7 +60,7 @@ public static class FactionAPI
 		if (faction == null || faction.IsNotAlive()) return;
 
 		var sectorList = StrategyManager.Collector.GetList<SectorObject>();
-		var values = sectorList.Where(i => i.CaptureFaction == faction).Select(i => i.GetElectric().value).ToArray();
+		var values = sectorList.Where(i => i.CaptureFaction == faction).Select(i => i.RuntimeData.LocalElectric).ToArray();
 
 		StatsValue totalValue = faction.FactionStats.GetValue(StatsType.세력_전력_현재);
 		if (PayCostByCutDown(value, totalValue, values))
@@ -71,7 +71,7 @@ public static class FactionAPI
 			{
 				var sector = sectorList[i];
 				total += values[i];
-				sector.SetElectric(values[i]);
+				sector.RuntimeData.LocalElectric = values[i];
 			}
 
 			totalValue.Value = value;
@@ -380,11 +380,11 @@ public static class FactionAPI
 			if (sector.CaptureFaction == null) return false;
 			return sector.CaptureFaction == faction;
 		}
-		var facilitiesList = factionSectorList.SelectMany(s => s.FacilitiesData.slotData).Select(s=>s.facilitiesKey).ToHashSet();
-		if (facilitiesList.Count > 0)
-		{
-			// 시설물 중에서 사용 가능한 유닛 종류를 늘려주는 시설이 있는지 검색해야 함.
-		}
+		//var facilitiesList = factionSectorList.SelectMany(s => s.FacilitiesData.slotData).Select(s=>s.facilitiesKey).ToHashSet();
+		//if (facilitiesList.Count > 0)
+		//{
+		//	// 시설물 중에서 사용 가능한 유닛 종류를 늘려주는 시설이 있는지 검색해야 함.
+		//}
 
 
 		return result;

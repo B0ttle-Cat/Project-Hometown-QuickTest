@@ -294,14 +294,14 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 			}
 			protected override void OnDispose()
 			{
-				if (selectSector != null)
-				{
-					selectSector.Profile.RemoveListener(OnChangeProfileData);
-					selectSector.Capture.RemoveListener(OnChangeCaptureData);
-					selectSector.Stats.RemoveListener(OnChangeStatsData);
-					selectSector.Facilities.RemoveListener(OnChangeFacilitiesData);
-					selectSector.Support.RemoveListener(OnChangeSupportData);
-				}
+				//if (selectSector != null)
+				//{
+				//	selectSector.Profile.RemoveListener(OnChangeProfileData);
+				//	selectSector.Capture.RemoveListener(OnChangeCaptureData);
+				//	selectSector.Stats.RemoveListener(OnChangeStatsData);
+				//	selectSector.Facilities.RemoveListener(OnChangeFacilitiesData);
+				//	selectSector.Support.RemoveListener(OnChangeSupportData);
+				//}
 
 				DeleteStatsItemList(detailStatsItemList);
 				DeleteStatsItemList(facilitiesStateItemList);
@@ -312,91 +312,91 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 			}
 			protected override void OnShow()
 			{
-				selectSector.Profile.AddLateListener(OnChangeProfileData);
-				selectSector.Capture.AddLateListener(OnChangeCaptureData);
-				selectSector.Stats.AddLateListener(OnChangeStatsData);
-				selectSector.Facilities.AddLateListener(OnChangeFacilitiesData);
-				selectSector.Support.AddLateListener(OnChangeSupportData);
-
-				OnChangeProfileData(selectSector.ProfileData);
-				OnChangeCaptureData(selectSector.CaptureData);
-				OnChangeStatsData(selectSector.StatsData);
-				OnChangeFacilitiesData(selectSector.FacilitiesData);
-				OnChangeSupportData(selectSector.SupportData);
+			//	selectSector.Profile.AddLateListener(OnChangeProfileData);
+			//	selectSector.Capture.AddLateListener(OnChangeCaptureData);
+			//	selectSector.Stats.AddLateListener(OnChangeStatsData);
+			//	selectSector.Facilities.AddLateListener(OnChangeFacilitiesData);
+			//	selectSector.Support.AddLateListener(OnChangeSupportData);
+			//
+			//	OnChangeProfileData(selectSector.ProfileData);
+			//	OnChangeCaptureData(selectSector.CaptureData);
+			//	OnChangeStatsData(selectSector.StatsData);
+			//	OnChangeFacilitiesData(selectSector.FacilitiesData);
+			//	OnChangeSupportData(selectSector.SupportData);
 			}
 
 			protected override void OnHide()
 			{
-				selectSector.Profile.RemoveListener(OnChangeProfileData);
-				selectSector.Capture.RemoveListener(OnChangeCaptureData);
-				selectSector.Stats.RemoveListener(OnChangeStatsData);
-				selectSector.Facilities.RemoveListener(OnChangeFacilitiesData);
-				selectSector.Support.RemoveListener(OnChangeSupportData);
+				//selectSector.Profile.RemoveListener(OnChangeProfileData);
+				//selectSector.Capture.RemoveListener(OnChangeCaptureData);
+				//selectSector.Stats.RemoveListener(OnChangeStatsData);
+				//selectSector.Facilities.RemoveListener(OnChangeFacilitiesData);
+				//selectSector.Support.RemoveListener(OnChangeSupportData);
 			}
 
-			void OnChangeProfileData(SectorData.Profile.Data data)
-			{
-				KeyPair
-					.FindPairChain<Image>("MainImage", out var mainImage)
-					.FindPairChain<TMP_Text>("NameText", out var nameText)
-					.FindPairChain<TMP_Text>("EffectText", out var effectText)
-					;
-
-				if (mainImage != null)
-				{
-					mainImage.sprite = StrategyManager.Key2Sprite.GetAsset(data.environmentalKey);
-				}
-				if (nameText != null)
-				{
-					nameText.text = data.sectorName;
-				}
-				if (effectText != null)
-				{
-					effectText.text = data.EffectString();
-				}
-			}
-			void OnChangeCaptureData(SectorData.Capture.Data data)
-			{
-				KeyPair
-				  .FindPairChain<TMP_Text>("CaptureText", out var captureText)
-				  ;
-
-				if (captureText != null)
-				{
-					if (StrategyManager.Collector.TryFind<Faction>(data.captureFactionID, out var faction))
-					{
-						captureText.text = faction.FactionName;
-					}
-					else
-					{
-						captureText.text = "중립 지역";
-					}
-				}
-			}
-			void OnChangeStatsData(SectorData.MainStats.Data data)
-			{
-				UpdateFillRectUI();
-				UpdateStatePanel("StatsData KeyValue", "Base StatsData", selectSector.CurrStatsList?.GetValueList());
-			}
-			void OnChangeFacilitiesData(SectorData.Facilities.Data data)
-			{
-				UpdateFillRectUI();
-				UpdateStatePanel("StatsData KeyValue", "Facilities StatsData",
-					selectSector.SectorStatsGroup.GetValueList(SectorObject.StatsGroupName_Facilities));
-			}
-			void OnChangeSupportData(SectorData.Support.Data data)
-			{
-				UpdateFillRectUI();
-				UpdateStatePanel("StatsData KeyValue", "Support StatsData",
-					selectSector.SectorStatsGroup.GetValueList(SectorObject.StatsGroupName_Support));
-			}
-			void UpdateFillRectUI()
-			{
-				SetFillRectUI("Fill Durability", selectSector.GetDurability(), "방어벽 없음");
-				SetFillRectUI("Fill Operation", selectSector.GetManpower(), "병력 보충 불가");
-				SetFillRectUI("Fill Material", selectSector.GetMaterial(), "물자 보충 불가");
-				SetFillRectUI("Fill Electric", selectSector.GetElectric(), "전력 보충 불가");
-			}
+			//void OnChangeProfileData(SectorData.Profile.Data data)
+			//{
+			//	KeyPair
+			//		.FindPairChain<Image>("MainImage", out var mainImage)
+			//		.FindPairChain<TMP_Text>("NameText", out var nameText)
+			//		.FindPairChain<TMP_Text>("EffectText", out var effectText)
+			//		;
+			//
+			//	if (mainImage != null)
+			//	{
+			//		mainImage.sprite = StrategyManager.Key2Sprite.GetAsset(data.environmentalKey);
+			//	}
+			//	if (nameText != null)
+			//	{
+			//		nameText.text = data.sectorName;
+			//	}
+			//	if (effectText != null)
+			//	{
+			//		effectText.text = data.EffectString();
+			//	}
+			//}
+			//void OnChangeCaptureData(SectorData.Capture.Data data)
+			//{
+			//	KeyPair
+			//	  .FindPairChain<TMP_Text>("CaptureText", out var captureText)
+			//	  ;
+			//
+			//	if (captureText != null)
+			//	{
+			//		if (StrategyManager.Collector.TryFind<Faction>(data.captureFactionID, out var faction))
+			//		{
+			//			captureText.text = faction.FactionName;
+			//		}
+			//		else
+			//		{
+			//			captureText.text = "중립 지역";
+			//		}
+			//	}
+			//}
+			//void OnChangeStatsData(SectorData.MainStats.Data data)
+			//{
+			//	UpdateFillRectUI();
+			//	UpdateStatePanel("StatsData KeyValue", "Base StatsData", selectSector.CurrStatsList?.GetValueList());
+			//}
+			//void OnChangeFacilitiesData(SectorData.Facilities.Data data)
+			//{
+			//	UpdateFillRectUI();
+			//	UpdateStatePanel("StatsData KeyValue", "FacilitiesInfo StatsData",
+			//		selectSector.SectorStatsGroup.GetValueList(SectorObject.StatsGroupName_Facilities));
+			//}
+			//void OnChangeSupportData(SectorData.Support.Data data)
+			//{
+			//	UpdateFillRectUI();
+			//	UpdateStatePanel("StatsData KeyValue", "Support StatsData",
+			//		selectSector.SectorStatsGroup.GetValueList(SectorObject.StatsGroupName_Support));
+			//}
+			//void UpdateFillRectUI()
+			//{
+			//	SetFillRectUI("Fill Durability", selectSector.GetDurability(), "방어벽 없음");
+			//	SetFillRectUI("Fill Operation", selectSector.GetManpower(), "병력 보충 불가");
+			//	SetFillRectUI("Fill Material", selectSector.GetMaterial(), "물자 보충 불가");
+			//	SetFillRectUI("Fill Electric", selectSector.GetElectric(), "전력 보충 불가");
+			//}
 			void UpdateStatePanel(string stateItemName, string statePanelName, List<StatsValue> list)
 			{
 				if (list == null) return;
@@ -483,51 +483,51 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 			}
 			protected override void OnShow()
 			{
-				selectSector.Support.AddLateListener(OnChangeSupportData);
-				OnChangeSupportData(selectSector.SupportData);
+			//	selectSector.Support.AddLateListener(OnChangeSupportData);
+			//	OnChangeSupportData(selectSector.SupportData);
 			}
 
 			protected override void OnHide()
 			{
-				selectSector.Support.RemoveListener(OnChangeSupportData);
+			//	selectSector.Support.RemoveListener(OnChangeSupportData);
 			}
-			void OnChangeSupportData(SectorData.Support.Data data)
-			{
-				KeyPair.FindPairChain<TMP_Text>("PointText", out var PointText);
-				if (PointText != null)
-				{
-					PointText.text = $"잉여 점수: {data.supportPoint}";
-				}
-
-				KeyPair.FindPairChain("Offensive", out var Offensive);
-				KeyPair.FindPairChain("Defensive", out var Defensive);
-				KeyPair.FindPairChain("Supply", out var Supply);
-				KeyPair.FindPairChain("Facilities", out var Facilities);
-
-				SetupSlider(Offensive, data.offensivePoint, selectSector.Controller.OnChangeSupport_Offensive);
-				SetupSlider(Defensive, data.defensivePoint, selectSector.Controller.OnChangeSupport_Defensive);
-				SetupSlider(Supply, data.supplyPoint, selectSector.Controller.OnChangeSupport_Supply);
-				SetupSlider(Facilities, data.facilitiesPoint, selectSector.Controller.OnChangeSupport_Facilities);
-
-				UpdateSupportState(SectorData.Support.SupportType.Offensive, Offensive, offensiveItemList);
-				UpdateSupportState(SectorData.Support.SupportType.Defensive, Defensive, defensiveItemList);
-				UpdateSupportState(SectorData.Support.SupportType.Supply, Supply, supplyItemList);
-				UpdateSupportState(SectorData.Support.SupportType.Facilities, Facilities, facilitiesItemList);
-			}
-			void UpdateSupportState(SectorData.Support.SupportType key, GameObject supportPanel, Dictionary<StatsType, LabelTextUI> itemList)
-			{
-				if (!selectSector.TryGetStatsList_Support(key, out var statsList)) return;
-
-				var list = statsList.GetValueList();
-				int length = list == null ? 0 : list.Count;
-				for (int i = 0 ; i < length ; i++)
-				{
-					var item = list[i];
-					var type = item.StatsType;
-					var value = item.Value;
-					UpdateStatsItem(type, value, itemList, supportPanel.transform);
-				}
-			}
+			//void OnChangeSupportData(SectorData.Support.Data data)
+			//{
+			//	KeyPair.FindPairChain<TMP_Text>("PointText", out var PointText);
+			//	if (PointText != null)
+			//	{
+			//		PointText.text = $"잉여 점수: {data.supportPoint}";
+			//	}
+			//
+			//	KeyPair.FindPairChain("Offensive", out var Offensive);
+			//	KeyPair.FindPairChain("Defensive", out var Defensive);
+			//	KeyPair.FindPairChain("Supply", out var Supply);
+			//	KeyPair.FindPairChain("FacilitiesInfo", out var Facilities);
+			//
+			//	SetupSlider(Offensive, data.offensivePoint, selectSector.Controller.OnChangeSupport_Offensive);
+			//	SetupSlider(Defensive, data.defensivePoint, selectSector.Controller.OnChangeSupport_Defensive);
+			//	SetupSlider(Supply, data.supplyPoint, selectSector.Controller.OnChangeSupport_Supply);
+			//	SetupSlider(Facilities, data.facilitiesPoint, selectSector.Controller.OnChangeSupport_Facilities);
+			//
+			//	UpdateSupportState(SectorData.Support.SupportType.Offensive, Offensive, offensiveItemList);
+			//	UpdateSupportState(SectorData.Support.SupportType.Defensive, Defensive, defensiveItemList);
+			//	UpdateSupportState(SectorData.Support.SupportType.Supply, Supply, supplyItemList);
+			//	UpdateSupportState(SectorData.Support.SupportType.Facilities, Facilities, facilitiesItemList);
+			//}
+			//void UpdateSupportState(SectorData.Support.SupportType key, GameObject supportPanel, Dictionary<StatsType, LabelTextUI> itemList)
+			//{
+			//	if (!selectSector.TryGetStatsList_Support(key, out var statsList)) return;
+			//
+			//	var list = statsList.GetValueList();
+			//	int length = list == null ? 0 : list.Count;
+			//	for (int i = 0 ; i < length ; i++)
+			//	{
+			//		var item = list[i];
+			//		var type = item.StatsType;
+			//		var value = item.Value;
+			//		UpdateStatsItem(type, value, itemList, supportPanel.transform);
+			//	}
+			//}
 			void UpdateStatsItem(StatsType key, int value, Dictionary<StatsType, LabelTextUI> list, Transform parent)
 			{
 				if (list.TryGetValue(key, out var uiObject))
@@ -578,8 +578,8 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 				: base(sectorObject, thisPanel, contentPrefab)
 			{
 				KeyPair.FindPairChain<TMP_Text>("InfoText", out facilitiesInfoText);
-				facilitiesControlUI = KeyPair.FindSubPairChain("Facilities Control");
-				facilitiesInstallableUI = KeyPair.FindSubPairChain("Facilities Installable");
+				facilitiesControlUI = KeyPair.FindSubPairChain("FacilitiesInfo Control");
+				facilitiesInstallableUI = KeyPair.FindSubPairChain("FacilitiesInfo Installable");
 
 				facilitiesSlots ??= new();
 				facilitiesItemList ??= new();
@@ -612,38 +612,38 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 			}
 			protected override void OnShow()
 			{
-				selectSector.Facilities.AddLateListener(OnChangeFacilitiesData);
-				OnChangeFacilitiesData(selectSector.FacilitiesData);
+			//	selectSector.Facilities.AddLateListener(OnChangeFacilitiesData);
+			//	OnChangeFacilitiesData(selectSector.FacilitiesData);
 			}
 
 			protected override void OnHide()
 			{
-				selectSector.Facilities.RemoveListener(OnChangeFacilitiesData);
+			//	selectSector.Facilities.RemoveListener(OnChangeFacilitiesData);
 			}
-			void OnChangeFacilitiesData(SectorData.Facilities.Data data)
-			{
-				SectorData.Facilities.Slot[] slotData = data.slotData;
-				CreateSlot(slotData == null ? 0 : slotData.Length);
-
-				int slotLength = slotData.Length;
-				for (int i = 0 ; i < slotLength ; i++)
-				{
-					UpdateSlotInfo(i, slotData[i]);
-				}
-				KeyPair.FindPairChain("Total Statistics", out var statistics);
-				UpdateFacilitiesState(statistics, facilitiesItemList);
-
-
-			}
+			//void OnChangeFacilitiesData(SectorData.Facilities.Data data)
+			//{
+			//	SectorData.Facilities.Slot[] slotData = data.slotData;
+			//	CreateSlot(slotData == null ? 0 : slotData.Length);
+			//
+			//	int slotLength = slotData.Length;
+			//	for (int i = 0 ; i < slotLength ; i++)
+			//	{
+			//		UpdateSlotInfo(i, slotData[i]);
+			//	}
+			//	KeyPair.FindPairChain("Total Statistics", out var statistics);
+			//	UpdateFacilitiesState(statistics, facilitiesItemList);
+			//
+			//
+			//}
 			void CreateSlot(int slotSize)
 			{
 				if (facilitiesSlots.Count == 0)
 				{
-					KeyPair.FindPairChain("Facilities PoolList", out var slotParent);
+					KeyPair.FindPairChain("FacilitiesInfo PoolList", out var slotParent);
 
 					for (int i = 0 ; i < slotSize ; i++)
 					{
-						KeyPair.FindPairChainAndCopy("Facilities Slot", slotParent.transform, out var newSlot);
+						KeyPair.FindPairChainAndCopy("FacilitiesInfo Slot", slotParent.transform, out var newSlot);
 						if (newSlot == null) break;
 						if (newSlot.TryGetComponent<KeyPairTarget>(out var slotObject))
 						{
@@ -652,46 +652,46 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 					}
 				}
 			}
-			void UpdateSlotInfo(int index, SectorData.Facilities.Slot data)
-			{
-				var slotChain = facilitiesSlots[index];
-				string key = data.facilitiesKey;
-				var constructing = data.constructing;
-
-				slotChain.FindPairChain<Button>("Button", out var Button);
-				slotChain.FindPairChain<Image>("Image", out var Image);
-				slotChain.FindPairChain<Image>("Progress", out var ProgressImage);
-				slotChain.FindPairChain<TMP_Text>("_label", out var Label);
-
-				if (Button != null)
-				{
-					Button.onClick.RemoveAllListeners();
-					Button.onClick.AddListener(() => ShowSlotControlUI(index, data.facilitiesKey));
-				}
-				if (Image != null)
-				{
-					Image.sprite = StrategyManager.Key2Sprite.GetAsset(key);
-				}
-				if (ProgressImage != null)
-				{
-					if (string.IsNullOrWhiteSpace(constructing.facilitiesKey) || constructing.facilitiesKey == key)
-					{
-						ProgressImage.enabled = false;
-					}
-					else
-					{
-						ProgressImage.enabled = true;
-						float installingTime = constructing.constructTime;
-						float timeRemaining = constructing.duration;
-						if (installingTime < 1) installingTime = 1;
-						ProgressImage.fillAmount = 1f - (timeRemaining / installingTime);
-					}
-				}
-				if (Label != null)
-				{
-					Label.text = StrategyManager.Key2Name.GetAsset(key);
-				}
-			}
+			//void UpdateSlotInfo(int index, SectorData.Facilities.Slot data)
+			//{
+			//	var slotChain = facilitiesSlots[index];
+			//	string key = data.facilitiesKey;
+			//	var constructing = data.constructing;
+			//
+			//	slotChain.FindPairChain<Button>("Button", out var Button);
+			//	slotChain.FindPairChain<Image>("Image", out var Image);
+			//	slotChain.FindPairChain<Image>("Progress", out var ProgressImage);
+			//	slotChain.FindPairChain<TMP_Text>("_label", out var Label);
+			//
+			//	if (Button != null)
+			//	{
+			//		Button.onClick.RemoveAllListeners();
+			//		Button.onClick.AddListener(() => ShowSlotControlUI(index, data.facilitiesKey));
+			//	}
+			//	if (Image != null)
+			//	{
+			//		Image.sprite = StrategyManager.Key2Sprite.GetAsset(key);
+			//	}
+			//	if (ProgressImage != null)
+			//	{
+			//		if (string.IsNullOrWhiteSpace(constructing.facilitiesKey) || constructing.facilitiesKey == key)
+			//		{
+			//			ProgressImage.enabled = false;
+			//		}
+			//		else
+			//		{
+			//			ProgressImage.enabled = true;
+			//			float installingTime = constructing.constructTime;
+			//			float timeRemaining = constructing.duration;
+			//			if (installingTime < 1) installingTime = 1;
+			//			ProgressImage.fillAmount = 1f - (timeRemaining / installingTime);
+			//		}
+			//	}
+			//	if (Label != null)
+			//	{
+			//		Label.text = StrategyManager.Key2Name.GetAsset(key);
+			//	}
+			//}
 			void ShowSlotControlUI(int index, string facilitiesKey)
 			{
 				if (facilitiesControlUI == null) return;
@@ -754,22 +754,21 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 
 			void UpdateFacilitiesState(GameObject FacilitiesPanel, Dictionary<StatsType, LabelTextUI> itemList)
 			{
-				var list = selectSector.SectorStatsGroup.GetValueList(SectorObject.StatsGroupName_Facilities);
-
-				int length = list == null ? 0 : list.Count;
-				for (int i = 0 ; i < length ; i++)
-				{
-					var item = list[i];
-					var type = item.StatsType;
-					var value = item.Value;
-					UpdateStatsItem(type, value, itemList, FacilitiesPanel.transform);
-				}
+			//	var list = selectSector.SectorStatsGroup.GetValueList(SectorObject.StatsGroupName_Facilities);
+			//
+			//	int length = list == null ? 0 : list.Count;
+			//	for (int i = 0 ; i < length ; i++)
+			//	{
+			//		var item = list[i];
+			//		var type = item.StatsType;
+			//		var value = item.Value;
+			//		UpdateStatsItem(type, value, itemList, FacilitiesPanel.transform);
+			//	}
 			}
 			void UpdateStatsItem(StatsType key, int value, Dictionary<StatsType, LabelTextUI> list, Transform parent)
 			{
 				if (list.TryGetValue(key, out var uiObject))
 				{
-					//string label = StrategyManager.Key2Name.GetAsset(type.ToString());
 					string text =  $"{(value>=0?"+":"-")}{value.ToString()}{SuffixStatsType(key)}";
 					list[key].SetText(text);
 
