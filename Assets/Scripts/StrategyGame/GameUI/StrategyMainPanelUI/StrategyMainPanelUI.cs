@@ -1,21 +1,37 @@
-﻿using UnityEngine;
+﻿using GameUI;
 
-public class StrategyMainPanelUI : MonoBehaviour, IGamePanelUI, IStrategyStartGame
+using UnityEngine;
+
+[RequireComponent(typeof(KeyPairTarget))]
+[RequireComponent(typeof(RectTransform))]
+public class StrategyMainPanelUI : GameUIController, IPanelItem
 {
-	public void OpenUI()
-	{
-	}
-	public void CloseUI()
-	{
+    private RectTransform rectTransform;
+	private KeyPairTarget keyPairTarget;
+
+    public IPanelItem ThisPanel => this;
+    RectTransform IPanelItem.ThisRect => rectTransform;
+
+    protected override void Awake()
+    {
+        base.Awake();
+		rectTransform = GetComponent<RectTransform>();
+		keyPairTarget.GetComponent<KeyPairTarget>();
 	}
 
-    void IStrategyStartGame.OnStartGame()
-	{
-		OpenUI();
-	}
+    protected override void Hide()
+    {
+        
+    }
 
-    void IStrategyStartGame.OnStopGame()
-	{
-		CloseUI();
+    protected override void Show()
+    {
+        var keyPair = gameObject.GetKeyPairChain();
+
+		if (keyPair.TryFindPair<StrategyResourcesView>("MainFillRect", out var view))
+		{
+			Faction playerFaction = StrategyManager.Collector.Find<Faction>(StrategyManager.PlayerFactionID);
+			view.SetTarget(playerFaction);
+		}
 	}
 }

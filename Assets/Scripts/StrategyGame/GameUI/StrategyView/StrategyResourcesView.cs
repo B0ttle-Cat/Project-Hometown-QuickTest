@@ -1,8 +1,10 @@
-﻿using UnityEngine;
+﻿using GameUI;
+
+using UnityEngine;
 
 using static StrategyGamePlayData;
 
-public class StrategyResourcesView : MonoBehaviour
+public class StrategyResourcesView : PanelItemComponent
 {
 	private ISupplyStats supplyTarget;
 
@@ -13,7 +15,10 @@ public class StrategyResourcesView : MonoBehaviour
 	[SerializeField]
 	private FillRectAndLabel electric;
 
-	private void SetTarget(ISupplyStats target)
+	public override IPanelItem ThisPanel => this;
+
+
+    public void SetTarget(ISupplyStats target)
 	{
 		if (supplyTarget.IsNotNullRef())
 		{

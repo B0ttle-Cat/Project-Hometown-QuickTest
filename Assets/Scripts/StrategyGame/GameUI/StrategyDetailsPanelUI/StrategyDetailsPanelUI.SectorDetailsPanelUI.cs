@@ -514,7 +514,7 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 			//	UpdateSupportState(SectorData.Support.SupportType.Supply, Supply, supplyItemList);
 			//	UpdateSupportState(SectorData.Support.SupportType.Facilities, Facilities, facilitiesItemList);
 			//}
-			//void UpdateSupportState(SectorData.Support.SupportType key, GameObject supportPanel, Dictionary<StatsType, LabelTextUI> itemList)
+			//void UpdateSupportState(SectorData.Support.SupportType key, GameObject supportPanel, keyPairValue<StatsType, LabelTextUI> itemList)
 			//{
 			//	if (!selectSector.TryGetStatsList_Support(key, out var statsList)) return;
 			//

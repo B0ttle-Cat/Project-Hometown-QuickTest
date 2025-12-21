@@ -1,11 +1,5 @@
-﻿using UnityEngine;
-
-public static class GameObjectExpand
+﻿public static class GameObjectExpand
 {
-	public static void SetDeactive(this GameObject gameObject, bool value)
-	{
-		gameObject.SetActive(!value);
-	}
 	public static bool IsNullRef<T>(this T obj) where T : class
 	{
 		// 1. C# 레벨에서의 순수한 null 검사
