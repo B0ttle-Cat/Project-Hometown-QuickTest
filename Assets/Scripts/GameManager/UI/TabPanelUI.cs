@@ -8,6 +8,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+[Obsolete("다른 로직으로 교체 필요", true)]
 public interface ITabControl
 {
 	ITabControl ClearTab();
@@ -15,6 +16,7 @@ public interface ITabControl
 	ITabControl RemoveTab(params string[] labels);
 	ITabControl GetTabControl();
 }
+[Obsolete("다른 로직으로 교체 필요", true)]
 public class TabPanelUI : MonoBehaviour, ITabControl
 {
 	[SerializeField]

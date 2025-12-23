@@ -86,13 +86,13 @@ public partial class StrategyDetailsPanelUI // FieldInfoDetailsPanelUI
 			fieldInfoDetails_MainMission = new FieldInfo_Mission(ThisPanelUI, uiPrefabStruct.mission);
 			fieldInfoDetails_Storyboard = new FieldInfo_Storyboard(ThisPanelUI, uiPrefabStruct.storyboard);
 
-			ThisPanelUI.tabControl.ClearTab();
-			ThisPanelUI.tabControl.AddTab(("", null),
-				("개요", ShowContnet_Overview),
-				("게임 통계", ShowContnet_Statistics),
-				("핵심 임무", ShowContnet_Mission),
-				("이야기", ShowContnet_Storyboard)
-				);
+			//ThisPanelUI.tabControl.ClearTab();
+			//ThisPanelUI.tabControl.AddTab(("", null),
+			//	("개요", ShowContnet_Overview),
+			//	("게임 통계", ShowContnet_Statistics),
+			//	("핵심 임무", ShowContnet_Mission),
+			//	("이야기", ShowContnet_Storyboard)
+			//	);
 
 			if (detailsType == DetailsType.None) detailsType = lastDetailsType;
 			Action onShow = detailsType switch

@@ -7,7 +7,9 @@ using UnityEngine;
 public partial class StrategyDetailsPanelUI : MonoBehaviour, IGamePanelUI, IStrategyStartGame
 {
 	[SerializeField]
+	[Obsolete("다른 로직으로 교체 필요", true)]
 	private  TabPanelUI tabPanelUI;
+	[Obsolete("다른 로직으로 교체 필요", true)]
 	private ITabControl tabControl;
 
 	[SerializeField]
@@ -39,7 +41,7 @@ public partial class StrategyDetailsPanelUI : MonoBehaviour, IGamePanelUI, IStra
 
     public void OpenUI()
 	{
-		tabControl = tabPanelUI.GetTabControl();
+		//tabControl = tabPanelUI.GetTabControl();
 		currrentContent = null;
 		gameObject.SetActive(true);
 	}

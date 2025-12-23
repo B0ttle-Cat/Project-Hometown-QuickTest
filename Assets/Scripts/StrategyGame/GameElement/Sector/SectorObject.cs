@@ -198,6 +198,6 @@ public partial class SectorObject : IStatsValueControl , ISupplyStats
 		StatsValue.SetStatsValue(StatsType.자원_재료_현재, integerMaterial);
 		StatsValue.SetStatsValue(StatsType.자원_전력_현재, integerElectric);
 
-		OnSupplyChange.Invoke(this);
+		OnSupplyChange?.Invoke(this);
 	}
 }

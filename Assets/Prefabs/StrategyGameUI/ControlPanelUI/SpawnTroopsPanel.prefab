@@ -734,17 +734,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69f83da43e56f034ba53e7751e0c3c7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CanvasGroupUI
-  isOn: 1
+  isShow: 0
+  AlphaOnOffValue: {x: 0, y: 0}
   changeTime: 0
-  scaledDeltaTime: 0
-  on:
-    alpha: 1
-    interactable: 1
-    blocksRaycasts: 1
-  off:
-    alpha: 0
-    interactable: 0
-    blocksRaycasts: 0
+  timeMode: 0
+  controlInteractable: 0
+  interactableOnAlpha: 0
+  interactableOffAlpha: 0
+  controlBlocksRaycasts: 0
+  blocksRaycastsOnAlpha: 0
+  blocksRaycastsOffAlpha: 0
 --- !u!114 &2940910399141874248
 MonoBehaviour:
   m_ObjectHideFlags: 0

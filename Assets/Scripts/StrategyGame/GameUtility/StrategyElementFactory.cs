@@ -30,7 +30,7 @@ public static class StrategyElementFactory
 			if (belongedOperation < 0) return;
 
 			var operation = StrategyManager.Collector.Find<OperationObject>(belongedOperation);
-			if (operation == null) return;
+			if (operation.IsNullRef()) return;
 
 			operation.AddUnitObject(newUnit);
 		}
@@ -45,9 +45,9 @@ public static class StrategyElementFactory
 	}
 	public static UnitObject Instantiate(UnitProfileObject profile, int factionID = -1, int belongedOperation = -1, Vector3? position = null, Quaternion? rotation = null, bool enterThis = true)
 	{
-		if (profile == null) return null;
+		if (profile.IsNullRef()) return null;
 		var prefab = profile.prefab;
-		if (prefab == null) return null;
+		if (prefab.IsNullRef()) return null;
 
 		var newObject = GameObject.Instantiate(prefab, position ?? Vector3.zero, rotation ?? Quaternion.identity);
 
@@ -75,7 +75,7 @@ public static class StrategyElementFactory
 			if (belongedOperation < 0) return;
 
 			var operation = StrategyManager.Collector.Find<OperationObject>(belongedOperation);
-			if (operation == null) return;
+			if (operation.IsNullRef()) return;
 
 			operation.AddUnitObject(unitObject);
 		}
@@ -90,7 +90,8 @@ public static class StrategyElementFactory
 	}
 	public static void Destroy(UnitObject unitObject)
 	{
-		if (unitObject == null) return;
+		if (unitObject.IsNullRef()) return;
+		if (StrategyManager.IsNotReadyScene) return;
 
 		if (StrategyManager.Collector.TryFind<Faction>(unitObject.FactionID, out var faction))
 		{
@@ -109,7 +110,7 @@ public static class StrategyElementFactory
 		int visiteSectorID = setterOperationData.visiteSectorID;
 
 		var sector = StrategyManager.Collector.Find<SectorObject>(visiteSectorID);
-		if (sector == null) return null;
+		if (sector.IsNullRef()) return null;
 		return Instantiate(sector, new SpawnTroopsInfo(factionID, null), teamName);
 	}
 	public static OperationObject Instantiate(SectorObject sector, in SpawnTroopsInfo spawnTroopsInfo, string teamName = "")
@@ -154,7 +155,8 @@ public static class StrategyElementFactory
 
 	public static void Destroy(OperationObject operation)
 	{
-		if (operation == null) return;
+		if (operation.IsNullRef()) return;
+		if (StrategyManager.IsNotReadyScene) return;
 
 		operation.DeInit();
 		StrategyManager.Collector.Remove<OperationObject>(operation);
@@ -232,7 +234,8 @@ public static class StrategyElementFactory
 	}
 	public static void Destroy(ProjectileObject projectile)
 	{
-		if (projectile == null) return;
+		if (projectile.IsNullRef()) return;
+		if (StrategyManager.IsNotReadyScene) return;
 
 		projectile.DeInit();
 		StrategyManager.Pooling.Release(projectile);

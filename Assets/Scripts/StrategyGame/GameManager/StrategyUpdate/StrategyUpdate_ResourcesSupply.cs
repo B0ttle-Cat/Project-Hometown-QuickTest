@@ -279,7 +279,7 @@ namespace StrategyManagerModule
 			protected override void Update(in float deltaTime)
 			{
 				int sectorCount = sectorList.Count;
-				int factionCount = factionList.Count;
+				int factionCount = sectorCount + factionList.Count;
 
 				for (int i = 0 ; i < sectorCount ; i++)
 				{

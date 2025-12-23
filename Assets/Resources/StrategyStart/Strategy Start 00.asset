@@ -33,6 +33,7 @@ MonoBehaviour:
       maxOperationPoint: 100
       requireOperationPoint: 0
       currentOperationPoint: 0
+      enableResourcesSupply: 1
       maxMaterialPoint: 100
       currentMaterialPoint: 0
       maxElectricPoint: 100
@@ -49,6 +50,7 @@ MonoBehaviour:
       maxOperationPoint: 0
       requireOperationPoint: 0
       currentOperationPoint: 0
+      enableResourcesSupply: 1
       maxMaterialPoint: 100
       currentMaterialPoint: 0
       maxElectricPoint: 100
@@ -71,7 +73,8 @@ MonoBehaviour:
       RecoveryElectric: 100
       LocalElectric: 100
       DistributionDepth: 0
-      CycleTime: 60
+      DistributionAddDepth: 0
+      CycleTime: 10
       FactionCapacityPersonnel: 10
       FactionCapacityMaterial: 50
       FactionCapacityElectric: 50
@@ -104,7 +107,8 @@ MonoBehaviour:
       RecoveryElectric: 100
       LocalElectric: 100
       DistributionDepth: 0
-      CycleTime: 60
+      DistributionAddDepth: 0
+      CycleTime: 10
       FactionCapacityPersonnel: 10
       FactionCapacityMaterial: 50
       FactionCapacityElectric: 50
@@ -129,7 +133,8 @@ MonoBehaviour:
       RecoveryElectric: 100
       LocalElectric: 100
       DistributionDepth: 0
-      CycleTime: 60
+      DistributionAddDepth: 0
+      CycleTime: 10
       FactionCapacityPersonnel: 10
       FactionCapacityMaterial: 50
       FactionCapacityElectric: 50
@@ -154,7 +159,8 @@ MonoBehaviour:
       RecoveryElectric: 100
       LocalElectric: 100
       DistributionDepth: 0
-      CycleTime: 60
+      DistributionAddDepth: 0
+      CycleTime: 10
       FactionCapacityPersonnel: 10
       FactionCapacityMaterial: 50
       FactionCapacityElectric: 50
@@ -169,20 +175,21 @@ MonoBehaviour:
       PermanentStatus: 0
       DynamicStatus: 0
     - sectorName: Sector_04
-      CapacityPersonnel: 0
-      RecoveryPersonnel: 0
-      LocalPersonnel: 0
-      CapacityMaterial: 0
-      RecoveryMaterial: 0
-      LocalMaterial: 0
-      CapacityElectric: 0
-      RecoveryElectric: 0
-      LocalElectric: 0
+      CapacityPersonnel: 20
+      RecoveryPersonnel: 2
+      LocalPersonnel: 2
+      CapacityMaterial: 200
+      RecoveryMaterial: 100
+      LocalMaterial: 100
+      CapacityElectric: 200
+      RecoveryElectric: 100
+      LocalElectric: 100
       DistributionDepth: 0
-      CycleTime: 0
-      FactionCapacityPersonnel: 0
-      FactionCapacityMaterial: 0
-      FactionCapacityElectric: 0
+      DistributionAddDepth: 0
+      CycleTime: 10
+      FactionCapacityPersonnel: 10
+      FactionCapacityMaterial: 50
+      FactionCapacityElectric: 50
       facilitiesInfo: []
       remainingPoint: 0
       offensivePoint: 0

@@ -85,13 +85,13 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 			sectorDetails_Facilities = new SectorDetails_Facilities(sectorObject, ThisPanelUI, uiPrefabStruct.facilities);
 			sectorDetails_Operation = new SectorDetails_Operation(sectorObject, ThisPanelUI, uiPrefabStruct.operation);
 
-			ThisPanelUI.tabControl.ClearTab();
-			ThisPanelUI.tabControl.AddTab(("", null),
-				("거점 정보", ShowTabAndContnet_Info),
-				("지원 정책", ShowTabAndContnet_Support),
-				("설치 시설", ShowTabAndContnet_Facilities),
-				("주둔 병력", ShowTabAndContnet_Operation)
-				);
+			//ThisPanelUI.tabControl.ClearTab();
+			//ThisPanelUI.tabControl.AddTab(("", null),
+			//	("거점 정보", ShowTabAndContnet_Info),
+			//	("지원 정책", ShowTabAndContnet_Support),
+			//	("설치 시설", ShowTabAndContnet_Facilities),
+			//	("주둔 병력", ShowTabAndContnet_Operation)
+			//	);
 
 			if (detailsType == DetailsType.None) detailsType = lastDetailsType;
 			Action onShow = detailsType switch

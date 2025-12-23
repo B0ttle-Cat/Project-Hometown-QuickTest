@@ -169,9 +169,9 @@ namespace GameUI
 				if (item.IsNullRef()) return;
 				if (item is IShowHide showHide)
 				{
-					if (item is IAsyncShowHide asyncShowHide)
+					if (item is IShowHideAsync asyncShowHide)
 					{
-						asyncShowHide.OnShowAsync();
+						asyncShowHide.OnShow();
 					}
 					else
 					{
@@ -184,9 +184,9 @@ namespace GameUI
 				if (item.IsNullRef()) return;
 				if (item is IShowHide showHide)
 				{
-					if (item is IAsyncShowHide asyncShowHide)
+					if (item is IShowHideAsync asyncShowHide)
 					{
-						asyncShowHide.OnHideAsync();
+						asyncShowHide.OnHide();
 					}
 					else
 					{

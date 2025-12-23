@@ -65,7 +65,7 @@ public class FloatingPanelItemUI : MonoBehaviour
 		gameObject.SetActive(true);
 		if (canvas != null) canvas.enabled = true;
 		OnShow();
-		if (canvasGroupUI != null) canvasGroupUI.OnShow(_Show);
+		if (canvasGroupUI != null) canvasGroupUI.ThisShowHide.OnShow(_Show);
 
 		void _Show()
 		{
@@ -76,7 +76,7 @@ public class FloatingPanelItemUI : MonoBehaviour
 	public void Hide(Action onInvisible = null)
 	{
 		OnHide();
-		if (canvasGroupUI != null) canvasGroupUI.OnHide(_Hide);
+		if (canvasGroupUI != null) canvasGroupUI.ThisShowHide.OnHide(_Hide);
 		else _Hide();
 
 		void _Hide()

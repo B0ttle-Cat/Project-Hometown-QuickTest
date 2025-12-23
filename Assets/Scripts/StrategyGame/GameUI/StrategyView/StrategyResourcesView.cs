@@ -15,11 +15,21 @@ public class StrategyResourcesView : PanelItemComponent
 	[SerializeField]
 	private FillRectAndLabel electric;
 
-	public override IPanelItem ThisPanel => this;
+	[SerializeField]
+	private IShowHide personnelShowHide;
+	[SerializeField]
+	private IShowHide materialShowHide;
+	[SerializeField]
+	private IShowHide electricShowHide;
 
+
+	public override IPanelItem ThisPanel => this;
+	public override IShowHideAsync ThisShowHide => this;
 
     public void SetTarget(ISupplyStats target)
 	{
+		if(supplyTarget == target) return;
+
 		if (supplyTarget.IsNotNullRef())
 		{
 			supplyTarget.OnSupplyChange -= OnSupplyChange;
@@ -35,7 +45,43 @@ public class StrategyResourcesView : PanelItemComponent
 		}
 	}
 
-	private void OnSupplyChange(ISupplyStats statsValue)
+    protected override void Hide()
+    {
+		if (personnelShowHide.IsNullRef())
+			personnelShowHide = personnel.GetComponent<IShowHide>();
+		if (personnelShowHide.IsNotNullRef())
+			personnelShowHide.OnHide();
+
+		if (materialShowHide.IsNullRef())
+			materialShowHide = material.GetComponent<IShowHide>();
+		if (materialShowHide.IsNotNullRef())
+			materialShowHide.OnHide();
+
+		if (electricShowHide.IsNullRef())
+			electricShowHide = electric.GetComponent<IShowHide>();
+		if (electricShowHide.IsNotNullRef())
+			electricShowHide.OnHide();
+	}
+
+    protected override void Show()
+    {
+		if(personnelShowHide.IsNullRef())
+			personnelShowHide = personnel.GetComponent<IShowHide>();
+		if (personnelShowHide.IsNotNullRef())
+			personnelShowHide.OnShow();
+
+		if (materialShowHide.IsNullRef())
+			materialShowHide = material.GetComponent<IShowHide>();
+		if (materialShowHide.IsNotNullRef())
+			materialShowHide.OnShow();
+
+		if (electricShowHide.IsNullRef())
+			electricShowHide = electric.GetComponent<IShowHide>();
+		if (electricShowHide.IsNotNullRef())
+			electricShowHide.OnShow();
+	}
+
+    private void OnSupplyChange(ISupplyStats statsValue)
 	{
 		if (personnel != null)
 		{
@@ -59,4 +105,5 @@ public class StrategyResourcesView : PanelItemComponent
 			electric.SetValueText(ratio, $"{local}/{max}");
 		}
 	}
+
 }

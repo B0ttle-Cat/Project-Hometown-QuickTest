@@ -21,11 +21,11 @@ public class MessageBox : MonoBehaviour
 	}
 	public void OnShow(Action awaitCallback = null)
 	{
-		canvasGroupUI.OnShow(awaitCallback);
+		canvasGroupUI.ThisShowHide.OnShow(awaitCallback);
 	}
 	public void OnHide(Action awaitCallback = null)
 	{
-		canvasGroupUI.OnHide(awaitCallback);
+		canvasGroupUI.ThisShowHide.OnHide(awaitCallback);
 	}
 	public string Text
 	{

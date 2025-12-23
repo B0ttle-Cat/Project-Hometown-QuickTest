@@ -671,7 +671,7 @@ public partial class StrategyMouseSelecter
 			Rect rect = Rect.MinMaxRect(xMin, yMin, xMax, yMax);
 			foreach (IList list in StrategyManager.Collector.GetAllElementLists())
 			{
-				foreach (IStrategyElement item in list)
+				foreach (var item in list)
 				{
 					if (item is not ISelectableByMouse target) continue;
 

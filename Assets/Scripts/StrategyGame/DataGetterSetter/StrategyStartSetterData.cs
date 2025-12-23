@@ -248,7 +248,7 @@ namespace StrategyManagerModule
 				FactionCapacityElectric = 50;
 
 				DistributionDepth = 0;
-				CycleTime = 60;
+				CycleTime = 10;
 			}
 #endif
 		}

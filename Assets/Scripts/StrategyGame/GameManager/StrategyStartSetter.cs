@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 using Sirenix.OdinInspector;
 
 using UnityEngine;
+
+using Debug = UnityEngine.Debug;
 
 namespace StrategyManagerModule
 {
@@ -73,6 +76,17 @@ namespace StrategyManagerModule
 		{
 			ref readonly var data = ref  strategyStartSetterData.ReadonlyData();
 			factionRelation.Init(collector, data.factionRelations);
+		}
+		[Conditional("UNITY_EDITOR")]
+		internal void OnStartSetter_FactionViewer()
+		{
+			var list = collector.GetList<Faction>();
+			int length = list.Count;
+			for (int i = 0 ; i < length ; i++)
+			{
+				FactionViewer factionViewer =  StrategyManager.Manager.gameObject.AddComponent<FactionViewer>();
+				factionViewer.faction = list[i];
+			}
 		}
 		internal async Awaitable OnStartSetter_Sector()
 		{

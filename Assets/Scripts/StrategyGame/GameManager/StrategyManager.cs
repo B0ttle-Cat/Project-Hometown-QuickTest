@@ -86,6 +86,9 @@ public class StrategyManager : MonoBehaviour
 	}
     private void OnDestroy()
 	{
+		IsGameSceneReady = false;
+		IsGameManagerReady = false;
+
 		Manager = null;
 
 		if(gameUI != null)
@@ -224,6 +227,7 @@ public class StrategyManager : MonoBehaviour
 		// 시작 세력 세팅
 		setter.OnStartSetter_Faction();
 		setter.OnStartSetter_FactionRelation(factionRelation);
+		setter.OnStartSetter_FactionViewer();
 
 		// Sector 세팅
 		await setter.OnStartSetter_Sector();
