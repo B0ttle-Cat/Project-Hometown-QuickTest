@@ -39,17 +39,17 @@ public record SectorStatsData
 	[LabelText("회복 및 분배 주기(초)")]
 	public float CycleTime;
 
-	[FoldoutGroup("Faction리소스")]
+	[FoldoutGroup("Faction보너스리소스", GroupName = "이 구역을 점령시 증가하는 세력의 최대 수용량")]
 	[LabelText("인력 수용량")]
-	public int FactionCapacityPersonnel;
+	public int MaxPersonnelCapacityBonusOfFaction;
 
-	[FoldoutGroup("Faction리소스")]
+	[FoldoutGroup("Faction보너스리소스")]
 	[LabelText("재료 수용량")]
-	public int FactionCapacityMaterial;
+	public int MaxMaterialCapacityBonusOfFaction;
 
-	[FoldoutGroup("Faction리소스")]
+	[FoldoutGroup("Faction보너스리소스")]
 	[LabelText("전력 수용량")]
-	public int FactionCapacityElectric;
+	public int MaxElectricCapacityBonusOfFaction;
 
 	[LabelText("구역 확보에 필요한 시간")]
 	public float CaptureTimeRequired;
@@ -69,9 +69,9 @@ public record SectorStatsData
 		this.RecoveryElectric = data.RecoveryElectric;
 		this.DistributionDepth = data.DistributionDepth;
 		this.CycleTime = data.CycleTime;
-		this.FactionCapacityPersonnel = data.FactionCapacityPersonnel;
-		this.FactionCapacityMaterial = data.FactionCapacityMaterial;
-		this.FactionCapacityElectric = data.FactionCapacityElectric;
+		this.MaxPersonnelCapacityBonusOfFaction = data.MaxPersonnelCapacityBonusOfFaction;
+		this.MaxMaterialCapacityBonusOfFaction = data.MaxMaterialCapacityBonusOfFaction;
+		this.MaxElectricCapacityBonusOfFaction = data.MaxElectricCapacityBonusOfFaction;
 		this.CaptureTimeRequired = data.CaptureTimeRequired;
 		this.EnvironmentalKey = data.EnvironmentalKey;
 		this.PermanentStatus = data.PermanentStatus;
@@ -81,16 +81,17 @@ public record SectorStatsData
 [Serializable]
 public record SectorRuntimeData
 {
-	[FoldoutGroup("리소스")]
-	[LabelText("현지 인력량")]
+	[BoxGroup("현지 리소스")]
+	[HorizontalGroup("현지 리소스/H")]
+	[HideLabel, SuffixLabel("인력량", Overlay = true)]
 	public int LocalPersonnel;
-	[FoldoutGroup("리소스")]
-	[LabelText("현지 재료량")]
+	[HorizontalGroup("현지 리소스/H")]
+	[HideLabel, SuffixLabel("재료량", Overlay = true)]
 	public int LocalMaterial;
-	[FoldoutGroup("리소스")]
-	[LabelText("현지 전력량")]
+	[HorizontalGroup("현지 리소스/H")]
+	[HideLabel, SuffixLabel("전력량", Overlay = true)]
 	public int LocalElectric;
-	[FoldoutGroup("리소스")]
+	[BoxGroup("현지 리소스")]
 	[LabelText("추가 분배 거리")]
 	public int DistributionDepth;
 

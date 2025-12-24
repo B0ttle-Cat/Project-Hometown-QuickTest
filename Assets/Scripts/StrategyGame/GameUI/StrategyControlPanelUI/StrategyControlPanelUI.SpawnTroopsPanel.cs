@@ -176,7 +176,7 @@ public partial class StrategyControlPanelUI // SpawnTroops
 				ReleaseContent();
 				void ReleaseFaction()
 				{
-					Value.FactionStats.RemoveListener(OnChangeFactionStats);
+					Value.DynamicKeyStatsList.RemoveListener(OnChangeFactionStats);
 				}
 				void ReleaseContent()
 				{
@@ -215,13 +215,13 @@ public partial class StrategyControlPanelUI // SpawnTroops
 				}
 				void UpdateFaction()
 				{
-					Value.FactionStats.AddLateListener(OnChangeFactionStats);
+					Value.DynamicKeyStatsList.AddLateListener(OnChangeFactionStats);
 					OnChangeFactionStats(new StatsValue());
 				}
 			}
 			private void OnChangeFactionStats(StatsValue _)
 			{
-				var factionStatsList = Value.FactionStats.GetValueList(
+				var factionStatsList = Value.DynamicKeyStatsList.GetValueList(
 					StatsType.자원_인력_최대,
 					StatsType.자원_인력_현재);
 

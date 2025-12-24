@@ -238,7 +238,6 @@ namespace StrategyManagerModule
 					// 점유 세력 없고 우위 세력만 있는 경우
 					// => 우의 세력의 점수를 올린다.
 
-
 					var factionList = StrategyManager.Collector.GetList<Faction>();
 					Faction ownerFaction = factionList.Find( ownerFactionID);
 					Faction dominantFaction = factionList.Find( dominantFactionID);
@@ -259,13 +258,13 @@ namespace StrategyManagerModule
 							{
 								// 중립화
 								controlFaction = ownerFactionID;
-								captureProgress -= Delta(ownerFactionID, in deltaTime);
+								captureProgress -= deltaTime;
 							}
 							else
 							{
 								//우세 세력이 점령 시작
 								controlFaction = dominantFactionID = topPointFactionID;
-								captureProgress += Delta(topPointFactionID, in deltaTime);
+								captureProgress += deltaTime;
 							}
 						}
 						else
@@ -274,7 +273,7 @@ namespace StrategyManagerModule
 							{
 								// 우세 세력이 점령중
 								controlFaction = dominantFactionID;
-								captureProgress += Delta(dominantFactionID, in deltaTime);
+								captureProgress += deltaTime;
 								if (captureProgress >= 1f)
 								{
 									// 점령중 세력을 점유자로 전환
@@ -286,7 +285,7 @@ namespace StrategyManagerModule
 								// 점령중 우세 상실
 								// 점령지 무효와
 								controlFaction = dominantFactionID;
-								captureProgress -= Delta(topPointFactionID, in deltaTime);
+								captureProgress -= deltaTime;
 								if (captureProgress <= 0f)
 								{
 									// 우세 세력을 점령중으로 전환
@@ -302,12 +301,12 @@ namespace StrategyManagerModule
 						{
 							// 점령지 회복 & 현싱 유지
 							controlFaction = ownerFactionID;
-							captureProgress += Delta(ownerFactionID, in deltaTime);
+							captureProgress += deltaTime;
 						}
 						else
 						{
 							controlFaction = ownerFactionID;
-							captureProgress -= Delta(dominantFactionID, in deltaTime);
+							captureProgress -= deltaTime;
 							if (captureProgress <= 0f)
 							{
 								// 점유자 해제
@@ -318,15 +317,6 @@ namespace StrategyManagerModule
 
 					dominantFactionID = controlFaction;
 					captureProgress = Mathf.Clamp01(captureProgress);
-
-					float Delta(int faction, in float deltaTime)
-					{
-						Faction deltaFaction = StrategyManager.Collector.Find<Faction>(faction);
-						float captureSpeed = deltaFaction == null ? 1 : Mathf.Max(deltaFaction.FactionStats.GetValue(StrategyGamePlayData.StatsType.세력_점령속도비율_c).Value, 0.1f);
-						float delta = (captureSpeed / captureTime) * deltaTime;
-						return delta;
-					}
-
 				}
 				private (Dictionary<int, int> factionPoint, int totalPoint) ComputeFactionTotals()
 				{

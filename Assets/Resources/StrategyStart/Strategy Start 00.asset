@@ -27,42 +27,42 @@ MonoBehaviour:
       defeatScript: 
       enableSubMissions: []
     factionDatas:
-    - factionName: Faction_00
-      factionColor: {r: 0.19607843, g: 0.5882353, b: 0.19607843, a: 1}
-      factionIcon: {fileID: 21300000, guid: 685efeaf107f1514f9036b5688b3ddb3, type: 3}
-      maxOperationPoint: 100
-      requireOperationPoint: 0
-      currentOperationPoint: 0
-      enableResourcesSupply: 1
-      maxMaterialPoint: 100
-      currentMaterialPoint: 0
-      maxElectricPoint: 100
-      currentElectricPoint: 0
-      captureSpeed: 1
-      defaultUnitPrefab: {fileID: 2460545361625872358, guid: 47ee3d89ec6dbf842b177734ea94c8d2, type: 3}
+    - FactionName: 
+      FactionColor: {r: 0, g: 0, b: 0, a: 0}
+      FactionIcon: {fileID: 0}
+      EnableResourcesSupply: 0
+      CapacityPersonnel: 0
+      RecoveryPersonnel: 0
+      CurrentPersonnel: 0
+      CapacityMaterial: 0
+      RecoveryMaterial: 0
+      CurrentMaterial: 0
+      CapacityElectric: 0
+      RecoveryElectric: 0
+      CurrentElectric: 0
       availableUnitKeyList:
       - Range: 1
         unitKey: 2100
         endUnitKey: 2121
-    - factionName: Faction_01
-      factionColor: {r: 0.78431374, g: 0.19607843, b: 0.19607843, a: 1}
-      factionIcon: {fileID: 21300000, guid: 685efeaf107f1514f9036b5688b3ddb3, type: 3}
-      maxOperationPoint: 0
-      requireOperationPoint: 0
-      currentOperationPoint: 0
-      enableResourcesSupply: 1
-      maxMaterialPoint: 100
-      currentMaterialPoint: 0
-      maxElectricPoint: 100
-      currentElectricPoint: 0
-      captureSpeed: 0
-      defaultUnitPrefab: {fileID: 2460545361625872358, guid: 47ee3d89ec6dbf842b177734ea94c8d2, type: 3}
+    - FactionName: 
+      FactionColor: {r: 0, g: 0, b: 0, a: 0}
+      FactionIcon: {fileID: 0}
+      EnableResourcesSupply: 0
+      CapacityPersonnel: 0
+      RecoveryPersonnel: 0
+      CurrentPersonnel: 0
+      CapacityMaterial: 0
+      RecoveryMaterial: 0
+      CurrentMaterial: 0
+      CapacityElectric: 0
+      RecoveryElectric: 0
+      CurrentElectric: 0
       availableUnitKeyList:
       - Range: 1
         unitKey: 1100
         endUnitKey: 1420
     sectorDatas:
-    - sectorName: Sector_00
+    - SectorName: 
       CapacityPersonnel: 20
       RecoveryPersonnel: 2
       LocalPersonnel: 2
@@ -75,9 +75,9 @@ MonoBehaviour:
       DistributionDepth: 0
       DistributionAddDepth: 0
       CycleTime: 10
-      FactionCapacityPersonnel: 10
-      FactionCapacityMaterial: 50
-      FactionCapacityElectric: 50
+      MaxPersonnelCapacityBonusOfFaction: 10
+      MaxMaterialCapacityBonusOfFaction: 50
+      MaxElectricCapacityBonusOfFaction: 50
       facilitiesInfo:
       - FacilityKey: 0
         ConstructionProgress: 0
@@ -96,7 +96,7 @@ MonoBehaviour:
       EnvironmentalKey: 0
       PermanentStatus: 0
       DynamicStatus: 0
-    - sectorName: Sector_01
+    - SectorName: 
       CapacityPersonnel: 20
       RecoveryPersonnel: 2
       LocalPersonnel: 2
@@ -109,9 +109,9 @@ MonoBehaviour:
       DistributionDepth: 0
       DistributionAddDepth: 0
       CycleTime: 10
-      FactionCapacityPersonnel: 10
-      FactionCapacityMaterial: 50
-      FactionCapacityElectric: 50
+      MaxPersonnelCapacityBonusOfFaction: 10
+      MaxMaterialCapacityBonusOfFaction: 50
+      MaxElectricCapacityBonusOfFaction: 50
       facilitiesInfo: []
       remainingPoint: 0
       offensivePoint: 0
@@ -122,7 +122,7 @@ MonoBehaviour:
       EnvironmentalKey: 0
       PermanentStatus: 0
       DynamicStatus: 0
-    - sectorName: Sector_02
+    - SectorName: 
       CapacityPersonnel: 20
       RecoveryPersonnel: 2
       LocalPersonnel: 2
@@ -135,9 +135,9 @@ MonoBehaviour:
       DistributionDepth: 0
       DistributionAddDepth: 0
       CycleTime: 10
-      FactionCapacityPersonnel: 10
-      FactionCapacityMaterial: 50
-      FactionCapacityElectric: 50
+      MaxPersonnelCapacityBonusOfFaction: 10
+      MaxMaterialCapacityBonusOfFaction: 50
+      MaxElectricCapacityBonusOfFaction: 50
       facilitiesInfo: []
       remainingPoint: 0
       offensivePoint: 0
@@ -148,7 +148,7 @@ MonoBehaviour:
       EnvironmentalKey: 0
       PermanentStatus: 0
       DynamicStatus: 0
-    - sectorName: Sector_03
+    - SectorName: 
       CapacityPersonnel: 20
       RecoveryPersonnel: 2
       LocalPersonnel: 2
@@ -161,9 +161,9 @@ MonoBehaviour:
       DistributionDepth: 0
       DistributionAddDepth: 0
       CycleTime: 10
-      FactionCapacityPersonnel: 10
-      FactionCapacityMaterial: 50
-      FactionCapacityElectric: 50
+      MaxPersonnelCapacityBonusOfFaction: 10
+      MaxMaterialCapacityBonusOfFaction: 50
+      MaxElectricCapacityBonusOfFaction: 50
       facilitiesInfo: []
       remainingPoint: 0
       offensivePoint: 0
@@ -174,7 +174,7 @@ MonoBehaviour:
       EnvironmentalKey: 0
       PermanentStatus: 0
       DynamicStatus: 0
-    - sectorName: Sector_04
+    - SectorName: 
       CapacityPersonnel: 20
       RecoveryPersonnel: 2
       LocalPersonnel: 2
@@ -187,9 +187,9 @@ MonoBehaviour:
       DistributionDepth: 0
       DistributionAddDepth: 0
       CycleTime: 10
-      FactionCapacityPersonnel: 10
-      FactionCapacityMaterial: 50
-      FactionCapacityElectric: 50
+      MaxPersonnelCapacityBonusOfFaction: 10
+      MaxMaterialCapacityBonusOfFaction: 50
+      MaxElectricCapacityBonusOfFaction: 50
       facilitiesInfo: []
       remainingPoint: 0
       offensivePoint: 0

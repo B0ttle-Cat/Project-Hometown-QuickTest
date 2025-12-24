@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 
 using UnityEngine;
+
+using static StrategyGamePlayData;
 namespace StrategyManagerModule
 {
 	public partial class StrategyUpdate
@@ -102,6 +104,7 @@ namespace StrategyManagerModule
 			public class SectorResourcesSupply : ResourcesSupply
 			{
 				private readonly SectorObject sector;
+				private readonly ISupplyStats supplyStats;
 				private readonly SupplyRequest supplyRequest;
 				private float watingTime;
 
@@ -112,6 +115,7 @@ namespace StrategyManagerModule
 					Dictionary<Faction, SupplyRequest> factionSupplyRequest) : base(thisSubClass)
 				{
 					this.sector = sector;
+					supplyStats = sector;
 					watingTime = 0;
 					supplyRequest = new SupplyRequest();
 
@@ -240,19 +244,22 @@ namespace StrategyManagerModule
 				protected override void OnUpdate(in float deltaTime)
 				{
 					if (!supplyRequest.IsUpdateFlag()) return;
+					if (supplyStats.IsNullRef()) return;
 
-					sector.OnSupplyUpdate(supplyRequest);
+					supplyStats.OnSupplyUpdate(supplyRequest);
 				}
 			}
 			public class FactionResourcesSupply : ResourcesSupply
 			{
 				private readonly Faction faction;
+				private readonly ISupplyStats supplyStats;
 				private readonly SupplyRequest supplyRequest;
 				private readonly Dictionary<Faction, SupplyRequest> factionSupplyRequest;
 				public FactionResourcesSupply(Faction faction, StrategyUpdate_ResourcesSupply thisSubClass,
 					Dictionary<Faction, SupplyRequest> factionSupplyRequest) : base(thisSubClass)
 				{
 					this.faction = faction;
+					supplyStats = faction;
 					this.factionSupplyRequest = factionSupplyRequest;
 					supplyRequest = new SupplyRequest();
 
@@ -272,8 +279,9 @@ namespace StrategyManagerModule
 				protected override void OnUpdate(in float deltaTime)
 				{
 					if (!supplyRequest.IsUpdateFlag()) return;
+					if (supplyStats.IsNullRef()) return;
 
-					faction.OnSupplyUpdate(supplyRequest);
+					supplyStats.OnSupplyUpdate(supplyRequest);
 				}
 			}
 			protected override void Update(in float deltaTime)

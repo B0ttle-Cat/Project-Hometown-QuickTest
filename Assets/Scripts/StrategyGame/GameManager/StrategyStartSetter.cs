@@ -64,7 +64,7 @@ namespace StrategyManagerModule
 			for (int i = 0 ; i < length ; i++)
 			{
 				var factionData = factions[i];
-				if (factionData.factionName == data.playerFactionName)
+				if (factionData.FactionName == data.playerFactionName)
 				{
 					StrategyManager.PlayerFactionID = i;
 				}

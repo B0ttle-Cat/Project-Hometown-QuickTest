@@ -87,10 +87,10 @@ namespace StrategyManagerModule
 			if (obj == null) return;
 			// 점령 세력 색상 추출
 			var faction = factionDatas[captureData.captureFactionID];
-			Color color = faction.factionColor;
+			Color color = faction.FactionColor;
 			if (color == default) return;
 
-			DrawLabel(obj.transform.position, Vector3.down, $"Capture: {faction.factionName} {(int)(captureData.captureProgress * 100)}%", color);
+			DrawLabel(obj.transform.position, Vector3.down, $"Capture: {faction.FactionName} {(int)(captureData.captureProgress * 100)}%", color);
 		}
 		private void DrawNetworkLink(StrategyStartSetterData target, StrategyStartSetterData.SectorLinkData net, StrategyStartSetterData.Data data)
 		{
@@ -278,7 +278,7 @@ namespace StrategyManagerModule
 			if (unit.factionID >= 0)
 			{
 				var faction = factions[unit.factionID];
-				factionColor = faction.factionColor;
+				factionColor = faction.FactionColor;
 			}
 			if (unit.belongedOperation >= 0)
 			{

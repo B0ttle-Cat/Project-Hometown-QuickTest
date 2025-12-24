@@ -9,112 +9,120 @@ using StrategyManagerModule;
 using UnityEngine;
 
 using static StrategyGamePlayData;
-using static StrategyManagerModule.StrategyUpdate;
 
 [Serializable]
-public partial class Faction : IEquatable<Faction>, IDisposable
+public partial class Faction : IDisposable
 {
+	[SerializeField, BoxGroup("Faction Data")]
+	private readonly FactionStatsData statsData;
+	[SerializeField, BoxGroup("Faction Data")]
+	private readonly FactionRuntimeData runtimeData;
+	public FactionStatsData StatsData => statsData;
+	public FactionRuntimeData RuntimeData => runtimeData;
+
 	public Faction(in StrategyStartSetterData.FactionData data)
 	{
-		factionName = data.factionName;
-		factionColor = data.factionColor;
-		factionIcon = data.factionIcon;
-		defaultUnitPrefab = data.defaultUnitPrefab;
+		statsData = new FactionStatsData();
+		runtimeData = new FactionRuntimeData();
 
-		enableResourcesSupply = data.enableResourcesSupply;
+		statsData.FactionName = data.FactionName;
+		statsData.FactionColor = data.FactionColor;
+		statsData.FactionIcon = data.FactionIcon;
+		statsData.EnableResourcesSupply = data.EnableResourcesSupply;
+		statsData.AvailableUnitKeyList = data.AvailableUnitKeyList();
 
-		factionStats = new StatsList(new StatsValue(StatsType.세력_점령속도비율_c, data.captureSpeed),
-			new StatsValue(StatsType.자원_인력_최대, data.maxOperationPoint),
-			new StatsValue(StatsType.자원_인력_현재, data.currentOperationPoint),
-			new StatsValue(StatsType.자원_재료_최대, data.maxMaterialPoint),
-			new StatsValue(StatsType.자원_재료_현재, data.currentMaterialPoint),
-			new StatsValue(StatsType.자원_전력_최대, data.maxElectricPoint),
-			new StatsValue(StatsType.자원_전력_현재, data.currentElectricPoint)
-		);
-		availableUnitKeyList = data.AvailableUnitKeyList();
+		statsData.CapacityPersonnel = data.CapacityPersonnel;
+		statsData.CapacityMaterial = data.CapacityMaterial;
+		statsData.CapacityElectric = data.CapacityElectric;
+		statsData.RecoveryPersonnel = data.RecoveryPersonnel;
+		statsData.RecoveryMaterial = data.RecoveryMaterial;
+		statsData.RecoveryElectric = data.RecoveryElectric;
 
-		detectedList = new ();
+		runtimeData.CurrentPersonnel = data.CurrentPersonnel;
+		runtimeData.CurrentMaterial = data.CurrentMaterial;
+		runtimeData.CurrentElectric = data.CurrentElectric;
+		runtimeData.AssignedMilitaryPersonnel = 0;
+		runtimeData.AssignedFacilitiesPersonnel = 0;
+		runtimeData.MaintenanceCostFacilitiesMaterial = 0;
+		runtimeData.MaintenanceCostFacilitiesElectric = 0;
+		runtimeData.DynamicAvailableUnitKeyList = new List<UnitKey>();
+		runtimeData.DynamicKeyStatsList = new StatsList();
+		detectedList = new();
+
+		OnSupplyChange = null;
 	}
 	public void Dispose()
 	{
-		factionIcon = null;
-		defaultUnitPrefab = null;
-		availableUnitKeyList = null;
+		detectedList?.Dispose();
 		detectedList = null;
 		OnSupplyChange = null;
 	}
+	public void ComputeAllRuntimeData()
+	{
+		ComputeAssignedMilitaryPersonnel();
+		ComputeFacilitiesRuntimeData();
+		ComputeDynamicKeyStatsList();
+	}
+	public void ComputeFacilitiesRuntimeData()
+	{
+		ComputeAssignedFacilitiesPersonnel();
+		ComputeMaintenanceCostFacilitiesMaterial();
+		ComputeMaintenanceCostFacilitiesElectric();
+	}
 
-	private string factionName;
-	private int factionID;
+	public void ComputeAssignedMilitaryPersonnel()
+	{
 
-	private Color factionColor;
-	private Sprite factionIcon;
-	private GameObject defaultUnitPrefab;
-	private bool enableResourcesSupply;
+	}
+	public void ComputeAssignedFacilitiesPersonnel()
+	{
 
-	private StatsList factionStats;
-	private List<UnitKey> availableUnitKeyList;
+	}
+	public void ComputeMaintenanceCostFacilitiesMaterial()
+	{
+
+	}
+	public void ComputeMaintenanceCostFacilitiesElectric()
+	{
+
+	}
+	public void ComputeDynamicAvailableUnitKeyList()
+	{
+
+	}
+	public void ComputeDynamicKeyStatsList()
+	{
+
+	}
+
 
 	private ElementSet detectedList;
 
 	[ShowInInspector]
-	public string FactionName => factionName;
+	public string FactionName => StatsData.FactionName;
 	[ShowInInspector]
-	public int FactionID => factionID;
+	public int FactionID => StatsData.FactionID;
 	[ShowInInspector]
-	public Color FactionColor => factionColor;
-	public Sprite FactionIcon => factionIcon;
-	public GameObject DefaultUnitPrefab => defaultUnitPrefab;
-	public bool IsEnableResourcesSupply {get => enableResourcesSupply; set => enableResourcesSupply = value; }
+	public Color FactionColor => StatsData.FactionColor;
+	public Sprite FactionIcon => StatsData.FactionIcon;
+	public bool IsEnableResourcesSupply { get => StatsData.EnableResourcesSupply; set => StatsData.EnableResourcesSupply = value; }
 	[ShowInInspector]
-	public StatsList FactionStats => factionStats;
-	public List<UnitKey> AvailableUnitKeyList => availableUnitKeyList;
+	public StatsList DynamicKeyStatsList => RuntimeData.DynamicKeyStatsList;
 	public ElementSet DetectedList => detectedList;
-
-	public static bool TryFindFaction(string factionName, out Faction find)
-	{
-		return StrategyManager.Collector.TryFind<Faction>(f => f.factionName == factionName, out find);
-	}
-	public static bool FindFaction(int factionID, out Faction find)
-	{
-		return StrategyManager.Collector.TryFind<Faction>(f => f.factionID == factionID, out find);
-	}
-	public override bool Equals(object obj)
-	{
-		return Equals(obj as Faction);
-	}
-	public bool Equals(Faction other)
-	{
-		return other is not null &&
-			   factionName == other.factionName &&
-			   factionID == other.factionID;
-	}
-	public override int GetHashCode()
-	{
-		return HashCode.Combine(factionName, factionID);
-	}
-    public static bool operator ==(Faction left, Faction right)
-	{
-		return EqualityComparer<Faction>.Default.Equals(left, right);
-	}
-	public static bool operator !=(Faction left, Faction right)
-	{
-		return !(left == right);
-	}
 }
 public partial class Faction : IStrategyElement
 {
 	public IStrategyElement ThisElement => this;
-	int IStrategyElement.ID { get => factionID; set => factionID = value; }
+	int IStrategyElement.ID { get => StatsData.FactionID; set => StatsData.FactionID = value; }
 
-    public void InStrategyCollector()
+	public void InStrategyCollector()
 	{
 	}
 	public void OutStrategyCollector()
 	{
 	}
 
-    void IStrategyStartGame.OnStartGame()
+	void IStrategyStartGame.OnStartGame()
 	{
 	}
 	void IStrategyStartGame.OnStopGame()
@@ -132,8 +140,8 @@ public partial class Faction // ElementSet
 		public IEnumerable<ITargetableCombatant> TargetableType => targetableList;
 		public IEnumerable<INearbyElement> NearbyType => nearbyList;
 		public int Count => elementList.Count;
-		public ElementSet() { } 
-		public ElementSet(IEnumerable<IStrategyElement> detectedList) 
+		public ElementSet() { }
+		public ElementSet(IEnumerable<IStrategyElement> detectedList)
 		{
 			foreach (var detected in detectedList)
 			{
@@ -144,7 +152,7 @@ public partial class Faction // ElementSet
 		{
 			Clear();
 		}
-		
+
 		#region 자주사용하는 함수
 		public bool Add(IStrategyElement item)
 		{
@@ -174,7 +182,7 @@ public partial class Faction // ElementSet
 		}
 		public bool Contains(IStrategyElement item) => elementList.Contains(item);
 		#endregion
-	
+
 		#region ISet<T>
 		bool ICollection<IStrategyElement>.IsReadOnly => false;
 		public void CopyTo(IStrategyElement[] array, int arrayIndex) => elementList.CopyTo(array, arrayIndex);
@@ -189,104 +197,77 @@ public partial class Faction // ElementSet
 		public void SymmetricExceptWith(IEnumerable<IStrategyElement> other) => elementList.SymmetricExceptWith(other);
 		public void UnionWith(IEnumerable<IStrategyElement> other) => elementList.UnionWith(other);
 		void ICollection<IStrategyElement>.Add(IStrategyElement item) => Add(item);
-        IEnumerator<IStrategyElement> IEnumerable<IStrategyElement>.GetEnumerator()	=> elementList.GetEnumerator();
+		IEnumerator<IStrategyElement> IEnumerable<IStrategyElement>.GetEnumerator() => elementList.GetEnumerator();
 		IEnumerator IEnumerable.GetEnumerator() => elementList.GetEnumerator();
 		#endregion
-    }
+	}
 }
 
 public partial class Faction : IStatsValueControl, ISupplyStats
 {
 	public IStatsValueControl StatsValue => this;
-    public Action<ISupplyStats> OnSupplyChange { get; set; }
+	public Action<ISupplyStats> OnSupplyChange { get; set; }
 
-    int IStatsValueControl.GetStatsValue(StatsType type)
-    {
+	int IStatsValueControl.GetStatsValue(StatsType type)
+	{
 		int baseValue = type switch
-        {
-            StatsType.자원_인력_최대 => 1,
-            StatsType.자원_인력_현재 => 1,
-            StatsType.자원_재료_최대 => 1,
-            StatsType.자원_재료_현재 => 1,
-            StatsType.자원_전력_최대 => 1,
-            StatsType.자원_전력_현재 => 1,
-            StatsType.자원_인력_회복 => 1,
-            StatsType.자원_재료_회복 => 1,
-            StatsType.자원_전력_회복 => 1,
-            StatsType.세력_점령속도비율_c => 1,
-            _ => 0,
-        } + factionStats.GetValue(type);
+		{
+			StatsType.자원_인력_최대 => StatsData.CapacityPersonnel,
+			StatsType.자원_재료_최대 => StatsData.CapacityMaterial,
+			StatsType.자원_전력_최대 => StatsData.CapacityElectric,
+
+			StatsType.자원_인력_현재 => StatsData.RecoveryPersonnel,
+			StatsType.자원_재료_현재 => StatsData.RecoveryMaterial,
+			StatsType.자원_전력_현재 => StatsData.RecoveryElectric,
+
+			StatsType.자원_인력_회복 => RuntimeData.CurrentPersonnel,
+			StatsType.자원_재료_회복 => RuntimeData.CurrentMaterial,
+			StatsType.자원_전력_회복 => RuntimeData.CurrentElectric,
+			_ => 0,
+		} + DynamicKeyStatsList.GetValue(type);
 		return baseValue;
 	}
 
-    float IStatsValueControl.GetStatsValuePrecent(StatsType type)
+	float IStatsValueControl.GetStatsValuePrecent(StatsType type)
 	{
 		int baseValue = type switch
 		{
-			StatsType.자원_인력_최대 => 1,
-			StatsType.자원_인력_현재 => 1,
-			StatsType.자원_재료_최대 => 1,
-			StatsType.자원_재료_현재 => 1,
-			StatsType.자원_전력_최대 => 1,
-			StatsType.자원_전력_현재 => 1,
-			StatsType.자원_인력_회복 => 1,
-			StatsType.자원_재료_회복 => 1,
-			StatsType.자원_전력_회복 => 1,
-			StatsType.세력_점령속도비율_c => 1,
+			StatsType.자원_인력_최대 => StatsData.CapacityPersonnel,
+			StatsType.자원_재료_최대 => StatsData.CapacityMaterial,
+			StatsType.자원_전력_최대 => StatsData.CapacityElectric,
+
+			StatsType.자원_인력_현재 => StatsData.RecoveryPersonnel,
+			StatsType.자원_재료_현재 => StatsData.RecoveryMaterial,
+			StatsType.자원_전력_현재 => StatsData.RecoveryElectric,
+
+			StatsType.자원_인력_회복 => RuntimeData.CurrentPersonnel,
+			StatsType.자원_재료_회복 => RuntimeData.CurrentMaterial,
+			StatsType.자원_전력_회복 => RuntimeData.CurrentElectric,
 			_ => 0,
-		} + factionStats.GetValue(type);
+		} + DynamicKeyStatsList.GetValue(type);
 		return baseValue * 0.01f;
 	}
 
-    void IStatsValueControl.SetStatsValue(StatsType type, int value)
+	void IStatsValueControl.SetStatsValue(StatsType type, int value)
 	{
-		switch(type)
+		switch (type)
 		{
-			case StatsType.자원_인력_현재: factionStats.SetValue(type, value); break;
-			case StatsType.자원_재료_현재: factionStats.SetValue(type, value); break;
-			case StatsType.자원_전력_현재: factionStats.SetValue(type, value); break;
-			default: factionStats.SetValue(type, value); break;
+			case StatsType.자원_인력_현재: RuntimeData.CurrentPersonnel = value; break;
+			case StatsType.자원_재료_현재: RuntimeData.CurrentMaterial = value; break;
+			case StatsType.자원_전력_현재: RuntimeData.CurrentElectric = value; break;
+			default: DynamicKeyStatsList.SetValue(type, value); break;
 		}
 	}
 
-    void IStatsValueControl.SetStatsValuePrecent(StatsType type, float valuePercent)
+	void IStatsValueControl.SetStatsValuePrecent(StatsType type, float valuePercent)
 	{
 		int value = Mathf.FloorToInt(valuePercent * 100);
 		switch (type)
 		{
-			case StatsType.자원_인력_현재: factionStats.SetValue(type, value); break;
-			case StatsType.자원_재료_현재: factionStats.SetValue(type, value); break;
-			case StatsType.자원_전력_현재: factionStats.SetValue(type, value); break;
-			default: factionStats.SetValue(type, value); break;
+			case StatsType.자원_인력_현재: RuntimeData.CurrentPersonnel = value; break;
+			case StatsType.자원_재료_현재: RuntimeData.CurrentMaterial = value; break;
+			case StatsType.자원_전력_현재: RuntimeData.CurrentElectric = value; break;
+			default: DynamicKeyStatsList.SetValue(type, value); break;
 		}
-	}
-
-
-	public void OnSupplyUpdate(SupplyRequest supplyRequest)
-	{
-		if (!supplyRequest.IsUpdateFlag()) return;
-
-		supplyRequest.ResetAndLeaveDecimal(
-			out int integerPersonnel,
-			out int integerMaterial,
-			out int integerElectric);
-
-		int maxPersonnel = StatsValue.GetStatsValue(StatsType.자원_인력_최대);
-		int maxMaterial = StatsValue.GetStatsValue(StatsType.자원_재료_최대);
-		int maxElectric = StatsValue.GetStatsValue(StatsType.자원_전력_최대);
-
-		integerPersonnel += StatsValue.GetStatsValue(StatsType.자원_인력_현재);
-		integerMaterial += StatsValue.GetStatsValue(StatsType.자원_재료_현재);
-		integerElectric += StatsValue.GetStatsValue(StatsType.자원_전력_현재);
-
-		if (maxPersonnel < integerPersonnel) integerPersonnel = maxPersonnel;
-		if (maxMaterial < integerMaterial) integerMaterial = maxMaterial;
-		if (maxElectric < integerElectric) integerElectric = maxElectric;
-
-		StatsValue.SetStatsValue(StatsType.자원_인력_현재, integerPersonnel);
-		StatsValue.SetStatsValue(StatsType.자원_재료_현재, integerMaterial);
-		StatsValue.SetStatsValue(StatsType.자원_전력_현재, integerElectric);
-
-		OnSupplyChange?.Invoke(this);
 	}
 }

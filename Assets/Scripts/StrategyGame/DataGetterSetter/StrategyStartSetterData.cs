@@ -59,40 +59,50 @@ namespace StrategyManagerModule
 				if (factionDatas == null || factionDatas.Length == 0)
 					return new[] { "(No SectorData)" };
 
-				return factionDatas.Select(x => x.factionName);
+				return factionDatas.Select(x => x.FactionName);
 			}
 #endif
 		}
 		[Serializable]
 		public struct FactionData
 		{
-			[FoldoutGroup("@factionName")]
-			public string factionName;
-			[FoldoutGroup("@factionName")]
-			public Color factionColor;
-			[FoldoutGroup("@factionName")]
-			public Sprite factionIcon;
+			[FoldoutGroup("@FactionName")]
+			public string FactionName;
+			[FoldoutGroup("@FactionName")]
+			public Color FactionColor;
+			[FoldoutGroup("@FactionName")]
+			public Sprite FactionIcon;
 
-			[FoldoutGroup("@factionName/StatsData")] public int maxOperationPoint;
-			[FoldoutGroup("@factionName/StatsData")] public int requireOperationPoint;
-			[FoldoutGroup("@factionName/StatsData")] public int currentOperationPoint;
-			[Space]
-			[FoldoutGroup("@factionName/StatsData")] public bool enableResourcesSupply;
-			[Space]
-			[FoldoutGroup("@factionName/StatsData")] public int maxMaterialPoint;
-			[FoldoutGroup("@factionName/StatsData")] public int currentMaterialPoint;
-			[Space]
-			[FoldoutGroup("@factionName/StatsData")] public int maxElectricPoint;
-			[FoldoutGroup("@factionName/StatsData")] public int currentElectricPoint;
-			[Space]
-			[FoldoutGroup("@factionName/StatsData")] public int captureSpeed;
+			[BoxGroup("@FactionName/세력 리소스")]
+			public bool EnableResourcesSupply;
 
-			[FoldoutGroup("@factionName")] public GameObject defaultUnitPrefab;
+			[BoxGroup("@FactionName/세력 리소스/인력", VisibleIf = "@EnableResourcesSupply")]
+			[HorizontalGroup("@FactionName/세력 리소스/인력/H"), HideLabel, SuffixLabel("최대 수용량", Overlay = true)]
+			public int CapacityPersonnel;
+			[HorizontalGroup("@FactionName/세력 리소스/인력/H"), HideLabel, SuffixLabel("분당 회복량", Overlay = true)]
+			public int RecoveryPersonnel;
+			[HorizontalGroup("@FactionName/세력 리소스/인력/H"), HideLabel, SuffixLabel("현재 보유량", Overlay = true)]
+			public int CurrentPersonnel;
 
-			[FoldoutGroup("@factionName"),SerializeField]
+			[BoxGroup("@FactionName/세력 리소스/재료", VisibleIf = "@EnableResourcesSupply")]
+			[HorizontalGroup("@FactionName/세력 리소스/재료/H"), HideLabel, SuffixLabel("최대 수용량", Overlay = true)]
+			public int CapacityMaterial;
+			[HorizontalGroup("@FactionName/세력 리소스/재료/H"), HideLabel, SuffixLabel("분당 회복량", Overlay = true)]
+			public int RecoveryMaterial;
+			[HorizontalGroup("@FactionName/세력 리소스/재료/H"), HideLabel, SuffixLabel("현재 보유량", Overlay = true)]
+			public int CurrentMaterial;
+
+			[BoxGroup("@FactionName/세력 리소스/전력", VisibleIf = "@EnableResourcesSupply")]
+			[HorizontalGroup("@FactionName/세력 리소스/전력/H"), HideLabel, SuffixLabel("최대 수용량", Overlay = true)]
+			public int CapacityElectric;
+			[HorizontalGroup("@FactionName/세력 리소스/전력/H"), HideLabel, SuffixLabel("분당 회복량", Overlay = true)]
+			public int RecoveryElectric;
+			[HorizontalGroup("@FactionName/세력 리소스/전력/H"), HideLabel, SuffixLabel("현재 보유량", Overlay = true)]
+			public int CurrentElectric;
+
+
+			[FoldoutGroup("@FactionName"),SerializeField]
 			private List<UnitKeySelecter> availableUnitKeyList;
-
-
 			[Serializable]
 			private struct UnitKeySelecter
 			{
@@ -140,15 +150,14 @@ namespace StrategyManagerModule
 		{
 			[FoldoutGroup("@SectorName"), SerializeField]
 			[ValueDropdown("SectorObjectListInScene", AppendNextDrawer = true)]
-			private string sectorName;
-			public string SectorName { get { return sectorName; } }
+			public string SectorName;
 
 			[BoxGroup("@SectorName/Local리소스/인력")]
 			[HorizontalGroup("@SectorName/Local리소스/인력/H"), HideLabel,SuffixLabel("최대 수용량", Overlay = true)]
 			public int CapacityPersonnel;
 			[HorizontalGroup("@SectorName/Local리소스/인력/H"), HideLabel,SuffixLabel("분당 회복량", Overlay = true)]
 			public int RecoveryPersonnel;
-			[HorizontalGroup("@SectorName/Local리소스/인력/H"), HideLabel,SuffixLabel("현지 수량", Overlay = true)]
+			[HorizontalGroup("@SectorName/Local리소스/인력/H"), HideLabel,SuffixLabel("현지 보유량", Overlay = true)]
 			public int LocalPersonnel;
 
 			[BoxGroup("@SectorName/Local리소스/재료")]
@@ -156,7 +165,7 @@ namespace StrategyManagerModule
 			public int CapacityMaterial;
 			[HorizontalGroup("@SectorName/Local리소스/재료/H"), HideLabel,SuffixLabel("분당 회복량", Overlay = true)]
 			public int RecoveryMaterial;
-			[HorizontalGroup("@SectorName/Local리소스/재료/H"), HideLabel,SuffixLabel("현지 수량", Overlay = true)]
+			[HorizontalGroup("@SectorName/Local리소스/재료/H"), HideLabel,SuffixLabel("현지 보유량", Overlay = true)]
 			public int LocalMaterial;
 
 			[BoxGroup("@SectorName/Local리소스/전력")]
@@ -164,30 +173,31 @@ namespace StrategyManagerModule
 			public int CapacityElectric;
 			[HorizontalGroup("@SectorName/Local리소스/전력/H"), HideLabel,SuffixLabel("분당 회복량", Overlay = true)]
 			public int RecoveryElectric;
-			[HorizontalGroup("@SectorName/Local리소스/전력/H"), HideLabel,SuffixLabel("현지 수량", Overlay = true)]
+			[HorizontalGroup("@SectorName/Local리소스/전력/H"), HideLabel,SuffixLabel("현지 보유량", Overlay = true)]
 			public int LocalElectric;
 
-			[FoldoutGroup("@SectorName/Local리소스")]
-			[LabelText("기본 분배 거리")]
+			[BoxGroup("@SectorName/Local리소스/분배 거리")]
+			[HorizontalGroup("@SectorName/Local리소스/분배 거리/H")]
+			[LabelText("기본 거리")]
 			public int DistributionDepth;
-			[FoldoutGroup("@SectorName/Local리소스")]
-			[LabelText("추가 분배 거리")]
+			[HorizontalGroup("@SectorName/Local리소스/분배 거리/H")]
+			[LabelText("추가 거리")]
 			public int DistributionAddDepth;
 			[FoldoutGroup("@SectorName/Local리소스")]
 			[LabelText("회복 및 분배 주기(초)")]
 			public float CycleTime;
 
-			[FoldoutGroup("@SectorName/Faction리소스")]
-			[LabelText("인력 수용량")]
-			public int FactionCapacityPersonnel;
+			[FoldoutGroup("@SectorName/Faction보너스리소스", GroupName = "이 구역을 점령시 증가하는 세력의 최대 수용량")]
+			[HorizontalGroup("@SectorName/Faction보너스리소스/H"), HideLabel,SuffixLabel("인력 수용량", Overlay = true)]
+			public int MaxPersonnelCapacityBonusOfFaction;
 
-			[FoldoutGroup("@SectorName/Faction리소스")]
-			[LabelText("재료 수용량")]
-			public int FactionCapacityMaterial;
+			[FoldoutGroup("@SectorName/Faction보너스리소스")]
+			[HorizontalGroup("@SectorName/Faction보너스리소스/H"), HideLabel,SuffixLabel("재료 수용량", Overlay = true)]
+			public int MaxMaterialCapacityBonusOfFaction;
 
-			[FoldoutGroup("@SectorName/Faction리소스")]
-			[LabelText("전력 수용량")]
-			public int FactionCapacityElectric;
+			[FoldoutGroup("@SectorName/Faction보너스리소스")]
+			[HorizontalGroup("@SectorName/Faction보너스리소스/H"), HideLabel,SuffixLabel("전력 수용량", Overlay = true)]
+			public int MaxElectricCapacityBonusOfFaction;
 
 			[FoldoutGroup("@SectorName/FacilityInfo")]
 			[ListDrawerSettings(ShowFoldout = false)]
@@ -243,9 +253,9 @@ namespace StrategyManagerModule
 				LocalMaterial = 100;
 				LocalElectric = 100;
 
-				FactionCapacityPersonnel = 10;
-				FactionCapacityMaterial = 50;
-				FactionCapacityElectric = 50;
+				MaxPersonnelCapacityBonusOfFaction = 10;
+				MaxMaterialCapacityBonusOfFaction = 50;
+				MaxElectricCapacityBonusOfFaction = 50;
 
 				DistributionDepth = 0;
 				CycleTime = 10;
@@ -320,7 +330,7 @@ namespace StrategyManagerModule
 					return list;
 				}
 
-				var items = bases.Select(x => x.factionName).ToList();
+				var items = bases.Select(x => x.FactionName).ToList();
 				list.Add("", -1);
 				for (int i = 0 ; i < items.Count ; i++)
 				{
@@ -564,7 +574,7 @@ namespace StrategyManagerModule
 					return list;
 				}
 
-				var items = bases.Select(x => x.factionName).ToList();
+				var items = bases.Select(x => x.FactionName).ToList();
 				list.Add("", -1);
 				for (int i = 0 ; i < items.Count ; i++)
 				{
@@ -666,7 +676,7 @@ namespace StrategyManagerModule
 					return list;
 				}
 
-				var items = bases.Select(x => x.factionName).ToList();
+				var items = bases.Select(x => x.FactionName).ToList();
 				list.Add("", -1);
 				for (int i = 0 ; i < items.Count ; i++)
 				{
@@ -837,7 +847,7 @@ namespace StrategyManagerModule
 					return list;
 				}
 
-				var items = bases.Select(x => x.factionName).ToList();
+				var items = bases.Select(x => x.FactionName).ToList();
 				list.Add("", -1);
 				for (int i = 0 ; i < items.Count ; i++)
 				{

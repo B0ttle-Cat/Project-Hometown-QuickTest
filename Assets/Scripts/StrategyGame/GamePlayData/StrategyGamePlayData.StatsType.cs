@@ -86,7 +86,7 @@ public partial class StrategyGamePlayData // StatsType
 
 		#region 세력_능력치	   	        
 
-		세력_점령속도비율_c       = 5107,
+		//세력_점령속도비율_c       = 5107,
 		#endregion
 	}
 
