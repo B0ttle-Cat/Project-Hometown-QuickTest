@@ -23,10 +23,10 @@ namespace GameUI
 			OnHideImmediate();
 		}
 
-		[Obsolete("이 메서드를 직접 호출하지 말것")]
-		protected void Show();
-		[Obsolete("이 메서드를 직접 호출하지 말것")]
-		protected void Hide();
+		[Obsolete("특수한 경우가 아니면, 이 메서드를 직접 호출하지 말것")]
+		void Show();
+		[Obsolete("특수한 경우가 아니면, 이 메서드를 직접 호출하지 말것")]
+		void Hide();
 
 		void OnShowImmediate()
 		{
@@ -169,10 +169,10 @@ namespace GameUI
 			Hide();
 		}
 
-		[Obsolete("이 메서드를 직접 호출하지 말것")]
-		protected Awaitable Show(CancellationToken cancellationToken);
-		[Obsolete("이 메서드를 직접 호출하지 말것")]
-		protected Awaitable Hide(CancellationToken cancellationToken);
+		[Obsolete("특수한 경우가 아니면, 이 메서드를 직접 호출하지 말것")]
+		Awaitable Show(CancellationToken cancellationToken);
+		[Obsolete("특수한 경우가 아니면, 이 메서드를 직접 호출하지 말것")]
+		Awaitable Hide(CancellationToken cancellationToken);
 
 
 		private void TokenSourceDispose()

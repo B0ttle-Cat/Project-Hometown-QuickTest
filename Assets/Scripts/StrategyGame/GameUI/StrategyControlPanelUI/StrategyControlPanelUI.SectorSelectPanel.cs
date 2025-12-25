@@ -172,7 +172,7 @@ public partial class StrategyControlPanelUI // SectorSelectPanel
 			//		.FindPairChain("IconSample", out GameObject iconSample)
 			//		;
 			//
-			//	if (name != null) name.text = data.sectorName;
+			//	if (name != null) name.textUI = data.sectorName;
 			//
 			//	if (iconParent != null && iconSample != null)
 			//	{
@@ -246,7 +246,7 @@ public partial class StrategyControlPanelUI // SectorSelectPanel
 				int value = item.value;
 				int max = item.max;
 				int supply = item.supply;
-				KeyPair.FindPairChain<FillRectUI>(fillRectName, out var fillRectUI);
+				KeyPair.FindPairChain<FillRectUI_Old>(fillRectName, out var fillRectUI);
 				if (fillRectUI == null) return;
 
 				if (max > 0)
@@ -266,7 +266,7 @@ public partial class StrategyControlPanelUI // SectorSelectPanel
 			{
 				int value = item.value;
 				int max = item.max;
-				KeyPair.FindPairChain<FillRectUI>(fillRectName, out var fillRect);
+				KeyPair.FindPairChain<FillRectUI_Old>(fillRectName, out var fillRect);
 				if (fillRect == null) return;
 
 				if (max > 0)

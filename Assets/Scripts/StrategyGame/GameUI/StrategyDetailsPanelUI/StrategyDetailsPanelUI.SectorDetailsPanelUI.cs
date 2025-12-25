@@ -184,7 +184,7 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 				int value = item.value;
 				int max = item.max;
 				int supply = item.supply;
-				KeyPair.FindPairChain<FillRectUI>(fillRectName, out var fillRectUI);
+				KeyPair.FindPairChain<FillRectUI_Old>(fillRectName, out var fillRectUI);
 				if (fillRectUI == null) return;
 
 				if (max > 0)
@@ -204,7 +204,7 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 			{
 				int value = item.value;
 				int max = item.max;
-				KeyPair.FindPairChain<FillRectUI>(fillRectName, out var fillRectUI);
+				KeyPair.FindPairChain<FillRectUI_Old>(fillRectName, out var fillRectUI);
 				if (fillRectUI == null) return;
 
 				if (max > 0)
@@ -348,11 +348,11 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 			//	}
 			//	if (nameText != null)
 			//	{
-			//		nameText.text = data.sectorName;
+			//		nameText.textUI = data.sectorName;
 			//	}
 			//	if (effectText != null)
 			//	{
-			//		effectText.text = data.EffectString();
+			//		effectText.textUI = data.EffectString();
 			//	}
 			//}
 			//void OnChangeCaptureData(SectorData.Capture.Data data)
@@ -365,11 +365,11 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 			//	{
 			//		if (StrategyManager.Collector.TryFind<Faction>(data.captureFactionID, out var faction))
 			//		{
-			//			captureText.text = faction.FactionName;
+			//			captureText.textUI = faction.FactionName;
 			//		}
 			//		else
 			//		{
-			//			captureText.text = "중립 지역";
+			//			captureText.textUI = "중립 지역";
 			//		}
 			//	}
 			//}
@@ -496,7 +496,7 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 			//	KeyPair.FindPairChain<TMP_Text>("PointText", out var PointText);
 			//	if (PointText != null)
 			//	{
-			//		PointText.text = $"잉여 점수: {data.supportPoint}";
+			//		PointText.textUI = $"잉여 점수: {data.supportPoint}";
 			//	}
 			//
 			//	KeyPair.FindPairChain("Offensive", out var Offensive);
@@ -689,7 +689,7 @@ public partial class StrategyDetailsPanelUI // SectorDetailsPanelUI
 			//	}
 			//	if (Label != null)
 			//	{
-			//		Label.text = StrategyManager.Key2Name.GetAsset(key);
+			//		Label.textUI = StrategyManager.Key2Name.GetAsset(key);
 			//	}
 			//}
 			void ShowSlotControlUI(int index, string facilitiesKey)

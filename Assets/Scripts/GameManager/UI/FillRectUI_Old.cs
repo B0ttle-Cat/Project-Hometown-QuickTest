@@ -7,7 +7,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class FillRectUI : MonoBehaviour
+public class FillRectUI_Old : MonoBehaviour
 {
 	[SerializeField, Range(0f,1f)]
 	private float fillAmount;
@@ -160,7 +160,7 @@ public class FillRectUI : MonoBehaviour
 
 		if (bgImage == null || fillImage == null) return;
 
-		// 채워진 부분은 fillColor 그대로 적용
+		// 채워진 부분은 FillColor 그대로 적용
 		fillColor.a = fillAlpha;
 		fillImage.color = fillColor;
 

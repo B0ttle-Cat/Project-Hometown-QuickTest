@@ -273,7 +273,7 @@ public partial class StrategyControlPanelUI // SpawnTroops
 				float 세력_병력_혀용용량 = 세력_병력_최대허용량 - 세력_병력_현재보유량;
 				if (세력_병력_혀용용량 <= 0)
 				{
-					if (KeyPair.TryFindPair<FillRectUI>("TotalFill", out var fill))
+					if (KeyPair.TryFindPair<FillRectUI_Old>("TotalFill", out var fill))
 					{
 						fill.SetValueText(0, "편성 불가");
 					}
@@ -284,7 +284,7 @@ public partial class StrategyControlPanelUI // SpawnTroops
 				}
 				else
 				{
-					if (KeyPair.TryFindPair<FillRectUI>("TotalFill", out var fill))
+					if (KeyPair.TryFindPair<FillRectUI_Old>("TotalFill", out var fill))
 					{
 						float rate = (float)세력_병력_신규편제수 / (float)세력_병력_혀용용량;
 						fill.SetValueText(rate, $"{세력_병력_신규편제수} / {세력_병력_혀용용량}");

@@ -9,7 +9,7 @@ public class FillRectAndLabel : MonoBehaviour
 	[SerializeField, InlineEditor]
 	private TMP_Text label;
 	[SerializeField, InlineEditor]
-	private FillRectUI fillRectUI;
+	private FillRectUI_Old fillRectUI;
 
 #if UNITY_EDITOR
 	[ShowInInspector, HideInPlayMode, HorizontalGroup(order: -1), ToggleLeft]
@@ -27,7 +27,7 @@ public class FillRectAndLabel : MonoBehaviour
 	public void Reset()
 	{
 		label = GetComponentInChildren<TMP_Text>(true);
-		fillRectUI = GetComponentInChildren<FillRectUI>(true);
+		fillRectUI = GetComponentInChildren<FillRectUI_Old>(true);
 	}
     private TMP_Text _label
 	{
@@ -40,13 +40,13 @@ public class FillRectAndLabel : MonoBehaviour
 			return label;
 		}
 	}
-	private FillRectUI _fillRectUI
+	private FillRectUI_Old _fillRectUI
 	{
 		get
 		{
 			if (fillRectUI == null)
 			{
-				fillRectUI = GetComponentInChildren<FillRectUI>();
+				fillRectUI = GetComponentInChildren<FillRectUI_Old>();
 			}
 			return fillRectUI;
 		}

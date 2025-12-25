@@ -8,9 +8,9 @@ using UnityEngine;
 
 namespace GameUI
 {
-    [RequireComponent(typeof(RectTransform))]
-    public  abstract class PanelGroupComponent<T> : MonoBehaviour, IPanelGroup<T>,  IShowHideAsync where T : IPanelItem
-    {
+	[RequireComponent(typeof(RectTransform))]
+	public abstract class PanelGroupComponent<T> : MonoBehaviour, IPanelGroup<T>, IShowHideAsync where T : IPanelItem
+	{
 		#region IPanelGroup<T>
 		private RectTransform rectTransform;
 		public abstract IPanelGroup<T> ThisPanel { get; }
@@ -25,9 +25,16 @@ namespace GameUI
 		}
 		IPanelItem IPanelItem.ThisPanel => ThisPanel;
 
-		[PropertyOrder(-98), SerializeField, HideInEditorMode, ReadOnly]
-		private List<T> items;
-		protected List<T> Items => items ??= new List<T>();
+		protected List<T> items;
+		protected virtual List<T> Items
+		{
+			get { return items ??= new List<T>(); }
+			set { items = value; }
+		}
+		protected virtual void Reset()
+		{
+			items = new List<T>();
+		}
 
 		public int Count => items == null ? 0 : items.Count;
 
@@ -94,8 +101,8 @@ namespace GameUI
 		[SerializeField, PropertyOrder(-10000)]
 		private bool isShow = false;
 		bool IShowHide.IsShow { get => isShow; set => isShow = value; }
- 
-        async Awaitable IShowHideAsync.Show(CancellationToken cancellationToken) => await Show(cancellationToken);
+
+		async Awaitable IShowHideAsync.Show(CancellationToken cancellationToken) => await Show(cancellationToken);
 		async Awaitable IShowHideAsync.Hide(CancellationToken cancellationToken) => await Hide(cancellationToken);
 		void IShowHide.Show() => Show();
 		void IShowHide.Hide() => Hide();

@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 [RequireComponent(typeof(Slider))]
 [RequireComponent(typeof(CanvasGroup))]
-public class SliderFillRect : FillRectUI
+public class SliderFillRect : FillRectUI_Old
 {
 	private Slider slider;
 	private TMP_InputField inputField;
