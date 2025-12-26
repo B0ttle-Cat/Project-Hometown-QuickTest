@@ -626,6 +626,7 @@ public partial class StrategyGamePlayData // StatsValue
 
 	public interface ISupplyStats : IStatsValueControl
 	{
+		public bool IsEnableResourcesSupply { get; set; }
 		public Action<ISupplyStats> OnSupplyChange { get; set; }
 		public void OnSupplyUpdate(SupplyRequest supplyRequest)
 		{
@@ -653,6 +654,32 @@ public partial class StrategyGamePlayData // StatsValue
 			StatsValue.SetStatsValue(StatsType.자원_전력_현재, integerElectric);
 
 			OnSupplyChange.Invoke(this);
+		}
+
+		public (float[] values, float total, float max) GetPersonnelDetailValue()
+		{
+			float max = StatsValue.GetStatsValue(StatsType.자원_인력_최대);
+			float total = StatsValue.GetStatsValue(StatsType.자원_인력_현재);
+			float[] values = new float[1];
+			values[0] = StatsValue.GetStatsValue(StatsType.자원_인력_현재);
+			return (values, total, max);
+		}
+		public (float[] values, float total, float max) GetMaterialDetailValue()
+		{
+			float max = StatsValue.GetStatsValue(StatsType.자원_재료_최대);
+			float total = StatsValue.GetStatsValue(StatsType.자원_재료_현재);
+			float[] values = new float[1];
+			values[0] = StatsValue.GetStatsValue(StatsType.자원_재료_현재);
+			return (values, total, max);
+		}
+		public (float[] values, float total, float max) GetElectricDetailValue()
+		{
+			float max = StatsValue.GetStatsValue(StatsType.자원_전력_최대);
+			float total = StatsValue.GetStatsValue(StatsType.자원_전력_현재);
+
+			float[] values = new float[1];
+			values[0] = StatsValue.GetStatsValue(StatsType.자원_전력_현재);
+			return (values, total, max);
 		}
 	}
 }

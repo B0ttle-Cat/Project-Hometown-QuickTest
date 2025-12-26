@@ -1,39 +1,23 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
-
-using Sirenix.OdinInspector;
 
 using UnityEngine;
 
 namespace GameUI
 {
 	[RequireComponent(typeof(RectTransform))]
-	public abstract class PanelGroupComponent<T> : MonoBehaviour, IPanelGroup<T>, IShowHideAsync where T : IPanelItem
+	public abstract class PanelGroupComponent<T> : PanelItemComponent, IPanelGroup<T>, IShowHideAsync
+		where T : IPanelItem, IDisposable
 	{
-		#region IPanelGroup<T>
-		private RectTransform rectTransform;
-		public abstract IPanelGroup<T> ThisPanel { get; }
-		public virtual RectTransform ThisRect
-		{
-			get
-			{
-				if (rectTransform.IsNullRef())
-					rectTransform = GetComponent<RectTransform>();
-				return rectTransform;
-			}
-		}
-		IPanelItem IPanelItem.ThisPanel => ThisPanel;
 
-		protected List<T> items;
-		protected virtual List<T> Items
+		#region IPanelGroup<T>
+
+		private List<T> items;
+		private List<T> Items
 		{
-			get { return items ??= new List<T>(); }
+			get { if (items == null) New(); return items; }
 			set { items = value; }
-		}
-		protected virtual void Reset()
-		{
-			items = new List<T>();
 		}
 
 		public int Count => items == null ? 0 : items.Count;
@@ -53,20 +37,40 @@ namespace GameUI
 
 		public virtual void RemoveAt(int index)
 		{
-			Items.RemoveAt(index);
+			if (index >= 0 && index < Count)
+			{
+				Remove(this[index]);
+			}
 		}
-
+		public virtual bool Remove(T item)
+		{
+			if (Items.Remove(item))
+			{
+				item.Dispose();
+				return true;
+			}
+			return false;
+		}
 		public virtual void Add(T item)
 		{
 			Items.Add(item);
 		}
 
+		public virtual void New()
+		{
+			if (items == null) items = new List<T>();
+			else items.Clear();
+		}
 		public virtual void Clear()
 		{
 			if (items == null) return;
+			int length = Count;
+			for (int i = 0 ; i < length ; i++)
+			{
+				this[i].Dispose();
+			}
 			Items.Clear();
 		}
-
 		public virtual bool Contains(T item)
 		{
 			return Items.Contains(item);
@@ -75,11 +79,6 @@ namespace GameUI
 		public void CopyTo(T[] array, int arrayIndex)
 		{
 			Items.CopyTo(array, arrayIndex);
-		}
-
-		public virtual bool Remove(T item)
-		{
-			return Items.Remove(item);
 		}
 
 		public IEnumerator<T> GetEnumerator()
@@ -93,23 +92,19 @@ namespace GameUI
 		}
 		#endregion
 
-
-		#region IShowHideAsync
-		public abstract IShowHideAsync ThisShowHide { get; }
-		IShowHide IShowHide.ThisShowHide => ThisShowHide;
-		CancellationTokenSource IShowHideAsync.ShowHideCancellationTokenSource { get; set; }
-		[SerializeField, PropertyOrder(-10000) , ReadOnly]
-		private bool isShow = false;
-		bool IShowHide.IsShow { get => isShow; set => isShow = value; }
-
-		async Awaitable IShowHideAsync.Show(CancellationToken cancellationToken) => await Show(cancellationToken);
-		async Awaitable IShowHideAsync.Hide(CancellationToken cancellationToken) => await Hide(cancellationToken);
-		void IShowHide.Show() => Show();
-		void IShowHide.Hide() => Hide();
-		protected abstract void Show();
-		protected abstract void Hide();
-		protected virtual async Awaitable Show(CancellationToken cancellationToken) { return; }
-		protected virtual async Awaitable Hide(CancellationToken cancellationToken) { return; }
-		#endregion
+		protected virtual void Reset()
+		{
+			items = new List<T>();
+		}
+		protected override void Awake()
+		{
+			items ??= new List<T>();
+			base.Awake();
+		}
+		protected override void OnDestroy()
+		{
+			Clear();
+			base.OnDestroy();
+		}
 	}
 }

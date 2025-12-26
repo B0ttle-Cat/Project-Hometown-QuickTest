@@ -80,9 +80,9 @@ public partial class SectorObject : IStatsValueControl , ISupplyStats
 	public IStatsValueControl StatsValue => this;
 
 	public Action<ISupplyStats> OnSupplyChange { get; set; }
+    public bool IsEnableResourcesSupply { get => StatsData.IsEnableResourcesSupply; set => StatsData.IsEnableResourcesSupply = value; }
 
-
-	int IStatsValueControl.GetStatsValue(StatsType type)
+    int IStatsValueControl.GetStatsValue(StatsType type)
 	{
 		int baseValue = type switch
 		{

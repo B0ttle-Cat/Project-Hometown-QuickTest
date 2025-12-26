@@ -11,9 +11,9 @@ public class StrategyResourcesView : PanelItemComponent
 	[SerializeField]
 	private FillRectMultiPanelUI personnel;
 	[SerializeField]
-	private FillRectPanelUI material;
+	private FillRectMultiPanelUI material;
 	[SerializeField]
-	private FillRectPanelUI electric;
+	private FillRectMultiPanelUI electric;
 
 	[SerializeField]
 	private IShowHide personnelShowHide;
@@ -22,13 +22,9 @@ public class StrategyResourcesView : PanelItemComponent
 	[SerializeField]
 	private IShowHide electricShowHide;
 
-
-	public override IPanelItem ThisPanel => this;
-	public override IShowHideAsync ThisShowHide => this;
-
-    public void SetTarget(ISupplyStats target)
+	public void SetTarget(ISupplyStats target)
 	{
-		if(supplyTarget == target) return;
+		if (supplyTarget == target) return;
 
 		if (supplyTarget.IsNotNullRef())
 		{
@@ -45,8 +41,8 @@ public class StrategyResourcesView : PanelItemComponent
 		}
 	}
 
-    protected override void Hide()
-    {
+	protected override void Hide()
+	{
 		if (personnelShowHide.IsNullRef())
 			personnelShowHide = personnel.GetComponent<IShowHide>();
 		if (personnelShowHide.IsNotNullRef())
@@ -63,9 +59,9 @@ public class StrategyResourcesView : PanelItemComponent
 			electricShowHide.OnHide();
 	}
 
-    protected override void Show()
-    {
-		if(personnelShowHide.IsNullRef())
+	protected override void Show()
+	{
+		if (personnelShowHide.IsNullRef())
 			personnelShowHide = personnel.GetComponent<IShowHide>();
 		if (personnelShowHide.IsNotNullRef())
 			personnelShowHide.OnShow();
@@ -81,30 +77,25 @@ public class StrategyResourcesView : PanelItemComponent
 			electricShowHide.OnShow();
 	}
 
-    private void OnSupplyChange(ISupplyStats statsValue)
+	private void OnSupplyChange(ISupplyStats statsValue)
 	{
-		if (personnel != null)
+		if (personnel.IsNotNullRef())
 		{
-			int max   = statsValue.GetStatsValue(StatsType.자원_인력_최대);
-			int local = statsValue.GetStatsValue(StatsType.자원_인력_현재);
-			float ratio = (float)local / (float)max;
+			(float[] values, float total, float max) = statsValue.GetPersonnelDetailValue();
 			personnel.MinMax = new Vector2(0, max);
-			personnel[0].FillValue = ratio;
+			personnel.SetValue(values);
 		}
-		if (material != null)
+		if (material.IsNotNullRef())
 		{
-			int max   = statsValue.GetStatsValue(StatsType.자원_재료_최대);
-			int local = statsValue.GetStatsValue(StatsType.자원_재료_현재);
-			float ratio = (float)local / (float)max;
-			//material.SetValueText(ratio, $"{local}/{max}");
+			(float[] values, float total, float max) = statsValue.GetMaterialDetailValue();
+			material.MinMax = new Vector2(0, max);
+			material.SetValue(values);
 		}
-		if (electric != null)
+		if (electric.IsNotNullRef())
 		{
-			int max   = statsValue.GetStatsValue(StatsType.자원_전력_최대);
-			int local = statsValue.GetStatsValue(StatsType.자원_전력_현재);
-			float ratio = (float)local / (float)max;
-			//electric.SetValueText(ratio, $"{local}/{max}");
+			(float[] values, float total, float max) = statsValue.GetElectricDetailValue();
+			electric.MinMax = new Vector2(0, max);
+			electric.SetValue(values);
 		}
 	}
-
 }

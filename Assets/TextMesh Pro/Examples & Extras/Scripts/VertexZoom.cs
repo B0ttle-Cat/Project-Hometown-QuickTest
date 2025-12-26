@@ -89,7 +89,7 @@ namespace TMPro.Examples
                     continue;
                 }
 
-                // Clear activeList of character scales
+                // OnClear activeList of character scales
                 modifiedCharScale.Clear();
                 scaleSortingOrder.Clear();
 

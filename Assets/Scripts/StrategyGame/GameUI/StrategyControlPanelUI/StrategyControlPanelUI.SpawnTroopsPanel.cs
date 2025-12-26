@@ -197,7 +197,7 @@ public partial class StrategyControlPanelUI // SpawnTroops
 				UpdateFaction();
 				void UpdateContent()
 				{
-					if (!KeyPair.TryFindPair("Content", out var content)) return;
+					if (!KeyPair.TryFindPair("ContentParent", out var content)) return;
 					Transform parent = content.transform;
 
 					var unitKeyList = Value.GetAvailableUnitKeyList();

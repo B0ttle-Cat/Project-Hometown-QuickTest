@@ -66,42 +66,45 @@ namespace StrategyManagerModule
 		[Serializable]
 		public struct FactionData
 		{
-			[FoldoutGroup("@FactionName")]
+			[FoldoutGroup("@FactionName"), VerticalGroup("@FactionName/Title/V")]
 			public string FactionName;
-			[FoldoutGroup("@FactionName")]
+			[VerticalGroup("@FactionName/Title/V")]
+			[ColorUsage(false)]
 			public Color FactionColor;
-			[FoldoutGroup("@FactionName")]
+			[HorizontalGroup("@FactionName/Title", width: 60), HideLabel, PreviewField(height:40)]
 			public Sprite FactionIcon;
 
-			[BoxGroup("@FactionName/세력 리소스")]
+			[FoldoutGroup("@FactionName"), ToggleLeft, LabelText("세력 보급 활성화")]
 			public bool EnableResourcesSupply;
-
-			[BoxGroup("@FactionName/세력 리소스/인력", VisibleIf = "@EnableResourcesSupply")]
-			[HorizontalGroup("@FactionName/세력 리소스/인력/H"), HideLabel, SuffixLabel("최대 수용량", Overlay = true)]
+			[FoldoutGroup("@FactionName/리소스", VisibleIf = "@EnableResourcesSupply")]
+#if UNITY_EDITOR
+			[HorizontalGroup("@FactionName/리소스/인력", width: 40), HideLabel, DisplayAsString, EnableGUI, ShowInInspector]
+			private const string PersonnelString = "인력: ";
+			[HorizontalGroup("@FactionName/리소스/재료", width: 40), HideLabel, DisplayAsString, EnableGUI, ShowInInspector]
+			private const string MaterialString = "재료: ";
+			[HorizontalGroup("@FactionName/리소스/전력", width: 40), HideLabel, DisplayAsString, EnableGUI, ShowInInspector]
+			private const string ElectricString = "전력: ";
+#endif
+			[HorizontalGroup("@FactionName/리소스/인력"), HideLabel, SuffixLabel("최대 수용량", Overlay = true)]
 			public int CapacityPersonnel;
-			[HorizontalGroup("@FactionName/세력 리소스/인력/H"), HideLabel, SuffixLabel("분당 회복량", Overlay = true)]
+			[HorizontalGroup("@FactionName/리소스/인력"), HideLabel, SuffixLabel("분당 회복량", Overlay = true)]
 			public int RecoveryPersonnel;
-			[HorizontalGroup("@FactionName/세력 리소스/인력/H"), HideLabel, SuffixLabel("현재 보유량", Overlay = true)]
+			[HorizontalGroup("@FactionName/리소스/인력"), HideLabel, SuffixLabel("현재 보유량", Overlay = true)]
 			public int CurrentPersonnel;
-
-			[BoxGroup("@FactionName/세력 리소스/재료", VisibleIf = "@EnableResourcesSupply")]
-			[HorizontalGroup("@FactionName/세력 리소스/재료/H"), HideLabel, SuffixLabel("최대 수용량", Overlay = true)]
+			[HorizontalGroup("@FactionName/리소스/재료"), HideLabel, SuffixLabel("최대 수용량", Overlay = true)]
 			public int CapacityMaterial;
-			[HorizontalGroup("@FactionName/세력 리소스/재료/H"), HideLabel, SuffixLabel("분당 회복량", Overlay = true)]
+			[HorizontalGroup("@FactionName/리소스/재료"), HideLabel, SuffixLabel("분당 회복량", Overlay = true)]
 			public int RecoveryMaterial;
-			[HorizontalGroup("@FactionName/세력 리소스/재료/H"), HideLabel, SuffixLabel("현재 보유량", Overlay = true)]
+			[HorizontalGroup("@FactionName/리소스/재료"), HideLabel, SuffixLabel("현재 보유량", Overlay = true)]
 			public int CurrentMaterial;
-
-			[BoxGroup("@FactionName/세력 리소스/전력", VisibleIf = "@EnableResourcesSupply")]
-			[HorizontalGroup("@FactionName/세력 리소스/전력/H"), HideLabel, SuffixLabel("최대 수용량", Overlay = true)]
+			[HorizontalGroup("@FactionName/리소스/전력"), HideLabel, SuffixLabel("최대 수용량", Overlay = true)]
 			public int CapacityElectric;
-			[HorizontalGroup("@FactionName/세력 리소스/전력/H"), HideLabel, SuffixLabel("분당 회복량", Overlay = true)]
+			[HorizontalGroup("@FactionName/리소스/전력"), HideLabel, SuffixLabel("분당 회복량", Overlay = true)]
 			public int RecoveryElectric;
-			[HorizontalGroup("@FactionName/세력 리소스/전력/H"), HideLabel, SuffixLabel("현재 보유량", Overlay = true)]
+			[HorizontalGroup("@FactionName/리소스/전력"), HideLabel, SuffixLabel("현재 보유량", Overlay = true)]
 			public int CurrentElectric;
-
-
-			[FoldoutGroup("@FactionName"),SerializeField]
+			
+			[FoldoutGroup("@FactionName"),Space, SerializeField]
 			private List<UnitKeySelecter> availableUnitKeyList;
 			[Serializable]
 			private struct UnitKeySelecter
@@ -152,51 +155,51 @@ namespace StrategyManagerModule
 			[ValueDropdown("SectorObjectListInScene", AppendNextDrawer = true)]
 			public string SectorName;
 
-			[BoxGroup("@SectorName/Local리소스/인력")]
-			[HorizontalGroup("@SectorName/Local리소스/인력/H"), HideLabel,SuffixLabel("최대 수용량", Overlay = true)]
+			[FoldoutGroup("@SectorName"), ToggleLeft, LabelText("거점 보급 활성화")]
+			public bool EnableResourcesSupply;
+			[FoldoutGroup("@SectorName/리소스", VisibleIf = "@EnableResourcesSupply")]
+#if UNITY_EDITOR
+			[HorizontalGroup("@SectorName/리소스/인력", width: 40), HideLabel, DisplayAsString, EnableGUI, ShowInInspector]
+			private const string PersonnelString = "인력: ";
+			[HorizontalGroup("@SectorName/리소스/재료", width: 40), HideLabel, DisplayAsString, EnableGUI, ShowInInspector]
+			private const string MaterialString = "재료: ";
+			[HorizontalGroup("@SectorName/리소스/전력", width: 40), HideLabel, DisplayAsString, EnableGUI, ShowInInspector]
+			private const string ElectricString = "전력: ";
+#endif
+			[HorizontalGroup("@SectorName/리소스/인력"), HideLabel, SuffixLabel("최대 수용량", Overlay = true)]
 			public int CapacityPersonnel;
-			[HorizontalGroup("@SectorName/Local리소스/인력/H"), HideLabel,SuffixLabel("분당 회복량", Overlay = true)]
+			[HorizontalGroup("@SectorName/리소스/인력"), HideLabel, SuffixLabel("분당 회복량", Overlay = true)]
 			public int RecoveryPersonnel;
-			[HorizontalGroup("@SectorName/Local리소스/인력/H"), HideLabel,SuffixLabel("현지 보유량", Overlay = true)]
+			[HorizontalGroup("@SectorName/리소스/인력"), HideLabel, SuffixLabel("현재 보유량", Overlay = true)]
 			public int LocalPersonnel;
-
-			[BoxGroup("@SectorName/Local리소스/재료")]
-			[HorizontalGroup("@SectorName/Local리소스/재료/H"), HideLabel,SuffixLabel("최대 수용량", Overlay = true)]
+			[HorizontalGroup("@SectorName/리소스/재료"), HideLabel, SuffixLabel("최대 수용량", Overlay = true)]
 			public int CapacityMaterial;
-			[HorizontalGroup("@SectorName/Local리소스/재료/H"), HideLabel,SuffixLabel("분당 회복량", Overlay = true)]
+			[HorizontalGroup("@SectorName/리소스/재료"), HideLabel, SuffixLabel("분당 회복량", Overlay = true)]
 			public int RecoveryMaterial;
-			[HorizontalGroup("@SectorName/Local리소스/재료/H"), HideLabel,SuffixLabel("현지 보유량", Overlay = true)]
+			[HorizontalGroup("@SectorName/리소스/재료"), HideLabel, SuffixLabel("현재 보유량", Overlay = true)]
 			public int LocalMaterial;
-
-			[BoxGroup("@SectorName/Local리소스/전력")]
-			[HorizontalGroup("@SectorName/Local리소스/전력/H"), HideLabel,SuffixLabel("최대 수용량", Overlay = true)]
+			[HorizontalGroup("@SectorName/리소스/전력"), HideLabel, SuffixLabel("최대 수용량", Overlay = true)]
 			public int CapacityElectric;
-			[HorizontalGroup("@SectorName/Local리소스/전력/H"), HideLabel,SuffixLabel("분당 회복량", Overlay = true)]
+			[HorizontalGroup("@SectorName/리소스/전력"), HideLabel, SuffixLabel("분당 회복량", Overlay = true)]
 			public int RecoveryElectric;
-			[HorizontalGroup("@SectorName/Local리소스/전력/H"), HideLabel,SuffixLabel("현지 보유량", Overlay = true)]
+			[HorizontalGroup("@SectorName/리소스/전력"), HideLabel, SuffixLabel("현재 보유량", Overlay = true)]
 			public int LocalElectric;
 
-			[BoxGroup("@SectorName/Local리소스/분배 거리")]
-			[HorizontalGroup("@SectorName/Local리소스/분배 거리/H")]
-			[LabelText("기본 거리")]
-			public int DistributionDepth;
-			[HorizontalGroup("@SectorName/Local리소스/분배 거리/H")]
-			[LabelText("추가 거리")]
-			public int DistributionAddDepth;
-			[FoldoutGroup("@SectorName/Local리소스")]
+			[FoldoutGroup("@SectorName/리소스")]
 			[LabelText("회복 및 분배 주기(초)")]
 			public float CycleTime;
 
-			[FoldoutGroup("@SectorName/Faction보너스리소스", GroupName = "이 구역을 점령시 증가하는 세력의 최대 수용량")]
-			[HorizontalGroup("@SectorName/Faction보너스리소스/H"), HideLabel,SuffixLabel("인력 수용량", Overlay = true)]
+			[BoxGroup("@SectorName/리소스/분배 거리")]
+			[HorizontalGroup("@SectorName/리소스/분배 거리/H")]
+			[LabelText("기본 거리")]
+			public int DistributionDepth;
+
+			[BoxGroup("@SectorName/리소스/Faction", GroupName = "이 구역을 점령한 세력에 추가되는 최대 수용량")]
+			[HorizontalGroup("@SectorName/리소스/Faction/H"), HideLabel,SuffixLabel("인력 수용량", Overlay = true)]
 			public int MaxPersonnelCapacityBonusOfFaction;
-
-			[FoldoutGroup("@SectorName/Faction보너스리소스")]
-			[HorizontalGroup("@SectorName/Faction보너스리소스/H"), HideLabel,SuffixLabel("재료 수용량", Overlay = true)]
+			[HorizontalGroup("@SectorName/리소스/Faction/H"), HideLabel,SuffixLabel("재료 수용량", Overlay = true)]
 			public int MaxMaterialCapacityBonusOfFaction;
-
-			[FoldoutGroup("@SectorName/Faction보너스리소스")]
-			[HorizontalGroup("@SectorName/Faction보너스리소스/H"), HideLabel,SuffixLabel("전력 수용량", Overlay = true)]
+			[HorizontalGroup("@SectorName/리소스/Faction/H"), HideLabel,SuffixLabel("전력 수용량", Overlay = true)]
 			public int MaxElectricCapacityBonusOfFaction;
 
 			[FoldoutGroup("@SectorName/FacilityInfo")]
@@ -269,18 +272,18 @@ namespace StrategyManagerModule
 			public UnitKey unitKey;
 			[FoldoutGroup("@unitKey")]
 			[ValueDropdown("@GetFactionNames($property)")]
-			[InlineButton("Clear_factionName","Clear")]
+			[InlineButton("Clear_factionName","OnClear")]
 			[OnValueChanged("OnValueChanged_factionID")]
 			public int factionID;
 			[FoldoutGroup("@unitKey")]
 			[ValueDropdown("@GetOperationNames($property)")]
-			[InlineButton("Clear_belongedOperation","Clear")]
+			[InlineButton("Clear_belongedOperation","OnClear")]
 			[ShowIf("@ShowOperationSelect($property)")]
 			public int belongedOperation;
 			[FoldoutGroup("@unitKey")]
 			[ValueDropdown("@GetSectorNames($property)")]
 			[LabelText("SectorName")]
-			[InlineButton("Clear_visiteSectorName","Clear")]
+			[InlineButton("Clear_visiteSectorName","OnClear")]
 			public int visiteSectorID;
 
 			[FoldoutGroup("@unitKey")]
@@ -538,13 +541,13 @@ namespace StrategyManagerModule
 			public string teamName;
 			[FoldoutGroup("@teamName")]
 			[ValueDropdown("@GetFactionNames($property)")]
-			[InlineButton("Clear_faction","Clear")]
+			[InlineButton("Clear_faction","OnClear")]
 			public int factionID;
 
 			[FoldoutGroup("@teamName")]
 			[ValueDropdown("@GetSectorNames($property)")]
 			[LabelText("SectorName")]
-			[InlineButton("Clear_visiteSectorName","Clear")]
+			[InlineButton("Clear_visiteSectorName","OnClear")]
 			public int visiteSectorID;
 #if UNITY_EDITOR
 			private void Clear_faction()

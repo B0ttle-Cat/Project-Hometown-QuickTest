@@ -34,7 +34,7 @@
 
 //		public class ResourcesSupply : UpdateLogic
 //		{
-//			private SectorObject sector;
+//			private SectorObject target;
 
 //			private const StatsType MaxType = StatsType.자원_재료_최대;
 //			private const StatsType SupplyType = StatsType.자원_재료_회복;
@@ -44,33 +44,33 @@
 //			float currentResupplyTime; // 다음 보충까지 남은 시간.
 //			float supplement; // 다음에 보충될 양
 
-//			public ResourcesSupply(StrategyUpdateSubClass<ResourcesSupply> thisSubClass, SectorObject sector) : base(thisSubClass)
+//			public ResourcesSupply(StrategyUpdateSubClass<ResourcesSupply> thisSubClass, SectorObject target) : base(thisSubClass)
 //			{
-//				this.sector = sector;
+//				this.target = target;
 //				currentResupplyTime = resetResupplyTime;
 //				supplement = 0f;
 //			}
 //			protected override void OnDispose()
 //			{
-//				sector = null;
+//				target = null;
 //			}
 //			protected override void OnUpdate(in float deltaTime)
 //			{
-//				if (sector == null || !sector.isActiveAndEnabled) return;
-//				if (sector.CaptureData.captureFactionID < 0) return;
+//				if (target == null || !target.isActiveAndEnabled) return;
+//				if (target.CaptureData.captureFactionID < 0) return;
 
-//				int max = sector.SectorStatsGroup.GetValue(MaxType);
-//				int supply = sector.SectorStatsGroup.GetValue(SupplyType);
-//				int curr = sector.CurrStatsList.GetValue(CurrType);
+//				int max = target.SectorStatsGroup.GetValue(MaxType);
+//				int supply = target.SectorStatsGroup.GetValue(SupplyType);
+//				int curr = target.CurrStatsList.GetValue(CurrType);
 
 //				if (ResourcesUpdate(ref curr, in max, in supply, ref supplement, ref currentResupplyTime, resetResupplyTime, in deltaTime))
 //				{
-//					sector.SetMaterial(curr);
+//					target.SetMaterial(curr);
 
-//					string key = $"{sector.SectorName}_{UpdateLogicSort.거점_자원갱신종료}";
+//					string key = $"{target.SectorName}_{UpdateLogicSort.거점_자원갱신종료}";
 //					TempData.SetTrigger(key, UpdateLogicSort.거점_자원갱신종료);
 
-//					int elementID = sector.CaptureData.captureFactionID;
+//					int elementID = target.CaptureData.captureFactionID;
 //					key = $"{elementID}_{UpdateLogicSort.세력_자원갱신종료}";
 //					TempData.SetTrigger(key, UpdateLogicSort.세력_자원갱신종료);
 //					if (TempData.TryGetValue<TempSupplyValue>(FactionTempSupplyValueKey(elementID), out var tempValue))

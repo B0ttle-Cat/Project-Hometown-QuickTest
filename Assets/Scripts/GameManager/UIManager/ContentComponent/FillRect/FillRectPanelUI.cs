@@ -12,8 +12,7 @@ namespace GameUI
 {
 	public class FillRectPanelUI : PanelItemComponent, IFillItem
 	{
-		public override IPanelItem ThisPanel => this;
-		public override IShowHideAsync ThisShowHide => this;
+		#region Ref Value
 		[SerializeField, FoldoutGroup("FillRext")]
 		private RectTransform showMaskRect;
 		[SerializeField, FoldoutGroup("Image")]
@@ -21,16 +20,9 @@ namespace GameUI
 		[SerializeField, FoldoutGroup("Text")]
 		private TMP_Text textUI;
 		private RectTransform textRect;
+		#endregion
 
-
-		private void Reset()
-		{
-			if (transform.childCount < 2) return;
-			showMaskRect = transform.GetChild(0).GetComponent<RectTransform>();
-			fillImage = transform.GetChild(1).GetComponent<Image>();
-			if (transform.childCount < 3) return;
-			textUI = transform.GetChild(2).GetComponent<TMP_Text>();
-		}
+		#region Value
 		public enum FillMethodType
 		{
 			[InspectorName("→")]
@@ -145,11 +137,18 @@ namespace GameUI
 			get => fillImage == null ? 1 : fillImage.pixelsPerUnitMultiplier;
 			set { if (fillImage == null) return; else fillImage.pixelsPerUnitMultiplier = value; }
 		}
-
+		#endregion
+		private void Reset()
+		{
+			if (transform.childCount < 2) return;
+			showMaskRect = transform.GetChild(0).GetComponent<RectTransform>();
+			fillImage = transform.GetChild(1).GetComponent<Image>();
+			if (transform.childCount < 3) return;
+			textUI = transform.GetChild(2).GetComponent<TMP_Text>();
+		}
 		protected override void Hide()
 		{
 		}
-
 		protected override void Show()
 		{
 		}
@@ -309,7 +308,6 @@ namespace GameUI
 				Debug.LogWarning(ex);
 			}
 		}
-
 		private int ConvertFloatToInt(float value)
 		{
 			return floatToInt switch

@@ -15,7 +15,7 @@ namespace StrategyManagerModule
 	/// </summary>
 	/// 
 	/// --------------------------
-	/// 사용 예시(조립 코드 - Composition Root)
+	/// 사용 예시(조립 코드 - Composition FindRoot)
 	/// --------------------------
 	/// var collector = new StrategyElementCollector();
 	/// collector.Register<SectorObject>()

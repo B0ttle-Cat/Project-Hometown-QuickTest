@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 using Sirenix.OdinInspector;
@@ -15,19 +14,8 @@ namespace GameUI
 {
 	public class FillRectMultiPanelUI : PanelGroupComponent<FillRectMultiItem>, IFillGroup
 	{
-		#region PanelGroupComponent
-		[PropertyOrder(0), BoxGroup("FillRext")]
-		[ShowInInspector, ListDrawerSettings(ShowFoldout = false)]
-		protected override List<FillRectMultiItem> Items
-		{
-			get { return items; }
-			set { items = value; }
-		}
-		#endregion
-
 		[BoxGroup("Text"), PropertyOrder(2), SerializeField]
 		protected TMP_Text textUI;
-
 
 		public enum GroupFillMethodType { 누적, 분배, [InspectorName("누적 후 분배")]누적분배 }
 		[SerializeField, HideIf("@true")]
@@ -41,7 +29,7 @@ namespace GameUI
 		[SerializeField, HideIf("@true")]
 		protected string textFormat;
 		private bool skipChange;
-	
+
 		public Vector2 Value
 		{
 			get => new Vector2(0, TotalValue());
@@ -131,9 +119,6 @@ namespace GameUI
 			set { textFormat = value; ChangeText(); }
 		}
 
-		public override IPanelGroup<FillRectMultiItem> ThisPanel => this;
-		public override IShowHideAsync ThisShowHide => this;
-
 		protected override void Reset()
 		{
 			InitListItem();
@@ -151,14 +136,15 @@ namespace GameUI
 		{
 			InitListItem();
 		}
-		protected void Awake()
+		protected override void Awake()
 		{
+			base.Awake();
 			InitListItem();
 		}
 		[ButtonGroup, PropertyOrder(-1)]
 		private void ResetListItem()
 		{
-			Items.Clear();
+			this.Clear();
 			InitListItem();
 		}
 		[ButtonGroup, PropertyOrder(-1)]
@@ -166,16 +152,24 @@ namespace GameUI
 		{
 			if (Count == 0)
 			{
-				Items = new List<FillRectMultiItem>();
+				this.New();
 				var fillRects = GetComponentsInChildren<FillRectPanelUI>(true);
-				foreach (var fill in fillRects)
+				for (int i = 0 ; i < fillRects.Length ; i++)
 				{
-					Items.Add(new FillRectMultiItem(fill, OnChangeValue));
+					FillRectPanelUI fill = fillRects[i];
+					if (i == 0)
+					{
+						backGroundFillRect = fill;
+					}
+					else
+					{
+						this.Add(new FillRectMultiItem(fill, OnChangeValue));
+					}
 				}
 			}
 			else
 			{
-				foreach (var item in Items)
+				foreach (var item in this)
 				{
 					item.SetFillAction(OnChangeValue);
 				}
@@ -198,12 +192,14 @@ namespace GameUI
 		{
 		}
 		[HideReferenceObjectPicker, Serializable]
-		public class FillRectMultiItem : IPanelItem, IShowHide
+		public class FillRectMultiItem : IPanelItem, IDisposable
 		{
 			[LabelWidth(100),LabelText("Fill Rect UI")]
 			public FillRectPanelUI fillRectPanelUI;
-			[SerializeField, HideIf("@true")]
-			private bool isBG;
+			public IPanelItem ThisPanel => fillRectPanelUI;
+			RectTransform IPanelItem.ThisRect => fillRectPanelUI.ThisPanel.ThisRect;
+			GameUIController IPanelItem.RootUI => fillRectPanelUI.ThisPanel.RootUI;
+
 			[SerializeField, HideIf("@true")]
 			private float fillValue;
 			private Action fillUpdate;
@@ -248,21 +244,15 @@ namespace GameUI
 				fillValue = 0;
 				this.fillUpdate = fillUpdate;
 			}
+			public void Dispose()
+			{
+				fillRectPanelUI = null;
+				fillUpdate = null;
+			}
 			public void SetFillAction(Action fillUpdate)
 			{
 				this.fillUpdate = fillUpdate;
 			}
-
-
-			public IPanelItem ThisPanel => fillRectPanelUI.ThisPanel;
-			public IShowHide ThisShowHide => fillRectPanelUI.ThisShowHide;
-			public bool IsShow { get => fillRectPanelUI.ThisShowHide.IsShow; set => fillRectPanelUI.ThisShowHide.IsShow = value; }
-			RectTransform IPanelItem.ThisRect => fillRectPanelUI.ThisPanel.ThisRect;
-#pragma warning disable CS0618 // 형식 또는 멤버는 사용되지 않습니다.
-			void IShowHide.Hide() => fillRectPanelUI.ThisShowHide.Hide();
-			void IShowHide.Show() => fillRectPanelUI.ThisShowHide.Show();
-#pragma warning restore CS0618 // 형식 또는 멤버는 사용되지 않습니다.
-
 			internal void ChangeMinMax(Vector2 minMax)
 			{
 				fillRectPanelUI.MinMax = minMax;
@@ -275,17 +265,33 @@ namespace GameUI
 			{
 				fillRectPanelUI.FillMethod = fillMethod;
 			}
-
 			internal void ChangeFloatToInt(FloatToIntType floatToInt)
 			{
 				fillRectPanelUI.FloatToInt = floatToInt;
 			}
-
 			internal bool IsNull()
 			{
 				return fillRectPanelUI.IsNullRef();
 
 			}
+        }
+		public void SetValue(params float[] values)
+		{
+			skipChange = true;
+			int length = values.Length;
+			for (int i = 0 ; i < Count ; i++)
+			{
+				if(i < length)
+				{
+					this[i].FillValue = values[i];
+				}
+				else
+				{
+					this[i].FillValue = MinMax.x;
+				}
+			}
+			skipChange = false;
+			GruopFillUpdate();
 		}
 		public void SetValue(params int[] values)
 		{
@@ -298,7 +304,6 @@ namespace GameUI
 			skipChange = false;
 			GruopFillUpdate();
 		}
-
 		private void ChangeMinMax()
 		{
 			int count = Count;
@@ -308,8 +313,8 @@ namespace GameUI
 				if (item.IsNull()) continue;
 				item.ChangeMinMax(MinMax);
 			}
-			if(backGroundFillRect.IsNotNullRef())
-					backGroundFillRect.MinMax = MinMax;
+			if (backGroundFillRect.IsNotNullRef())
+				backGroundFillRect.MinMax = MinMax;
 			GruopFillUpdate();
 		}
 		private void ChangeFillMethod()
@@ -483,7 +488,7 @@ namespace GameUI
 			}
 
 			// 인덱스 참조({0}, {^1} 등)는 이 리스트를 기준으로 동작함
-			var validItems = Items;
+			var validItems = this;
 			int vCount = Count;
 
 			string processedText = textFormat;
@@ -633,7 +638,7 @@ namespace GameUI
 				_ => (int)value,
 			};
 		}
-		private float TotalValue()
+		public float TotalValue()
 		{
 			float min = MinMax.x;
 			float max = MinMax.y;

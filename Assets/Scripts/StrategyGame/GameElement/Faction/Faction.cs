@@ -269,4 +269,31 @@ public partial class Faction : IStatsValueControl, ISupplyStats
 			default: DynamicKeyStatsList.SetValue(type, value); break;
 		}
 	}
+
+
+	(float[] values, float total, float max) ISupplyStats.GetPersonnelDetailValue()
+	{
+		float max = StatsValue.GetStatsValue(StatsType.자원_인력_최대);
+		float total = StatsValue.GetStatsValue(StatsType.자원_인력_현재);
+		float[] values = new float[1];
+		values[0] = StatsValue.GetStatsValue(StatsType.자원_인력_현재);
+		return (values, total, max);
+	}
+	(float[] values, float total, float max) ISupplyStats.GetMaterialDetailValue()
+	{
+		float max = StatsValue.GetStatsValue(StatsType.자원_재료_최대);
+		float total = StatsValue.GetStatsValue(StatsType.자원_재료_현재);
+		float[] values = new float[1];
+		values[0] = StatsValue.GetStatsValue(StatsType.자원_재료_현재);
+		return (values, total, max);
+	}
+	(float[] values, float total, float max) ISupplyStats.GetElectricDetailValue()
+	{
+		float max = StatsValue.GetStatsValue(StatsType.자원_전력_최대);
+		float total = StatsValue.GetStatsValue(StatsType.자원_전력_현재);
+
+		float[] values = new float[1];
+		values[0] = StatsValue.GetStatsValue(StatsType.자원_전력_현재);
+		return (values, total, max);
+	}
 }

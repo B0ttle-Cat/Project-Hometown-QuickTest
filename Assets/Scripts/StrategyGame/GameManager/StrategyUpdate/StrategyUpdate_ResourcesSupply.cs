@@ -133,11 +133,11 @@ namespace StrategyManagerModule
 				{
 					if (sector.IsNullRef()) return false;
 					if (sector.CaptureFactionID < 0) return false;
+					if (!sector.IsEnableResourcesSupply) return false;
 
 					Faction faction = sector.CaptureFaction;
 					if (faction.IsNullRef()) return false;
 					if (!faction.IsEnableResourcesSupply) return false;
-
 
 					return true;
 				}

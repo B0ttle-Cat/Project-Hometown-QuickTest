@@ -14,30 +14,38 @@ public record SectorStatsData
 {
 	public string SectorName;
 
-	[BoxGroup("Local리소스/인력")]
-	[HorizontalGroup("Local리소스/인력/H"), HideLabel,SuffixLabel("최대 수용량", Overlay = true)]
+	public bool IsEnableResourcesSupply;
+
+	[FoldoutGroup("리소스", VisibleIf = "@IsEnableResourcesSupply")]
+#if UNITY_EDITOR
+	[HorizontalGroup("리소스/인력", width: 40), HideLabel, DisplayAsString, EnableGUI, ShowInInspector]
+	private const string PersonnelString = "인력: ";
+	[HorizontalGroup("리소스/재료", width: 40), HideLabel, DisplayAsString, EnableGUI, ShowInInspector]
+	private const string MaterialString = "재료: ";
+	[HorizontalGroup("리소스/전력", width: 40), HideLabel, DisplayAsString, EnableGUI, ShowInInspector]
+	private const string ElectricString = "전력: ";
+#endif
+	[HorizontalGroup("리소스/인력"), HideLabel, SuffixLabel("최대 수용량", Overlay = true)]
 	public int CapacityPersonnel;
-	[HorizontalGroup("Local리소스/인력/H"), HideLabel,SuffixLabel("분당 회복량", Overlay = true)]
+	[HorizontalGroup("리소스/인력"), HideLabel, SuffixLabel("분당 회복량", Overlay = true)]
 	public int RecoveryPersonnel;
-
-	[BoxGroup("Local리소스/재료")]
-	[HorizontalGroup("Local리소스/재료/H"), HideLabel,SuffixLabel("최대 수용량", Overlay = true)]
+	[HorizontalGroup("리소스/재료"), HideLabel, SuffixLabel("최대 수용량", Overlay = true)]
 	public int CapacityMaterial;
-	[HorizontalGroup("Local리소스/재료/H"), HideLabel,SuffixLabel("분당 회복량", Overlay = true)]
+	[HorizontalGroup("리소스/재료"), HideLabel, SuffixLabel("분당 회복량", Overlay = true)]
 	public int RecoveryMaterial;
-
-	[BoxGroup("Local리소스/전력")]
-	[HorizontalGroup("Local리소스/전력/H"), HideLabel,SuffixLabel("최대 수용량", Overlay = true)]
+	[HorizontalGroup("리소스/전력"), HideLabel, SuffixLabel("최대 수용량", Overlay = true)]
 	public int CapacityElectric;
-	[HorizontalGroup("Local리소스/전력/H"), HideLabel,SuffixLabel("분당 회복량", Overlay = true)]
+	[HorizontalGroup("리소스/전력"), HideLabel, SuffixLabel("분당 회복량", Overlay = true)]
 	public int RecoveryElectric;
 
-	[FoldoutGroup("Local리소스")]
-	[LabelText("기본 분배 거리")]
-	public int DistributionDepth;
-	[FoldoutGroup("Local리소스")]
+
+	[FoldoutGroup("리소스")]
 	[LabelText("회복 및 분배 주기(초)")]
 	public float CycleTime;
+
+	[FoldoutGroup("리소스")]
+	[LabelText("기본 분배 거리")]
+	public int DistributionDepth;
 
 	[FoldoutGroup("Faction보너스리소스", GroupName = "이 구역을 점령시 증가하는 세력의 최대 수용량")]
 	[LabelText("인력 수용량")]
@@ -61,14 +69,15 @@ public record SectorStatsData
 	public SectorStatsData(StrategyStartSetterData.SectorData data)
 	{
 		this.SectorName = data.SectorName;
+		this.IsEnableResourcesSupply = data.EnableResourcesSupply;
 		this.CapacityPersonnel = data.CapacityPersonnel;
 		this.RecoveryPersonnel = data.RecoveryPersonnel;
 		this.CapacityMaterial = data.CapacityMaterial;
 		this.RecoveryMaterial = data.RecoveryMaterial;
 		this.CapacityElectric = data.CapacityElectric;
 		this.RecoveryElectric = data.RecoveryElectric;
-		this.DistributionDepth = data.DistributionDepth;
 		this.CycleTime = data.CycleTime;
+		this.DistributionDepth = data.DistributionDepth;
 		this.MaxPersonnelCapacityBonusOfFaction = data.MaxPersonnelCapacityBonusOfFaction;
 		this.MaxMaterialCapacityBonusOfFaction = data.MaxMaterialCapacityBonusOfFaction;
 		this.MaxElectricCapacityBonusOfFaction = data.MaxElectricCapacityBonusOfFaction;

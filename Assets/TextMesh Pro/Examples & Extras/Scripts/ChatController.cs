@@ -24,7 +24,7 @@ public class ChatController : MonoBehaviour {
 
     void AddToChatOutput(string newText)
     {
-        // Clear Input Field
+        // OnClear Input Field
         ChatInputField.text = string.Empty;
 
         var timeNow = System.DateTime.Now;

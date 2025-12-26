@@ -186,7 +186,7 @@ public partial class StrategyDetailsPanelUI // FieldInfoDetailsPanelUI
 					title.text = overviewData.title;
 				}
 
-				if (KeyPair.TryFindPair<TMP_Text>("Content", out var overview))
+				if (KeyPair.TryFindPair<TMP_Text>("ContentParent", out var overview))
 				{
 					overview.text = overviewData.description;
 				}
@@ -316,7 +316,7 @@ public partial class StrategyDetailsPanelUI // FieldInfoDetailsPanelUI
 			public FieldInfo_Statistics(StrategyDetailsPanelUI thisPanel, RectTransform contentPrefab)
 				: base(thisPanel, contentPrefab)
 			{
-				if (!KeyPair.TryFindPair("Content", out contentParent)) return;
+				if (!KeyPair.TryFindPair("ContentParent", out contentParent)) return;
 				if (!KeyPair.TryFindPair("Group", out groupPrefab)) return;
 				if (!KeyPair.TryFindPair("KeyValue", out itemPrefab)) return;
 			}

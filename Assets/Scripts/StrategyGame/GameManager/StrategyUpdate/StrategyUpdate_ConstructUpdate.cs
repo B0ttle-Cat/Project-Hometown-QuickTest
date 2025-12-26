@@ -52,8 +52,8 @@ namespace StrategyManagerModule
 
 				protected override void OnUpdate(in float deltaTime)
 				{
-				//	if (sector == null || !sector.isActiveAndEnabled) return;
-				//	if ((data ??= sector.Facilities) == null) return;
+				//	if (target == null || !target.isActiveAndEnabled) return;
+				//	if ((data ??= target.Facilities) == null) return;
 				//
 				//	ref readonly var _data = ref data.ReadonlyData();
 				//	int length = _data.slotData.Length;
@@ -88,7 +88,7 @@ namespace StrategyManagerModule
 				//		while (finishList.Count > 0)
 				//		{
 				//			var item = finishList.Dequeue();
-				//			sector.Controller.OnFacilitiesConstruct_Finish(item.Item1, item.Item2);
+				//			target.Controller.OnFacilitiesConstruct_Finish(item.Item1, item.Item2);
 				//		}
 				//	}
 				}

@@ -1,7 +1,5 @@
 ﻿using System.Threading;
 
-using Sirenix.OdinInspector;
-
 using UnityEngine;
 
 namespace GameUI
@@ -10,29 +8,30 @@ namespace GameUI
     public abstract class PanelItemComponent : MonoBehaviour, IPanelItem, IShowHideAsync
 	{
 		private RectTransform rectTransform;
-		public abstract IPanelItem ThisPanel { get; }
-		public virtual RectTransform ThisRect
+		private GameUIController root;
+		public IPanelItem ThisPanel => this;
+		RectTransform IPanelItem.ThisRect => rectTransform.IsNotNullRef() ? rectTransform : rectTransform = GetComponent<RectTransform>();
+		GameUIController IPanelItem.RootUI => root.IsNotNullRef() ? root : root = ThisPanel.FindRoot();
+		public IShowHide ThisShowHide => this;
+		bool IShowHide.IsShow { get; set; } = false;
+
+
+		protected virtual void Awake()
 		{
-			get
-			{
-				if(rectTransform.IsNullRef())
-					rectTransform = GetComponent<RectTransform>();
-				return rectTransform;
-			}
+			ThisShowHide.PairingShowHide();
 		}
-        public abstract IShowHideAsync ThisShowHide { get; }
-		IShowHide IShowHide.ThisShowHide => ThisShowHide;
-        CancellationTokenSource IShowHideAsync.ShowHideCancellationTokenSource { get; set; }
-		[SerializeField, PropertyOrder(-10000)]
-		private bool isShow = false;
-		bool IShowHide.IsShow { get => isShow; set => isShow = value; }
-		async Awaitable IShowHideAsync.Show(CancellationToken cancellationToken) => await Show(cancellationToken);
-		async Awaitable IShowHideAsync.Hide(CancellationToken cancellationToken) => await Hide(cancellationToken);
+		protected virtual void OnDestroy()
+		{
+			ThisShowHide.UnpairingShowHide();
+		}
+
+
 		void IShowHide.Show() => Show();
 		void IShowHide.Hide() => Hide();
+		async Awaitable IShowHideAsync.Show(CancellationToken cancellationToken) => await Show(cancellationToken);
+		async Awaitable IShowHideAsync.Hide(CancellationToken cancellationToken) => await Hide(cancellationToken);
 		protected abstract void Show();
 		protected abstract void Hide();
-
 		protected virtual async Awaitable Show(CancellationToken cancellationToken) { return; }
 		protected virtual async Awaitable Hide(CancellationToken cancellationToken) { return; }
 	}

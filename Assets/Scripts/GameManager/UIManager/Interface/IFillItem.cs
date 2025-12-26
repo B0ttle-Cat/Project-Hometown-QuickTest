@@ -21,6 +21,7 @@ namespace GameUI
 		int Count { get; }
 		float this[int index] { get;  set; }
 
+		void SetValue(params float[] values);
 		void SetValue(params int[] values);
 	}
 }

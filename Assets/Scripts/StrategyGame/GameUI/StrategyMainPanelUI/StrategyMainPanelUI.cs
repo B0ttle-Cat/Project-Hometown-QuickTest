@@ -3,17 +3,19 @@
 using UnityEngine;
 
 [RequireComponent(typeof(RectTransform))]
-public class StrategyMainPanelUI : GameUIController, IPanelItem	,IStrategyStartGame
+public class StrategyMainPanelUI : GameUIController	,IStrategyStartGame
 {
-	private RectTransform rectTransform;
-
-	public IPanelItem ThisPanel => this;
-	RectTransform IPanelItem.ThisRect => rectTransform;
-
 	protected override void Awake()
 	{
 		base.Awake();
-		rectTransform = GetComponent<RectTransform>();
+	}
+	void IStrategyStartGame.OnStartGame()
+	{
+		OnShow();
+	}
+	void IStrategyStartGame.OnStopGame()
+	{
+		OnHide();
 	}
 
 	protected override void Hide()
@@ -26,11 +28,9 @@ public class StrategyMainPanelUI : GameUIController, IPanelItem	,IStrategyStartG
 			finds[i].OnHide();
 		}
 	}
-
 	protected override void Show()
 	{
 		InitStrategyResourcesView();
-
 
 		int count = ThisUIFinder.TryFinds<IShowHide>(out var finds);
         for (int i = 0 ; i < count; i++)
@@ -39,16 +39,7 @@ public class StrategyMainPanelUI : GameUIController, IPanelItem	,IStrategyStartG
 		}
 	}
 
-    void IStrategyStartGame.OnStartGame()
-    {
-		ThisShowHide.OnShow();
-	}
 
-    void IStrategyStartGame.OnStopGame()
-    {
-
-		ThisShowHide.OnHide();
-    }
 
 
 	private void InitStrategyResourcesView()

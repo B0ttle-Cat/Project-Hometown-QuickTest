@@ -10,9 +10,7 @@ using UnityEngine;
 public class CanvasGroupUI : PanelItemComponent
 {
 	private CanvasGroup canvasGroup;
-	public virtual CanvasGroup ThisCanvasGroup { get { if (canvasGroup.IsNullRef()) canvasGroup = GetComponent<CanvasGroup>(); return canvasGroup; } }
-	public override IPanelItem ThisPanel => this;
-	public override IShowHideAsync ThisShowHide => this;
+	public virtual CanvasGroup ThisCanvasGroup => canvasGroup.IsNotNullRef() ? canvasGroup : canvasGroup = GetComponent<CanvasGroup>();
 
 #if UNITY_EDITOR
 	private void Reset()

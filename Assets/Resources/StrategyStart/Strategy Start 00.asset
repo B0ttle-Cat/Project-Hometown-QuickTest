@@ -27,9 +27,9 @@ MonoBehaviour:
       defeatScript: 
       enableSubMissions: []
     factionDatas:
-    - FactionName: 
-      FactionColor: {r: 0, g: 0, b: 0, a: 0}
-      FactionIcon: {fileID: 0}
+    - FactionName: Faction_00
+      FactionColor: {r: 1, g: 0, b: 0, a: 1}
+      FactionIcon: {fileID: 21300000, guid: 23f59f3afcad60b48a7c4a94a85168fa, type: 3}
       EnableResourcesSupply: 0
       CapacityPersonnel: 0
       RecoveryPersonnel: 0
@@ -44,10 +44,10 @@ MonoBehaviour:
       - Range: 1
         unitKey: 2100
         endUnitKey: 2121
-    - FactionName: 
-      FactionColor: {r: 0, g: 0, b: 0, a: 0}
-      FactionIcon: {fileID: 0}
-      EnableResourcesSupply: 0
+    - FactionName: Faction_01
+      FactionColor: {r: 0, g: 0, b: 1, a: 0}
+      FactionIcon: {fileID: 21300000, guid: b4e5b9fc3aa67354090d09fa2ca83c1b, type: 3}
+      EnableResourcesSupply: 1
       CapacityPersonnel: 0
       RecoveryPersonnel: 0
       CurrentPersonnel: 0
@@ -62,7 +62,8 @@ MonoBehaviour:
         unitKey: 1100
         endUnitKey: 1420
     sectorDatas:
-    - SectorName: 
+    - SectorName: Sector_00
+      EnableResourcesSupply: 1
       CapacityPersonnel: 20
       RecoveryPersonnel: 2
       LocalPersonnel: 2
@@ -72,9 +73,8 @@ MonoBehaviour:
       CapacityElectric: 200
       RecoveryElectric: 100
       LocalElectric: 100
-      DistributionDepth: 0
-      DistributionAddDepth: 0
       CycleTime: 10
+      DistributionDepth: 0
       MaxPersonnelCapacityBonusOfFaction: 10
       MaxMaterialCapacityBonusOfFaction: 50
       MaxElectricCapacityBonusOfFaction: 50
@@ -96,7 +96,8 @@ MonoBehaviour:
       EnvironmentalKey: 0
       PermanentStatus: 0
       DynamicStatus: 0
-    - SectorName: 
+    - SectorName: Sector_01
+      EnableResourcesSupply: 1
       CapacityPersonnel: 20
       RecoveryPersonnel: 2
       LocalPersonnel: 2
@@ -106,9 +107,8 @@ MonoBehaviour:
       CapacityElectric: 200
       RecoveryElectric: 100
       LocalElectric: 100
-      DistributionDepth: 0
-      DistributionAddDepth: 0
       CycleTime: 10
+      DistributionDepth: 0
       MaxPersonnelCapacityBonusOfFaction: 10
       MaxMaterialCapacityBonusOfFaction: 50
       MaxElectricCapacityBonusOfFaction: 50
@@ -122,7 +122,8 @@ MonoBehaviour:
       EnvironmentalKey: 0
       PermanentStatus: 0
       DynamicStatus: 0
-    - SectorName: 
+    - SectorName: Sector_02
+      EnableResourcesSupply: 1
       CapacityPersonnel: 20
       RecoveryPersonnel: 2
       LocalPersonnel: 2
@@ -132,9 +133,8 @@ MonoBehaviour:
       CapacityElectric: 200
       RecoveryElectric: 100
       LocalElectric: 100
-      DistributionDepth: 0
-      DistributionAddDepth: 0
       CycleTime: 10
+      DistributionDepth: 0
       MaxPersonnelCapacityBonusOfFaction: 10
       MaxMaterialCapacityBonusOfFaction: 50
       MaxElectricCapacityBonusOfFaction: 50
@@ -148,7 +148,8 @@ MonoBehaviour:
       EnvironmentalKey: 0
       PermanentStatus: 0
       DynamicStatus: 0
-    - SectorName: 
+    - SectorName: Sector_03
+      EnableResourcesSupply: 1
       CapacityPersonnel: 20
       RecoveryPersonnel: 2
       LocalPersonnel: 2
@@ -158,9 +159,8 @@ MonoBehaviour:
       CapacityElectric: 200
       RecoveryElectric: 100
       LocalElectric: 100
-      DistributionDepth: 0
-      DistributionAddDepth: 0
       CycleTime: 10
+      DistributionDepth: 0
       MaxPersonnelCapacityBonusOfFaction: 10
       MaxMaterialCapacityBonusOfFaction: 50
       MaxElectricCapacityBonusOfFaction: 50
@@ -174,7 +174,8 @@ MonoBehaviour:
       EnvironmentalKey: 0
       PermanentStatus: 0
       DynamicStatus: 0
-    - SectorName: 
+    - SectorName: Sector_04
+      EnableResourcesSupply: 1
       CapacityPersonnel: 20
       RecoveryPersonnel: 2
       LocalPersonnel: 2
@@ -184,9 +185,8 @@ MonoBehaviour:
       CapacityElectric: 200
       RecoveryElectric: 100
       LocalElectric: 100
-      DistributionDepth: 0
-      DistributionAddDepth: 0
       CycleTime: 10
+      DistributionDepth: 0
       MaxPersonnelCapacityBonusOfFaction: 10
       MaxMaterialCapacityBonusOfFaction: 50
       MaxElectricCapacityBonusOfFaction: 50
