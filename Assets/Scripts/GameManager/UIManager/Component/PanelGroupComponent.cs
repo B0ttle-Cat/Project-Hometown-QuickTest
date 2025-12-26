@@ -98,7 +98,7 @@ namespace GameUI
 		public abstract IShowHideAsync ThisShowHide { get; }
 		IShowHide IShowHide.ThisShowHide => ThisShowHide;
 		CancellationTokenSource IShowHideAsync.ShowHideCancellationTokenSource { get; set; }
-		[SerializeField, PropertyOrder(-10000)]
+		[SerializeField, PropertyOrder(-10000) , ReadOnly]
 		private bool isShow = false;
 		bool IShowHide.IsShow { get => isShow; set => isShow = value; }
 

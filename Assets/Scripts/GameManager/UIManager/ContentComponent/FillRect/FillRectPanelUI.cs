@@ -16,7 +16,7 @@ namespace GameUI
 		public override IShowHideAsync ThisShowHide => this;
 		[SerializeField, FoldoutGroup("FillRext")]
 		private RectTransform showMaskRect;
-		[ShowInInspector, FoldoutGroup("Image")]
+		[SerializeField, FoldoutGroup("Image")]
 		private Image fillImage;
 		[SerializeField, FoldoutGroup("Text")]
 		private TMP_Text textUI;
@@ -49,11 +49,17 @@ namespace GameUI
 			RountToInt,
 			CeilToInt
 		}
+		[SerializeField, HideIf("@true")]
 		private Vector2 minMax;
+		[SerializeField, HideIf("@true")]
 		private Vector2 valueRange;
+		[SerializeField, HideIf("@true")]
 		private FillMethodType fillMethod;
+		[SerializeField, HideIf("@true")]
 		private FloatToIntType floatToInt;
+		[SerializeField, HideIf("@true")]
 		private string textFormat;
+		[SerializeField, HideIf("@true")]
 		private bool textRectFitInFillRect;
 
 		[ShowInInspector, BoxGroup("FillRext/Value", ShowLabel = false, VisibleIf = "@showMaskRect != null")]
@@ -83,6 +89,14 @@ namespace GameUI
 		}
 
 		[ShowInInspector, BoxGroup("Text/Value", ShowLabel = false, VisibleIf = "@textUI != null")]
+		[InfoBox(@"TextFormat Hint
+	{0} == Value.y		== ""Value (end)""
+	{1} == MinMax.y		== ""Max""
+	{2} == MinMax.x		== ""Min""
+	{4} == Value.x		== ""Value (start)""
+	Ex) ""{0}/{1}"" 
+			== ""{Value.y}/{MinMax.y}""
+			== ""{Value}/{Max}""")]
 		public string TextFormat
 		{
 			get => textFormat;
@@ -153,12 +167,16 @@ namespace GameUI
 			}
 			float minValue = Value.x;
 			float maxValue = Value.y;
-			if (Mathf.Approximately(minValue, maxValue))
+
+			if (fillImage.IsNotNullRef())
 			{
-				fillImage.enabled = false;
-				return;
+				if (Mathf.Approximately(minValue, maxValue))
+				{
+					fillImage.enabled = false;
+					return;
+				}
+				fillImage.enabled = true;
 			}
-			fillImage.enabled = true;
 			if (minValue > maxValue)
 			{
 				maxValue = Value.x;

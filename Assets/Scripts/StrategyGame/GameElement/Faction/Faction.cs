@@ -202,7 +202,6 @@ public partial class Faction // ElementSet
 		#endregion
 	}
 }
-
 public partial class Faction : IStatsValueControl, ISupplyStats
 {
 	public IStatsValueControl StatsValue => this;
