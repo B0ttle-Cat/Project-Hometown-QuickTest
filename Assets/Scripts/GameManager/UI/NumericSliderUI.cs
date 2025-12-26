@@ -11,6 +11,7 @@ public class NumericSliderUI : MonoBehaviour
 	[SerializeField]
 	private TMP_Text label;
 	[SerializeField]
+	[Obsolete("FillRectPanelUI 으로 변경 필요")]
 	private SliderFillRect slider;
 	[SerializeField]
 	private Button buttonSample;

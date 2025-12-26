@@ -7,6 +7,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+[Obsolete("FillRectPanelUI 으로 변경 필요")]
 public class FillRectUI_Old : MonoBehaviour
 {
 	[SerializeField, Range(0f,1f)]

@@ -9,6 +9,7 @@ using UnityEngine.UI;
 
 [RequireComponent(typeof(Slider))]
 [RequireComponent(typeof(CanvasGroup))]
+[Obsolete("FillRectPanelUI 으로 변경 필요")]
 public class SliderFillRect : FillRectUI_Old
 {
 	private Slider slider;

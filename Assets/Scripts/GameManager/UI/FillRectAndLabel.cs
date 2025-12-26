@@ -1,9 +1,12 @@
-﻿using Sirenix.OdinInspector;
+﻿using System;
+
+using Sirenix.OdinInspector;
 
 using TMPro;
 
 using UnityEngine;
 
+[Obsolete("FillRectPanelUI 으로 변경 필요")]
 public class FillRectAndLabel : MonoBehaviour
 {
 	[SerializeField, InlineEditor]

@@ -385,26 +385,32 @@ namespace GameUI
 #if UNITY_EDITOR
 			async void EditrUpdate(CancellationToken token)
 			{
-				int timeout = 30 * 1000;
 				if (!Application.isPlaying)
 				{
-					// Task가 완료될 때까지 에디터 루프를 강제로 트리거
-					int delta = Mathf.FloorToInt(Time.fixedDeltaTime) * 1000;
+					const long TIMEOUT_MS = 30000; // 30초
+
+					System.Diagnostics.Stopwatch timeoutStopwatch = System.Diagnostics.Stopwatch.StartNew();
+					int delta = Mathf.FloorToInt(Time.fixedDeltaTime * 1000);
 					int minDelta = Mathf.FloorToInt((1f / 60f) * 1000f);
-					if (delta > minDelta)
+					if (delta < minDelta)
 					{
 						delta = minDelta;
 					}
 					while (asyncCount > 0)
 					{
-						if (timeout < 0) break;
 						if (token.IsCancellationRequested) break;
+						if (timeoutStopwatch.ElapsedMilliseconds >= TIMEOUT_MS)
+						{
+							UnityEngine.Debug.LogWarning("ShowHideAsync: 30초 타임아웃으로 에디터 비동기 루프를 강제 종료합니다.");
+							break;
+						}
 
+						// Task가 완료될 때까지 에디터 루프를 강제로 트리거
 						EditorApplication.QueuePlayerLoopUpdate();
 						UnityEditorInternal.InternalEditorUtility.RepaintAllViews();
 						await Task.Delay(delta);
-						timeout -= delta;
 					}
+					timeoutStopwatch.Stop();
 				}
 			}
 #endif
