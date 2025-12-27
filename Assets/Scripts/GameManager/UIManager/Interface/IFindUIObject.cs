@@ -8,9 +8,9 @@ using UnityEngine;
 
 namespace GameUI
 {
-	public interface IFundUIObject
+	public interface IFindUIObject
 	{
-		IFundUIObject ThisUIFinder { get; }
+		IFindUIObject ThisUIFinder { get; }
 		public List<KeyPairObject> KeyPairs { get; }
 
 		public bool IsPathMatch(string pattern, string targetKey)

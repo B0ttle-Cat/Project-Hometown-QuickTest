@@ -87,13 +87,13 @@
 				{
 					if (faction == null || SearcherAPI.IsNullRef()) return;
 					if (!SearcherAPI.IsEnable) return;
-					faction.RemoveDetects(SearcherAPI.ExitRageThisFrame());
+					faction.RemoveDetect(SearcherAPI.ExitRageThisFrame());
 				}
 				public void EnterViewUpdate()
 				{
 					if (faction == null || SearcherAPI.IsNullRef()) return;
 					if (!SearcherAPI.IsEnable) return;
-					faction.AddDetects(SearcherAPI.EnterRageThisFrame());
+					faction.AddDetect(SearcherAPI.EnterRageThisFrame());
 				}
 			}
 		}

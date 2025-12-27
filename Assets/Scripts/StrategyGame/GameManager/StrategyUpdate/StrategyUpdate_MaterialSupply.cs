@@ -12,7 +12,7 @@
 //		protected override void Start()
 //		{
 //			this = new PoolList<ResourcesSupply>();
-//			var activeList = StrategyManager.Collector.SectorList;
+//			var activeList = StrategyManager.Collector.CapturedList;
 //			int length = activeList.Count;
 //			for (int i = 0 ; i < length ; i++)
 //			{

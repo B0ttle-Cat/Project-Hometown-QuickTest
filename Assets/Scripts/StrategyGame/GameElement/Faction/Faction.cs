@@ -47,16 +47,21 @@ public partial class Faction : IDisposable
 		runtimeData.MaintenanceCostFacilitiesElectric = 0;
 		runtimeData.DynamicAvailableUnitKeyList = new List<UnitKey>();
 		runtimeData.DynamicKeyStatsList = new StatsList();
-		detectedList = new();
 
-		OnSupplyChange = null;
+		InitElementSet();
+		InitSupply();
 	}
 	public void Dispose()
 	{
-		detectedList?.Dispose();
-		detectedList = null;
-		OnSupplyChange = null;
+		DeinitElementSet();
+		DeinitSupply();
 	}
+	partial void InitElementSet();
+	partial void DeinitElementSet();
+
+	partial void InitSupply();
+	partial void DeinitSupply();
+
 	public void ComputeAllRuntimeData()
 	{
 		ComputeAssignedMilitaryPersonnel();
@@ -94,10 +99,6 @@ public partial class Faction : IDisposable
 	{
 
 	}
-
-
-	private ElementSet detectedList;
-
 	[ShowInInspector]
 	public string FactionName => StatsData.FactionName;
 	[ShowInInspector]
@@ -108,7 +109,6 @@ public partial class Faction : IDisposable
 	public bool IsEnableResourcesSupply { get => StatsData.EnableResourcesSupply; set => StatsData.EnableResourcesSupply = value; }
 	[ShowInInspector]
 	public StatsList DynamicKeyStatsList => RuntimeData.DynamicKeyStatsList;
-	public ElementSet DetectedList => detectedList;
 }
 public partial class Faction : IStrategyElement
 {
@@ -132,13 +132,96 @@ public partial class Faction : IStrategyElement
 }
 public partial class Faction // ElementSet
 {
+	private DetectedSet detectedList;
+	private CaptureSectorSet capturedList;
+	private Action<IStrategyElement, bool> onChangeDetected;
+	private Action<IStrategyElement, bool> onChangeCaptured;
+	public void AddChangeDetected(Action<IStrategyElement, bool> onChange, bool invokeForExisting = true)
+	{
+		onChangeDetected -= onChange;
+		onChangeDetected += onChange;
+		if (invokeForExisting)
+		{
+			foreach (var item in detectedList)
+			{
+				onChange?.Invoke(item,true);
+			}
+		}
+	}
+	public void RemoveChangeDetected(Action<IStrategyElement, bool> onChange)
+	{
+		onChangeDetected -= onChange;
+	}
+	public void AddChangeCaptured(Action<IStrategyElement, bool> onChange, bool invokeForExisting = true)
+	{
+		onChangeCaptured -= onChange;
+		onChangeCaptured += onChange;
+		if (invokeForExisting)
+		{
+			foreach (var item in capturedList)
+			{
+				onChange?.Invoke(item, true);
+			}
+		}
+	}
+	public void RemoveChangeCaptured(Action<IStrategyElement, bool> onChange)
+	{
+		onChangeCaptured -= onChange;
+	}
+
+	public DetectedSet DetectedList => detectedList;
+	public CaptureSectorSet CapturedList => capturedList;
+
+
+	partial void InitElementSet()
+	{
+		detectedList = new DetectedSet();
+		capturedList = new CaptureSectorSet();
+
+		onChangeDetected = null;
+		onChangeCaptured = null;
+	}
+	partial void DeinitElementSet()
+	{
+		detectedList?.Dispose();
+		detectedList = null;
+
+		capturedList?.Dispose();
+		capturedList = null;
+
+		onChangeDetected = null;
+		onChangeCaptured = null;
+	}
+
+	public void OnChangeElementSetEvent()
+	{
+		if (DetectedList.HasChange)
+		{
+			//DetectedList.changeAdd, DetectedList.changeRemvoe;
+			foreach (var item in DetectedList.changeRemvoe)
+				onChangeDetected?.Invoke(item, false);
+			foreach (var item in DetectedList.changeAdd)
+				onChangeDetected?.Invoke(item, true);
+
+			DetectedList.ClearHasChange();
+		}
+		if (CapturedList.HasChange)
+		{
+			foreach (var item in CapturedList.changeRemvoe)
+				onChangeCaptured?.Invoke(item, false);
+			foreach (var item in CapturedList.changeAdd)
+				onChangeCaptured?.Invoke(item, true);
+
+			CapturedList.ClearHasChange();
+		}
+	}
 	public class ElementSet : ISet<IStrategyElement>, IDisposable
 	{
-		private readonly HashSet<IStrategyElement> elementList = new HashSet<IStrategyElement>();
-		private readonly HashSet<ITargetableCombatant> targetableList = new HashSet<ITargetableCombatant>();
-		private readonly HashSet<INearbyElement> nearbyList = new HashSet<INearbyElement>();
-		public IEnumerable<ITargetableCombatant> TargetableType => targetableList;
-		public IEnumerable<INearbyElement> NearbyType => nearbyList;
+		public bool HasChange { get; private set; }
+		protected readonly HashSet<IStrategyElement> elementList = new HashSet<IStrategyElement>();
+
+		public readonly HashSet<IStrategyElement> changeAdd = new HashSet<IStrategyElement>();
+		public readonly HashSet<IStrategyElement> changeRemvoe = new HashSet<IStrategyElement>();
 		public int Count => elementList.Count;
 		public ElementSet() { }
 		public ElementSet(IEnumerable<IStrategyElement> detectedList)
@@ -150,37 +233,46 @@ public partial class Faction // ElementSet
 		}
 		public void Dispose()
 		{
+			HasChange = false;
 			Clear();
 		}
 
 		#region 자주사용하는 함수
-		public bool Add(IStrategyElement item)
+		public virtual bool Add(IStrategyElement item)
 		{
 			if (elementList.Add(item))
 			{
-				if (item is INearbyElement nearby) nearbyList.Add(nearby);
-				if (item is ITargetableCombatant target) targetableList.Add(target);
+				changeAdd.Add(item);
+				changeRemvoe.Remove(item);
+
+				HasChange = true;
 				return true;
 			}
 			return false;
 		}
-		public bool Remove(IStrategyElement item)
+		public virtual bool Remove(IStrategyElement item)
 		{
 			if (elementList.Remove(item))
 			{
-				if (item is INearbyElement nearby) nearbyList.Remove(nearby);
-				if (item is ITargetableCombatant target) targetableList.Remove(target);
+				changeAdd.Remove(item);
+				changeRemvoe.Add(item);
+
+				HasChange = true;
 				return true;
 			}
 			return false;
 		}
-		public void Clear()
+		public virtual void Clear()
 		{
+			HasChange = true;
 			elementList.Clear();
-			nearbyList.Clear();
-			targetableList.Clear();
 		}
 		public bool Contains(IStrategyElement item) => elementList.Contains(item);
+		public void ClearHasChange()
+		{
+			changeAdd.Clear();
+			changeRemvoe.Clear();
+		}
 		#endregion
 
 		#region ISet<T>
@@ -201,11 +293,93 @@ public partial class Faction // ElementSet
 		IEnumerator IEnumerable.GetEnumerator() => elementList.GetEnumerator();
 		#endregion
 	}
+	public class DetectedSet : ElementSet
+	{
+		private readonly HashSet<ITargetableCombatant> targetableList = new HashSet<ITargetableCombatant>();
+		private readonly HashSet<INearbyElement> nearbyList = new HashSet<INearbyElement>();
+		public IEnumerable<ITargetableCombatant> TargetableType => targetableList;
+		public IEnumerable<INearbyElement> NearbyType => nearbyList;
+
+		public override bool Add(IStrategyElement item)
+		{
+			if (base.Add(item))
+			{
+				if (item is INearbyElement nearby) nearbyList.Add(nearby);
+				if (item is ITargetableCombatant target) targetableList.Add(target);
+				return true;
+			}
+			return false;
+		}
+		public override bool Remove(IStrategyElement item)
+		{
+			if (base.Remove(item))
+			{
+				if (item is INearbyElement nearby) nearbyList.Remove(nearby);
+				if (item is ITargetableCombatant target) targetableList.Remove(target);
+				return true;
+			}
+			return false;
+		}
+		public override void Clear()
+		{
+			base.Clear();
+			nearbyList.Clear();
+			targetableList.Clear();
+		}
+	}
+	public class CaptureSectorSet : ElementSet
+	{
+		private readonly HashSet<ISectorController> controllerList = new HashSet<ISectorController>();
+		private readonly HashSet<ISupplyStats> supplyList = new HashSet<ISupplyStats>();
+		private readonly HashSet<ISectorCardUIObject> cardUIList = new HashSet<ISectorCardUIObject>();
+		public IEnumerable<ISectorController> ControllerType => controllerList;
+		public IEnumerable<ISupplyStats> SupplyType => supplyList;
+		public IEnumerable<ISectorCardUIObject> CardUIType => cardUIList;
+		public override bool Add(IStrategyElement item)
+		{
+			if (elementList.Add(item))
+			{
+				if (item is ISupplyStats supply) supplyList.Add(supply);
+				if (item is ISectorController control) controllerList.Add(control);
+				if (item is ISectorCardUIObject card) cardUIList.Add(card);
+				return true;
+			}
+			return false;
+		}
+		public override bool Remove(IStrategyElement item)
+		{
+			if (elementList.Remove(item))
+			{
+				if (item is ISupplyStats supply) supplyList.Remove(supply);
+				if (item is ISectorController control) controllerList.Remove(control);
+				if (item is ISectorCardUIObject card) cardUIList.Remove(card);
+				return true;
+			}
+			return false;
+		}
+		public override void Clear()
+		{
+			elementList.Clear();
+			supplyList.Clear();
+			controllerList.Clear();
+			cardUIList.Clear();
+		}
+	}
 }
 public partial class Faction : IStatsValueControl, ISupplyStats
 {
 	public IStatsValueControl StatsValue => this;
 	public Action<ISupplyStats> OnSupplyChange { get; set; }
+
+	partial void InitSupply()
+	{
+		OnSupplyChange = null;
+	}
+	partial void DeinitSupply()
+	{
+		OnSupplyChange = null;
+	}
+
 
 	int IStatsValueControl.GetStatsValue(StatsType type)
 	{
@@ -271,7 +445,8 @@ public partial class Faction : IStatsValueControl, ISupplyStats
 	}
 
 
-	(float[] values, float total, float max) ISupplyStats.GetPersonnelDetailValue()
+	#region ISupplyStats
+	public (float[] values, float total, float max) GetPersonnelDetailValue()
 	{
 		float max = StatsValue.GetStatsValue(StatsType.자원_인력_최대);
 		float total = StatsValue.GetStatsValue(StatsType.자원_인력_현재);
@@ -279,7 +454,7 @@ public partial class Faction : IStatsValueControl, ISupplyStats
 		values[0] = StatsValue.GetStatsValue(StatsType.자원_인력_현재);
 		return (values, total, max);
 	}
-	(float[] values, float total, float max) ISupplyStats.GetMaterialDetailValue()
+	public (float[] values, float total, float max) GetMaterialDetailValue()
 	{
 		float max = StatsValue.GetStatsValue(StatsType.자원_재료_최대);
 		float total = StatsValue.GetStatsValue(StatsType.자원_재료_현재);
@@ -287,7 +462,7 @@ public partial class Faction : IStatsValueControl, ISupplyStats
 		values[0] = StatsValue.GetStatsValue(StatsType.자원_재료_현재);
 		return (values, total, max);
 	}
-	(float[] values, float total, float max) ISupplyStats.GetElectricDetailValue()
+	public (float[] values, float total, float max) GetElectricDetailValue()
 	{
 		float max = StatsValue.GetStatsValue(StatsType.자원_전력_최대);
 		float total = StatsValue.GetStatsValue(StatsType.자원_전력_현재);
@@ -296,4 +471,80 @@ public partial class Faction : IStatsValueControl, ISupplyStats
 		values[0] = StatsValue.GetStatsValue(StatsType.자원_전력_현재);
 		return (values, total, max);
 	}
+	public (float total, float max) GetPersonnelSimpleValue()
+	{
+		float max = StatsValue.GetStatsValue(StatsType.자원_인력_최대);
+		float total = StatsValue.GetStatsValue(StatsType.자원_인력_현재);
+		return (total, max);
+	}
+	public (float total, float max) GetMaterialSimpleValue()
+	{
+		float max = StatsValue.GetStatsValue(StatsType.자원_재료_최대);
+		float total = StatsValue.GetStatsValue(StatsType.자원_재료_현재);
+		return (total, max);
+	}
+	public (float total, float max) GetElectricSimpleValue()
+	{
+		float max = StatsValue.GetStatsValue(StatsType.자원_전력_최대);
+		float total = StatsValue.GetStatsValue(StatsType.자원_전력_현재);
+		return (total, max);
+	}
+	public string GetPersonnelDetailText()
+	{
+		(float[] values, float total, float max) = GetPersonnelDetailValue();
+		string text = $"인력: {total}/{max}";
+		int length = values.Length;
+		for (int i = 0 ; i < length ; i++)
+		{
+			float value = values[i];
+			text += $"\t{value:+#;-#;0}";
+		}
+
+		return text;
+	}
+	public string GetMaterialDetailText()
+	{
+		(float[] values, float total, float max) = GetMaterialDetailValue();
+		string text = $"재료: {total}/{max}";
+		int length = values.Length;
+		for (int i = 0 ; i < length ; i++)
+		{
+			float value = values[i];
+			text += $"\t{value:+#;-#;0}";
+		}
+
+		return text;
+	}
+	public string GetElectricDetailText()
+	{
+		(float[] values, float total, float max) = GetElectricDetailValue();
+		string text = $"전력: {total}/{max}";
+		int length = values.Length;
+		for (int i = 0 ; i < length ; i++)
+		{
+			float value = values[i];
+			text += $"\t{value:+#;-#;0}";
+		}
+
+		return text;
+	}
+	public string GetPersonnelSimpleText()
+	{
+		(float total, float max) = GetPersonnelSimpleValue();
+		string text = $"인력: {total}/{max}";
+		return text;
+	}
+	public string GetMaterialSimpleText()
+	{
+		(float total, float max) = GetMaterialSimpleValue();
+		string text = $"재료: {total}/{max}";
+		return text;
+	}
+	public string GetElectricSimpleText()
+	{
+		(float total, float max) = GetElectricSimpleValue();
+		string text = $"전력: {total}/{max}";
+		return text;
+	}
+	#endregion
 }

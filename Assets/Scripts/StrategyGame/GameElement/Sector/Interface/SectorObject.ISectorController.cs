@@ -4,7 +4,7 @@ public partial class SectorObject : ISectorController
 {
 	public SectorObject This => this;
 	public ISectorController Controller => this;
-    void ISectorController.OnChangeSupport_Defensive(float changeLevel)
+	void ISectorController.OnChangeSupport_Defensive(float changeLevel)
 	{
 	}
 	void ISectorController.OnChangeSupport_Facilities(float changeLevel)
@@ -25,17 +25,17 @@ public partial class SectorObject : ISectorController
 	void ISectorController.OnControlButton_ConstructFacilities()
 	{
 	}
-    void ISectorController.OnControlButton_DeployUniqueUnit()
-    {
-    }
+	void ISectorController.OnControlButton_DeployUniqueUnit()
+	{
+	}
 
-    void ISectorController.OnControlButton_SpawnOperation()
-    {
+	void ISectorController.OnControlButton_SpawnOperation()
+	{
 		StrategyManager.GameUI.ControlPanelUI.OpenUI();
 		var selecter = StrategyManager.GameUI.ControlPanelUI.ShowSpawnTroops();
 		selecter.AddTarget(this);
 	}
-    void ISectorController.OnControlButton_UseFacilitiesSkill()
+	void ISectorController.OnControlButton_UseFacilitiesSkill()
 	{
 	}
 	void ISectorController.OnFacilitiesConstruct_Finish(int slotIndex, FacilityKey facilityKey)
@@ -53,20 +53,20 @@ public partial class SectorObject : ISectorController
 		slot.ConstructionProgress = 0;
 	}
 
-    void ISectorController.OnHideUI_SelectUI()
-    {
+	void ISectorController.OnHideUI_SelectUI()
+	{
 		StrategyManager.GameUI.ControlPanelUI.HideSectorSelectPanel();
 	}
 
-    void ISectorController.OnShowUI_DetailUI()
+	void ISectorController.OnShowUI_DetailUI()
 	{
 		var gamePlayData = StrategyManager.GamePlayTempData;
 		StrategyManager.GameUI.DetailsPanelUI.OpenUI();
 		StrategyManager.GameUI.DetailsPanelUI.OnShowSectorDetail(This);
 	}
 
-    void ISectorController.OnShowUI_SelectUI()
-    {
+	void ISectorController.OnShowUI_SelectUI()
+	{
 		StrategyManager.GameUI.ControlPanelUI.OpenUI();
 		var selecter = StrategyManager.GameUI.ControlPanelUI.ShowSectorSelectPanel();
 		selecter.AddTarget(this);

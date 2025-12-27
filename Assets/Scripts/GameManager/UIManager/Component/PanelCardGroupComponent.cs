@@ -20,7 +20,8 @@ namespace GameUI
 
 		[SerializeField, ToggleGroup("poolingCardObject")]
 		private bool poolingCardObject;
-		[SerializeField, ToggleGroup("poolingCardObject")]
+		[ShowInInspector, ToggleGroup("poolingCardObject")]
+		[HideInEditorMode]
 		protected Stack<CardPanel> PoolStack;
 
 		[Serializable]
@@ -41,7 +42,7 @@ namespace GameUI
 			public abstract void OnClear();
         }
 		public abstract class CardPanel<T> : CardPanel, IPanelItem, IShowHide, IDisposable
-			where T : class
+			where T : class, ICardUIObject
 		{
 			protected IPanelItem panelItem;
 			public override IPanelItem ThisPanel => panelItem;

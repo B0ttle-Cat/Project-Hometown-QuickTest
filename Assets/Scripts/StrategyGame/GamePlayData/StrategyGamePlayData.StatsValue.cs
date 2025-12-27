@@ -681,5 +681,23 @@ public partial class StrategyGamePlayData // StatsValue
 			values[0] = StatsValue.GetStatsValue(StatsType.자원_전력_현재);
 			return (values, total, max);
 		}
+		public (float total, float max) GetPersonnelSimpleValue()
+		{
+			float max = StatsValue.GetStatsValue(StatsType.자원_인력_최대);
+			float total = StatsValue.GetStatsValue(StatsType.자원_인력_현재);
+			return (total, max);
+		}
+		public (float total, float max) GetMaterialSimpleValue()
+		{
+			float max = StatsValue.GetStatsValue(StatsType.자원_재료_최대);
+			float total = StatsValue.GetStatsValue(StatsType.자원_재료_현재);
+			return (total, max);
+		}
+		public (float total, float max) GetElectricSimpleValue()
+		{
+			float max = StatsValue.GetStatsValue(StatsType.자원_전력_최대);
+			float total = StatsValue.GetStatsValue(StatsType.자원_전력_현재);
+			return (total, max);
+		}
 	}
 }

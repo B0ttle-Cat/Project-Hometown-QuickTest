@@ -16,11 +16,11 @@ namespace GameUI
 	[RequireComponent(typeof(RectTransform))]
 	public abstract partial class GameUIController : MonoBehaviour
 		, IShowStackController
-		, IFundUIObject
+		, IFindUIObject
 		, IPanelItem
 	{
 		public IShowStackController StackController => this;
-		public IFundUIObject ThisUIFinder => this;
+		public IFindUIObject ThisUIFinder => this;
 		public IPanelItem ThisPanel => this;
 		public GameUIController RootUI { get => this; set { } }
 
@@ -37,7 +37,7 @@ namespace GameUI
 		[SerializeField, PropertyOrder(-10000)]
 		private RectTransform thisRect;
 		[SerializeField, PropertyOrder(-9998)]
-		private List<IFundUIObject.KeyPairObject> keyPairs;
+		private List<IFindUIObject.KeyPairObject> keyPairs;
 
 #if UNITY_EDITOR
 		[ShowInInspector, InlineButton("TestKeyPair"), PropertyOrder(-9999)]
@@ -52,7 +52,7 @@ namespace GameUI
 		}
 #endif
 		public virtual IShowStackController.GroupShowStack ShowStack { get; protected set; }
-		List<IFundUIObject.KeyPairObject> IFundUIObject.KeyPairs => keyPairs;
+		List<IFindUIObject.KeyPairObject> IFindUIObject.KeyPairs => keyPairs;
 
 		protected virtual void Awake()
 		{

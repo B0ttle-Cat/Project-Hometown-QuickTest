@@ -169,7 +169,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69f83da43e56f034ba53e7751e0c3c7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: GameUI::CanvasGroupUI
-  isShow: 0
   AlphaOnOffValue: {x: 0, y: 1}
   changeTime: 0
   timeMode: 0
@@ -223,10 +222,10 @@ RectTransform:
   - {fileID: 106531616}
   m_Father: {fileID: 2081128785}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 75, y: -30}
-  m_SizeDelta: {x: 142, y: 17.333334}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &35174509
 GameObject:
@@ -405,8 +404,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 958603560}
+  m_Children: []
   m_Father: {fileID: 627432496}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -505,7 +503,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69f83da43e56f034ba53e7751e0c3c7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: GameUI::CanvasGroupUI
-  isShow: 0
   AlphaOnOffValue: {x: 0, y: 1}
   changeTime: 0
   timeMode: 0
@@ -539,10 +536,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abe0073b977f4194785669f476191d62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StrategySectorCardView
-  isShow: 0
-  CardPrefab: {fileID: 0}
-  ContentParent: {fileID: 0}
-  poolingCardObject: 0
+  CardPrefab: {fileID: 958603560}
+  ContentParent: {fileID: 44458275}
+  poolingCardObject: 1
 --- !u!1 &69116205
 GameObject:
   m_ObjectHideFlags: 0
@@ -2618,10 +2614,10 @@ RectTransform:
   - {fileID: 79549538}
   m_Father: {fileID: 2081128785}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 75, y: -49.333336}
-  m_SizeDelta: {x: 142, y: 17.333334}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &265424245
 GameObject:
@@ -5097,7 +5093,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2dc5652770363e4f86b2979cf6e8b24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StrategyMainTabContentUI
-  isShow: 1
   panels:
   - {fileID: 1234401991}
   - {fileID: 58857480}
@@ -6750,6 +6745,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 44458275}
+  - {fileID: 958603560}
   m_Father: {fileID: 806062828}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -9005,7 +9001,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69f83da43e56f034ba53e7751e0c3c7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: GameUI::CanvasGroupUI
-  isShow: 0
   AlphaOnOffValue: {x: 0, y: 1}
   changeTime: 0
   timeMode: 0
@@ -9023,7 +9018,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 955811203}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 0
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
@@ -9038,8 +9033,9 @@ GameObject:
   - component: {fileID: 958603560}
   - component: {fileID: 958603562}
   - component: {fileID: 958603561}
+  - component: {fileID: 958603563}
   m_Layer: 5
-  m_Name: Sector_00
+  m_Name: SectorCard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9052,19 +9048,19 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 958603559}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 483486617}
   - {fileID: 2081128785}
-  m_Father: {fileID: 44458275}
+  m_Father: {fileID: 627432496}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 150, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 75.00008, y: -110}
+  m_SizeDelta: {x: 150, y: 220}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &958603561
 MonoBehaviour:
@@ -9104,6 +9100,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 958603559}
   m_CullTransparentMesh: 1
+--- !u!114 &958603563
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 958603559}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bcfacc0e23b7e541a35bb1a08d7e703, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SectorCardUIObjectView
+  keyPairs: []
+  MinaImage: {fileID: 0}
+  MainText: {fileID: 0}
 --- !u!1 &980736787
 GameObject:
   m_ObjectHideFlags: 0
@@ -9761,7 +9772,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d782bccc91345064c9b0c71c21e5dd4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StrategyMainTabButtonUI
-  isShow: 0
   toggleGroup: {fileID: 1081975520}
   canvasGroupUI: {fileID: 1081975522}
   tabPanelGroup: {fileID: 489642286}
@@ -9788,7 +9798,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69f83da43e56f034ba53e7751e0c3c7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: GameUI::CanvasGroupUI
-  isShow: 1
   AlphaOnOffValue: {x: 0, y: 1}
   changeTime: 0.25
   timeMode: 0
@@ -9842,10 +9851,10 @@ RectTransform:
   - {fileID: 2020070812}
   m_Father: {fileID: 2081128785}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 75, y: -10.666667}
-  m_SizeDelta: {x: 142, y: 17.333334}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1103826509
 GameObject:
@@ -9976,7 +9985,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17661c26fd3d8434aaea7c31a2f8d738, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StrategyResourcesView
-  isShow: 1
   personnel: {fileID: 724487846}
   material: {fileID: 559244690}
   electric: {fileID: 590767849}
@@ -10973,7 +10981,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69f83da43e56f034ba53e7751e0c3c7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: GameUI::CanvasGroupUI
-  isShow: 0
   AlphaOnOffValue: {x: 0, y: 1}
   changeTime: 0
   timeMode: 0
@@ -10991,7 +10998,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1234401989}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 0
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
@@ -11033,7 +11040,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f8c656feedb494449ba80bb4dd59e94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StrategyMainInfoView
-  isShow: 0
   ShowMainScenario: 1
   mainScenario:
     thisRect: {fileID: 1401314288}
@@ -12329,7 +12335,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69f83da43e56f034ba53e7751e0c3c7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: GameUI::CanvasGroupUI
-  isShow: 0
   AlphaOnOffValue: {x: 0, y: 1}
   changeTime: 0
   timeMode: 0
@@ -15093,7 +15098,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20693979e12f46943b2e0fe55111c957, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StrategyMainPanelUI
-  thisRect: {fileID: 0}
+  thisRect: {fileID: 58857479}
   keyPairs:
   - customKey: 0
     Key: Layout/Main Panel/Layout/MainFillRect
@@ -15993,11 +15998,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2589019829179684258, guid: 470324ede2bd26f48a2d17dd52c4b3fb, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.652
+      value: 0.6725
       objectReference: {fileID: 0}
     - target: {fileID: 2589019829179684258, guid: 470324ede2bd26f48a2d17dd52c4b3fb, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3895
+      value: 0.357
       objectReference: {fileID: 0}
     - target: {fileID: 2637995782648833660, guid: 470324ede2bd26f48a2d17dd52c4b3fb, type: 3}
       propertyPath: m_Alpha
@@ -16053,7 +16058,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6883161525088723528, guid: 470324ede2bd26f48a2d17dd52c4b3fb, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3895
+      value: 0.357
       objectReference: {fileID: 0}
     - target: {fileID: 7600284081348421223, guid: 470324ede2bd26f48a2d17dd52c4b3fb, type: 3}
       propertyPath: m_SizeDelta.x

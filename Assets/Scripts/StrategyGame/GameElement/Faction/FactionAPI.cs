@@ -15,6 +15,7 @@ public static class FactionAPI
 
 	public static Faction ID2Faction(int factionID)
 	{
+		if (!StrategyManager.IsReadyManager) return null;
 		return StrategyManager.Collector.Find<Faction>(factionID);
 	}
 	#region Unit Count
@@ -398,7 +399,7 @@ public static class FactionAPI
 
 		return faction.DetectedList.Add(target);
 	}
-	public static bool AddDetects(this Faction faction, IEnumerable<IStrategyElement> targets)
+	public static bool AddDetect(this Faction faction, IEnumerable<IStrategyElement> targets)
 	{
 		if (faction == null || faction.IsNotAlive()) return false;
 
@@ -415,7 +416,7 @@ public static class FactionAPI
 
 		return faction.DetectedList.Remove(target);
 	}
-	public static bool RemoveDetects(this Faction faction, IEnumerable<IStrategyElement> targets)
+	public static bool RemoveDetect(this Faction faction, IEnumerable<IStrategyElement> targets)
 	{
 		if (faction == null || faction.IsNotAlive()) return false;
 
@@ -437,6 +438,54 @@ public static class FactionAPI
 		if (faction == null || faction.IsNotAlive()) return;
 		faction.DetectedList.Clear();
 	}
+	#endregion
+	#region CaptureSector
+	public static bool AddCapture(this Faction faction, SectorObject target)
+	{
+		if (faction == null || faction.IsNotAlive()) return false;
+
+		return faction.CapturedList.Add(target);
+	}
+	public static bool AddCapture(this Faction faction, IEnumerable<SectorObject> targets)
+	{
+		if (faction == null || faction.IsNotAlive()) return false;
+
+		bool change = false;
+		foreach (var target in targets)
+		{
+			change = faction.CapturedList.Add(target) || change;
+		}
+		return change;
+	}
+	public static bool RemoveCapture(this Faction faction, SectorObject target)
+	{
+		if (faction == null || faction.IsNotAlive()) return false;
+
+		return faction.CapturedList.Remove(target);
+	}
+	public static bool RemoveCapture(this Faction faction, IEnumerable<SectorObject> targets)
+	{
+		if (faction == null || faction.IsNotAlive()) return false;
+
+		bool change = false;
+		foreach (var target in targets)
+		{
+			change = faction.CapturedList.Remove(target) || change;
+		}
+		return change;
+	}
+	public static bool HasCaptured(this Faction faction, SectorObject target)
+	{
+		if (faction == null || faction.IsNotAlive()) return false;
+
+		return faction.CapturedList.Contains(target);
+	}
+	public static void ClearCapture(this Faction faction)
+	{
+		if (faction == null || faction.IsNotAlive()) return;
+		faction.CapturedList.Clear();
+	}
+
 	#endregion
 
 	public static bool IsFriendlyBetween(Faction factionA, Faction factionB)
