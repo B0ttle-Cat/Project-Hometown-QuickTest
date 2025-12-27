@@ -68,9 +68,9 @@ namespace StrategyManagerModule
 					{
 						sector.StatsValue.SetStatsValue(StatsType.자원_전력_현재, Mathf.Clamp(tempValue.material, 0, tempValue.materialMax));
 					}
-					if (tempValue.manpowerIsUpdate)
+					if (tempValue.personnelIsUpdate)
 					{
-						sector.StatsValue.SetStatsValue(StatsType.자원_전력_현재, Mathf.Clamp(tempValue.manpower, 0, tempValue.manpowerMax));
+						sector.StatsValue.SetStatsValue(StatsType.자원_전력_현재, Mathf.Clamp(tempValue.personnel, 0, tempValue.personnelMax));
 					}
 				}
 			}

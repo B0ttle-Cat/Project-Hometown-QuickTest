@@ -3,9 +3,9 @@
 //using static StrategyGamePlayData;
 //public partial class StrategyUpdate
 //{
-//    public class StrategyUpdate_ManpowerSupply : StrategyUpdateSubClass<StrategyUpdate_ManpowerSupply.ResourcesSupply>
+//    public class StrategyUpdate_PersonnelSupply : StrategyUpdateSubClass<StrategyUpdate_PersonnelSupply.ResourcesSupply>
 //	{
-//		public StrategyUpdate_ManpowerSupply(StrategyUpdate updater) : base(updater)
+//		public StrategyUpdate_PersonnelSupply(StrategyUpdate updater) : base(updater)
 //		{
 //		}
 
@@ -64,7 +64,7 @@
 
 //				if (ResourcesUpdate(ref curr, in max, in supply, ref supplement, ref currentResupplyTime, resetResupplyTime, in deltaTime))
 //				{
-//					target.SetManpower(curr);
+//					target.SetPersonnel(curr);
 
 //					string key = $"{target.SectorName}_{UpdateLogicSort.거점_자원갱신종료}";
 //					TempData.SetTrigger(key, UpdateLogicSort.거점_자원갱신종료);
@@ -74,8 +74,8 @@
 //					TempData.SetTrigger(key, UpdateLogicSort.세력_자원갱신종료);
 //					if (TempData.TryGetValue<TempSupplyValue>(FactionTempSupplyValueKey(elementID), out var tempValue))
 //					{
-//						tempValue.manpower += curr;
-//						tempValue.manpowerMax += max;
+//						tempValue.personnel += curr;
+//						tempValue.personnelMax += max;
 //					}
 //				}
 //			}

@@ -91,15 +91,15 @@ namespace StrategyManagerModule
 				public void Start()
 				{
 					// TempSupplyValue 는 자원 분배에 참고할 값을 가지고 있다.
-					// 약 1초마가 갱신되며, manpowerIsUpdate 가 true이다.
+					// 약 1초마가 갱신되며, personnelIsUpdate 가 true이다.
 					if (TempData.TryGetValue<TempSupplyValue>(SectorTempSupplyValueKey(sector), out var tempValue))
 					{
-						if (tempValue.manpowerIsUpdate)
+						if (tempValue.personnelIsUpdate)
 						{
 							currPoint = tempValue.material;                 // 현제 이 SectorObject 에 추가 예정인 값 (Clamp 되지 않음)
 							maxPoint = tempValue.materialMax;               // 이 SectorObject에 추가 가능한 최대값
 							plusPoint = tempValue.materialSupply;           // 이번 턴에 SectorObject에 얼마만큼 추가 되었는지?
-							updateThisTurn = tempValue.manpowerIsUpdate;    // 이 턴에 업데이트가 필요한가?
+							updateThisTurn = tempValue.personnelIsUpdate;    // 이 턴에 업데이트가 필요한가?
 							updateNextTurn = true;                          // 다음턴에 업데이트가 필요한가?
 						}
 					}

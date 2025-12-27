@@ -76,7 +76,7 @@
 //					if (TempData.TryGetValue<TempSupplyValue>(FactionTempSupplyValueKey(elementID), out var tempValue))
 //					{
 //						tempValue.reservationMaterial += curr;
-//						tempValue.manpowerMax += max;
+//						tempValue.personnelMax += max;
 //					}
 //				}
 //			}

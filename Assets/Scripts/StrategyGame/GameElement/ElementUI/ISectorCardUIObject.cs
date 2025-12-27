@@ -4,7 +4,7 @@ using UnityEngine;
 
 public interface ISectorCardUIObject : ICardUIObject
 {
-	public Sprite GetMainImage();
+	public Sprite GetTitleImage();
 	public string GetTitleName();
 	public string GetDescription();
 	public string GetCaptureFactionName();

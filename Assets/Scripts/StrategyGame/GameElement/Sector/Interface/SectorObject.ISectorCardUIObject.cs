@@ -2,7 +2,7 @@
 
 public partial class SectorObject : ISectorCardUIObject
 {
-	Sprite ISectorCardUIObject.GetMainImage()
+	Sprite ISectorCardUIObject.GetTitleImage()
 	{
 		return null;
 	}

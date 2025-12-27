@@ -416,10 +416,10 @@ namespace StrategyManagerModule
 			{
 				public readonly int elementID;
 
-				public int manpower;
-				public int manpowerMax;
-				public int manpowerSupply;
-				public bool manpowerIsUpdate;
+				public int personnel;
+				public int personnelMax;
+				public int personnelSupply;
+				public bool personnelIsUpdate;
 
 				public int material;
 				public int materialMax;
@@ -433,34 +433,34 @@ namespace StrategyManagerModule
 				public TempSupplyValue(int elementID)
 				{
 					this.elementID = elementID;
-					manpower = 0; manpowerMax = 0; manpowerSupply = 0;
+					personnel = 0; personnelMax = 0; personnelSupply = 0;
 					material = 0; materialMax = 0; materialSupply = 0;
 					electric = 0; electricMax = 0; electricSupply = 0;
-					manpowerIsUpdate = materialIsUpdate = electricIsUpdate = false;
+					personnelIsUpdate = materialIsUpdate = electricIsUpdate = false;
 
 				}
 				public TempSupplyValue(IStrategyElement element)
 				{
 					elementID = element == null ? -1 : element.ID;
-					manpower = 0; manpowerMax = 0; manpowerSupply = 0;
+					personnel = 0; personnelMax = 0; personnelSupply = 0;
 					material = 0; materialMax = 0; materialSupply = 0;
 					electric = 0; electricMax = 0; electricSupply = 0;
-					manpowerIsUpdate = materialIsUpdate = electricIsUpdate = false;
+					personnelIsUpdate = materialIsUpdate = electricIsUpdate = false;
 				}
 				public static TempSupplyValue operator +(TempSupplyValue a, TempSupplyValue b)
 				{
 					return new TempSupplyValue(a.elementID)
 					{
-						manpower = a.manpower + b.manpower,
+						personnel = a.personnel + b.personnel,
 						material = a.material + b.material,
 						electric = a.electric + b.electric,
-						manpowerMax = a.manpowerMax + b.manpowerMax,
+						personnelMax = a.personnelMax + b.personnelMax,
 						materialMax = a.materialMax + b.materialMax,
 						electricMax = a.electricMax + b.electricMax,
-						manpowerSupply = a.manpowerSupply + b.manpowerSupply,
+						personnelSupply = a.personnelSupply + b.personnelSupply,
 						materialSupply = a.materialSupply + b.materialSupply,
 						electricSupply = a.electricSupply + b.electricSupply,
-						manpowerIsUpdate = a.manpowerIsUpdate || b.manpowerIsUpdate,
+						personnelIsUpdate = a.personnelIsUpdate || b.personnelIsUpdate,
 						materialIsUpdate = a.materialIsUpdate || b.materialIsUpdate,
 						electricIsUpdate = a.electricIsUpdate || b.electricIsUpdate
 					};
@@ -469,16 +469,16 @@ namespace StrategyManagerModule
 				{
 					return new TempSupplyValue(a.elementID)
 					{
-						manpower = a.manpower - b.manpower,
+						personnel = a.personnel - b.personnel,
 						material = a.material - b.material,
 						electric = a.electric - b.electric,
-						manpowerMax = a.manpowerMax - b.manpowerMax,
+						personnelMax = a.personnelMax - b.personnelMax,
 						materialMax = a.materialMax - b.materialMax,
 						electricMax = a.electricMax - b.electricMax,
-						manpowerSupply = a.manpowerSupply - b.manpowerSupply,
+						personnelSupply = a.personnelSupply - b.personnelSupply,
 						materialSupply = a.materialSupply - b.materialSupply,
 						electricSupply = a.electricSupply - b.electricSupply,
-						manpowerIsUpdate = a.manpowerIsUpdate || b.manpowerIsUpdate,
+						personnelIsUpdate = a.personnelIsUpdate || b.personnelIsUpdate,
 						materialIsUpdate = a.materialIsUpdate || b.materialIsUpdate,
 						electricIsUpdate = a.electricIsUpdate || b.electricIsUpdate
 					};

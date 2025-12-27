@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
+using Sirenix.OdinInspector;
+
 using UnityEngine;
 
 namespace GameUI
@@ -13,7 +15,9 @@ namespace GameUI
 
 		#region IPanelGroup<T>
 
+		[HideIf("@true")]
 		private List<T> items;
+		[ShowInInspector]
 		private List<T> Items
 		{
 			get { if (items == null) New(); return items; }

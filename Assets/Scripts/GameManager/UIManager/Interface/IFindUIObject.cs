@@ -60,6 +60,7 @@ namespace GameUI
 		}
 
 		public bool TryFind<T>(out T find) where T : class => TryFind<T>("..", null, out find);
+		public bool TryFind<T>(string key, out T find) where T : class => TryFind<T>(key, null, out find);
 		public bool TryFind<T>(Func<T, bool> condition, out T find) where T : class => TryFind<T>("..", condition, out find);
 		public bool TryFind<T>(string key, Func<T, bool> condition, out T find) where T : class
 		{
@@ -81,6 +82,7 @@ namespace GameUI
 			return find.Count;
 		}
 		public int TryFinds<T>(out List<T> find) where T : class => TryFinds<T>("..", null, out find);
+		public int TryFinds<T>(string key, out List<T> find) where T : class => TryFinds<T>(key, null, out find);
 		public int TryFinds<T>(Func<T, bool> condition, out List<T> find) where T : class => TryFinds<T>("..", condition, out find);
 		public int TryFinds<T>(string key, Func<T, bool> condition, out List<T> find) where T : class
 		{
