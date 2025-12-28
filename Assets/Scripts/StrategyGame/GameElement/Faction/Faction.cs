@@ -99,7 +99,8 @@ public partial class Faction : IDisposable
 	{
 
 	}
-	[ShowInInspector]
+
+    [ShowInInspector]
 	public string FactionName => StatsData.FactionName;
 	[ShowInInspector]
 	public int FactionID => StatsData.FactionID;
@@ -134,19 +135,28 @@ public partial class Faction // ElementSet
 {
 	private DetectedSet detectedList;
 	private CaptureSectorSet capturedList;
+	private OperationSet operationList;
+	private UnitSet unitList;
 	private Action<IStrategyElement, bool> onChangeDetected;
 	private Action<IStrategyElement, bool> onChangeCaptured;
-	public void AddChangeDetected(Action<IStrategyElement, bool> onChange, bool invokeForExisting = true)
+	private Action<IStrategyElement, bool> onChangeOperation;
+	private Action<IStrategyElement, bool> onChangeUnit;
+	private void AddChangeEvent(ref Action<IStrategyElement, bool> action, ElementSet elementsSet,  Action<IStrategyElement, bool> onChange, bool invokeForExisting)
 	{
-		onChangeDetected -= onChange;
-		onChangeDetected += onChange;
+		action -= onChange;
+		action += onChange;
 		if (invokeForExisting)
 		{
-			foreach (var item in detectedList)
+			foreach (var item in elementsSet)
 			{
-				onChange?.Invoke(item,true);
+				onChange?.Invoke(item, true);
 			}
 		}
+	}
+
+	public void AddChangeDetected(Action<IStrategyElement, bool> onChange, bool invokeForExisting = true)
+	{
+		AddChangeEvent(ref onChangeDetected, detectedList, onChange, invokeForExisting);
 	}
 	public void RemoveChangeDetected(Action<IStrategyElement, bool> onChange)
 	{
@@ -154,32 +164,46 @@ public partial class Faction // ElementSet
 	}
 	public void AddChangeCaptured(Action<IStrategyElement, bool> onChange, bool invokeForExisting = true)
 	{
-		onChangeCaptured -= onChange;
-		onChangeCaptured += onChange;
-		if (invokeForExisting)
-		{
-			foreach (var item in capturedList)
-			{
-				onChange?.Invoke(item, true);
-			}
-		}
+		AddChangeEvent(ref onChangeCaptured, capturedList, onChange, invokeForExisting);
 	}
 	public void RemoveChangeCaptured(Action<IStrategyElement, bool> onChange)
 	{
 		onChangeCaptured -= onChange;
 	}
+	public void AddChangeOperation(Action<IStrategyElement, bool> onChange, bool invokeForExisting = true)
+	{
+		AddChangeEvent(ref onChangeOperation, operationList, onChange, invokeForExisting);
+	}
+	public void RemoveChangeOperation(Action<IStrategyElement, bool> onChange)
+	{
+		onChangeOperation -= onChange;
+	}
+	public void AddChangeUnit(Action<IStrategyElement, bool> onChange, bool invokeForExisting = true)
+	{
+		AddChangeEvent(ref onChangeUnit, unitList, onChange, invokeForExisting);
+	}
+	public void RemoveChangeUnit(Action<IStrategyElement, bool> onChange)
+	{
+		onChangeUnit -= onChange;
+	}
 
 	public DetectedSet DetectedList => detectedList;
 	public CaptureSectorSet CapturedList => capturedList;
+	public OperationSet OperationList => operationList;
+	public UnitSet UnitList => unitList;
 
 
 	partial void InitElementSet()
 	{
 		detectedList = new DetectedSet();
 		capturedList = new CaptureSectorSet();
+		operationList = new OperationSet();
+		unitList = new UnitSet();
 
 		onChangeDetected = null;
 		onChangeCaptured = null;
+		onChangeOperation = null;
+		onChangeUnit = null;
 	}
 	partial void DeinitElementSet()
 	{
@@ -189,39 +213,44 @@ public partial class Faction // ElementSet
 		capturedList?.Dispose();
 		capturedList = null;
 
+		operationList?.Dispose();
+		operationList = null;
+
+		unitList?.Dispose();
+		unitList = null;
+
 		onChangeDetected = null;
 		onChangeCaptured = null;
+		onChangeOperation = null;
+		onChangeUnit = null;
 	}
 
 	public void OnChangeElementSetEvent()
 	{
-		if (DetectedList.HasChange)
-		{
-			//DetectedList.changeAdd, DetectedList.changeRemvoe;
-			foreach (var item in DetectedList.changeRemvoe)
-				onChangeDetected?.Invoke(item, false);
-			foreach (var item in DetectedList.changeAdd)
-				onChangeDetected?.Invoke(item, true);
+		ClearHasChange(DetectedList);
+		ClearHasChange(CapturedList);
+		ClearHasChange(OperationList);
+		ClearHasChange(UnitList);
 
-			DetectedList.ClearHasChange();
-		}
-		if (CapturedList.HasChange)
+		void ClearHasChange(ElementSet elementset)
 		{
-			foreach (var item in CapturedList.changeRemvoe)
-				onChangeCaptured?.Invoke(item, false);
-			foreach (var item in CapturedList.changeAdd)
-				onChangeCaptured?.Invoke(item, true);
+			if (elementset.HasChange)
+			{
+				foreach (var item in elementset.ChangeRemvoe)
+					onChangeCaptured?.Invoke(item, false);
+				foreach (var item in elementset.ChangeAdd)
+					onChangeCaptured?.Invoke(item, true);
 
-			CapturedList.ClearHasChange();
+				elementset.ClearHasChange();
+			}
 		}
 	}
 	public class ElementSet : ISet<IStrategyElement>, IDisposable
 	{
 		public bool HasChange { get; private set; }
 		protected readonly HashSet<IStrategyElement> elementList = new HashSet<IStrategyElement>();
-
-		public readonly HashSet<IStrategyElement> changeAdd = new HashSet<IStrategyElement>();
-		public readonly HashSet<IStrategyElement> changeRemvoe = new HashSet<IStrategyElement>();
+		public readonly HashSet<IStrategyElement> ChangeAdd = new HashSet<IStrategyElement>();
+		public readonly HashSet<IStrategyElement> ChangeRemvoe = new HashSet<IStrategyElement>();
 		public int Count => elementList.Count;
 		public ElementSet() { }
 		public ElementSet(IEnumerable<IStrategyElement> detectedList)
@@ -242,8 +271,8 @@ public partial class Faction // ElementSet
 		{
 			if (elementList.Add(item))
 			{
-				changeAdd.Add(item);
-				changeRemvoe.Remove(item);
+				ChangeAdd.Add(item);
+				ChangeRemvoe.Remove(item);
 
 				HasChange = true;
 				return true;
@@ -254,8 +283,8 @@ public partial class Faction // ElementSet
 		{
 			if (elementList.Remove(item))
 			{
-				changeAdd.Remove(item);
-				changeRemvoe.Add(item);
+				ChangeAdd.Remove(item);
+				ChangeRemvoe.Add(item);
 
 				HasChange = true;
 				return true;
@@ -270,8 +299,8 @@ public partial class Faction // ElementSet
 		public bool Contains(IStrategyElement item) => elementList.Contains(item);
 		public void ClearHasChange()
 		{
-			changeAdd.Clear();
-			changeRemvoe.Clear();
+			ChangeAdd.Clear();
+			ChangeRemvoe.Clear();
 		}
 		#endregion
 
@@ -337,10 +366,10 @@ public partial class Faction // ElementSet
 		public IEnumerable<ISectorCardUIObject> CardUIType => cardUIList;
 		public override bool Add(IStrategyElement item)
 		{
-			if (elementList.Add(item))
+			if (base.Add(item))
 			{
-				if (item is ISupplyStats supply) supplyList.Add(supply);
 				if (item is ISectorController control) controllerList.Add(control);
+				if (item is ISupplyStats supply) supplyList.Add(supply);
 				if (item is ISectorCardUIObject card) cardUIList.Add(card);
 				return true;
 			}
@@ -348,21 +377,91 @@ public partial class Faction // ElementSet
 		}
 		public override bool Remove(IStrategyElement item)
 		{
-			if (elementList.Remove(item))
+			if (base.Remove(item))
 			{
-				if (item is ISupplyStats supply) supplyList.Remove(supply);
 				if (item is ISectorController control) controllerList.Remove(control);
 				if (item is ISectorCardUIObject card) cardUIList.Remove(card);
+				if (item is ISupplyStats supply) supplyList.Remove(supply);
 				return true;
 			}
 			return false;
 		}
 		public override void Clear()
 		{
-			elementList.Clear();
-			supplyList.Clear();
+			base.Clear();
 			controllerList.Clear();
+			supplyList.Clear();
 			cardUIList.Clear();
+		}
+	}
+	public class OperationSet : ElementSet
+	{
+		private readonly HashSet<IOperationController> controllerList = new HashSet<IOperationController>();
+		private readonly HashSet<IUnitOrganization> organizationList = new HashSet<IUnitOrganization>();
+		private readonly HashSet<IOperationCardUIObject> cardUIList = new HashSet<IOperationCardUIObject>();
+		public override bool Add(IStrategyElement item)
+		{
+			if (base.Add(item))
+			{
+				if (item is IOperationController control) controllerList.Add(control);
+				if (item is IUnitOrganization organization) organizationList.Add(organization);
+				if (item is IOperationCardUIObject card) cardUIList.Add(card);
+				return true;
+			}
+			return false;
+		}
+		public override bool Remove(IStrategyElement item)
+		{
+			if (base.Remove(item))
+			{
+				if (item is IOperationController control) controllerList.Remove(control);
+				if (item is IUnitOrganization organization) organizationList.Remove(organization);
+				if (item is IOperationCardUIObject card) cardUIList.Remove(card);
+				return true;
+			}
+			return false;
+		}
+		public override void Clear()
+		{
+			base.Clear();
+			controllerList.Clear();
+			organizationList.Clear();
+			cardUIList.Clear();
+		}
+	}
+
+	public class UnitSet : ElementSet
+	{
+		private readonly HashSet<ITargetableCombatant> targetableList = new HashSet<ITargetableCombatant>();
+		private readonly HashSet<INearbyElement> nearbyList = new HashSet<INearbyElement>();
+		public IEnumerable<ITargetableCombatant> TargetableType => targetableList;
+		public IEnumerable<INearbyElement> NearbyType => nearbyList;
+
+		public override bool Add(IStrategyElement item)
+		{
+			if (base.Add(item))
+			{
+				if (item is INearbyElement nearby) nearbyList.Add(nearby);
+				if (item is ITargetableCombatant target) targetableList.Add(target);
+				return true;
+			}
+			return false;
+		}
+		public override bool Remove(IStrategyElement item)
+		{
+			if (base.Remove(item))
+			{
+				if (item is INearbyElement nearby) nearbyList.Remove(nearby);
+				if (item is ITargetableCombatant target) targetableList.Remove(target);
+				return true;
+			}
+			return false;
+		}
+		public override void Clear()
+		{
+			base.Clear();
+			nearbyList.Clear();
+			targetableList.Clear();
 		}
 	}
 }

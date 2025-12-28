@@ -1,4 +1,5 @@
-﻿using static StrategyManagerModule.StrategyPathfinding;
+﻿using static StrategyGamePlayData.ISupplyStats;
+using static StrategyManagerModule.StrategyPathfinding;
 using static StrategyManagerModule.StrategyUpdate.StrategyUpdate_SectorResourcesDistribution;
 
 namespace StrategyManagerModule
@@ -92,7 +93,7 @@ namespace StrategyManagerModule
 				{
 					// TempSupplyValue 는 자원 분배에 참고할 값을 가지고 있다.
 					// 약 1초마가 갱신되며, personnelIsUpdate 가 true이다.
-					if (TempData.TryGetValue<TempSupplyValue>(SectorTempSupplyValueKey(sector), out var tempValue))
+					if (TempData.TryGetValue<TempSupplyValue>(TempSupplyValue.SectorTempSupplyValueKey(sector), out var tempValue))
 					{
 						if (tempValue.personnelIsUpdate)
 						{

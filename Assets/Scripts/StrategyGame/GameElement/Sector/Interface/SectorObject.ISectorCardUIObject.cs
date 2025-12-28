@@ -1,20 +1,22 @@
-﻿using UnityEngine;
+﻿using GameUI;
+
+using UnityEngine;
 
 public partial class SectorObject : ISectorCardUIObject
 {
-	Sprite ISectorCardUIObject.GetTitleImage()
+	Sprite ICardUIObject.GetTitleImage()
 	{
 		return null;
 	}
-	string ISectorCardUIObject.GetTitleName()
+	string ICardUIObject.GetTitleName()
 	{
 		return StatsData.SectorName;
 	}
-	string ISectorCardUIObject.GetDescription()
+	string ICardUIObject.GetDescription()
 	{
 		return StatsData.SectorName;
 	}
-	string ISectorCardUIObject.GetCaptureFactionName()
+	string ICardUIObject.GetFactionName()
 	{
 		Faction faction = FactionAPI.ID2Faction(RuntimeData.CaptureFactionID);
 		if (faction == null) return "점령 없음";

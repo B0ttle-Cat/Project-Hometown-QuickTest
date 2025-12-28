@@ -10,7 +10,7 @@ namespace GameUI
 {
 
 
-	public abstract class PanelCardGroupComponent : PanelGroupComponent<PanelCardGroupComponent.CardPanel>
+	public abstract class CardGroupPanelComponent : PanelGroupComponent<CardGroupPanelComponent.CardPanel>
 
 	{
 		[SerializeField]

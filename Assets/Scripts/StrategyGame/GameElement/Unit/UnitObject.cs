@@ -1,4 +1,6 @@
-﻿using Sirenix.OdinInspector;
+﻿using GameUI;
+
+using Sirenix.OdinInspector;
 
 using StrategyManagerModule;
 
@@ -120,4 +122,27 @@ public partial class UnitObject // UnitCaptureTag
 			UnitCaptureTag = null;
 		}
 	}
+}
+
+
+public partial class UnitObject : IUnitCardUIObject
+{
+	Sprite ICardUIObject.GetTitleImage()
+	{
+		return null;
+	}
+
+	string ICardUIObject.GetTitleName()
+	{
+		return InstanceData.displayName;
+	}
+	string ICardUIObject.GetFactionName()
+	{
+		return Faction.IsNullRef() ? "중립" : Faction.FactionName;
+	}
+	string ICardUIObject.GetDescription()
+    {
+		return "";
+    }
+
 }

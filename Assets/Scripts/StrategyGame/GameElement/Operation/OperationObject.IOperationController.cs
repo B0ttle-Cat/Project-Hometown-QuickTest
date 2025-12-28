@@ -6,7 +6,7 @@
 	{
 		// 스스로에게 파괴 명령
 		ControllerDestory();
-		RelaseAndDestroyAllUnit();
+		ThisOrganization.RelaseAndDestroyAllUnit();
 	}
 
 	void IOperationController.OnMovementOrder_AvailableType(out bool execute, out bool pause, out bool cancel)
@@ -53,18 +53,14 @@
 	{
 		return true;
 	}
-
-
 	bool IOperationController.OnOrganization_Divide(in SpawnTroopsInfo divide)
 	{
 		return true;
 	}
-
 	bool IOperationController.OnOrganization_Merge(in SpawnTroopsInfo merge)
 	{
 		return true;
 	}
-
 	void IOperationController.OnShowCloser()
 	{
 		// 카메라 타겟 설정
@@ -73,7 +69,6 @@
 		// 모드 전환
 		StrategyManager.ViewAndControl.ModeChange(ViewAndControlModeType.TacticsMode);
 	}
-
     void IOperationController.On_SelectLabel()
     {
 		StrategyManager.Selecter.OnSystemSelectObject(this);

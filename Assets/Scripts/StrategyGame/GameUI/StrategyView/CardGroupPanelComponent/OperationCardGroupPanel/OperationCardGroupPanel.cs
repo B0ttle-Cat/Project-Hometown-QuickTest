@@ -2,10 +2,8 @@
 
 using UnityEngine;
 
-
-public class StrategySectorCardView : PanelCardGroupComponent
+public class OperationCardGroupPanel : CardGroupPanelComponent
 {
-
 	protected override void Hide()
 	{
 		Faction playerFaction = FactionAPI.ID2Faction(StrategyManager.PlayerFactionID);
@@ -51,64 +49,62 @@ public class StrategySectorCardView : PanelCardGroupComponent
 	}
 	protected override CardPanel CardFactory<T>(GameObject newUIObject, T item) where T : class
 	{
-		if (item is SectorObject sectorObject)
+		if (item is OperationObject sectorObject)
 		{
-			return new SectorCard(newUIObject, sectorObject);
+			return new OperationCard(newUIObject, sectorObject);
 		}
 		return null;
 	}
-
-
-	public class SectorCard : CardPanel<ISectorCardUIObject>
+	public class OperationCard : CardPanel<IOperationCardUIObject>
 	{
-		private SectorCardUIObjectView sectorCardUIObjectView;
+		private OperationCardItemPanel cardUIObjectView;
 
-		public SectorCard(GameObject thisObject, SectorObject item = null) : base(thisObject, item)
+		public OperationCard(GameObject thisObject, OperationObject item = null) : base(thisObject, item)
 		{
-			if(thisObject.TryGetComponent<SectorCardUIObjectView>(out sectorCardUIObjectView))
+			if (thisObject.TryGetComponent<OperationCardItemPanel>(out cardUIObjectView))
 			{
-				sectorCardUIObjectView.SetUITarget(item);
+				cardUIObjectView.SetUITarget(item);
 			}
 		}
 		public override void Dispose()
 		{
-			if (sectorCardUIObjectView.IsNotNullRef())
+			if (cardUIObjectView.IsNotNullRef())
 			{
-				sectorCardUIObjectView.Release();
-				sectorCardUIObjectView = null;
+				cardUIObjectView.Release();
+				cardUIObjectView = null;
 			}
 
-			base.Dispose();	
+			base.Dispose();
 		}
 		protected override void ReleaseUI()
 		{
-			if (sectorCardUIObjectView.IsNotNullRef())
+			if (cardUIObjectView.IsNotNullRef())
 			{
-				sectorCardUIObjectView.Release();
+				cardUIObjectView.Release();
 			}
 
 		}
 		protected override void AttachUI()
 		{
-			if (sectorCardUIObjectView.IsNotNullRef())
+			if (cardUIObjectView.IsNotNullRef())
 			{
-				sectorCardUIObjectView.Attach(item);
+				cardUIObjectView.Attach(item);
 			}
 		}
 
 		protected override void ChangeUI()
 		{
-			if (sectorCardUIObjectView.IsNotNullRef())
+			if (cardUIObjectView.IsNotNullRef())
 			{
-				sectorCardUIObjectView.RePating();
+				cardUIObjectView.RePating();
 			}
 		}
 
 		protected override void ClearUI()
 		{
-			if (sectorCardUIObjectView.IsNotNullRef())
+			if (cardUIObjectView.IsNotNullRef())
 			{
-				sectorCardUIObjectView.ClearUI();
+				cardUIObjectView.ClearUI();
 			}
 		}
 	}

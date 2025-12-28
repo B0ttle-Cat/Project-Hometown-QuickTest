@@ -15,6 +15,7 @@ namespace StrategyManagerModule
 	{
 		private StrategyUpdateTempData tempData;
 		private List<(UpdateLogicSort type, IStrategyUpdater updater)> updateList;
+		private List<(UpdateLogicSort type, IStrategyUpdater updater)> lateUpdateList;
 		public StrategyUpdateTempData TempData => tempData;
 
 		public enum UpdateLogicSort
@@ -52,6 +53,7 @@ namespace StrategyManagerModule
 			작전_기본변수_갱신,
 
 			UI,
+			ElementInfoUpdateWithUI,
 
 			End = int.MaxValue,
 			//거점_자원분배,			// 자원 분배대신 건물을 건설하여 일정 범위 내에 보급 보너스를 주는식으로...
@@ -162,9 +164,10 @@ namespace StrategyManagerModule
 		public void OnEnable()
 		{
 			tempData = new StrategyUpdateTempData();
+			// 일반적인 로직 처리
 			updateList = new List<(UpdateLogicSort type, IStrategyUpdater updater)>()
 			{
-				(UpdateLogicSort.Start,  null),
+				(UpdateLogicSort.Start, null),
 
 				(UpdateLogicSort.거점_점령상태,  new StrategyUpdate_CaptureUpdate(this)),
 				(UpdateLogicSort.거점_시설_건설,  new StrategyUpdate_ConstructUpdate(this)),
@@ -184,7 +187,6 @@ namespace StrategyManagerModule
 				(UpdateLogicSort.각종_상태_업데이트,  new StrategyUpdate_FSMUpdater(this)),
 				(UpdateLogicSort.유닛_CombatTarget_업데이트, new StrategyUpdate_UnitCombatTargetUpdate(this)),
 
-
 				(UpdateLogicSort.유닛_노드_이동,  new StrategyUpdate_NodeMovement(this)),
 				(UpdateLogicSort.유닛_추격_이동,  new StrategyUpdate_NavMovement(this)),
 
@@ -193,8 +195,11 @@ namespace StrategyManagerModule
 
 				(UpdateLogicSort.데미지_계산,  new StrategyUpdate_ComputeDamage(this)),
 				(UpdateLogicSort.사망_파괴_처리,  new StrategyUpdate_ElementDestroyer(this)),
-
-
+			};
+			// 카메라 및 UI 관련 처리
+			lateUpdateList = new List<(UpdateLogicSort type, IStrategyUpdater updater)>()
+			{
+				(UpdateLogicSort.ElementInfoUpdateWithUI, new GameUIInfoUpdateWithUI_ElementInfoUpdate(this)),
 				(UpdateLogicSort.End, null)
 			};
 
@@ -249,6 +254,34 @@ namespace StrategyManagerModule
 				}
 			}
 		}
+		private void LateUpdate()
+		{
+			if (ThisTime != null) ThisTime.TimeUpdate();
+			float deltaTime = Time.deltaTime;
+			foreach ((UpdateLogicSort type, IStrategyUpdater updater) in lateUpdateList)
+			{
+				try
+				{
+					updater?.Update(in deltaTime);
+				}
+				catch (Exception ex)
+				{
+					Debug.LogException(ex);
+				}
+				finally
+				{
+					try
+					{
+						tempData.AfterRemove(type);
+					}
+					catch (Exception ex)
+					{
+						Debug.LogException(ex);
+						tempData = new StrategyUpdateTempData();
+					}
+				}
+			}
+		}
 	}
 
 
@@ -259,12 +292,6 @@ namespace StrategyManagerModule
 		protected StrategyUpdate.StrategyUpdateTempData TempData => thisUpdater == null ? null : thisUpdater.TempData;
 
 		private readonly List<T> updateList;
-		public int Count => updateList.Count;
-
-		public bool IsReadOnly => ((ICollection<T>)updateList).IsReadOnly;
-
-		public T this[int index] { get => updateList[index]; set => updateList[index] = value; }
-
 		public StrategyUpdateSubClass(StrategyUpdate updater)
 		{
 			thisUpdater = updater;
@@ -287,6 +314,10 @@ namespace StrategyManagerModule
 			}
 			Dispose();
 		}
+		#region IList
+		public int Count => updateList.Count;
+		public bool IsReadOnly => ((ICollection<T>)updateList).IsReadOnly;
+		public T this[int index] { get => updateList[index]; set => updateList[index] = value; }
 		protected abstract void Dispose();
 		protected abstract void Start();
 		protected virtual void Update(in float deltaTime)
@@ -370,14 +401,14 @@ namespace StrategyManagerModule
 		{
 			return updateList.GetEnumerator();
 		}
-
 		public int FindIndex(Predicate<T> match)
 		{
 			return updateList.FindIndex(match);
 		}
+		#endregion
 		public abstract partial class UpdateLogic : IDisposable
 		{
-			protected StrategyUpdateSubClass<T> thisSubClass;
+			protected readonly StrategyUpdateSubClass<T> thisSubClass;
 			protected StrategyUpdate Updater => thisSubClass == null ? null : thisSubClass.thisUpdater;
 			protected StrategyUpdate.StrategyUpdateTempData TempData => thisSubClass == null ? null : thisSubClass.TempData;
 			protected UpdateLogic(StrategyUpdateSubClass<T> thisSubClass)
@@ -393,101 +424,34 @@ namespace StrategyManagerModule
 			public void Dispose()
 			{
 				OnDispose();
-				thisSubClass = null;
 			}
 
 			protected abstract void OnUpdate(in float deltaTime);
 			protected abstract void OnDispose();
 		}
-		public abstract partial class UpdateLogic // Sector
-		{
-			public string SectorTempSupplyValueKey(SectorObject sector) => SectorTempSupplyValueKey(sector.SectorID);
-			public string SectorTempSupplyValueKey(int sector) => $"SectorTempSupplyValueKey_{sector}";
-		}
-		public abstract partial class UpdateLogic // Faction
-		{
-			public string FactionKey(Faction faction) => FactionKey(faction.FactionID);
-			public string FactionIsAliveKey(Faction faction) => FactionIsAliveKey(faction.FactionID);
-			public string FactionTempSupplyValueKey(Faction faction) => FactionTempSupplyValueKey(faction.FactionID);
-			public string FactionKey(int faction) => $"FactionKey_{faction}";
-			public string FactionIsAliveKey(int faction) => $"FactionIsAliveKey_{faction}";
-			public string FactionTempSupplyValueKey(int faction) => $"FactionTempSupplyValueKey_{faction}";
-			public struct TempSupplyValue
-			{
-				public readonly int elementID;
-
-				public int personnel;
-				public int personnelMax;
-				public int personnelSupply;
-				public bool personnelIsUpdate;
-
-				public int material;
-				public int materialMax;
-				public int materialSupply;
-				public bool materialIsUpdate;
-
-				public int electric;
-				public int electricMax;
-				public int electricSupply;
-				public bool electricIsUpdate;
-				public TempSupplyValue(int elementID)
-				{
-					this.elementID = elementID;
-					personnel = 0; personnelMax = 0; personnelSupply = 0;
-					material = 0; materialMax = 0; materialSupply = 0;
-					electric = 0; electricMax = 0; electricSupply = 0;
-					personnelIsUpdate = materialIsUpdate = electricIsUpdate = false;
-
-				}
-				public TempSupplyValue(IStrategyElement element)
-				{
-					elementID = element == null ? -1 : element.ID;
-					personnel = 0; personnelMax = 0; personnelSupply = 0;
-					material = 0; materialMax = 0; materialSupply = 0;
-					electric = 0; electricMax = 0; electricSupply = 0;
-					personnelIsUpdate = materialIsUpdate = electricIsUpdate = false;
-				}
-				public static TempSupplyValue operator +(TempSupplyValue a, TempSupplyValue b)
-				{
-					return new TempSupplyValue(a.elementID)
-					{
-						personnel = a.personnel + b.personnel,
-						material = a.material + b.material,
-						electric = a.electric + b.electric,
-						personnelMax = a.personnelMax + b.personnelMax,
-						materialMax = a.materialMax + b.materialMax,
-						electricMax = a.electricMax + b.electricMax,
-						personnelSupply = a.personnelSupply + b.personnelSupply,
-						materialSupply = a.materialSupply + b.materialSupply,
-						electricSupply = a.electricSupply + b.electricSupply,
-						personnelIsUpdate = a.personnelIsUpdate || b.personnelIsUpdate,
-						materialIsUpdate = a.materialIsUpdate || b.materialIsUpdate,
-						electricIsUpdate = a.electricIsUpdate || b.electricIsUpdate
-					};
-				}
-				public static TempSupplyValue operator -(TempSupplyValue a, TempSupplyValue b)
-				{
-					return new TempSupplyValue(a.elementID)
-					{
-						personnel = a.personnel - b.personnel,
-						material = a.material - b.material,
-						electric = a.electric - b.electric,
-						personnelMax = a.personnelMax - b.personnelMax,
-						materialMax = a.materialMax - b.materialMax,
-						electricMax = a.electricMax - b.electricMax,
-						personnelSupply = a.personnelSupply - b.personnelSupply,
-						materialSupply = a.materialSupply - b.materialSupply,
-						electricSupply = a.electricSupply - b.electricSupply,
-						personnelIsUpdate = a.personnelIsUpdate || b.personnelIsUpdate,
-						materialIsUpdate = a.materialIsUpdate || b.materialIsUpdate,
-						electricIsUpdate = a.electricIsUpdate || b.electricIsUpdate
-					};
-				}
-			}
-		}
 	}
-	public partial class StrategyUpdate
+	public abstract class GameUIInfoUpdateWithUI<T> : StrategyUpdateSubClass<T>
+		where T : GameUIInfoUpdateWithUI<T>.UpdateLogic
 	{
+		protected GameUIInfoUpdateWithUI(StrategyUpdate updater) : base(updater)
+		{
+		}
+		public abstract class UpdateLogic<TElement> : UpdateLogic
+			where TElement : class
+		{
+			public readonly TElement Target;
+			protected UpdateLogic(TElement target, GameUIInfoUpdateWithUI<T> thisSubClass) : base(thisSubClass)
+			{
+				Target = target;
+			}
 
+            sealed protected override void OnUpdate(in float deltaTime)
+            {
+				if (Target.IsNullRef()) return;
+				OnInfpUpdate(in deltaTime);
+			}
+			protected abstract void OnInfpUpdate(in float deltaTime);
+		}
 	}
+
 }

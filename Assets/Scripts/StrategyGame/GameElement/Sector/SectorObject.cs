@@ -51,7 +51,7 @@ public partial class SectorObject // Getter
 	public int CaptureFactionID => RuntimeData.CaptureFactionID;
 	public float CaptureProgress => RuntimeData.CaptureProgress;
 }
-public partial class SectorObject : IStrategyElement, IStrategyStartGame
+public partial class SectorObject : IStrategyMonoElement, IStrategyStartGame
 {
 	public IStrategyElement ThisElement => this;
 	public bool IsInCollector { get; set; }

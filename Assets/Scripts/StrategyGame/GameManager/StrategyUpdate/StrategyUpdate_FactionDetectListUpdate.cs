@@ -64,7 +64,7 @@
 
 //				protected override void OnUpdate(in float deltaTime)
 //				{
-//					faction.ClearDetect();
+//					faction.ClearElementSet();
 
 //					var allElement =  StrategyManager.Collector.GetAllElementLists();
 //					foreach (var items in allElement)
@@ -79,7 +79,7 @@
 //							var nearbyItems = searcher.SearcherAPI.GetNearbyItemsType<INearbyElement>(i => i.FactionID != thisFactionID);
 //							foreach (var target in nearbyItems)
 //							{
-//								faction.AddDetect(target as IStrategyElement);
+//								faction.AddElementSet(target as IStrategyElement);
 //							}
 //						}
 //					}

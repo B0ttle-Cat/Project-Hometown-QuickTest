@@ -134,6 +134,10 @@ namespace StrategyManagerModule
 
 				Debug.LogError($"SectorData 가 없는 SectorObject 가 있습니다: {tempSector.gameObject.name}");
 			}
+
+#if UNITY_EDITOR
+			await Awaitable.NextFrameAsync();
+#endif
 		}
 		internal async Awaitable OnStartSetter_Unit()
 		{
@@ -151,6 +155,10 @@ namespace StrategyManagerModule
 				if (unitObject == null) continue;
 				collector.Add(unitObject);
 			}
+
+#if UNITY_EDITOR
+			await Awaitable.NextFrameAsync();
+#endif
 		}
 		internal void OnStartSetter_Capture()
 		{

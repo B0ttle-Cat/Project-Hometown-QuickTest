@@ -1,4 +1,4 @@
-﻿public partial class UnitObject : IStrategyElement, IStrategyStartGame
+﻿public partial class UnitObject : IStrategyMonoElement, IStrategyStartGame
 {
 	int unitElementID;
 	public IStrategyElement ThisElement => this;
@@ -50,7 +50,7 @@ public partial class UnitObject : IStrategyElementDestroyer
 	{
 		if(HasOperation)
 		{
-			Operation.RemoveUnitObject(this);
+			Operation.ThisOrganization.RemoveUnitObject(this);
 		}
 
 		ThisDestroyer.OnReservationDestroy();

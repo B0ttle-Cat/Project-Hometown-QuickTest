@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
+using GameUI;
+
 using UnityEngine;
 public partial class OperationObject : MonoBehaviour  // Main
 {
@@ -37,6 +39,9 @@ public partial class OperationObject : MonoBehaviour  // Main
 		InitMovement();
 		InitNearby();
 		InitFSM();
+
+		var faction = FactionAPI.ID2Faction(FactionID);
+		faction.AddOperation(this);
 	}
 	partial void InitOrganization(in List<int> unitList);
 	partial void InitMovement();
@@ -44,6 +49,9 @@ public partial class OperationObject : MonoBehaviour  // Main
 	partial void InitNearby();
 	public void DeInit()
 	{
+		var faction = FactionAPI.ID2Faction(FactionID);
+		faction.RemoveOperation(this);
+
 		DeInitOrganization();
 		DeselectSelf();
 		DeinitFSM();
@@ -105,7 +113,7 @@ public partial class OperationObject // StatsData
 		return (center, maxDistance);
 	}
 }
-public partial class OperationObject : IStrategyElement, IStrategyElementDestroyer
+public partial class OperationObject : IStrategyMonoElement, IStrategyElementDestroyer
 {
 	public IStrategyElement ThisElement => this;
 	int IStrategyElement.ID { get => operationID; set => operationID = value; }
@@ -190,4 +198,30 @@ public partial class OperationObject : ISelectable
 			StrategyManager.GameUI.ControlPanelUI.HideOperationPlannerPanel();
 		}
 	}
+}
+
+public partial class OperationObject : IOperationCardUIObject
+{
+	Sprite ICardUIObject.GetTitleImage()
+	{
+		return null;
+	}
+	string ICardUIObject.GetFactionName()
+    {
+		var faction = FactionAPI.ID2Faction(FactionID);
+		if(faction == null) return "중립";
+		return faction.FactionName;
+	}
+
+  
+
+    string ICardUIObject.GetTitleName()
+	{
+		return TeamName;
+	}
+	string ICardUIObject.GetDescription()
+	{
+		return "";
+	}
+
 }

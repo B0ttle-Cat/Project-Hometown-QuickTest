@@ -1,14 +1,7 @@
 ﻿using GameUI;
 
-using UnityEngine;
-
 public interface ISectorCardUIObject : ICardUIObject
 {
-	public Sprite GetTitleImage();
-	public string GetTitleName();
-	public string GetDescription();
-	public string GetCaptureFactionName();
-
 	bool IsEnableResourcesSupply { get; set; }
 	public (float[] values, float total, float max) GetPersonnelDetailValue();
     public (float[] values, float total, float max) GetMaterialDetailValue();

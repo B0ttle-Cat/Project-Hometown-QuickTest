@@ -626,6 +626,85 @@ public partial class StrategyGamePlayData // StatsValue
 
 	public interface ISupplyStats : IStatsValueControl
 	{
+		public struct TempSupplyValue
+		{
+			public readonly int elementID;
+
+			public int personnel;
+			public int personnelMax;
+			public int personnelSupply;
+			public bool personnelIsUpdate;
+
+			public int material;
+			public int materialMax;
+			public int materialSupply;
+			public bool materialIsUpdate;
+
+			public int electric;
+			public int electricMax;
+			public int electricSupply;
+			public bool electricIsUpdate;
+			public TempSupplyValue(int elementID)
+			{
+				this.elementID = elementID;
+				personnel = 0; personnelMax = 0; personnelSupply = 0;
+				material = 0; materialMax = 0; materialSupply = 0;
+				electric = 0; electricMax = 0; electricSupply = 0;
+				personnelIsUpdate = materialIsUpdate = electricIsUpdate = false;
+
+			}
+			public TempSupplyValue(IStrategyElement element)
+			{
+				elementID = element == null ? -1 : element.ID;
+				personnel = 0; personnelMax = 0; personnelSupply = 0;
+				material = 0; materialMax = 0; materialSupply = 0;
+				electric = 0; electricMax = 0; electricSupply = 0;
+				personnelIsUpdate = materialIsUpdate = electricIsUpdate = false;
+			}
+			public static TempSupplyValue operator +(TempSupplyValue a, TempSupplyValue b)
+			{
+				return new TempSupplyValue(a.elementID)
+				{
+					personnel = a.personnel + b.personnel,
+					material = a.material + b.material,
+					electric = a.electric + b.electric,
+					personnelMax = a.personnelMax + b.personnelMax,
+					materialMax = a.materialMax + b.materialMax,
+					electricMax = a.electricMax + b.electricMax,
+					personnelSupply = a.personnelSupply + b.personnelSupply,
+					materialSupply = a.materialSupply + b.materialSupply,
+					electricSupply = a.electricSupply + b.electricSupply,
+					personnelIsUpdate = a.personnelIsUpdate || b.personnelIsUpdate,
+					materialIsUpdate = a.materialIsUpdate || b.materialIsUpdate,
+					electricIsUpdate = a.electricIsUpdate || b.electricIsUpdate
+				};
+			}
+			public static TempSupplyValue operator -(TempSupplyValue a, TempSupplyValue b)
+			{
+				return new TempSupplyValue(a.elementID)
+				{
+					personnel = a.personnel - b.personnel,
+					material = a.material - b.material,
+					electric = a.electric - b.electric,
+					personnelMax = a.personnelMax - b.personnelMax,
+					materialMax = a.materialMax - b.materialMax,
+					electricMax = a.electricMax - b.electricMax,
+					personnelSupply = a.personnelSupply - b.personnelSupply,
+					materialSupply = a.materialSupply - b.materialSupply,
+					electricSupply = a.electricSupply - b.electricSupply,
+					personnelIsUpdate = a.personnelIsUpdate || b.personnelIsUpdate,
+					materialIsUpdate = a.materialIsUpdate || b.materialIsUpdate,
+					electricIsUpdate = a.electricIsUpdate || b.electricIsUpdate
+				};
+			}
+
+			public static string SectorTempSupplyValueKey(SectorObject sector) => SectorTempSupplyValueKey(sector.SectorID);
+			public static string SectorTempSupplyValueKey(int sector) => $"SectorTempSupplyValueKey_{sector}";
+			public static string FactionTempSupplyValueKey(Faction faction) => FactionTempSupplyValueKey(faction.FactionID);
+			public static string FactionTempSupplyValueKey(int faction) => $"FactionTempSupplyValueKey_{faction}";
+		}
+
+
 		public bool IsEnableResourcesSupply { get; set; }
 		public Action<ISupplyStats> OnSupplyChange { get; set; }
 		public void OnSupplyUpdate(SupplyRequest supplyRequest)

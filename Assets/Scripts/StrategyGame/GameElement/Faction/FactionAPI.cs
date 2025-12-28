@@ -4,7 +4,7 @@ using System.Linq;
 
 using static StrategyGamePlayData;
 
-public static class FactionAPI
+public static partial class FactionAPI
 {
 	public static bool IsAlive(this Faction faction)
 		=> faction != null && faction.FactionID >= 0;
@@ -392,101 +392,6 @@ public static class FactionAPI
 	}
 	#endregion
 
-	#region Detect
-	public static bool AddDetect(this Faction faction, IStrategyElement target)
-	{
-		if (faction == null || faction.IsNotAlive()) return false;
-
-		return faction.DetectedList.Add(target);
-	}
-	public static bool AddDetect(this Faction faction, IEnumerable<IStrategyElement> targets)
-	{
-		if (faction == null || faction.IsNotAlive()) return false;
-
-		bool change = false;
-		foreach (var target in targets)
-		{
-			change = faction.DetectedList.Add(target) || change;
-		}
-		return change;
-	}
-	public static bool RemoveDetect(this Faction faction, IStrategyElement target)
-	{
-		if (faction == null || faction.IsNotAlive()) return false;
-
-		return faction.DetectedList.Remove(target);
-	}
-	public static bool RemoveDetect(this Faction faction, IEnumerable<IStrategyElement> targets)
-	{
-		if (faction == null || faction.IsNotAlive()) return false;
-
-		bool change = false;
-		foreach (var target in targets)
-		{
-			change = faction.DetectedList.Remove(target) || change;
-		}
-		return change;
-	}
-	public static bool HasDetected(this Faction faction, IStrategyElement target)
-	{
-		if (faction == null || faction.IsNotAlive()) return false;
-
-		return faction.DetectedList.Contains(target);
-	}
-	public static void ClearDetect(this Faction faction)
-	{
-		if (faction == null || faction.IsNotAlive()) return;
-		faction.DetectedList.Clear();
-	}
-	#endregion
-	#region CaptureSector
-	public static bool AddCapture(this Faction faction, SectorObject target)
-	{
-		if (faction == null || faction.IsNotAlive()) return false;
-
-		return faction.CapturedList.Add(target);
-	}
-	public static bool AddCapture(this Faction faction, IEnumerable<SectorObject> targets)
-	{
-		if (faction == null || faction.IsNotAlive()) return false;
-
-		bool change = false;
-		foreach (var target in targets)
-		{
-			change = faction.CapturedList.Add(target) || change;
-		}
-		return change;
-	}
-	public static bool RemoveCapture(this Faction faction, SectorObject target)
-	{
-		if (faction == null || faction.IsNotAlive()) return false;
-
-		return faction.CapturedList.Remove(target);
-	}
-	public static bool RemoveCapture(this Faction faction, IEnumerable<SectorObject> targets)
-	{
-		if (faction == null || faction.IsNotAlive()) return false;
-
-		bool change = false;
-		foreach (var target in targets)
-		{
-			change = faction.CapturedList.Remove(target) || change;
-		}
-		return change;
-	}
-	public static bool HasCaptured(this Faction faction, SectorObject target)
-	{
-		if (faction == null || faction.IsNotAlive()) return false;
-
-		return faction.CapturedList.Contains(target);
-	}
-	public static void ClearCapture(this Faction faction)
-	{
-		if (faction == null || faction.IsNotAlive()) return;
-		faction.CapturedList.Clear();
-	}
-
-	#endregion
 
 	public static bool IsFriendlyBetween(Faction factionA, Faction factionB)
 	{
@@ -513,4 +418,181 @@ public static class FactionAPI
 	{
 		return StrategyManager.FactionRelation.GetRelationType(factionA, factionB) == FactionRelationType.Neutral;
 	}
+}
+public static partial class FactionAPI // ElementSetAPI
+{
+	#region ElementSetAPI
+	private static bool AddElementSet(Faction.ElementSet elementSet, IStrategyElement target)
+	{
+		if (elementSet == null) return false;
+		return elementSet.Add(target);
+	}
+	private static bool AddElementSet(Faction.ElementSet elementSet, IEnumerable<IStrategyElement> targets)
+	{
+		if (elementSet == null) return false;
+		bool change = false;
+		foreach (var target in targets)
+		{
+			change = elementSet.Add(target) || change;
+		}
+		return change;
+	}
+	private static bool RemoveElementSet(Faction.ElementSet elementSet, IStrategyElement target)
+	{
+		if (elementSet == null) return false;
+		return elementSet.Remove(target);
+	}
+	private static bool RemoveElementSet(Faction.ElementSet elementSet, IEnumerable<IStrategyElement> targets)
+	{
+		if (elementSet == null) return false;
+		bool change = false;
+		foreach (var target in targets)
+		{
+			change = elementSet.Remove(target) || change;
+		}
+		return change;
+	}
+	private static bool HasElementSet(Faction.ElementSet elementSet, IStrategyElement target)
+	{
+		if (elementSet == null) return false;
+
+		return elementSet.Contains(target);
+	}
+	private static void ClearElementSet(Faction.ElementSet elementSet)
+	{
+		if (elementSet == null) return;
+		elementSet.Clear();
+	}
+	#endregion
+	#region Detect
+	public static bool AddDetect(this Faction faction, IStrategyElement target)
+	{
+		if (faction == null || faction.IsNotAlive()) return false;
+		return AddElementSet(faction.DetectedList, target);
+	}
+	public static bool AddDetect(this Faction faction, IEnumerable<IStrategyElement> targets)
+	{
+		if (faction == null || faction.IsNotAlive()) return false;
+		return AddElementSet(faction.DetectedList, targets);
+	}
+	public static bool RemoveDetect(this Faction faction, IStrategyElement target)
+	{
+		if (faction == null || faction.IsNotAlive()) return false;
+		return RemoveElementSet(faction.DetectedList, target);
+	}
+	public static bool RemoveDetect(this Faction faction, IEnumerable<IStrategyElement> targets)
+	{
+		if (faction == null || faction.IsNotAlive()) return false;
+		return RemoveElementSet(faction.DetectedList, targets);
+	}
+	public static bool HasDetected(this Faction faction, IStrategyElement target)
+	{
+		if (faction == null || faction.IsNotAlive()) return false;
+		return HasElementSet(faction.DetectedList, target);
+	}
+	public static void ClearDetect(this Faction faction)
+	{
+		if (faction == null || faction.IsNotAlive()) return;
+		ClearElementSet(faction.DetectedList);
+	}
+	#endregion
+	#region CaptureSector
+	public static bool AddCaptured(this Faction faction, IStrategyElement target)
+	{
+		if (faction == null || faction.IsNotAlive()) return false;
+		return AddElementSet(faction.CapturedList, target);
+	}
+	public static bool AddCaptured(Faction faction, IEnumerable<IStrategyElement> targets)
+	{
+		if (faction == null || faction.IsNotAlive()) return false;
+		return AddElementSet(faction.CapturedList, targets);
+	}
+	public static bool RemoveCaptured(this Faction faction, IStrategyElement target)
+	{
+		if (faction == null || faction.IsNotAlive()) return false;
+		return RemoveElementSet(faction.CapturedList, target);
+	}
+	public static bool RemoveCaptured(this Faction faction, IEnumerable<IStrategyElement> targets)
+	{
+		if (faction == null || faction.IsNotAlive()) return false;
+		return RemoveElementSet(faction.CapturedList, targets);
+	}
+	public static bool HasCaptureded(this Faction faction, IStrategyElement target)
+	{
+		if (faction == null || faction.IsNotAlive()) return false;
+		return HasElementSet(faction.CapturedList, target);
+	}
+	public static void ClearCaptured(this Faction faction)
+	{
+		if (faction == null || faction.IsNotAlive()) return;
+		ClearElementSet(faction.CapturedList);
+	}
+
+	#endregion
+	#region Operation
+	public static bool AddOperation(this Faction faction, IStrategyElement target)
+	{
+		if (faction == null || faction.IsNotAlive()) return false;
+		return AddElementSet(faction.OperationList, target);
+	}
+	public static bool AddOperation(this Faction faction, IEnumerable<IStrategyElement> targets)
+	{
+		if (faction == null || faction.IsNotAlive()) return false;
+		return AddElementSet(faction.OperationList, targets);
+	}
+	public static bool RemoveOperation(this Faction faction, IStrategyElement target)
+	{
+		if (faction == null || faction.IsNotAlive()) return false;
+		return RemoveElementSet(faction.OperationList, target);
+	}
+	public static bool RemoveOperation(this Faction faction, IEnumerable<IStrategyElement> targets)
+	{
+		if (faction == null || faction.IsNotAlive()) return false;
+		return RemoveElementSet(faction.OperationList, targets);
+	}
+	public static bool HasOperationed(this Faction faction, IStrategyElement target)
+	{
+		if (faction == null || faction.IsNotAlive()) return false;
+		return HasElementSet(faction.OperationList, target);
+	}
+	public static void ClearOperation(this Faction faction)
+	{
+		if (faction == null || faction.IsNotAlive()) return;
+		ClearElementSet(faction.OperationList);
+	}
+	#endregion
+	#region Unit
+	public static bool AddUnit(this Faction faction, IStrategyElement target)
+	{
+		if (faction == null || faction.IsNotAlive()) return false;
+		return AddElementSet(faction.UnitList, target);
+	}
+	public static bool AddUnit(this Faction faction, IEnumerable<IStrategyElement> targets)
+	{
+		if (faction == null || faction.IsNotAlive()) return false;
+		return AddElementSet(faction.UnitList, targets);
+	}
+	public static bool RemoveUnit(this Faction faction, IStrategyElement target)
+	{
+		if (faction == null || faction.IsNotAlive()) return false;
+		return RemoveElementSet(faction.UnitList, target);
+	}
+	public static bool RemoveUnit(this Faction faction, IEnumerable<IStrategyElement> targets)
+	{
+		if (faction == null || faction.IsNotAlive()) return false;
+		return RemoveElementSet(faction.UnitList, targets);
+	}
+	public static bool HasUnited(this Faction faction, IStrategyElement target)
+	{
+		if (faction == null || faction.IsNotAlive()) return false;
+		return HasElementSet(faction.UnitList, target);
+	}
+	public static void ClearUnit(this Faction faction)
+	{
+		if (faction == null || faction.IsNotAlive()) return;
+		ClearElementSet(faction.UnitList);
+	}
+	#endregion
+
+
 }

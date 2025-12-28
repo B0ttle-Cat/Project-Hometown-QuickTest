@@ -3,6 +3,7 @@
 using UnityEngine;
 
 using static StrategyGamePlayData;
+using static StrategyGamePlayData.ISupplyStats;
 
 namespace StrategyManagerModule
 {
@@ -58,7 +59,7 @@ namespace StrategyManagerModule
 
 					string key = $"{sector.SectorName}_ResourcesSupply";
 					if (!TempData.GetTrigger(key)) return;
-					if (!TempData.TryGetValue<TempSupplyValue>(SectorTempSupplyValueKey(sector), out var tempValue)) return;
+					if (!TempData.TryGetValue<TempSupplyValue>(TempSupplyValue.SectorTempSupplyValueKey(sector), out var tempValue)) return;
 
 					if (tempValue.electricIsUpdate)
 					{

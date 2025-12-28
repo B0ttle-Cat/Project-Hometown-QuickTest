@@ -22,7 +22,7 @@ public partial class SkillObject : MonoBehaviour
 	private int skillInstanceID;
 }
 
-public partial class SkillObject : IStrategyElement, IStrategyStartGame
+public partial class SkillObject : IStrategyMonoElement, IStrategyStartGame
 {
 	public bool IsInCollector { get; set; }
 

@@ -1,19 +1,13 @@
-﻿using System.Collections.Generic;
-
-using GameUI;
+﻿using GameUI;
 
 using TMPro;
 
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SectorCardUIObjectView : PanelItemComponent, IFindUIObject
+public class SectorCardItemPanel : KeyPairPanelItemComponent
 {
-	public IFindUIObject ThisUIFinder => this;
-	[SerializeField]
-	private List<IFindUIObject.KeyPairObject> keyPairs;
 	private ISectorCardUIObject sectorCard;
-	List<IFindUIObject.KeyPairObject> IFindUIObject.KeyPairs => keyPairs;
 
 	public void SetUITarget(SectorObject sectorObject)
 	{

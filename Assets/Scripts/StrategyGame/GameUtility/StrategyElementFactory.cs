@@ -32,7 +32,7 @@ public static class StrategyElementFactory
 			var operation = StrategyManager.Collector.Find<OperationObject>(belongedOperation);
 			if (operation.IsNullRef()) return;
 
-			operation.AddUnitObject(newUnit);
+			operation.ThisOrganization.AddUnitObject(newUnit);
 		}
 	}
 	public static UnitObject Instantiate(UnitKey unitKey, int factionID = -1, int belongedOperation = -1, Vector3? position = null, Quaternion? rotation = null, bool enterThis = true)
@@ -77,7 +77,7 @@ public static class StrategyElementFactory
 			var operation = StrategyManager.Collector.Find<OperationObject>(belongedOperation);
 			if (operation.IsNullRef()) return;
 
-			operation.AddUnitObject(unitObject);
+			operation.ThisOrganization.AddUnitObject(unitObject);
 		}
 	}
 	private static void AddCollector(UnitObject unitObject)

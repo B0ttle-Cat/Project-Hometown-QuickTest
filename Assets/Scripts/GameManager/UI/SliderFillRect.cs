@@ -76,24 +76,39 @@ public class SliderFillRect : FillRectUI_Old
 			handleRectArea.anchorMin = bgRect.anchorMin;
 			handleRectArea.anchorMax = bgRect.anchorMax;
 			handleRectArea.anchoredPosition = bgRect.anchoredPosition;
-			handleRectArea.sizeDelta = bgRect.sizeDelta;
+#if UNITY_EDITOR
+			if (UnityEditor.EditorApplication.isPlaying)
+#endif
+			{
+				handleRectArea.sizeDelta = bgRect.sizeDelta;
+			}
 			handleRectArea.pivot = bgRect.pivot;
 
 			float offsetSize = Diraction == Slider.Direction.LeftToRight || Diraction == Slider.Direction.RightToLeft
 				? rect.height * 0.5f
 				: rect.width  * 0.5f;
+#if UNITY_EDITOR
+			if (UnityEditor.EditorApplication.isPlaying)
+#endif
+			{
 
-			handleRectArea.offsetMin += Diraction == Slider.Direction.LeftToRight || Diraction == Slider.Direction.RightToLeft
+				handleRectArea.offsetMin += Diraction == Slider.Direction.LeftToRight || Diraction == Slider.Direction.RightToLeft
 				? new Vector2(offsetSize, 0f)
 				: new Vector2(0f, offsetSize);
-			handleRectArea.offsetMax += Diraction == Slider.Direction.LeftToRight || Diraction == Slider.Direction.RightToLeft
-				? new Vector2(-offsetSize, 0f)
-				: new Vector2(0f, -offsetSize);
+				handleRectArea.offsetMax += Diraction == Slider.Direction.LeftToRight || Diraction == Slider.Direction.RightToLeft
+					? new Vector2(-offsetSize, 0f)
+					: new Vector2(0f, -offsetSize);
+			}
 		}
 
-		handleRect.sizeDelta = Diraction == Slider.Direction.LeftToRight || Diraction == Slider.Direction.RightToLeft
+#if UNITY_EDITOR
+		if (UnityEditor.EditorApplication.isPlaying)
+#endif
+		{
+			handleRect.sizeDelta = Diraction == Slider.Direction.LeftToRight || Diraction == Slider.Direction.RightToLeft
 			? new Vector2(rect.height + handelSizeOffset, handelSizeOffset)
 			: new Vector2(handelSizeOffset, rect.width + handelSizeOffset);
+		}
 	}
 	public override string Text
 	{
@@ -122,7 +137,7 @@ public class SliderFillRect : FillRectUI_Old
 		Value = value / SliderRange;
 		ChangeToSlider(value);
 #if UNITY_EDITOR
-		if(!UnityEditor.EditorApplication.isPlaying)
+		if (!UnityEditor.EditorApplication.isPlaying)
 		{
 			SliderInit();
 		}

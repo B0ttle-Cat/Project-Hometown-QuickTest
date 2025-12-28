@@ -130,6 +130,7 @@ GameObject:
   - component: {fileID: 4796101}
   - component: {fileID: 4796103}
   - component: {fileID: 4796102}
+  - component: {fileID: 4796104}
   m_Layer: 5
   m_Name: UniquUnit
   m_TagString: Untagged
@@ -190,6 +191,21 @@ CanvasGroup:
   m_Interactable: 0
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
+--- !u!114 &4796104
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4796100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67787c6c02e394f468e1998b97658359, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnitCardGroupPanel
+  CardPrefab: {fileID: 6497815980617949089, guid: fc35562ad7ae8914e8aff49a280cc4d9, type: 3}
+  ContentParent: {fileID: 560685280}
+  poolingCardObject: 0
 --- !u!1 &35174509
 GameObject:
   m_ObjectHideFlags: 0
@@ -499,7 +515,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abe0073b977f4194785669f476191d62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StrategySectorCardView
-  CardPrefab: {fileID: 2084230541395357494, guid: 26358ddb0dc491d47abdd8843b6c7c45, type: 3}
+  CardPrefab: {fileID: 6497815980617949089, guid: 1db8ce840c975564597ccd5a154d31c5, type: 3}
   ContentParent: {fileID: 44458275}
   poolingCardObject: 1
 --- !u!1 &69116205
@@ -8323,6 +8339,7 @@ GameObject:
   - component: {fileID: 955811204}
   - component: {fileID: 955811206}
   - component: {fileID: 955811205}
+  - component: {fileID: 955811207}
   m_Layer: 5
   m_Name: Operation
   m_TagString: Untagged
@@ -8383,6 +8400,21 @@ CanvasGroup:
   m_Interactable: 0
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
+--- !u!114 &955811207
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 955811203}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbee63441a005744da915de26c70be4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OperationCardGroupPanel
+  CardPrefab: {fileID: 159616052365629527, guid: cf76bf7b24cb3ae499488979c6537bfe, type: 3}
+  ContentParent: {fileID: 1307337658}
+  poolingCardObject: 0
 --- !u!1 &980736787
 GameObject:
   m_ObjectHideFlags: 0

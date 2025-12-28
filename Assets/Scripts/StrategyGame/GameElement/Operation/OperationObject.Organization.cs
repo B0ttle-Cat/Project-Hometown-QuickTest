@@ -8,8 +8,11 @@ using UnityEngine;
 
 using static StrategyGamePlayData;
 
-public partial class OperationObject // Organization
+public partial class OperationObject : IUnitOrganization
 {
+	public IUnitOrganization ThisOrganization => this;
+
+
 	[ShowInInspector]
 	private OperationUnitList unitOrganizationList;
 	public OperationUnitList UnitOrganizationList => unitOrganizationList;
@@ -29,7 +32,7 @@ public partial class OperationObject // Organization
 			int unitID = unitList[i];
 			if (!StrategyManager.Collector.TryFind<UnitObject>(unitID, out var unitObj)) continue;
 
-			if (AddUnitObject(unitObj, false))
+			if (ThisOrganization.AddUnitObject(unitObj, false))
 			{
 				isChange = true;
 			}
@@ -39,26 +42,23 @@ public partial class OperationObject // Organization
 			OnChangeOrganizationList();
 		}
 	}
-
 	private void OnChangeOrganizationList()
 	{
 		if (!enableChangeCallback) return;
 
 		OnChangeUnitList?.Invoke(this);
 	}
-
 	partial void DeInitOrganization()
 	{
-		RelaseAndDestroyAllUnit();
+		ThisOrganization.RelaseAndDestroyAllUnit();
 		UnitOrganizationList.Dispose();
 		unitOrganizationList = null;
 	}
-
-	public bool HasUnitType(in UnitKey unitKey)
+	bool IUnitOrganization.HasUnitType(in UnitKey unitKey)
 	{
 		return UnitOrganizationList.HasUnitType(unitKey);
 	}
-	public bool AddUnitObject(UnitObject unitObject, bool callback = true)
+	bool IUnitOrganization.AddUnitObject(UnitObject unitObject, bool callback = true)
 	{
 		if (unitObject == null) return false;
 		if (factionID != unitObject.InstanceData.factionID) return false;
@@ -68,7 +68,7 @@ public partial class OperationObject // Organization
 		enableChangeCallback = true;
 		return onChange;
 	}
-	public bool RemoveUnitObject(UnitObject unitObject, bool callback = true)
+	bool IUnitOrganization.RemoveUnitObject(UnitObject unitObject, bool callback = true)
 	{
 		if (unitObject == null) return false;
 
@@ -84,19 +84,15 @@ public partial class OperationObject // Organization
 	/// <summary>
 	/// </summary>
 	/// <param name="withDestroy">true 인 경우 == OperationObject와 함꼐 소속된 Unit 도 같이 삭제되는 경우</param>
-	public void RelaseAllUnit(bool withDestroy = false)
+	void IUnitOrganization.RelaseAllUnit(bool withDestroy)
 	{
 		if(UnitOrganizationList == null) return;
 		UnitOrganizationList.Clear(withDestroy);
 		EmptyUnitDestory();
 	}
-	public void RelaseAndDestroyAllUnit()
-	{
-		RelaseAllUnit(true);
-	}
 }
 
-public partial class OperationObject // OperationUnitList
+public partial class OperationObject // IUnitOrganization
 {
 	public class OperationUnitList : IDisposable, ISet<UnitObject>
 	{
