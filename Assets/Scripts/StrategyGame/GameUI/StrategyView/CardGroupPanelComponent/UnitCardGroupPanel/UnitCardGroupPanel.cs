@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class UnitCardGroupPanel : CardGroupPanelComponent
 {
+	
 	protected override void Hide()
 	{
 		Faction playerFaction = FactionAPI.ID2Faction(StrategyManager.PlayerFactionID);
 		if (playerFaction != null)
 		{
-			playerFaction.RemoveChangeCaptured(OnChangeItem);
+			playerFaction.RemoveChangeCaptured(OnChangeValue);
 		}
 		int length = Count;
 		for (int i = 0 ; i < length ; i++)
@@ -23,7 +24,8 @@ public class UnitCardGroupPanel : CardGroupPanelComponent
 		Faction playerFaction = FactionAPI.ID2Faction(StrategyManager.PlayerFactionID);
 		if (playerFaction != null)
 		{
-			playerFaction.AddChangeUnit(OnChangeItem);
+			playerFaction.AddChangeUnit(OnChangeValue);
+			InitCardList<UnitObject>(playerFaction.UnitList.CardUIType);
 		}
 
 		int length = Count;
@@ -33,18 +35,18 @@ public class UnitCardGroupPanel : CardGroupPanelComponent
 		}
 	}
 
-	private void OnChangeItem(IStrategyElement element, bool added)
+	private void OnChangeValue(IStrategyElement element, bool added)
 	{
 		if (element is not UnitObject item) return;
 
 		if (added)
 		{
-			this.Add(item);
+			this.AddPoolData(item);
 
 		}
 		else
 		{
-			this.Remove(item);
+			this.RemovePoolData(item);
 		}
 	}
 	protected override CardPanel CardFactory<T>(GameObject newUIObject, T item) where T : class

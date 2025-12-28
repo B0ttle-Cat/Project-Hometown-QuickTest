@@ -58,7 +58,7 @@ namespace StrategyManagerModule
 			onChangeListener = null;
 		}
 
-		// Add / Remove
+		// AddItem / RemoveItem
 		public virtual bool Add(T item, Action beforeCallback = null)
 		{
 			if (item == null) return false;

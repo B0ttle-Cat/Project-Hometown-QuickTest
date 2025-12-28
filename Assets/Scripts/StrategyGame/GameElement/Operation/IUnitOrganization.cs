@@ -3,7 +3,7 @@
 using static OperationObject;
 using static StrategyGamePlayData;
 
-public interface IUnitOrganization
+public interface IUnitOrganization : IStrategyElement
 {
 	IUnitOrganization ThisOrganization { get; }
 	public OperationUnitList UnitOrganizationList {  get; }

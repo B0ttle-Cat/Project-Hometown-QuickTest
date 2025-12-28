@@ -1,6 +1,6 @@
 ﻿using GameUI;
 
-public interface IUnitCardUIObject : ICardUIObject
+public interface IUnitCardUIObject : ICardUIObject , IStrategyElement
 {
 
 }

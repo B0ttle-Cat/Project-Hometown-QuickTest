@@ -1,6 +1,6 @@
 ﻿using GameUI;
 
-public interface ISectorCardUIObject : ICardUIObject
+public interface ISectorCardUIObject : ICardUIObject, IStrategyElement
 {
 	bool IsEnableResourcesSupply { get; set; }
 	public (float[] values, float total, float max) GetPersonnelDetailValue();

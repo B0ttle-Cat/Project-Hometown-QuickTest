@@ -5,12 +5,13 @@ using UnityEngine;
 
 public class SectorCardGroupPanel : CardGroupPanelComponent
 {
+
 	protected override void Hide()
 	{
 		Faction playerFaction = FactionAPI.ID2Faction(StrategyManager.PlayerFactionID);
 		if (playerFaction != null)
 		{
-			playerFaction.RemoveChangeCaptured(OnChangeCaptured);
+			playerFaction.RemoveChangeCaptured(OnChangeValue);
 		}
 		int length = Count;
 		for (int i = 0 ; i < length ; i++)
@@ -24,7 +25,8 @@ public class SectorCardGroupPanel : CardGroupPanelComponent
 		Faction playerFaction = FactionAPI.ID2Faction(StrategyManager.PlayerFactionID);
 		if (playerFaction != null)
 		{
-			playerFaction.AddChangeCaptured(OnChangeCaptured);
+			playerFaction.AddChangeCaptured(OnChangeValue, false);
+			InitCardList<SectorObject>(playerFaction.CapturedList.CardUIList);
 		}
 
 		int length = Count;
@@ -34,18 +36,18 @@ public class SectorCardGroupPanel : CardGroupPanelComponent
 		}
 	}
 
-	private void OnChangeCaptured(IStrategyElement element, bool added)
+	private void OnChangeValue(IStrategyElement element, bool added)
 	{
-		if (element is not SectorObject sector) return;
+		if (element is not SectorObject item) return;
 
 		if (added)
 		{
-			this.Add(sector);
+			this.AddPoolData(item);
 
 		}
 		else
 		{
-			this.Remove(sector);
+			this.RemovePoolData(item);
 		}
 	}
 	protected override CardPanel CardFactory<T>(GameObject newUIObject, T item) where T : class

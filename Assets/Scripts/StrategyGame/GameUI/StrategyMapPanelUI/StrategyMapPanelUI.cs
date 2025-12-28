@@ -37,11 +37,11 @@ public partial class StrategyMapPanelUI : MonoBehaviour, IGamePanelUI, IStrategy
 	}
 	void IStrategyStartGame.OnStartGame()
 	{
-		OpenUI();
+	//	OpenUI();
 	}
 	void IStrategyStartGame.OnStopGame()
 	{
-		CloseUI();
+	//	CloseUI();
 	}
 	public void RectUICollisionAvoidance()
 	{

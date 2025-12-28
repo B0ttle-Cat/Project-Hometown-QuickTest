@@ -61,7 +61,7 @@
 					}
 					else 
 					{
-						AttackLimitAPI.OnNearbySearching(unitObject.Faction.DetectedList.NearbyType);
+						AttackLimitAPI.OnNearbySearching(unitObject.Faction.DetectedList.NearbyList);
 					}
 
 

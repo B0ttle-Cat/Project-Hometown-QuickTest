@@ -59,12 +59,12 @@ public partial class StrategyDetailsPanelUI : MonoBehaviour, IGamePanelUI, IStra
 
 	void IStrategyStartGame.OnStartGame()
 	{
-		(this as IGamePanelUI).CloseUI();
+		//(this as IGamePanelUI).CloseUI();
 	}
 
 	void IStrategyStartGame.OnStopGame()
 	{
-		(this as IGamePanelUI).CloseUI();
+	//	(this as IGamePanelUI).CloseUI();
 	}
 
 	public abstract class DetailsContentPanel : IDisposable, IPanelItemUI

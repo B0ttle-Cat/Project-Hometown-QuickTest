@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 
 using UnityEngine;
 
@@ -18,11 +19,27 @@ namespace GameUI
 
 		protected virtual void Awake()
 		{
-			ThisShowHide.PairingShowHide();
+			try
+			{
+				ThisShowHide.PairingShowHide();
+			}
+			catch(Exception ex)
+			{
+				Debug.LogError(gameObject.name);
+				Debug.LogException(ex);
+			}
 		}
 		protected virtual void OnDestroy()
 		{
-			ThisShowHide.UnpairingShowHide();
+			try
+			{
+				ThisShowHide.UnpairingShowHide();
+			}
+			catch (Exception ex)
+			{
+				Debug.LogError(gameObject.name);
+				Debug.LogException(ex);
+			}
 		}
 
 

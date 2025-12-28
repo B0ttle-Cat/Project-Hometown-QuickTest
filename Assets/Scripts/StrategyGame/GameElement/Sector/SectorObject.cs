@@ -47,7 +47,7 @@ public partial class SectorObject : MonoBehaviour
 public partial class SectorObject // Getter
 {
 	public string SectorName => StatsData.SectorName;
-	public Faction CaptureFaction => StrategyManager.Collector.Find<Faction>(CaptureFactionID);
+	public Faction CaptureFaction => FactionAPI.ID2Faction(CaptureFactionID);
 	public int CaptureFactionID => RuntimeData.CaptureFactionID;
 	public float CaptureProgress => RuntimeData.CaptureProgress;
 }
@@ -60,18 +60,34 @@ public partial class SectorObject : IStrategyMonoElement, IStrategyStartGame
 
 	public void InStrategyCollector()
 	{
+		if (CaptureFactionID >= 0)
+		{
+			CaptureFaction.AddCaptured(this);
+		}
 	}
 
 	public void OutStrategyCollector()
 	{
+		if (CaptureFactionID >= 0)
+		{
+			CaptureFaction.RemoveOperation(this);
+		}
 	}
 
 	void IStrategyStartGame.OnStartGame()
 	{
+		if (CaptureFactionID >= 0)
+		{
+			CaptureFaction.AddCaptured(this);
+		}
 	}
 
 	void IStrategyStartGame.OnStopGame()
 	{
+		if (CaptureFactionID >= 0)
+		{
+			CaptureFaction.RemoveOperation(this);
+		}
 	}
 }
 

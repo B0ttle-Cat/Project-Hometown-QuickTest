@@ -21,11 +21,13 @@ public partial class StrategyMapPanelUI // OperationLabelGroup
 
 	private void ShowOperationLabelGroup()
 	{
+		return;
 		operationLabelGroup = new OperationLabelGroup(operationLabelPreafab, operationLabelRoot, this);
 		operationLabelGroup.Show();
 	}
 	private void HideOperationLabelGroup()
 	{
+		return;
 		if (operationLabelGroup == null) return;
 		operationLabelGroup.Hide();
 		operationLabelGroup.Dispose();
@@ -33,6 +35,7 @@ public partial class StrategyMapPanelUI // OperationLabelGroup
 	}
 	private void OperationLabelGroupUpdate()
 	{
+		return;
 		if (operationLabelGroup == null) return;
 		operationLabelGroup.Update();
 	}

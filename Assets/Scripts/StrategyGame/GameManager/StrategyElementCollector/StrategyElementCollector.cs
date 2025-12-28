@@ -28,7 +28,7 @@ namespace StrategyManagerModule
 	/// collector.Register<MyArbitraryData>();
 	/// 
 	/// // 요소 추가
-	/// collector.Add(unitInstance);
+	/// collector.AddItem(unitInstance);
 	/// 
 	/// // 변경 리스너
 	/// collector.AddChangeListener<UnitObject>((u, added) => {

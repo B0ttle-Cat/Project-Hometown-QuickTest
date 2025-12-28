@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 4796103}
   - component: {fileID: 4796102}
   - component: {fileID: 4796104}
+  - component: {fileID: 4796105}
   m_Layer: 5
   m_Name: UniquUnit
   m_TagString: Untagged
@@ -205,7 +206,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitCardGroupPanel
   CardPrefab: {fileID: 6497815980617949089, guid: fc35562ad7ae8914e8aff49a280cc4d9, type: 3}
   ContentParent: {fileID: 560685280}
-  poolingCardObject: 0
+  poolingCardObject: 1
+  poolingScrollDataContainer: {fileID: 4796105}
+--- !u!114 &4796105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4796100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5debd66c1a485304cbc1b3016e25355c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameUI::GameUI.ScrollRectIndexCallbackHelper
+  scrollRect: {fileID: 1421464715}
+  content: {fileID: 560685280}
+  layoutGroup: {fileID: 560685282}
+  viewBufferCount: 2
+  targetComponent: {fileID: 4796104}
+  minIndex: -1
+  maxIndex: -1
 --- !u!1 &35174509
 GameObject:
   m_ObjectHideFlags: 0
@@ -443,6 +464,7 @@ GameObject:
   - component: {fileID: 58857481}
   - component: {fileID: 58857480}
   - component: {fileID: 58857482}
+  - component: {fileID: 58857483}
   m_Layer: 5
   m_Name: Sector
   m_TagString: Untagged
@@ -518,6 +540,26 @@ MonoBehaviour:
   CardPrefab: {fileID: 6497815980617949089, guid: 1db8ce840c975564597ccd5a154d31c5, type: 3}
   ContentParent: {fileID: 44458275}
   poolingCardObject: 1
+  poolingScrollDataContainer: {fileID: 58857483}
+--- !u!114 &58857483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 58857478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5debd66c1a485304cbc1b3016e25355c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameUI::GameUI.ScrollRectIndexCallbackHelper
+  scrollRect: {fileID: 806062829}
+  content: {fileID: 44458275}
+  layoutGroup: {fileID: 44458276}
+  viewBufferCount: 2
+  targetComponent: {fileID: 58857482}
+  minIndex: -1
+  maxIndex: -1
 --- !u!1 &69116205
 GameObject:
   m_ObjectHideFlags: 0
@@ -1109,7 +1151,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &117014629
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4728,6 +4770,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2dc5652770363e4f86b2979cf6e8b24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StrategyMainTabContentUI
+  rectTransform: {fileID: 0}
+  root: {fileID: 0}
+  items: []
   panels:
   - {fileID: 1234401991}
   - {fileID: 58857480}
@@ -5641,7 +5686,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 122672814}
   m_HandleRect: {fileID: 122672813}
   m_Direction: 2
-  m_Value: 1.0000001
+  m_Value: 0.99999964
   m_Size: 0.51248
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -6603,7 +6648,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1573788718}
   m_HandleRect: {fileID: 1573788717}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -8340,6 +8385,7 @@ GameObject:
   - component: {fileID: 955811206}
   - component: {fileID: 955811205}
   - component: {fileID: 955811207}
+  - component: {fileID: 955811208}
   m_Layer: 5
   m_Name: Operation
   m_TagString: Untagged
@@ -8414,7 +8460,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::OperationCardGroupPanel
   CardPrefab: {fileID: 159616052365629527, guid: cf76bf7b24cb3ae499488979c6537bfe, type: 3}
   ContentParent: {fileID: 1307337658}
-  poolingCardObject: 0
+  poolingCardObject: 1
+  poolingScrollDataContainer: {fileID: 955811208}
+--- !u!114 &955811208
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 955811203}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5debd66c1a485304cbc1b3016e25355c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameUI::GameUI.ScrollRectIndexCallbackHelper
+  scrollRect: {fileID: 721551565}
+  content: {fileID: 1307337658}
+  layoutGroup: {fileID: 1307337660}
+  viewBufferCount: 2
+  targetComponent: {fileID: 955811207}
+  minIndex: -1
+  maxIndex: -1
 --- !u!1 &980736787
 GameObject:
   m_ObjectHideFlags: 0
@@ -8759,7 +8825,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_IsOn: 1
+  m_IsOn: 0
 --- !u!1 &1043851290
 GameObject:
   m_ObjectHideFlags: 0
@@ -9074,18 +9140,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StrategyMainTabButtonUI
   toggleGroup: {fileID: 1081975520}
   canvasGroupUI: {fileID: 1081975522}
-  tabPanelGroup: {fileID: 489642286}
-  itemPairs:
+  initItemPairs:
   - toggle: {fileID: 1053609880}
-    rect: {fileID: 1234401990}
+    panel: {fileID: 1234401991}
   - toggle: {fileID: 1007553024}
-    rect: {fileID: 58857479}
+    panel: {fileID: 58857480}
   - toggle: {fileID: 388215294}
-    rect: {fileID: 955811204}
+    panel: {fileID: 955811205}
   - toggle: {fileID: 492795972}
-    rect: {fileID: 4796101}
+    panel: {fileID: 4796102}
   - toggle: {fileID: 331986544}
-    rect: {fileID: 1555327484}
+    panel: {fileID: 1555327485}
 --- !u!114 &1081975522
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12608,7 +12673,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1711988332
 RectTransform:
   m_ObjectHideFlags: 0
@@ -13299,7 +13364,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1769027712
 RectTransform:
   m_ObjectHideFlags: 0
@@ -15021,27 +15086,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1303079880123350574, guid: c53fb86f53bbd5443aeea5bcc75a1ca3, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1303079880123350574, guid: c53fb86f53bbd5443aeea5bcc75a1ca3, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1303079880123350574, guid: c53fb86f53bbd5443aeea5bcc75a1ca3, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 671.19
       objectReference: {fileID: 0}
     - target: {fileID: 1303079880123350574, guid: c53fb86f53bbd5443aeea5bcc75a1ca3, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 42.98
       objectReference: {fileID: 0}
     - target: {fileID: 1303079880123350574, guid: c53fb86f53bbd5443aeea5bcc75a1ca3, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 335.595
       objectReference: {fileID: 0}
     - target: {fileID: 1303079880123350574, guid: c53fb86f53bbd5443aeea5bcc75a1ca3, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -21.49
       objectReference: {fileID: 0}
     - target: {fileID: 3441598747289294524, guid: c53fb86f53bbd5443aeea5bcc75a1ca3, type: 3}
       propertyPath: m_Pivot.x
@@ -15069,11 +15134,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3441598747289294524, guid: c53fb86f53bbd5443aeea5bcc75a1ca3, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 671.19
       objectReference: {fileID: 0}
     - target: {fileID: 3441598747289294524, guid: c53fb86f53bbd5443aeea5bcc75a1ca3, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 42.98
       objectReference: {fileID: 0}
     - target: {fileID: 3441598747289294524, guid: c53fb86f53bbd5443aeea5bcc75a1ca3, type: 3}
       propertyPath: m_LocalPosition.x

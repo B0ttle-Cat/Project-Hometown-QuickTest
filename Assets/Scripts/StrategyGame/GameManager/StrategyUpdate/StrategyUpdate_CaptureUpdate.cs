@@ -58,40 +58,6 @@ namespace StrategyManagerModule
 					captureTagList.Remove(item);
 				}
 			}
-
-			protected override void Update(in float deltaTime)
-			{
-				int length = Count;
-				for (int i = 0 ; i < length ; i++)
-				{
-					CaptureUpdate update = this[i];
-					SectorObject sector = update.sector;
-					if (sector == null || !sector.isActiveAndEnabled) continue;
-
-					int oldFaction = update.ownerFactionID;
-					float oldProgress = update.captureProgress;
-
-					update.Update(in deltaTime);
-
-					int nextFaction = update.ownerFactionID;
-					int nextDominantFaction = update.dominantFactionID;
-					float nextProgress = update.captureProgress;
-
-					bool changeProgress =  oldProgress != nextProgress;
-					this[i] = update;
-
-					if (oldFaction != nextFaction || changeProgress)
-					{
-						sector.RuntimeData.CaptureFactionID = nextFaction;
-						sector.RuntimeData.CaptureProgress = nextProgress;
-					}
-					if (changeProgress)
-					{
-						update.ColorUpdate(nextDominantFaction, nextProgress);
-					}
-				}
-			}
-
 			public class CaptureUpdate : UpdateLogic
 			{
 				public SectorObject sector;
@@ -332,7 +298,6 @@ namespace StrategyManagerModule
 					}
 					return (dict, total);
 				}
-
 				public void ColorUpdate(int colorFaction, float colorProgress)
 				{
 					if (StrategyManager.Collector.TryFind<Faction>(colorFaction, out var faction))
@@ -343,6 +308,64 @@ namespace StrategyManagerModule
 					{
 						sectorColor.UpdateColor(null, 0);
 					}
+				}
+
+			}
+
+
+			protected override void Update(in float deltaTime)
+			{
+				int length = Count;
+				for (int i = 0 ; i < length ; i++)
+				{
+					CaptureUpdate update = this[i];
+					SectorObject sector = update.sector;
+					if (sector == null || !sector.isActiveAndEnabled) continue;
+
+					int oldFaction = update.ownerFactionID;
+					float oldProgress = update.captureProgress;
+
+					update.Update(in deltaTime);
+
+					int nextFaction = update.ownerFactionID;
+					int nextDominantFaction = update.dominantFactionID;
+					float nextProgress = update.captureProgress;
+
+					bool changeProgress =  oldProgress != nextProgress;
+					this[i] = update;
+
+					if (oldFaction != nextFaction || changeProgress)
+					{
+						sector.RuntimeData.CaptureFactionID = nextFaction;
+						sector.RuntimeData.CaptureProgress = nextProgress;
+
+
+						if (oldFaction != nextFaction)
+						{
+							OnTrigger(sector, oldFaction, false);
+							OnTrigger(sector, nextFaction, false);
+						}
+					}
+					if (changeProgress)
+					{
+						update.ColorUpdate(nextDominantFaction, nextProgress);
+					}
+				}
+			}
+
+			private void OnTrigger(SectorObject sector, int factionID, bool state)
+			{
+				if (factionID < 0) return;
+				var faction = FactionAPI.ID2Faction(factionID);
+				if (faction.IsNullRef()) return;
+
+				if (state)
+				{
+					faction.AddCaptured(sector);
+				}
+				else
+				{
+					faction.RemoveCaptured(sector);
 				}
 			}
 		}

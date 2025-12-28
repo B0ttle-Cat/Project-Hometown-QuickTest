@@ -27,7 +27,7 @@
 //				{
 //					if (added)
 //					{
-//						this.Add(new DetectListUpdate(faction, this));
+//						this.AddItem(new DetectListUpdate(faction, this));
 //					}
 //					else
 //					{

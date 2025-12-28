@@ -1,6 +1,6 @@
 ﻿using static StrategyGamePlayData;
 
-public partial interface ISectorController
+public partial interface ISectorController : IStrategyElement
 {
 	SectorObject This { get; }
 	ISectorController Controller { get; }

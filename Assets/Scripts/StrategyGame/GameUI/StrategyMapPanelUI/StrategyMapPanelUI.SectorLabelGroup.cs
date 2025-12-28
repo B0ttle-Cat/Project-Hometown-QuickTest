@@ -256,7 +256,7 @@ public partial class StrategyMapPanelUI // SectorLabelGroup
 					//	{
 					//		KeyPair.FindPairChainAndCopy<Image>("Icon", iconParent, out var iconImage);
 					//		iconImage.sprite = sprite;
-					//		iconlist.Add(iconImage.Target);
+					//		iconlist.AddItem(iconImage.Target);
 					//		iconImage.Target.SetActive(true);
 					//	}
 					//}

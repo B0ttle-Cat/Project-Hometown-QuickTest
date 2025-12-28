@@ -1,46 +1,32 @@
-﻿using GameUI;
+﻿//using GameUI;
 
-using UnityEngine;
+//using UnityEngine;
 
-public class StrategyMainTabContentUI : TabPanelGroup
-{
-    [SerializeField]
-    private CanvasGroupUI[] panels;
+//public class StrategyMainTabContentUI : TabPanelGroup
+//{
+//    [SerializeField]
+//    private CanvasGroupUI[] panels;
 
-    public override void InitTab()
-    {
-		this.New();
-		this.Clear();
+//    protected override void Hide()
+//    {
+//    }
 
-		panels = GetComponentsInChildren<CanvasGroupUI>(true);
+//    protected override void Show()
+//    {
+//    }
 
-		int length = panels.Length;
-        for (int i = 0 ; i < length ; i++)
-        {
-			this.Add(new MainTabPanelItem(panels[i]));
-		}
-    }
+//    public class MainTabPanelItem : TabPanelItem
+//    {
+//        public MainTabPanelItem(GameObject uiObject) : base(uiObject)
+//        {
+//        }
 
-    protected override void Hide()
-    {
-    }
+//		public MainTabPanelItem(CanvasGroupUI canvasGroupUI) : base(canvasGroupUI)
+//        {
+//        }
 
-    protected override void Show()
-    {
-    }
-
-    public class MainTabPanelItem : TabPanelItem
-    {
-        public MainTabPanelItem(GameObject uiObject) : base(uiObject)
-        {
-        }
-
-		public MainTabPanelItem(CanvasGroupUI canvasGroupUI) : base(canvasGroupUI)
-        {
-        }
-
-		public MainTabPanelItem(RectTransform rectTransform) : base(rectTransform)
-        {
-        }
-    }
-}
+//		public MainTabPanelItem(RectTransform rectTransform) : base(rectTransform)
+//        {
+//        }
+//    }
+//}

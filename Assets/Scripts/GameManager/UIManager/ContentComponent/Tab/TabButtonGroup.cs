@@ -21,8 +21,6 @@ namespace GameUI
 		}
 		[SerializeField, PropertyOrder(-98)]
 		protected CanvasGroupUI canvasGroupUI;
-		[SerializeField,Space, PropertyOrder(-97)]
-		protected TabPanelGroup tabPanelGroup;
 
 		protected override void Reset()
 		{
@@ -48,7 +46,6 @@ namespace GameUI
 				this[i].Dispose();
 			}
 
-			tabPanelGroup = null;
 			toggleGroup = null;
 			canvasGroupUI = null;
 
@@ -82,11 +79,22 @@ namespace GameUI
 		[Serializable]
 		public class TabButton : IPanelItem, IDisposable
 		{
-			[SerializeField]
+			[SerializeField, HorizontalGroup, LabelWidth(50)]
 			protected Toggle toggle;
-			protected IShowHide contentTarget;
+			[SerializeField, HorizontalGroup, LabelWidth(50), PropertyOrder(1)]
+			protected IShowHide panel;
 			private RectTransform thisRect;
 			private GameUIController root;
+
+			[ShowInInspector, HorizontalGroup(width: 50), LabelText("IsOn"), LabelWidth(30)]
+			public bool IsOn
+			{
+				get => !toggle.IsNullRef() && toggle.isOn;
+				set { if (toggle.IsNotNullRef()) toggle.isOn = value; }
+			}
+
+
+
 			public IPanelItem ThisPanel => this;
 			RectTransform IPanelItem.ThisRect => thisRect.IsNotNullRef() ? thisRect : thisRect = toggle.GetComponent<RectTransform>();
 			GameUIController IPanelItem.RootUI => root.IsNotNullRef() ? root : root = ThisPanel.FindRoot();
@@ -101,19 +109,19 @@ namespace GameUI
 				toggle.isOn = init;
 				toggle.group = toggleGroup;
 				toggle.onValueChanged.AddListener(OnChangeValue);
-				this.contentTarget = content;
+				this.panel = content;
 
-				if (contentTarget.IsNullRef()) return;
-				if (init) contentTarget.OnShowImmediate();
-				else contentTarget.OnHideImmediate();
+				if (panel.IsNullRef()) return;
+				if (init) panel.OnShowImmediate();
+				else panel.OnHideImmediate();
 			}
 
 			public void OnChangeValue(bool newValue)
 			{
-				if (contentTarget.IsNullRef()) return;
+				if (panel.IsNullRef()) return;
 
-				if (newValue) contentTarget.OnShow();
-				else contentTarget.OnHide();
+				if (newValue) panel.OnShow();
+				else panel.OnHide();
 			}
 			public void OnChangeValue()
 			{
@@ -126,7 +134,7 @@ namespace GameUI
 				toggle.onValueChanged.RemoveListener(OnChangeValue);
 
 				toggle = null;
-				contentTarget = null;
+				panel = null;
 				thisRect = null;
 				root = null;
 			}

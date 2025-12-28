@@ -17,7 +17,7 @@
 //			for (int i = 0 ; i < length ; i++)
 //			{
 //				var cb = activeList[i];
-//				this.Add(new ResourcesSupply(this, cb));
+//				this.AddItem(new ResourcesSupply(this, cb));
 //			}
 //		}
 //		protected override void Update(in float deltaTime)
@@ -36,7 +36,7 @@
 //		{
 //			private SectorObject target;
 //			private const StatsType MaxType = StatsType.자원_인력_최대;
-//			private const StatsType SupplyType = StatsType.자원_인력_회복;
+//			private const StatsType OrganizationList = StatsType.자원_인력_회복;
 //			private const StatsType CurrType = StatsType.자원_인력_현재;
 			
 //			private const float resetResupplyTime = 1f;
@@ -59,7 +59,7 @@
 //				if (target.CaptureData.captureFactionID < 0) return;
 
 //				int max = target.SectorStatsGroup.GetValue(MaxType);
-//				int supply = target.SectorStatsGroup.GetValue(SupplyType);
+//				int supply = target.SectorStatsGroup.GetValue(OrganizationList);
 //				int curr = target.CurrStatsList.GetValue(CurrType);
 
 //				if (ResourcesUpdate(ref curr, in max, in supply, ref supplement, ref currentResupplyTime, resetResupplyTime, in deltaTime))

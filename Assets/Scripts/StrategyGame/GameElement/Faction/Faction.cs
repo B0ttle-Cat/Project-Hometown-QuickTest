@@ -133,9 +133,13 @@ public partial class Faction : IStrategyElement
 }
 public partial class Faction // ElementSet
 {
+	[ShowInInspector,ReadOnly]
 	private DetectedSet detectedList;
+	[ShowInInspector,ReadOnly]
 	private CaptureSectorSet capturedList;
+	[ShowInInspector,ReadOnly]
 	private OperationSet operationList;
+	[ShowInInspector,ReadOnly]
 	private UnitSet unitList;
 	private Action<IStrategyElement, bool> onChangeDetected;
 	private Action<IStrategyElement, bool> onChangeCaptured;
@@ -252,6 +256,8 @@ public partial class Faction // ElementSet
 		public readonly HashSet<IStrategyElement> ChangeAdd = new HashSet<IStrategyElement>();
 		public readonly HashSet<IStrategyElement> ChangeRemvoe = new HashSet<IStrategyElement>();
 		public int Count => elementList.Count;
+		public readonly List<IStrategyElement> ElementList = new List<IStrategyElement>();
+		public IStrategyElement this[int index] => ElementList[index];
 		public ElementSet() { }
 		public ElementSet(IEnumerable<IStrategyElement> detectedList)
 		{
@@ -271,6 +277,7 @@ public partial class Faction // ElementSet
 		{
 			if (elementList.Add(item))
 			{
+				ElementList.Add(item);
 				ChangeAdd.Add(item);
 				ChangeRemvoe.Remove(item);
 
@@ -283,6 +290,7 @@ public partial class Faction // ElementSet
 		{
 			if (elementList.Remove(item))
 			{
+				ElementList.Remove(item);
 				ChangeAdd.Remove(item);
 				ChangeRemvoe.Add(item);
 
@@ -295,6 +303,7 @@ public partial class Faction // ElementSet
 		{
 			HasChange = true;
 			elementList.Clear();
+			ElementList.Clear();
 		}
 		public bool Contains(IStrategyElement item) => elementList.Contains(item);
 		public void ClearHasChange()
@@ -324,10 +333,10 @@ public partial class Faction // ElementSet
 	}
 	public class DetectedSet : ElementSet
 	{
-		private readonly HashSet<ITargetableCombatant> targetableList = new HashSet<ITargetableCombatant>();
-		private readonly HashSet<INearbyElement> nearbyList = new HashSet<INearbyElement>();
-		public IEnumerable<ITargetableCombatant> TargetableType => targetableList;
-		public IEnumerable<INearbyElement> NearbyType => nearbyList;
+		protected readonly List<ITargetableCombatant> targetableList = new List<ITargetableCombatant>();
+		protected readonly List<INearbyElement> nearbyList = new List<INearbyElement>();
+		public List<ITargetableCombatant> TargetableList => targetableList;
+		public List<INearbyElement> NearbyList => nearbyList;
 
 		public override bool Add(IStrategyElement item)
 		{
@@ -358,12 +367,13 @@ public partial class Faction // ElementSet
 	}
 	public class CaptureSectorSet : ElementSet
 	{
-		private readonly HashSet<ISectorController> controllerList = new HashSet<ISectorController>();
-		private readonly HashSet<ISupplyStats> supplyList = new HashSet<ISupplyStats>();
-		private readonly HashSet<ISectorCardUIObject> cardUIList = new HashSet<ISectorCardUIObject>();
-		public IEnumerable<ISectorController> ControllerType => controllerList;
-		public IEnumerable<ISupplyStats> SupplyType => supplyList;
-		public IEnumerable<ISectorCardUIObject> CardUIType => cardUIList;
+		protected readonly List<ISectorController> controllerList = new List<ISectorController>();
+		protected readonly List<ISupplyStats> supplyList = new List<ISupplyStats>();
+		protected readonly List<ISectorCardUIObject> cardUIList = new List<ISectorCardUIObject>();
+
+		public List<ISectorController> ControllerList => controllerList;
+		public List<ISupplyStats> SupplyList => supplyList;
+		public List<ISectorCardUIObject> CardUIList => cardUIList;
 		public override bool Add(IStrategyElement item)
 		{
 			if (base.Add(item))
@@ -396,9 +406,13 @@ public partial class Faction // ElementSet
 	}
 	public class OperationSet : ElementSet
 	{
-		private readonly HashSet<IOperationController> controllerList = new HashSet<IOperationController>();
-		private readonly HashSet<IUnitOrganization> organizationList = new HashSet<IUnitOrganization>();
-		private readonly HashSet<IOperationCardUIObject> cardUIList = new HashSet<IOperationCardUIObject>();
+		protected readonly List<IOperationController> controllerList = new List<IOperationController>();
+		protected readonly List<IUnitOrganization> organizationList = new List<IUnitOrganization>();
+		protected readonly List<IOperationCardUIObject> cardUIList = new List<IOperationCardUIObject>();
+
+		public List<IOperationController> ControllerList => controllerList;
+		public List<IUnitOrganization> OrganizationList => organizationList;
+		public List<IOperationCardUIObject> CardUIList => cardUIList;
 		public override bool Add(IStrategyElement item)
 		{
 			if (base.Add(item))
@@ -429,13 +443,14 @@ public partial class Faction // ElementSet
 			cardUIList.Clear();
 		}
 	}
-
 	public class UnitSet : ElementSet
 	{
-		private readonly HashSet<ITargetableCombatant> targetableList = new HashSet<ITargetableCombatant>();
-		private readonly HashSet<INearbyElement> nearbyList = new HashSet<INearbyElement>();
-		public IEnumerable<ITargetableCombatant> TargetableType => targetableList;
-		public IEnumerable<INearbyElement> NearbyType => nearbyList;
+		protected readonly List<ITargetableCombatant> targetableList = new List<ITargetableCombatant>();
+		protected readonly List<INearbyElement> nearbyList = new List<INearbyElement>();
+		protected readonly List<IUnitCardUIObject> cardUIList = new List<IUnitCardUIObject>();
+		public List<ITargetableCombatant> TargetableType => targetableList;
+		public List<INearbyElement> NearbyType => nearbyList;
+		public List<IUnitCardUIObject> CardUIType => cardUIList;
 
 		public override bool Add(IStrategyElement item)
 		{
@@ -443,6 +458,7 @@ public partial class Faction // ElementSet
 			{
 				if (item is INearbyElement nearby) nearbyList.Add(nearby);
 				if (item is ITargetableCombatant target) targetableList.Add(target);
+				if (item is IUnitCardUIObject card) cardUIList.Add(card);
 				return true;
 			}
 			return false;
@@ -453,6 +469,7 @@ public partial class Faction // ElementSet
 			{
 				if (item is INearbyElement nearby) nearbyList.Remove(nearby);
 				if (item is ITargetableCombatant target) targetableList.Remove(target);
+				if (item is IUnitCardUIObject card) cardUIList.Remove(card);
 				return true;
 			}
 			return false;
@@ -462,6 +479,7 @@ public partial class Faction // ElementSet
 			base.Clear();
 			nearbyList.Clear();
 			targetableList.Clear();
+			cardUIList.Clear();
 		}
 	}
 }

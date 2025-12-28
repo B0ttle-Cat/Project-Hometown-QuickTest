@@ -67,7 +67,7 @@
 
 					if (faction == null || SearcherAPI.IsNullRef()) return;
 					if (!SearcherAPI.IsEnable) return;
-					SearcherAPI.OnNearbySearching(faction.DetectedList.NearbyType);
+					SearcherAPI.OnNearbySearching(faction.DetectedList.NearbyList);
 				}
 			}
 		}

@@ -17,6 +17,7 @@ public partial class OperationObject : MonoBehaviour  // Main
 	public int OperationID => operationID;
 	public string TeamName => teamName;
 	public int FactionID => factionID;
+	public Faction Faction => FactionAPI.ID2Faction(FactionID);
 	public float OperationRadius => operationRadius;
 	internal void Awake()
 	{
@@ -39,9 +40,6 @@ public partial class OperationObject : MonoBehaviour  // Main
 		InitMovement();
 		InitNearby();
 		InitFSM();
-
-		var faction = FactionAPI.ID2Faction(FactionID);
-		faction.AddOperation(this);
 	}
 	partial void InitOrganization(in List<int> unitList);
 	partial void InitMovement();
@@ -119,15 +117,31 @@ public partial class OperationObject : IStrategyMonoElement, IStrategyElementDes
 	int IStrategyElement.ID { get => operationID; set => operationID = value; }
 	void IStrategyElement.InStrategyCollector()
 	{
+		if (FactionID >= 0)
+		{
+			Faction.AddOperation(this);
+		}
 	}
 	void IStrategyElement.OutStrategyCollector()
 	{
+		if (FactionID >= 0)
+		{
+			Faction.RemoveOperation(this);
+		}
 	}
 	void IStrategyStartGame.OnStartGame()
 	{
+		if(FactionID >=0)
+		{
+			Faction.AddOperation(this);
+		}
 	}
 	void IStrategyStartGame.OnStopGame()
 	{
+		if (FactionID >= 0)
+		{
+			Faction.RemoveOperation(this);
+		}
 	}
 
 	public IStrategyElementDestroyer ThisDestroyer => this;

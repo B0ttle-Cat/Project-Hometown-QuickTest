@@ -58,6 +58,8 @@ namespace GameUI
 		public virtual void Add(T item)
 		{
 			Items.Add(item);
+
+			Debug.Log("ADD: " + GetType().Name);
 		}
 
 		public virtual void New()

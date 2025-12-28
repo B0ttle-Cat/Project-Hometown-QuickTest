@@ -8,17 +8,21 @@
 	public void InStrategyCollector()
 	{
 		instanceData.SetElementID(in unitElementID);
+		if(FactionID >=0) Faction.AddUnit(this);
 	}
 
 	public void OutStrategyCollector()
 	{
+		if (FactionID >= 0) Faction.RemoveUnit(this);
 	}
 
 	void IStrategyStartGame.OnStartGame()
 	{
+		if (FactionID >= 0) Faction.AddUnit(this);
 	}
 	void IStrategyStartGame.OnStopGame()
 	{
+		if (FactionID >= 0) Faction.RemoveUnit(this);
 	}
 }
 

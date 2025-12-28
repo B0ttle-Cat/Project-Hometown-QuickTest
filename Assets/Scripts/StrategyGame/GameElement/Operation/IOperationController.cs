@@ -1,4 +1,4 @@
-﻿public interface IOperationController
+﻿public interface IOperationController : IStrategyElement
 {
 	OperationObject This { get; }
     IOperationController ThisController => This;

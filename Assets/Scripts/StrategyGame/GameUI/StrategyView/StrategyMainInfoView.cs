@@ -96,7 +96,6 @@ public partial class StrategyMainInfoView // ScenarioView
 
 		public override void Dispose()
 		{
-			throw new NotImplementedException();
 		}
 
 		protected override void UpdateView<T>(T data) where T : class

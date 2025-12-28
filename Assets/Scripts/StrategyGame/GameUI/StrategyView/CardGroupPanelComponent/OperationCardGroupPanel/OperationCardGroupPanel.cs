@@ -9,7 +9,7 @@ public class OperationCardGroupPanel : CardGroupPanelComponent
 		Faction playerFaction = FactionAPI.ID2Faction(StrategyManager.PlayerFactionID);
 		if (playerFaction != null)
 		{
-			playerFaction.RemoveChangeCaptured(OnChangeCaptured);
+			playerFaction.RemoveChangeCaptured(OnChangeValue);
 		}
 		int length = Count;
 		for (int i = 0 ; i < length ; i++)
@@ -23,7 +23,8 @@ public class OperationCardGroupPanel : CardGroupPanelComponent
 		Faction playerFaction = FactionAPI.ID2Faction(StrategyManager.PlayerFactionID);
 		if (playerFaction != null)
 		{
-			playerFaction.AddChangeCaptured(OnChangeCaptured);
+			playerFaction.AddChangeOperation(OnChangeValue, false);
+			InitCardList<OperationObject>(playerFaction.OperationList.CardUIList);
 		}
 
 		int length = Count;
@@ -33,18 +34,18 @@ public class OperationCardGroupPanel : CardGroupPanelComponent
 		}
 	}
 
-	private void OnChangeCaptured(IStrategyElement element, bool added)
+	private void OnChangeValue(IStrategyElement element, bool added)
 	{
-		if (element is not SectorObject sector) return;
+		if (element is not OperationObject item) return;
 
 		if (added)
 		{
-			this.Add(sector);
+			this.AddPoolData(item);
 
 		}
 		else
 		{
-			this.Remove(sector);
+			this.RemovePoolData(item);
 		}
 	}
 	protected override CardPanel CardFactory<T>(GameObject newUIObject, T item) where T : class

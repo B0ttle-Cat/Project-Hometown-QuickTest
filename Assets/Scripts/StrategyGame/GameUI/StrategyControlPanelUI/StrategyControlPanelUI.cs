@@ -28,11 +28,11 @@ public partial class StrategyControlPanelUI : MonoBehaviour, IGamePanelUI, IView
 	}
 	void IStrategyStartGame.OnStartGame()
 	{
-		CloseUI();
+		//CloseUI();
 	}
 	void IStrategyStartGame.OnStopGame()
 	{
-		CloseUI();
+		//CloseUI();
 	}
 }
 

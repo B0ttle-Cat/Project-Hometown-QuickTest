@@ -614,7 +614,7 @@ public partial class StrategyGamePlayData // StatsValue
 			}
 		}
 	}
-	public interface IStatsValueControl
+	public interface IStatsValueControl : IStrategyElement
 	{
 		// 데이터 저장소 접근을 위한 속성
 		public IStatsValueControl StatsValue { get; }
