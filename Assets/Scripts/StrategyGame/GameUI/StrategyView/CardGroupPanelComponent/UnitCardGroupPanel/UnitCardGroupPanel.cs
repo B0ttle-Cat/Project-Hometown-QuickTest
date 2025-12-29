@@ -12,11 +12,7 @@ public class UnitCardGroupPanel : CardGroupPanelComponent
 		{
 			playerFaction.RemoveChangeCaptured(OnChangeValue);
 		}
-		int length = Count;
-		for (int i = 0 ; i < length ; i++)
-		{
-			this[i].Hide();
-		}
+		base.Hide();
 	}
 
 	protected override void Show()
@@ -27,12 +23,7 @@ public class UnitCardGroupPanel : CardGroupPanelComponent
 			playerFaction.AddChangeUnit(OnChangeValue);
 			InitCardList<UnitObject>(playerFaction.UnitList.CardUIType);
 		}
-
-		int length = Count;
-		for (int i = 0 ; i < length ; i++)
-		{
-			this[i].Show();
-		}
+		base.Show();
 	}
 
 	private void OnChangeValue(IStrategyElement element, bool added)
@@ -94,7 +85,7 @@ public class UnitCardGroupPanel : CardGroupPanelComponent
 			}
 		}
 
-		protected override void ChangeUI()
+		protected override void UpdateUI()
 		{
 			if (cardUIObjectView.IsNotNullRef())
 			{

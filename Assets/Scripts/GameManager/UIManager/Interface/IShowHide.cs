@@ -18,7 +18,7 @@ namespace GameUI
 			{
 				return;
 			}
-			ShowHideController.OnShow(this, awaitCallback);
+			ShowHideController.OnShow(ThisShowHide, awaitCallback);
 		}
 		void OnHide(Action awaitCallback = null)
 		{
@@ -26,7 +26,7 @@ namespace GameUI
 			{
 				return;
 			}
-			ShowHideController.OnHide(this, awaitCallback);
+			ShowHideController.OnHide(ThisShowHide, awaitCallback);
 		}
 
 		[Obsolete("특수한 경우가 아니면, 이 메서드를 직접 호출하지 말것")]
@@ -40,7 +40,7 @@ namespace GameUI
 			{
 				if (ShowHideController.IsNullRef()) return;
 			}
-			ShowHideController.OnShowImmediate(this);
+			ShowHideController.OnShowImmediate(ThisShowHide);
 		}
 		void OnHideImmediate()
 		{
@@ -48,7 +48,7 @@ namespace GameUI
 			{
 				if (ShowHideController.IsNullRef()) return;
 			}
-			ShowHideController.OnHideImmediate(this);
+			ShowHideController.OnHideImmediate(ThisShowHide);
 		}
 
 		void PairingShowHide() => ShowHideController.PairingShowHide(this);

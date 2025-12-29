@@ -38,6 +38,27 @@ namespace GameUI
 		[HideInEditorMode]
 		protected Stack<CardPanel> PoolStack;
 
+		protected override void Hide()
+		{
+			int length = Count;
+			for (int i = 0 ; i < length ; i++)
+			{
+				this[i].ThisShowHide.OnHide();
+			}
+			Clear();
+		}
+
+		protected override void Show()
+		{
+			int length = Count;
+			for (int i = 0 ; i < length ; i++)
+			{
+				this[i].ThisShowHide.OnShow();
+			}
+		}
+
+
+
 		[Serializable]
 		public abstract class CardPanel : IPanelItem, IShowHide, IDisposable
 		{
@@ -47,12 +68,12 @@ namespace GameUI
 			public abstract IShowHide ThisShowHide { get; }
 			public abstract bool IsShow { get; set; }
 
-			public abstract void Hide();
-			public abstract void Show();
+			void IShowHide.Hide(){}
+			void IShowHide.Show(){}
 			public abstract void Dispose();
 			public abstract void OnRelease();
 			public abstract void OnAttach();
-			public abstract void OnChange();
+			public abstract void OnUpdateUI();
 			public abstract void OnClear();
 		}
 		public abstract class CardPanel<T> : CardPanel, IPanelItem, IShowHide, IDisposable
@@ -63,7 +84,7 @@ namespace GameUI
 			public override RectTransform ThisRect => panelItem.ThisRect;
 			public override GameUIController RootUI => panelItem.RootUI;
 			public override IShowHide ThisShowHide => this;
-			public override bool IsShow { get; set; }
+			public override bool IsShow { get; set; }		    
 			[SerializeField, ReadOnly]
 			protected T item;
 			public CardPanel(GameObject thisObject, T item = null)
@@ -86,6 +107,8 @@ namespace GameUI
 			}
 			public override void Dispose()
 			{
+				if (panelItem.IsNullRef()) return;
+
 				ThisShowHide.UnpairingShowHide();
 				OnClear();
 
@@ -96,17 +119,13 @@ namespace GameUI
 				panelItem = null;
 				item = null;
 			}
-			public override void Hide()
-			{
-			}
-			public override void Show()
-			{
-			}
+			void IShowHide.Hide() { }
+			void IShowHide.Show() { }
 			public void OnUpdateUI(T item)
 			{
 				if (this.item == item)
 				{
-					OnChange();
+					OnUpdateUI();
 					return;
 				}
 				else
@@ -120,7 +139,7 @@ namespace GameUI
 					{
 						OnAttach();
 					}
-					OnChange();
+					OnUpdateUI();
 				}
 			}
 			public override void OnRelease()
@@ -142,14 +161,14 @@ namespace GameUI
 				}
 				AttachUI();
 			}
-			public override void OnChange()
+			public override void OnUpdateUI()
 			{
 				if (item.IsNullRef())
 				{
 					OnClear();
 					return;
 				}
-				ChangeUI();
+				UpdateUI();
 			}
 			public override void OnClear()
 			{
@@ -164,15 +183,16 @@ namespace GameUI
 			}
 			protected abstract void ReleaseUI();
 			protected abstract void AttachUI();
-			protected abstract void ChangeUI();
+			protected abstract void UpdateUI();
 			protected abstract void ClearUI();
 		}
 		protected abstract CardPanel CardFactory<T>(GameObject newUIObject, T item) where T : class, ICardUIObject;
+		
 		protected void InitCardList<T>(IEnumerable<ICardUIObject> cardElements) where T : class, ICardUIObject
 		{
 			Clear();
 
-			if (PoolingData.IsNullRef())
+			if (PoolingData.IsNotNullRef())
 			{
 				PoolingData.SetData<T>(cardElements);
 				return;
@@ -186,7 +206,7 @@ namespace GameUI
 		}
 		public virtual void AddPoolData<T>(T item) where T : class, ICardUIObject
 		{
-			if (PoolingData.IsNullRef())
+			if (PoolingData.IsNotNullRef())
 			{
 				PoolingData.AddData<T>(item);
 				return;
@@ -195,13 +215,14 @@ namespace GameUI
 		}
 		public virtual void RemovePoolData<T>(T item) where T : class, ICardUIObject
 		{
-			if (PoolingData.IsNullRef())
+			if (PoolingData.IsNotNullRef())
 			{
 				PoolingData.RemoveData<T>(item);
 				return;
 			}
 			RemoveItem<T>(item);
 		}
+
 
 		public virtual void AddItem<T>(T item, bool addLast = true) where T : class, ICardUIObject
 		{
@@ -246,28 +267,6 @@ namespace GameUI
 			}
 
 		}
-		public override void Add(CardPanel item)
-		{
-			if (item == null) return;
-			base.Add(item);
-			item.OnChange();
-		}
-		public override void Insert(int index, CardPanel item)
-		{
-			if (item == null) return;
-			base.Insert(index, item);
-			item.OnChange();
-		}
-		public override void Clear()
-		{
-			int length = Count;
-			for (int i = 0 ; i < length ; i++)
-			{
-				Remove(this[i]);
-			}
-			if (PoolStack != null) PoolStack.Clear();
-			base.Clear();
-		}
 		public virtual bool RemoveItem<T>(T item) where T : class, ICardUIObject
 		{
 			int length = Count;
@@ -280,9 +279,32 @@ namespace GameUI
 			}
 			return false;
 		}
+
+		public override void Add(CardPanel item)
+		{
+			if (item == null) return;
+			Items.Add(item);
+			item.OnUpdateUI();
+		}
+		public override void Insert(int index, CardPanel item)
+		{
+			if (item == null) return;
+			Items.Insert(index, item);
+			item.OnUpdateUI();
+		}
+		public override void Clear()
+		{
+			int length = Count;
+			for (int i = 0 ; i < length ; i++)
+			{
+				Remove(this[i]);
+			}
+			if (PoolStack != null) PoolStack.Clear();
+			Items.Clear();
+		}
 		public override bool Remove(CardPanel item)
 		{
-			if (base.Remove(item))
+			if (Items.Remove(item))
 			{
 				if (item.IsNotNullRef())
 				{
@@ -318,10 +340,6 @@ namespace GameUI
 				}
 			}
 			return false;
-		}
-		public override bool Contains(CardPanel item)
-		{
-			return base.Contains(item);
 		}
 
 		public Rect GetCardRect()

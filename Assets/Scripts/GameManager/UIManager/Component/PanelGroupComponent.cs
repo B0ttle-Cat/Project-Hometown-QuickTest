@@ -18,7 +18,7 @@ namespace GameUI
 		[HideIf("@true")]
 		private List<T> items;
 		[ShowInInspector]
-		private List<T> Items
+		protected List<T> Items
 		{
 			get { if (items == null) New(); return items; }
 			set { items = value; }
@@ -58,8 +58,6 @@ namespace GameUI
 		public virtual void Add(T item)
 		{
 			Items.Add(item);
-
-			Debug.Log("ADD: " + GetType().Name);
 		}
 
 		public virtual void New()
