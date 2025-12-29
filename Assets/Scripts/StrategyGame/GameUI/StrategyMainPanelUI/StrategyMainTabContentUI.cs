@@ -7,11 +7,11 @@
 //    [SerializeField]
 //    private CanvasGroupUI[] panels;
 
-//    protected override void Hide()
+//    protected override void EndedHide()
 //    {
 //    }
 
-//    protected override void Show()
+//    protected override void EndedShow()
 //    {
 //    }
 

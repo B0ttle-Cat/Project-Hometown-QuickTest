@@ -45,15 +45,6 @@ public partial class StrategyMainInfoView : PanelGroupComponent<MainInfoView>
 			InitSubMissions();
 		}
 	}
-	protected override void Hide()
-	{
-
-	}
-	protected override void Show()
-	{
-
-	}
-
 	partial void InitMainScenario();
 	partial void InitMainMission();
 	partial void InitSubMissions();
@@ -115,7 +106,7 @@ public partial class StrategyMainInfoView // ScenarioView
 }
 #endregion
 
-#region ScenarioView
+#region MainMission
 public partial class StrategyMainInfoView // MainMission
 {
 	[Serializable]

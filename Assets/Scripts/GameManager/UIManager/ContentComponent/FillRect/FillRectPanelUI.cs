@@ -10,7 +10,7 @@ using UnityEngine.UI;
 
 namespace GameUI
 {
-	public class FillRectPanelUI : PanelItemComponent, IFillItem
+	public class FillRectPanelUI : PanelItemComponent, IFillItem, IShowHideAsync
 	{
 		#region Ref Value
 		[SerializeField, FoldoutGroup("FillRext")]
@@ -146,13 +146,6 @@ namespace GameUI
 			if (transform.childCount < 3) return;
 			textUI = transform.GetChild(2).GetComponent<TMP_Text>();
 		}
-		protected override void Hide()
-		{
-		}
-		protected override void Show()
-		{
-		}
-
 		public void ChangeShowMaskRect()
 		{
 			if (showMaskRect.IsNullRef()) return;

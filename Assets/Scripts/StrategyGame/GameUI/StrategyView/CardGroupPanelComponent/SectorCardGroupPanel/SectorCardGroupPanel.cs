@@ -3,20 +3,20 @@
 using UnityEngine;
 
 
-public class SectorCardGroupPanel : CardGroupPanelComponent
+public class SectorCardGroupPanel : CardGroupPanelComponent, IShowHideAsync
 {
 
-	protected override void Hide()
+	void IShowHide.EndedHide()
 	{
 		Faction playerFaction = FactionAPI.ID2Faction(StrategyManager.PlayerFactionID);
 		if (playerFaction != null)
 		{
 			playerFaction.RemoveChangeCaptured(OnChangeValue);
 		}
-		base.Hide();
+		AllHideAndClear();
 	}
 
-	protected override void Show()
+	void IShowHide.StartShow()
 	{
 		Faction playerFaction = FactionAPI.ID2Faction(StrategyManager.PlayerFactionID);
 		if (playerFaction != null)
@@ -24,7 +24,7 @@ public class SectorCardGroupPanel : CardGroupPanelComponent
 			playerFaction.AddChangeCaptured(OnChangeValue, false);
 			InitCardList<SectorObject>(playerFaction.CapturedList.CardUIList);
 		}
-		base.Show();
+		AllShow();
 	}
 
 	private void OnChangeValue(IStrategyElement element, bool added)
@@ -82,7 +82,7 @@ public class SectorCardGroupPanel : CardGroupPanelComponent
 		{
 			if (cardUIObjectView.IsNotNullRef())
 			{
-				cardUIObjectView.Attach(item);
+				cardUIObjectView.Attach(Item);
 			}
 		}
 

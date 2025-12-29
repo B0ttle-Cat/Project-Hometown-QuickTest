@@ -13,14 +13,6 @@ public class OperationCardItemPanel : KeyPairPanelItemComponent
 		operationCard = operationObject;
 	}
 
-	protected override void Hide()
-	{
-	}
-
-	protected override void Show()
-	{
-	}
-
 	internal void Attach(IOperationCardUIObject item)
 	{
 		operationCard = item;

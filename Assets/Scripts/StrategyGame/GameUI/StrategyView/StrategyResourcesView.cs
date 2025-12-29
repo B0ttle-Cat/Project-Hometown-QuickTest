@@ -4,7 +4,7 @@ using UnityEngine;
 
 using static StrategyGamePlayData;
 
-public class StrategyResourcesView : PanelItemComponent
+public class StrategyResourcesView : PanelItemComponent, IShowHideAsync
 {
 	private ISupplyStats supplyTarget;
 
@@ -41,7 +41,7 @@ public class StrategyResourcesView : PanelItemComponent
 		}
 	}
 
-	protected override void Hide()
+	void IShowHide.EndedHide()
 	{
 		if (personnelShowHide.IsNullRef())
 			personnelShowHide = personnel.GetComponent<IShowHide>();
@@ -59,7 +59,7 @@ public class StrategyResourcesView : PanelItemComponent
 			electricShowHide.OnHide();
 	}
 
-	protected override void Show()
+	void IShowHide.StartShow()
 	{
 		if (personnelShowHide.IsNullRef())
 			personnelShowHide = personnel.GetComponent<IShowHide>();

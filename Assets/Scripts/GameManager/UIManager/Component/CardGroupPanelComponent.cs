@@ -10,7 +10,7 @@ namespace GameUI
 {
 
 
-	public abstract class CardGroupPanelComponent : PanelGroupComponent<CardGroupPanelComponent.CardPanel>
+	public abstract class CardGroupPanelComponent : PanelGroupComponent<CardGroupPanelComponent.CardPanel>, IShowHideAsync
 	{
 		[SerializeField, Required]
 		protected RectTransform CardPrefab;
@@ -38,7 +38,7 @@ namespace GameUI
 		[HideInEditorMode]
 		protected Stack<CardPanel> PoolStack;
 
-		protected override void Hide()
+		protected void AllHideAndClear()
 		{
 			int length = Count;
 			for (int i = 0 ; i < length ; i++)
@@ -48,7 +48,7 @@ namespace GameUI
 			Clear();
 		}
 
-		protected override void Show()
+		protected void AllShow()
 		{
 			int length = Count;
 			for (int i = 0 ; i < length ; i++)
@@ -67,9 +67,6 @@ namespace GameUI
 			public abstract RectTransform ThisRect { get; }
 			public abstract IShowHide ThisShowHide { get; }
 			public abstract bool IsShow { get; set; }
-
-			void IShowHide.Hide(){}
-			void IShowHide.Show(){}
 			public abstract void Dispose();
 			public abstract void OnRelease();
 			public abstract void OnAttach();
@@ -84,10 +81,11 @@ namespace GameUI
 			public override RectTransform ThisRect => panelItem.ThisRect;
 			public override GameUIController RootUI => panelItem.RootUI;
 			public override IShowHide ThisShowHide => this;
-			public override bool IsShow { get; set; }		    
-			[SerializeField, ReadOnly]
-			protected T item;
-			public CardPanel(GameObject thisObject, T item = null)
+			public override bool IsShow { get; set; }
+            [ShowInInspector]
+            public T Item { get ; private set; }
+
+            public CardPanel(GameObject thisObject, T item = null)
 			{
 				panelItem = thisObject.GetComponent<IPanelItem>();
 				ThisShowHide.PairingShowHide();
@@ -117,25 +115,23 @@ namespace GameUI
 					Destroy(ThisPanel.ThisRect.gameObject);
 				}
 				panelItem = null;
-				item = null;
+				Item = null;
 			}
-			void IShowHide.Hide() { }
-			void IShowHide.Show() { }
 			public void OnUpdateUI(T item)
 			{
-				if (this.item == item)
+				if (this.Item == item)
 				{
 					OnUpdateUI();
 					return;
 				}
 				else
 				{
-					if (this.item.IsNotNullRef())
+					if (this.Item.IsNotNullRef())
 					{
 						OnRelease();
 					}
-					this.item = item;
-					if (this.item.IsNotNullRef())
+					this.Item = item;
+					if (this.Item.IsNotNullRef())
 					{
 						OnAttach();
 					}
@@ -144,26 +140,26 @@ namespace GameUI
 			}
 			public override void OnRelease()
 			{
-				if (item.IsNullRef())
+				if (Item.IsNullRef())
 				{
-					item = null;
+					Item = null;
 					return;
 				}
 				ReleaseUI();
-				item = null;
+				Item = null;
 			}
 			public override void OnAttach()
 			{
-				if (item.IsNullRef())
+				if (Item.IsNullRef())
 				{
-					item = null;
+					Item = null;
 					return;
 				}
 				AttachUI();
 			}
 			public override void OnUpdateUI()
 			{
-				if (item.IsNullRef())
+				if (Item.IsNullRef())
 				{
 					OnClear();
 					return;
@@ -172,14 +168,14 @@ namespace GameUI
 			}
 			public override void OnClear()
 			{
-				if (item.IsNullRef())
+				if (Item.IsNullRef())
 				{
 					ClearUI();
 				}
 			}
 			internal bool Contains(T item)
 			{
-				return this.item == item;
+				return this.Item == item;
 			}
 			protected abstract void ReleaseUI();
 			protected abstract void AttachUI();
@@ -334,7 +330,9 @@ namespace GameUI
 			int length = Count;
 			for (int i = 0 ; i < length ; i++)
 			{
-				if (Contains<T>(item))
+				var panel = this[i];
+				if (panel is not CardPanel<T> tPanel) continue;
+				if(tPanel.Item == item)
 				{
 					return true;
 				}

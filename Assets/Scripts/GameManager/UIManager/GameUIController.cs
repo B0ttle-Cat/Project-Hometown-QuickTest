@@ -207,9 +207,11 @@ namespace GameUI
 						tokenSource = new CancellationTokenSource();
 						pairingToken.Add(thisRect, tokenSource);
 					}
-					async.Add(showHideAsync.Show);
+					async.Add(showHideAsync.AsyncShow);
 				}
-				sync.Add(item.Show);
+				sync.Add(item.EndedShow);
+
+				item.StartShow();
 			}
 
 			ShowHideExecute(thisRect, tokenSource, async, sync, awaitCallback);
@@ -246,9 +248,11 @@ namespace GameUI
 						tokenSource = new CancellationTokenSource();
 						pairingToken.Add(thisRect, tokenSource);
 					}
-					async.Add(showHideAsync.Hide);
+					async.Add(showHideAsync.AsyncHide);
 				}
-				sync.Add(item.Hide);
+				sync.Add(item.EndedHide);
+
+				item.StartHide();
 			}
 
 			ShowHideExecute(thisRect, tokenSource, async, sync, awaitCallback);
@@ -274,7 +278,7 @@ namespace GameUI
 			{
 				if (item.IsShow) continue;
 				item.IsShow = true;
-				item.Show();
+				item.EndedShow();
 			}
 		}
 		void IShowHideController.OnHideImmediate(IShowHide showHide)
@@ -298,7 +302,7 @@ namespace GameUI
 			{
 				if (item.IsHide) continue;
 				item.IsHide = true;
-				item.Hide();
+				item.EndedHide();
 			}
 		}
 #pragma warning restore CS0618 // 형식 또는 멤버는 사용되지 않습니다.
@@ -371,7 +375,7 @@ namespace GameUI
 				}
 				catch (OperationCanceledException)
 				{
-					Debug.Log("Show Async가 취소됨");
+					Debug.Log("EndedShow Async가 취소됨");
 				}
 				catch (Exception ex)
 				{

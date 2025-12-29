@@ -7,7 +7,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class StrategyMainTabButtonUI : TabButtonGroup
+public class StrategyMainTabButtonUI : TabButtonGroup, IShowHideAsync
 {
 	[Serializable]
 	public class ItemPair
@@ -28,9 +28,9 @@ public class StrategyMainTabButtonUI : TabButtonGroup
 	[SerializeField, HideInPlayMode]
 
 	private ItemPair[] initItemPairs;
-
-	protected override void Show()
+	void IShowHide.StartShow()
 	{
+		canvasGroupUI.ThisShowHide.OnShow();
 		int length = initItemPairs.Length;
 
 		for (int i = 0 ; i < length ; i++)
@@ -40,10 +40,11 @@ public class StrategyMainTabButtonUI : TabButtonGroup
 			this.Add(newButton);
 		}
 	}
-
-	protected override void Hide()
+	void IShowHide.EndedHide()
 	{
+		canvasGroupUI.ThisShowHide.OnHide();
 		this.Clear();
+
 	}
 
 	[Serializable]

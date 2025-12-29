@@ -14,14 +14,6 @@ public class SectorCardItemPanel : KeyPairPanelItemComponent
 		sectorCard = sectorObject;
 	}
 
-	protected override void Hide()
-	{
-	}
-
-	protected override void Show()
-	{
-	}
-
 	internal void Attach(ISectorCardUIObject item)
 	{
 		sectorCard = item;

@@ -30,9 +30,13 @@ namespace GameUI
 		}
 
 		[Obsolete("특수한 경우가 아니면, 이 메서드를 직접 호출하지 말것")]
-		void Show();
+		void StartShow() { }
 		[Obsolete("특수한 경우가 아니면, 이 메서드를 직접 호출하지 말것")]
-		void Hide();
+		void StartHide() { }
+		[Obsolete("특수한 경우가 아니면, 이 메서드를 직접 호출하지 말것")]
+		void EndedShow() { }
+		[Obsolete("특수한 경우가 아니면, 이 메서드를 직접 호출하지 말것")]
+		void EndedHide() { }
 
 		void OnShowImmediate()
 		{
@@ -57,9 +61,9 @@ namespace GameUI
 	public interface IShowHideAsync : IShowHide
 	{
 		[Obsolete("특수한 경우가 아니면, 이 메서드를 직접 호출하지 말것")]
-		Awaitable Show(CancellationToken cancellationToken);
+		async Awaitable AsyncShow(CancellationToken cancellationToken) { }
 		[Obsolete("특수한 경우가 아니면, 이 메서드를 직접 호출하지 말것")]
-		Awaitable Hide(CancellationToken cancellationToken);
+		async Awaitable AsyncHide(CancellationToken cancellationToken) { }
 	}
 #pragma warning restore CS0618 // 형식 또는 멤버는 사용되지 않습니다.
 }

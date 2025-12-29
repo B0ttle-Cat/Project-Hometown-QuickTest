@@ -12,7 +12,7 @@ using static GameUI.FillRectPanelUI;
 
 namespace GameUI
 {
-	public class FillRectMultiPanelUI : PanelGroupComponent<FillRectMultiItem>, IFillGroup
+	public class FillRectMultiPanelUI : PanelGroupComponent<FillRectMultiItem>, IFillGroup, IShowHideAsync
 	{
 		[BoxGroup("Text"), PropertyOrder(2), SerializeField]
 		protected TMP_Text textUI;
@@ -185,12 +185,6 @@ namespace GameUI
 			}
 		}
 
-		protected override void Hide()
-		{
-		}
-		protected override void Show()
-		{
-		}
 		[HideReferenceObjectPicker, Serializable]
 		public class FillRectMultiItem : IPanelItem, IDisposable
 		{

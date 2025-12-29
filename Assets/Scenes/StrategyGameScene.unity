@@ -172,7 +172,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: GameUI::CanvasGroupUI
   AlphaOnOffValue: {x: 0, y: 1}
-  changeTime: 0
+  changeTime: 0.1
   timeMode: 0
   controlInteractable: 0
   interactableOnAlpha: 0
@@ -393,7 +393,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: GameUI::CanvasGroupUI
   AlphaOnOffValue: {x: 0, y: 1}
-  changeTime: 0
+  changeTime: 0.1
   timeMode: 0
   controlInteractable: 0
   interactableOnAlpha: 0
@@ -4549,7 +4549,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 122672814}
   m_HandleRect: {fileID: 122672813}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0.99999964
   m_Size: 0.5124801
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -7175,7 +7175,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: GameUI::CanvasGroupUI
   AlphaOnOffValue: {x: 0, y: 1}
-  changeTime: 0
+  changeTime: 0.1
   timeMode: 0
   controlInteractable: 0
   interactableOnAlpha: 0
@@ -8404,7 +8404,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: GameUI::CanvasGroupUI
   AlphaOnOffValue: {x: 0, y: 1}
-  changeTime: 0
+  changeTime: 0.1
   timeMode: 0
   controlInteractable: 0
   interactableOnAlpha: 0
@@ -9404,7 +9404,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: GameUI::CanvasGroupUI
   AlphaOnOffValue: {x: 0, y: 1}
-  changeTime: 0
+  changeTime: 0.1
   timeMode: 0
   controlInteractable: 0
   interactableOnAlpha: 0

@@ -9,7 +9,7 @@ namespace GameUI
 {
 	[RequireComponent(typeof(ToggleGroup))]
 	[RequireComponent(typeof(CanvasGroupUI))]
-	public abstract class TabButtonGroup : PanelGroupComponent<TabButtonGroup.TabButton>
+	public abstract class TabButtonGroup : PanelGroupComponent<TabButtonGroup.TabButton> , IShowHideAsync
 	{
 		[SerializeField, HorizontalGroup, PropertyOrder(-99)]
 		protected ToggleGroup toggleGroup;
@@ -67,11 +67,11 @@ namespace GameUI
 			base.Clear();
 		}
 
-		protected override void Show()
+		void IShowHide.StartShow()
 		{
 			canvasGroupUI.ThisShowHide.OnShow();
 		}
-		protected override void Hide()
+		void IShowHide.EndedHide()
 		{
 			canvasGroupUI.ThisShowHide.OnHide();
 		}

@@ -13,13 +13,6 @@ public class UnitCardItemPanel : KeyPairPanelItemComponent
 		unitCard = operationObject;
 	}
 
-	protected override void Hide()
-	{
-	}
-
-	protected override void Show()
-	{
-	}
 
 	internal void Attach(IUnitCardUIObject item)
 	{

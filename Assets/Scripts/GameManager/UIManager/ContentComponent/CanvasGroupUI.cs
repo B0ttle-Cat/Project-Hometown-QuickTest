@@ -7,7 +7,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 
 [RequireComponent(typeof(CanvasGroup))]
-public class CanvasGroupUI : PanelItemComponent
+public class CanvasGroupUI : PanelItemComponent, IShowHideAsync
 {
 	private CanvasGroup canvasGroup;
 	public virtual CanvasGroup ThisCanvasGroup => canvasGroup.IsNotNullRef() ? canvasGroup : canvasGroup = GetComponent<CanvasGroup>();
@@ -47,7 +47,7 @@ public class CanvasGroupUI : PanelItemComponent
 	private float changeTime;
 	[SerializeField, HorizontalGroup, HideLabel, EnumToggleButtons]
 	private ChangeTimeMode timeMode;
-	public enum ChangeTimeMode { UnscaleTime = 0, DeltaTime, FixedMode,}
+	public enum ChangeTimeMode { UnscaleTime = 0, DeltaTime, FixedMode, }
 
 	[SerializeField]
 	private bool controlInteractable;
@@ -64,10 +64,10 @@ public class CanvasGroupUI : PanelItemComponent
 	private float blocksRaycastsOffAlpha;
 
 
-	protected override void Hide() { Alpha = AlphaOnOffValue.x; }
-	protected override void Show() { Alpha = AlphaOnOffValue.y; }
+	void IShowHide.EndedHide() { Alpha = AlphaOnOffValue.x; }
+	void IShowHide.EndedShow() { Alpha = AlphaOnOffValue.y; }
 
-	protected override async Awaitable Show(CancellationToken cancellationToken)
+	async Awaitable IShowHideAsync.AsyncShow(CancellationToken cancellationToken)
 	{
 		float endAlpha = AlphaOnOffValue.y;
 		float speed = GetSpeed();
@@ -80,7 +80,7 @@ public class CanvasGroupUI : PanelItemComponent
 		if (!cancellationToken.IsCancellationRequested) Alpha = endAlpha;
 	}
 
-	protected override async Awaitable Hide(CancellationToken cancellationToken)
+	async Awaitable IShowHideAsync.AsyncHide(CancellationToken cancellationToken)
 	{
 		float endAlpha = AlphaOnOffValue.x;
 		float speed = GetSpeed();

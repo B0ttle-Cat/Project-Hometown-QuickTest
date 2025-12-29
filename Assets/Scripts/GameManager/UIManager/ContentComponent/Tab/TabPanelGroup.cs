@@ -47,11 +47,11 @@
 //				ThisShowHide.PairingShowHide();
 //			}
 
-//			void IShowHide.Show()=> Show();
-//			void IShowHide.Hide()=> Hide();
+//			void IShowHide.EndedShow()=> EndedShow();
+//			void IShowHide.EndedHide()=> EndedHide();
 
-//			protected virtual void Show() { }
-//			protected virtual void Hide() { }
+//			protected virtual void EndedShow() { }
+//			protected virtual void EndedHide() { }
 //			public virtual void Dispose() 
 //			{
 //				ThisShowHide.UnpairingShowHide();

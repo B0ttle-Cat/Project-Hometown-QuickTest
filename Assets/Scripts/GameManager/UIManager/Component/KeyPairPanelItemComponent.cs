@@ -32,15 +32,6 @@ namespace GameUI
 			catch { }
 		}
 
-        protected override void Show()
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void Hide()
-        {
-            throw new NotImplementedException();
-        }
 
         [Serializable]
 		private class CopyKeyPairObjectData
