@@ -1,6 +1,5 @@
 ﻿using System;
 
-
 using Sirenix.OdinInspector;
 
 using TMPro;
@@ -17,6 +16,8 @@ namespace GameUI
 		private RectTransform showMaskRect;
 		[SerializeField, FoldoutGroup("Image")]
 		private Image fillImage;
+		[SerializeField, FoldoutGroup("Image"),PropertyOrder(10)]
+		private Image backgroundFillImage;
 		[SerializeField, FoldoutGroup("Text")]
 		private TMP_Text textUI;
 		private RectTransform textRect;
@@ -102,6 +103,12 @@ namespace GameUI
 		}
 
 		[ShowInInspector, BoxGroup("Image/Value", ShowLabel = false, VisibleIf = "@fillImage != null")]
+		public Sprite FillSprite
+		{
+			get => fillImage == null ? null : fillImage.sprite;
+			set { if (fillImage == null) return; else fillImage.sprite = value; ApplyBackgroundImage(); }
+		}
+		[ShowInInspector, BoxGroup("Image/Value")]
 		[ColorUsage(false)]
 		public Color FillColor
 		{
@@ -109,7 +116,7 @@ namespace GameUI
 			set { if (fillImage == null) return; else fillImage.color = value; }
 		}
 		[ShowInInspector, BoxGroup("Image/Value")]
-		[Range(0, 1)]
+		[Range(0f,1f)]
 		public float FillAlpha
 		{
 			get => fillImage == null ? 0 : fillImage.color.a;
@@ -126,16 +133,33 @@ namespace GameUI
 		}
 
 		[ShowInInspector, BoxGroup("Image/Value")]
-		public Sprite FillSprite
-		{
-			get => fillImage == null ? null : fillImage.sprite;
-			set { if (fillImage == null) return; else fillImage.sprite = value; }
-		}
-		[ShowInInspector, BoxGroup("Image/Value")]
 		public float PixelsPerUnitMultiplier
 		{
 			get => fillImage == null ? 1 : fillImage.pixelsPerUnitMultiplier;
-			set { if (fillImage == null) return; else fillImage.pixelsPerUnitMultiplier = value; }
+			set { if (fillImage == null) return; else fillImage.pixelsPerUnitMultiplier = value; ApplyBackgroundImage(); }
+		}
+		[ShowInInspector, BoxGroup("Image/Background", ShowLabel = false, VisibleIf = "@backgroundFillImage != null", Order = 11)]
+		[ColorUsage(false)]
+		public Color BGFillColor
+		{
+			get => backgroundFillImage == null ? Color.clear : backgroundFillImage.color;
+			set { if (backgroundFillImage == null) return; else backgroundFillImage.color = value; }
+		}
+		[ShowInInspector, BoxGroup("Image/Background")]
+		[Range(0f, 1f)]
+		public float BGFillAlpha
+		{
+			get => backgroundFillImage == null ? 0 : backgroundFillImage.color.a;
+			set
+			{
+				if (backgroundFillImage == null) return;
+				else
+				{
+					Color color = backgroundFillImage.color;
+					color.a = value;
+					backgroundFillImage.color = color;
+				}
+			}
 		}
 		#endregion
 		private void Reset()
@@ -310,6 +334,14 @@ namespace GameUI
 				FloatToIntType.CeilToInt => Mathf.CeilToInt(value),
 				_ => (int)value,
 			};
+		}
+
+
+		private void ApplyBackgroundImage()
+		{
+			if (backgroundFillImage.IsNullRef()) return;
+			backgroundFillImage.sprite = fillImage.sprite;
+			backgroundFillImage.pixelsPerUnitMultiplier = fillImage.pixelsPerUnitMultiplier;
 		}
 	}
 }

@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 97fe0319f1fc73b43a9b0fa05370679b
+guid: 89a7b0ca467b2cc4a8df0acbd4829b22
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -69,7 +69,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 256
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -97,7 +97,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: material
+      name: level0
       rect:
         serializedVersion: 2
         x: 0
@@ -112,14 +112,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 26d3d9f15215ffb4889c4a5a671af2e6
-      internalID: 1328324774
+      spriteID: c00d96acf6b83ec41b957ffcfae27cca
+      internalID: 443272321
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: sector
+      name: level1
       rect:
         serializedVersion: 2
         x: 584
@@ -134,14 +134,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 87fcedec06c9bc34eb80d1a3213809ec
-      internalID: 1808607100
+      spriteID: c5fa42348119ed443a18d2664970929e
+      internalID: -730347313
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: personnel
+      name: level2
       rect:
         serializedVersion: 2
         x: 0
@@ -156,18 +156,18 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 9ee4c6f96ede97d4ab3a8e765738f934
-      internalID: 1108103868
+      spriteID: 5dffc7bab78d98d4e8d789a153906b36
+      internalID: -1072524151
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: electric
+      name: level3
       rect:
         serializedVersion: 2
         x: 584
-        y: 0
+        y: 1
         width: 584
         height: 584
       alignment: 0
@@ -178,8 +178,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 96ba382b84636a447821c40bba9a375b
-      internalID: -1327481779
+      spriteID: ed5a87726ae30f8429a4b48d3e594912
+      internalID: -847817047
       vertices: []
       indices: 
       edges: []
@@ -188,7 +188,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: fef501abc057653488257f62cbf7fffa
+    spriteID: 847250e0e87e8c144ae98a5b862b5c19
     internalID: 0
     vertices: []
     indices: 
@@ -200,10 +200,10 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":false,"gridCellCount":{"x":2.0,"y":2.0},"gridSpriteSize":{"x":584.0,"y":584.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      electric: -1327481779
-      material: 1328324774
-      personnel: 1108103868
-      sector: 1808607100
+      level0: 443272321
+      level1: -730347313
+      level2: -1072524151
+      level3: -847817047
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

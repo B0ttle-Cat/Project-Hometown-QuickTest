@@ -184,6 +184,50 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: shield_brock
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1176
+        width: 586
+        height: 586
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dcea3859389cb4a46839bc6dba0b91b4
+      internalID: 2021880383
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shield_fill
+      rect:
+        serializedVersion: 2
+        x: 588
+        y: 1176
+        width: 586
+        height: 586
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1c710f51c0ba1f44eb142dcd482ea9b9
+      internalID: -1754850093
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -204,6 +248,8 @@ TextureImporter:
       level1: -441239362
       level2: -2118891018
       level3: -1870610559
+      shield_brock: 2021880383
+      shield_fill: -1754850093
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

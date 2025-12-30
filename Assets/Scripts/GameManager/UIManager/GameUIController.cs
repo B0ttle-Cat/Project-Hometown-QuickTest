@@ -52,7 +52,7 @@ namespace GameUI
 		}
 #endif
 		public virtual IShowStackController.GroupShowStack ShowStack { get; protected set; }
-		List<IFindUIObject.KeyPairObject> IFindUIObject.KeyPairs => keyPairs;
+		List<IFindUIObject.KeyPairObject> IFindUIObject.KeyPairs { get => keyPairs; set => keyPairs = value; }
 
 		protected virtual void Awake()
 		{

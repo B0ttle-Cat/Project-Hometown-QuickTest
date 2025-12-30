@@ -1,12 +1,22 @@
-﻿using GameUI;
+﻿using System.Collections.Generic;
+
+using GameUI;
+
+using Sirenix.OdinInspector;
 
 using TMPro;
 
+using UnityEngine;
 using UnityEngine.UI;
 
-public class OperationCardItemPanel : KeyPairPanelItemComponent
+public class OperationCardItemPanel : PanelItemComponent, IFindUIObject
 {
 	private IOperationCardUIObject operationCard;
+	public IFindUIObject ThisUIFinder => this;
+	[SerializeField, PropertyOrder(-90)] private List<IFindUIObject.KeyPairObject> keyPairs;
+	List<IFindUIObject.KeyPairObject> IFindUIObject.KeyPairs { get => keyPairs; set => keyPairs = value; }
+
+
 
 	public void SetUITarget(OperationObject operationObject)
 	{

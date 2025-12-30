@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 using Sirenix.OdinInspector;
@@ -10,8 +11,44 @@ namespace GameUI
 {
 	public interface IFindUIObject
 	{
+		/*
+	public IFindUIObject ThisUIFinder => this;
+	[SerializeField, PropertyOrder(-90)] private List<IFindUIObject.KeyPairObject> keyPairs;
+	List<IFindUIObject.KeyPairObject> IFindUIObject.KeyPairs { get => keyPairs; set => keyPairs = value; }
+		  */
+
 		IFindUIObject ThisUIFinder { get; }
-		public List<KeyPairObject> KeyPairs { get; }
+		public List<KeyPairObject> KeyPairs { get; set; }
+
+#if UNITY_EDITOR
+		[PropertyOrder(-91), ButtonGroup]
+		private void CopyKeyPairs()
+		{
+			CopyKeyPairObjectData copy = new CopyKeyPairObjectData()
+			{
+				keyPairs = KeyPairs
+			};
+			GUIUtility.systemCopyBuffer = JsonUtility.ToJson(copy);
+		}
+		[PropertyOrder(-91), ButtonGroup]
+		private void PasteKeyPairs()
+		{
+			try
+			{
+				CopyKeyPairObjectData data = JsonUtility.FromJson<CopyKeyPairObjectData>(GUIUtility.systemCopyBuffer);
+				KeyPairs = data.keyPairs.ToList();
+			}
+			catch { }
+		}
+
+
+		[Serializable]
+		private class CopyKeyPairObjectData
+		{
+			public List<IFindUIObject.KeyPairObject> keyPairs;
+		}
+#endif
+
 
 		public bool IsPathMatch(string pattern, string targetKey)
 		{
