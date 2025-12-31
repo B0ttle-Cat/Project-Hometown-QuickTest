@@ -11,11 +11,13 @@ namespace StrategyManagerModule
 		[Serializable]
 		public record SupplyRequest
 		{
+			private float thisFrameReservationPersonnel;
+			private float thisFrameReservationMaterial;
+			private float thisFrameReservationElectric;
 
 			private float reservationPersonnel;
 			private float reservationMaterial;
 			private float reservationElectric;
-
 			public SupplyRequest()
 			{
 				reservationPersonnel = 0;
@@ -35,8 +37,7 @@ namespace StrategyManagerModule
 			{
 				get => reservationElectric; set => reservationElectric = value;
 			}
-
-			public bool IsUpdateFlag() => 
+			public bool IsUpdateFlag() =>
 				reservationPersonnel >= 1
 				|| reservationMaterial >= 1
 				|| reservationElectric >= 1;
@@ -59,7 +60,7 @@ namespace StrategyManagerModule
 
 			private Dictionary<SectorObject, SupplyRequest> sectorSupplyRequest;
 			private Dictionary<Faction, SupplyRequest> factionSupplyRequest;
-	
+
 			public StrategyUpdate_ResourcesSupply(StrategyUpdate updater) : base(updater)
 			{
 			}
@@ -100,6 +101,8 @@ namespace StrategyManagerModule
 				}
 				public abstract bool IsValid();
 				public bool IsInvalid() => !IsValid();
+				public abstract bool CheclSupplyTimeUpdate(in float deltaTime);
+				public abstract void UpdateSupplyRequest(in float deltaTime);
 			}
 			public class SectorResourcesSupply : ResourcesSupply
 			{
@@ -107,6 +110,8 @@ namespace StrategyManagerModule
 				private readonly ISupplyStats supplyStats;
 				private readonly SupplyRequest supplyRequest;
 				private float watingTime;
+
+				private const float minuteCycleFactor = 1f/ 60f;
 
 				private readonly Dictionary<SectorObject, SupplyRequest> sectorSupplyRequest;
 				private readonly Dictionary<Faction, SupplyRequest> factionSupplyRequest;
@@ -141,7 +146,7 @@ namespace StrategyManagerModule
 
 					return true;
 				}
-				public bool CheclSupplyTimeUpdate(in float deltaTime)
+				public override bool CheclSupplyTimeUpdate(in float deltaTime)
 				{
 					float cycleTime = sector.StatsData.CycleTime;
 					if (cycleTime < 1f) cycleTime = 1;
@@ -154,13 +159,57 @@ namespace StrategyManagerModule
 					watingTime += deltaTime;
 					return false;
 				}
-				public void UpdateCumulativePoint(in float deltaTime)
+				public override void UpdateSupplyRequest(in float deltaTime)
 				{
 					int depthCount = sector.StatsData.DistributionDepth + sector.RuntimeData.DistributionDepth;
 
 					int recoveryPersonnel = sector.ThisStatsValue.GetStatsValue(StrategyGamePlayData.StatsType.자원_인력_회복);
 					int recoveryMaterial = sector.ThisStatsValue.GetStatsValue(StrategyGamePlayData.StatsType.자원_재료_회복);
 					int recoveryElectric = sector.ThisStatsValue.GetStatsValue(StrategyGamePlayData.StatsType.자원_전력_회복);
+
+					Faction faction = sector.CaptureFaction;
+					recoveryPersonnel += faction.ThisStatsValue.GetStatsValue(StrategyGamePlayData.StatsType.자원_인력_회복);
+					recoveryMaterial += faction.ThisStatsValue.GetStatsValue(StrategyGamePlayData.StatsType.자원_재료_회복);
+					recoveryElectric += faction.ThisStatsValue.GetStatsValue(StrategyGamePlayData.StatsType.자원_전력_회복);
+
+					var factionSupply = factionSupplyRequest[faction];
+					if (recoveryPersonnel > 0)
+					{
+						int capacity = sector.ThisStatsValue.GetStatsValue(StrategyGamePlayData.StatsType.자원_인력_최대);
+						if (capacity > 0)
+						{
+							int local= sector.ThisStatsValue.GetStatsValue(StrategyGamePlayData.StatsType.자원_인력_현재);
+							float ratio = Mathf.Clamp01((float)local / (float)capacity);
+							ratio = Mathf.Clamp01((ratio - 0.1f) * 2f);
+							supplyRequest.ReservationPersonnel = recoveryPersonnel * ratio * deltaTime * minuteCycleFactor;
+						}
+						else recoveryPersonnel = 0;
+					}
+					if (recoveryMaterial > 0)
+					{
+						int capacity = sector.ThisStatsValue.GetStatsValue(StrategyGamePlayData.StatsType.자원_재료_최대);
+						if (capacity > 0)
+						{
+							int local= sector.ThisStatsValue.GetStatsValue(StrategyGamePlayData.StatsType.자원_재료_현재);
+							float ratio = Mathf.Clamp01((float)local / (float)capacity);
+							ratio = Mathf.Clamp01((ratio - 0.1f) * 2f);
+							supplyRequest.ReservationMaterial = recoveryMaterial * ratio * deltaTime * minuteCycleFactor;
+						}
+						else recoveryPersonnel = 0;
+					}
+					if (recoveryElectric > 0)
+					{
+						int capacity= sector.ThisStatsValue.GetStatsValue(StrategyGamePlayData.StatsType.자원_전력_최대);
+						if (capacity > 0)
+						{
+							int local= sector.ThisStatsValue.GetStatsValue(StrategyGamePlayData.StatsType.자원_전력_현재);
+							float ratio = Mathf.Clamp01((float)local / (float)capacity);
+							ratio = Mathf.Clamp01((ratio - 0.1f) * 2f);
+							supplyRequest.ReservationElectric = recoveryElectric * ratio * deltaTime * minuteCycleFactor;
+						}
+						else recoveryElectric = 0;
+					}
+
 
 					if (depthCount <= 0)
 					{
@@ -183,9 +232,9 @@ namespace StrategyManagerModule
 						}
 					}
 
-					void SectorUpdateSupplyRequest(SectorObject target, in float depthfactor, in float deltaTime)
+					void SectorUpdateSupplyRequest(SectorObject target, in float depthFactor, in float deltaTime)
 					{
-						float factor = depthfactor * deltaTime * (1/60f);
+						float factor = depthFactor * deltaTime * minuteCycleFactor;
 
 						if (sectorSupplyRequest.TryGetValue(target, out var request))
 						{
@@ -193,52 +242,6 @@ namespace StrategyManagerModule
 							request.ReservationMaterial += recoveryMaterial * factor;
 							request.ReservationElectric += recoveryElectric * factor;
 						}
-					}
-				}
-				public void UpdateSectorToFaction()
-				{
-					if (!supplyRequest.IsUpdateFlag()) return;
-					var factionSupply = factionSupplyRequest[sector.CaptureFaction];
-
-					int capacityPersonnel = sector.ThisStatsValue.GetStatsValue(StrategyGamePlayData.StatsType.자원_인력_최대);
-					int localPersonnel = sector.ThisStatsValue.GetStatsValue(StrategyGamePlayData.StatsType.자원_인력_현재);
-					float sectorPersonnel = supplyRequest.ReservationPersonnel;
-					float factionPersonnel = 0f;
-					SectorToFaction(in capacityPersonnel, in localPersonnel,
-						ref sectorPersonnel, ref factionPersonnel);
-					supplyRequest.ReservationPersonnel = sectorPersonnel;
-					factionSupply.ReservationPersonnel += factionPersonnel;
-
-
-					int capacityMaterial = sector.ThisStatsValue.GetStatsValue(StrategyGamePlayData.StatsType.자원_재료_최대);
-					int localMaterial = sector.ThisStatsValue.GetStatsValue(StrategyGamePlayData.StatsType.자원_재료_현재);
-					float sectorMaterial = supplyRequest.ReservationMaterial;
-					float factionMaterial = 0f;
-					SectorToFaction(in capacityMaterial, in localMaterial,
-						ref sectorMaterial, ref factionMaterial);
-					supplyRequest.ReservationPersonnel = sectorMaterial;
-					factionSupply.ReservationPersonnel += factionMaterial;
-
-					int capacityElectric = sector.ThisStatsValue.GetStatsValue(StrategyGamePlayData.StatsType.자원_전력_최대);
-					int localElectric = sector.ThisStatsValue.GetStatsValue(StrategyGamePlayData.StatsType.자원_전력_현재);
-					float sectorElectric = supplyRequest.ReservationElectric;
-					float factionElectric = 0f;
-					SectorToFaction(in capacityElectric, in localElectric,
-						ref sectorElectric, ref factionElectric);
-					supplyRequest.ReservationPersonnel = sectorElectric;
-					factionSupply.ReservationPersonnel += factionElectric;
-
-					static void SectorToFaction(in int capacityValue, in int localValue, ref float sectorRecovery, ref float factionRecovery)
-					{
-						if (capacityValue == 0) { return; }
-						float ratio = (float)localValue / (float)capacityValue;
-						ratio = Mathf.Clamp(ratio, 0f, 0.9f);
-						if (ratio < 0.5f)
-						{
-							return;
-						}
-						factionRecovery = sectorRecovery * ratio;
-						sectorRecovery -= factionRecovery;
 					}
 				}
 				protected override void OnUpdate(in float deltaTime)
@@ -275,7 +278,14 @@ namespace StrategyManagerModule
 				protected override void OnDispose()
 				{
 				}
+				public override bool CheclSupplyTimeUpdate(in float deltaTime)
+				{
+					return true;
+				}
+				public override void UpdateSupplyRequest(in float deltaTime)
+				{
 
+				}
 				protected override void OnUpdate(in float deltaTime)
 				{
 					if (!supplyRequest.IsUpdateFlag()) return;
@@ -289,15 +299,12 @@ namespace StrategyManagerModule
 				int sectorCount = sectorList.Count;
 				int factionCount = sectorCount + factionList.Count;
 
-				for (int i = 0 ; i < sectorCount ; i++)
+				for (int i = 0 ; i < factionCount ; i++)
 				{
 					var item = this[i];
 					if (item == null) continue;
 					if (item.IsInvalid()) continue;
-					if (item is SectorResourcesSupply itemSector)
-					{
-						itemSector.UpdateCumulativePoint(in deltaTime);
-					}
+					item.UpdateSupplyRequest(in deltaTime);
 				}
 				for (int i = 0 ; i < sectorCount ; i++)
 				{
@@ -308,7 +315,6 @@ namespace StrategyManagerModule
 					{
 						if (itemSector.CheclSupplyTimeUpdate(in deltaTime))
 						{
-							itemSector.UpdateSectorToFaction();
 							itemSector.Update(in deltaTime);
 						}
 					}

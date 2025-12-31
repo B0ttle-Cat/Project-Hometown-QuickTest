@@ -13,11 +13,11 @@ using static StrategyGamePlayData;
 [Serializable]
 public partial class Faction : IDisposable
 {
-	[SerializeField, BoxGroup("Faction Data")]
 	private readonly FactionStatsData statsData;
-	[SerializeField, BoxGroup("Faction Data")]
 	private readonly FactionRuntimeData runtimeData;
+	[ShowInInspector, BoxGroup("Faction Data")]
 	public FactionStatsData StatsData => statsData;
+	[ShowInInspector, BoxGroup("Faction Data")]
 	public FactionRuntimeData RuntimeData => runtimeData;
 
 	public Faction(in StrategyStartSetterData.FactionData data)
@@ -100,7 +100,7 @@ public partial class Faction : IDisposable
 
 	}
 
-    [ShowInInspector]
+	[ShowInInspector]
 	public string FactionName => StatsData.FactionName;
 	[ShowInInspector]
 	public int FactionID => StatsData.FactionID;
@@ -145,7 +145,7 @@ public partial class Faction // ElementSet
 	private Action<IStrategyElement, bool> onChangeCaptured;
 	private Action<IStrategyElement, bool> onChangeOperation;
 	private Action<IStrategyElement, bool> onChangeUnit;
-	private void AddChangeEvent(ref Action<IStrategyElement, bool> action, ElementSet elementsSet,  Action<IStrategyElement, bool> onChange, bool invokeForExisting)
+	private void AddChangeEvent(ref Action<IStrategyElement, bool> action, ElementSet elementsSet, Action<IStrategyElement, bool> onChange, bool invokeForExisting)
 	{
 		action -= onChange;
 		action += onChange;
@@ -368,18 +368,18 @@ public partial class Faction // ElementSet
 	public class CaptureSectorSet : ElementSet
 	{
 		protected readonly List<ISectorController> controllerList = new List<ISectorController>();
-		protected readonly List<ISupplyStats> supplyList = new List<ISupplyStats>();
+		protected readonly List<ISupplyStateForSector> supplyList = new List<ISupplyStateForSector>();
 		protected readonly List<ISectorCardUIObject> cardUIList = new List<ISectorCardUIObject>();
 
 		public List<ISectorController> ControllerList => controllerList;
-		public List<ISupplyStats> SupplyList => supplyList;
+		public List<ISupplyStateForSector> SupplyList => supplyList;
 		public List<ISectorCardUIObject> CardUIList => cardUIList;
 		public override bool Add(IStrategyElement item)
 		{
 			if (base.Add(item))
 			{
 				if (item is ISectorController control) controllerList.Add(control);
-				if (item is ISupplyStats supply) supplyList.Add(supply);
+				if (item is ISupplyStateForSector supply) supplyList.Add(supply);
 				if (item is ISectorCardUIObject card) cardUIList.Add(card);
 				return true;
 			}
@@ -391,7 +391,7 @@ public partial class Faction // ElementSet
 			{
 				if (item is ISectorController control) controllerList.Remove(control);
 				if (item is ISectorCardUIObject card) cardUIList.Remove(card);
-				if (item is ISupplyStats supply) supplyList.Remove(supply);
+				if (item is ISupplyStateForSector supply) supplyList.Remove(supply);
 				return true;
 			}
 			return false;
@@ -502,40 +502,65 @@ public partial class Faction : IStatsValueControl, ISupplyStats
 	{
 		int baseValue = type switch
 		{
-			StatsType.자원_인력_최대 => StatsData.CapacityPersonnel,
-			StatsType.자원_재료_최대 => StatsData.CapacityMaterial,
-			StatsType.자원_전력_최대 => StatsData.CapacityElectric,
+			StatsType.자원_인력_최대 => StatsData.CapacityPersonnel + SumPersonnel(),
+			StatsType.자원_재료_최대 => StatsData.CapacityMaterial + SumMaterial(),
+			StatsType.자원_전력_최대 => StatsData.CapacityElectric + SumElectric(),
 
-			StatsType.자원_인력_현재 => StatsData.RecoveryPersonnel,
-			StatsType.자원_재료_현재 => StatsData.RecoveryMaterial,
-			StatsType.자원_전력_현재 => StatsData.RecoveryElectric,
+			StatsType.자원_인력_회복 => StatsData.RecoveryPersonnel,
+			StatsType.자원_재료_회복 => StatsData.RecoveryMaterial,
+			StatsType.자원_전력_회복 => StatsData.RecoveryElectric,
 
-			StatsType.자원_인력_회복 => RuntimeData.CurrentPersonnel,
-			StatsType.자원_재료_회복 => RuntimeData.CurrentMaterial,
-			StatsType.자원_전력_회복 => RuntimeData.CurrentElectric,
+			StatsType.자원_인력_현재 => RuntimeData.CurrentPersonnel,
+			StatsType.자원_재료_현재 => RuntimeData.CurrentMaterial,
+			StatsType.자원_전력_현재 => RuntimeData.CurrentElectric,
+
+			StatsType.사용중_인력_병력 => RuntimeData.AssignedMilitaryPersonnel,
+			StatsType.사용중_인력_시설 => RuntimeData.AssignedFacilitiesPersonnel,
+			StatsType.유지비_재료_시설 => RuntimeData.MaintenanceCostFacilitiesMaterial,
+			StatsType.유지비_전력_시설=> RuntimeData.MaintenanceCostFacilitiesElectric,
+
 			_ => 0,
 		} + DynamicKeyStatsList.GetValue(type);
 		return baseValue;
+
+		int SumPersonnel()
+		{
+			var list = CapturedList.SupplyList;
+			int length = list.Count;
+			int sum = 0;
+			for (int i = 0 ; i < length ; i++)
+			{
+				sum += list[i].MaxPersonnelCapacityBonus;
+			}
+			return sum;
+		}
+		int SumMaterial()
+		{
+			var list = CapturedList.SupplyList;
+			int length = list.Count;
+			int sum = 0;
+			for (int i = 0 ; i < length ; i++)
+			{
+				sum += list[i].MaxMaterialCapacityBonus;
+			}
+			return sum;
+		}
+		int SumElectric()
+		{
+			var list = CapturedList.SupplyList;
+			int length = list.Count;
+			int sum = 0;
+			for (int i = 0 ; i < length ; i++)
+			{
+				sum += list[i].MaxElectricCapacityBonus;
+			}
+			return sum;
+		}
 	}
 
 	float IStatsValueControl.GetStatsValuePrecent(StatsType type)
 	{
-		int baseValue = type switch
-		{
-			StatsType.자원_인력_최대 => StatsData.CapacityPersonnel,
-			StatsType.자원_재료_최대 => StatsData.CapacityMaterial,
-			StatsType.자원_전력_최대 => StatsData.CapacityElectric,
-
-			StatsType.자원_인력_현재 => StatsData.RecoveryPersonnel,
-			StatsType.자원_재료_현재 => StatsData.RecoveryMaterial,
-			StatsType.자원_전력_현재 => StatsData.RecoveryElectric,
-
-			StatsType.자원_인력_회복 => RuntimeData.CurrentPersonnel,
-			StatsType.자원_재료_회복 => RuntimeData.CurrentMaterial,
-			StatsType.자원_전력_회복 => RuntimeData.CurrentElectric,
-			_ => 0,
-		} + DynamicKeyStatsList.GetValue(type);
-		return baseValue * 0.01f;
+		return 0;
 	}
 
 	void IStatsValueControl.SetStatsValue(StatsType type, int value)
@@ -545,6 +570,11 @@ public partial class Faction : IStatsValueControl, ISupplyStats
 			case StatsType.자원_인력_현재: RuntimeData.CurrentPersonnel = value; break;
 			case StatsType.자원_재료_현재: RuntimeData.CurrentMaterial = value; break;
 			case StatsType.자원_전력_현재: RuntimeData.CurrentElectric = value; break;
+
+			case StatsType.사용중_인력_병력: RuntimeData.AssignedMilitaryPersonnel = value; break;
+			case StatsType.사용중_인력_시설: RuntimeData.AssignedFacilitiesPersonnel = value; break;
+			case StatsType.유지비_재료_시설: RuntimeData.MaintenanceCostFacilitiesMaterial = value; break;
+			case StatsType.유지비_전력_시설: RuntimeData.MaintenanceCostFacilitiesElectric = value; break;
 			default: DynamicKeyStatsList.SetValue(type, value); break;
 		}
 	}
@@ -552,13 +582,13 @@ public partial class Faction : IStatsValueControl, ISupplyStats
 	void IStatsValueControl.SetStatsValuePrecent(StatsType type, float valuePercent)
 	{
 		int value = Mathf.FloorToInt(valuePercent * 100);
-		switch (type)
-		{
-			case StatsType.자원_인력_현재: RuntimeData.CurrentPersonnel = value; break;
-			case StatsType.자원_재료_현재: RuntimeData.CurrentMaterial = value; break;
-			case StatsType.자원_전력_현재: RuntimeData.CurrentElectric = value; break;
-			default: DynamicKeyStatsList.SetValue(type, value); break;
-		}
+		//switch (type)
+		//{
+		//	case StatsType.자원_인력_현재: RuntimeData.CurrentPersonnel = value; break;
+		//	case StatsType.자원_재료_현재: RuntimeData.CurrentMaterial = value; break;
+		//	case StatsType.자원_전력_현재: RuntimeData.CurrentElectric = value; break;
+		//	default: DynamicKeyStatsList.SetValue(type, value); break;
+		//}
 	}
 
 
@@ -566,9 +596,11 @@ public partial class Faction : IStatsValueControl, ISupplyStats
 	public (float[] values, float total, float max) GetPersonnelDetailValue()
 	{
 		float max = ThisStatsValue.GetStatsValue(StatsType.자원_인력_최대);
-		float total = ThisStatsValue.GetStatsValue(StatsType.자원_인력_현재);
-		float[] values = new float[1];
+		float[] values = new float[3];
 		values[0] = ThisStatsValue.GetStatsValue(StatsType.자원_인력_현재);
+		values[1] = ThisStatsValue.GetStatsValue(StatsType.사용중_인력_병력);
+		values[2] = ThisStatsValue.GetStatsValue(StatsType.사용중_인력_시설);
+		float total =  values[0] + values[1] + values[2];
 		return (values, total, max);
 	}
 	public (float[] values, float total, float max) GetMaterialDetailValue()
@@ -605,63 +637,6 @@ public partial class Faction : IStatsValueControl, ISupplyStats
 		float max = ThisStatsValue.GetStatsValue(StatsType.자원_전력_최대);
 		float total = ThisStatsValue.GetStatsValue(StatsType.자원_전력_현재);
 		return (total, max);
-	}
-	public string GetPersonnelDetailText()
-	{
-		(float[] values, float total, float max) = GetPersonnelDetailValue();
-		string text = $"인력: {total}/{max}";
-		int length = values.Length;
-		for (int i = 0 ; i < length ; i++)
-		{
-			float value = values[i];
-			text += $"\t{value:+#;-#;0}";
-		}
-
-		return text;
-	}
-	public string GetMaterialDetailText()
-	{
-		(float[] values, float total, float max) = GetMaterialDetailValue();
-		string text = $"재료: {total}/{max}";
-		int length = values.Length;
-		for (int i = 0 ; i < length ; i++)
-		{
-			float value = values[i];
-			text += $"\t{value:+#;-#;0}";
-		}
-
-		return text;
-	}
-	public string GetElectricDetailText()
-	{
-		(float[] values, float total, float max) = GetElectricDetailValue();
-		string text = $"전력: {total}/{max}";
-		int length = values.Length;
-		for (int i = 0 ; i < length ; i++)
-		{
-			float value = values[i];
-			text += $"\t{value:+#;-#;0}";
-		}
-
-		return text;
-	}
-	public string GetPersonnelSimpleText()
-	{
-		(float total, float max) = GetPersonnelSimpleValue();
-		string text = $"인력: {total}/{max}";
-		return text;
-	}
-	public string GetMaterialSimpleText()
-	{
-		(float total, float max) = GetMaterialSimpleValue();
-		string text = $"재료: {total}/{max}";
-		return text;
-	}
-	public string GetElectricSimpleText()
-	{
-		(float total, float max) = GetElectricSimpleValue();
-		string text = $"전력: {total}/{max}";
-		return text;
 	}
 	#endregion
 }

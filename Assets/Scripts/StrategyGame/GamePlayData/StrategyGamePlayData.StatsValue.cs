@@ -742,4 +742,10 @@ public partial class StrategyGamePlayData // ThisStatsValue
 		public (float total, float max) GetMaterialSimpleValue();
 		public (float total, float max) GetElectricSimpleValue();
 	}
+	public interface ISupplyStateForSector : ISupplyStats
+	{
+		int MaxPersonnelCapacityBonus { get; }
+		int MaxMaterialCapacityBonus { get; }
+		int MaxElectricCapacityBonus { get; }
+	}
 }

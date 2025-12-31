@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using UnityEngine;
+
 using static StrategyGamePlayData;
 
 public static partial class FactionAPI
@@ -23,9 +25,9 @@ public static partial class FactionAPI
 	{
 		if (faction == null || faction.IsNotAlive()) return;
 
-		StatsValue nowValue = faction.DynamicKeyStatsList.GetValue(StatsType.자원_인력_현재);
+		int nowValue = faction.ThisStatsValue.GetStatsValue(StatsType.사용중_인력_병력);
 		nowValue += value;
-		faction.DynamicKeyStatsList.SetValue(nowValue);
+		faction.ThisStatsValue.SetStatsValue(StatsType.사용중_인력_병력, nowValue);
 	}
 	#endregion
 
@@ -34,7 +36,7 @@ public static partial class FactionAPI
 	{
 		if (faction == null || faction.IsNotAlive()) return false;
 
-		StatsValue nowValue = faction.DynamicKeyStatsList.GetValue(StatsType.자원_재료_현재);
+		int nowValue = faction.ThisStatsValue.GetStatsValue(StatsType.자원_재료_현재);
 		return nowValue >= value;
 	}
 
@@ -42,7 +44,7 @@ public static partial class FactionAPI
 	{
 		if (faction.IsNotAlive()) return false;
 
-		StatsValue nowValue = faction.DynamicKeyStatsList.GetValue(StatsType.자원_전력_현재);
+		int nowValue = faction.ThisStatsValue.GetStatsValue(StatsType.자원_전력_현재);
 		return nowValue >= value;
 	}
 	#endregion
@@ -63,7 +65,7 @@ public static partial class FactionAPI
 		var sectorList = StrategyManager.Collector.GetList<SectorObject>();
 		var values = sectorList.Where(i => i.CaptureFaction == faction).Select(i => i.RuntimeData.LocalElectric).ToArray();
 
-		StatsValue totalValue = faction.DynamicKeyStatsList.GetValue(StatsType.자원_전력_현재);
+		int totalValue = faction.ThisStatsValue.GetStatsValue(StatsType.자원_전력_현재);
 		if (PayCostByCutDown(value, totalValue, values))
 		{
 			int total = 0;
@@ -75,8 +77,8 @@ public static partial class FactionAPI
 				sector.RuntimeData.LocalElectric = values[i];
 			}
 
-			totalValue.Value = value;
-			faction.DynamicKeyStatsList.SetValue(totalValue);
+			totalValue = value;
+			faction.ThisStatsValue.SetStatsValue(StatsType.자원_전력_현재, totalValue);
 		}
 	}
 	#endregion
@@ -86,26 +88,26 @@ public static partial class FactionAPI
 	{
 		if (faction == null || faction.IsNotAlive()) return;
 
-		StatsValue maxValue = faction.DynamicKeyStatsList.GetValue(StatsType.자원_재료_최대);
-		StatsValue nowValue = faction.DynamicKeyStatsList.GetValue(StatsType.자원_재료_현재);
+		int maxValue = faction.ThisStatsValue.GetStatsValue(StatsType.자원_재료_최대);
+		int nowValue = faction.ThisStatsValue.GetStatsValue(StatsType.자원_재료_현재);
 		if (nowValue >= maxValue) return;
 
 		nowValue += value;
-		nowValue.Clamp(0, maxValue);
-		faction.DynamicKeyStatsList.SetValue(nowValue);
+		nowValue = Mathf.Clamp(nowValue, 0, maxValue);
+		faction.ThisStatsValue.SetStatsValue(StatsType.자원_재료_현재, nowValue);
 	}
 
 	public static void API_SupplyElectric(this Faction faction, int value)
 	{
 		if (faction == null || faction.IsNotAlive()) return;
 
-		StatsValue maxValue = faction.DynamicKeyStatsList.GetValue(StatsType.자원_전력_최대);
-		StatsValue nowValue = faction.DynamicKeyStatsList.GetValue(StatsType.자원_전력_현재);
+		int maxValue = faction.ThisStatsValue.GetStatsValue(StatsType.자원_전력_최대);
+		int nowValue = faction.ThisStatsValue.GetStatsValue(StatsType.자원_전력_현재);
 		if (nowValue >= maxValue) return;
 
 		nowValue += value;
-		nowValue.Clamp(0, maxValue);
-		faction.DynamicKeyStatsList.SetValue(nowValue);
+		nowValue = Mathf.Clamp(nowValue, 0, maxValue);
+		faction.ThisStatsValue.SetStatsValue(StatsType.자원_전력_현재, nowValue);
 	}
 	#endregion
 
@@ -114,8 +116,8 @@ public static partial class FactionAPI
 	{
 		if (faction == null || faction.IsNotAlive()) return true;
 
-		StatsValue maxValue = faction.DynamicKeyStatsList.GetValue(StatsType.자원_재료_최대);
-		StatsValue nowValue = faction.DynamicKeyStatsList.GetValue(StatsType.자원_재료_현재);
+		int maxValue = faction.ThisStatsValue.GetStatsValue(StatsType.자원_재료_최대);
+		int nowValue = faction.ThisStatsValue.GetStatsValue(StatsType.자원_재료_현재);
 		return nowValue >= maxValue;
 	}
 
@@ -123,15 +125,15 @@ public static partial class FactionAPI
 	{
 		if (faction == null || faction.IsNotAlive()) return true;
 
-		StatsValue maxValue = faction.DynamicKeyStatsList.GetValue(StatsType.자원_전력_최대);
-		StatsValue nowValue = faction.DynamicKeyStatsList.GetValue(StatsType.자원_전력_현재);
+		int maxValue = faction.ThisStatsValue.GetStatsValue(StatsType.자원_전력_최대);
+		int nowValue = faction.ThisStatsValue.GetStatsValue(StatsType.자원_전력_현재);
 		return nowValue >= maxValue;
 	}
 	#endregion
 
 	#region PayCostFunction
 	// 가장 큰 위치부터 비용을 지불한다.
-	private static bool PayCostByCutDown(int cost, int? totalValue, int[] values)
+	private static bool PayCostByCutDown(int cost, int totalValue, int[] values)
 	{
 		// 0 비용이면 바로 성공
 		if (cost <= 0) return true;
@@ -148,7 +150,7 @@ public static partial class FactionAPI
 		}
 
 		// 총합이 cost 이상인지 확인
-		if (!totalValue.HasValue)
+		if (totalValue <= 0)
 		{
 			int total = 0;
 			for (int i = 0 ; i < length ; i++)
@@ -158,7 +160,7 @@ public static partial class FactionAPI
 			}
 			totalValue = total;
 		}
-		if (totalValue.Value < cost) return false;
+		if (totalValue < cost) return false;
 
 		// 원본 배열을 건드리지 않고, 큰 값 순서의 인덱스 배열 생성
 		int[] sortedIndices = new int[length];

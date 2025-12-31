@@ -91,12 +91,15 @@ public partial class SectorObject : IStrategyMonoElement, IStrategyStartGame
 	}
 }
 
-public partial class SectorObject : IStatsValueControl, ISupplyStats
+public partial class SectorObject : IStatsValueControl, ISupplyStateForSector
 {
 	public IStatsValueControl ThisStatsValue => this;
 
 	public Action<ISupplyStats> OnSupplyChange { get; set; }
 	public bool IsEnableResourcesSupply { get => StatsData.IsEnableResourcesSupply; set => StatsData.IsEnableResourcesSupply = value; }
+	int ISupplyStateForSector.MaxPersonnelCapacityBonus => StatsData.MaxPersonnelCapacityBonusOfFaction;
+	int ISupplyStateForSector.MaxMaterialCapacityBonus => StatsData.MaxMaterialCapacityBonusOfFaction;
+	int ISupplyStateForSector.MaxElectricCapacityBonus => StatsData.MaxElectricCapacityBonusOfFaction;
 
 	int IStatsValueControl.GetStatsValue(StatsType type)
 	{

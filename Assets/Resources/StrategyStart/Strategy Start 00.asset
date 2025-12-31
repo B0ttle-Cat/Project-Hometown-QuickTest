@@ -30,14 +30,14 @@ MonoBehaviour:
     - FactionName: Faction_00
       FactionColor: {r: 1, g: 0, b: 0, a: 1}
       FactionIcon: {fileID: 21300000, guid: 23f59f3afcad60b48a7c4a94a85168fa, type: 3}
-      EnableResourcesSupply: 0
-      CapacityPersonnel: 0
+      EnableResourcesSupply: 1
+      CapacityPersonnel: 100
       RecoveryPersonnel: 0
       CurrentPersonnel: 0
-      CapacityMaterial: 0
+      CapacityMaterial: 100
       RecoveryMaterial: 0
       CurrentMaterial: 0
-      CapacityElectric: 0
+      CapacityElectric: 100
       RecoveryElectric: 0
       CurrentElectric: 0
       availableUnitKeyList:
@@ -47,7 +47,7 @@ MonoBehaviour:
     - FactionName: Faction_01
       FactionColor: {r: 0, g: 0, b: 1, a: 0}
       FactionIcon: {fileID: 21300000, guid: b4e5b9fc3aa67354090d09fa2ca83c1b, type: 3}
-      EnableResourcesSupply: 1
+      EnableResourcesSupply: 0
       CapacityPersonnel: 0
       RecoveryPersonnel: 0
       CurrentPersonnel: 0
@@ -73,7 +73,7 @@ MonoBehaviour:
       CapacityElectric: 200
       RecoveryElectric: 100
       LocalElectric: 100
-      CycleTime: 10
+      CycleTime: 1
       DistributionDepth: 0
       MaxPersonnelCapacityBonusOfFaction: 10
       MaxMaterialCapacityBonusOfFaction: 50
@@ -107,7 +107,7 @@ MonoBehaviour:
       CapacityElectric: 200
       RecoveryElectric: 100
       LocalElectric: 100
-      CycleTime: 10
+      CycleTime: 1
       DistributionDepth: 0
       MaxPersonnelCapacityBonusOfFaction: 10
       MaxMaterialCapacityBonusOfFaction: 50
@@ -133,7 +133,7 @@ MonoBehaviour:
       CapacityElectric: 200
       RecoveryElectric: 100
       LocalElectric: 100
-      CycleTime: 10
+      CycleTime: 1
       DistributionDepth: 0
       MaxPersonnelCapacityBonusOfFaction: 10
       MaxMaterialCapacityBonusOfFaction: 50
@@ -159,7 +159,7 @@ MonoBehaviour:
       CapacityElectric: 200
       RecoveryElectric: 100
       LocalElectric: 100
-      CycleTime: 10
+      CycleTime: 1
       DistributionDepth: 0
       MaxPersonnelCapacityBonusOfFaction: 10
       MaxMaterialCapacityBonusOfFaction: 50
@@ -185,7 +185,7 @@ MonoBehaviour:
       CapacityElectric: 200
       RecoveryElectric: 100
       LocalElectric: 100
-      CycleTime: 10
+      CycleTime: 1
       DistributionDepth: 0
       MaxPersonnelCapacityBonusOfFaction: 10
       MaxMaterialCapacityBonusOfFaction: 50

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using Sirenix.OdinInspector;
 
@@ -6,6 +7,7 @@ using UnityEngine;
 
 using static StrategyGamePlayData;
 
+[Serializable]
 public class FactionStatsData
 {
 	public string FactionName;
@@ -40,6 +42,7 @@ public class FactionStatsData
 	[BoxGroup("사용가능유닛"),SerializeField]
 	public List<UnitKey> AvailableUnitKeyList;
 }
+[Serializable]
 public class FactionRuntimeData
 {
 	[BoxGroup("세력리소스", GroupName ="세력이 보유한 현재 리소스")]

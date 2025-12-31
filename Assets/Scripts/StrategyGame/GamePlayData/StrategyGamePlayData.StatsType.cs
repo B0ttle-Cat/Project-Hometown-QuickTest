@@ -1,6 +1,4 @@
-﻿using Sirenix.OdinInspector;
-
-public partial class StrategyGamePlayData // StatsType
+﻿public partial class StrategyGamePlayData // StatsType
 {
 	/// <summary>
 	/// 피해량 계싼에 대한 건 <see cref="DamageCommander"/>확인
@@ -62,29 +60,30 @@ public partial class StrategyGamePlayData // StatsType
 
 		#region 자원_능력치
 		자원_인력_최대            = 2000,
-		[LabelText("자원_인력_회복 (10초당)")]
 		자원_인력_회복            = 2001,
 		자원_인력_현재            = 2002,
 
 		자원_재료_최대            = 2010,
-		[LabelText("자원_재료_회복 (10초당)")]
 		자원_재료_회복            = 2011,
 		자원_재료_현재            = 2012,
 
 		자원_전력_최대            = 2020,
-		[LabelText("자원_전력_회복 (10초당)")]
 		자원_전력_회복            = 2021,
 		자원_전력_현재            = 2022,
 		#endregion
 
-		#region 시설물
-		[LabelText("거점_내구도_회복 (10초당)")]
+		#region 시설물 관련
 		시설_내구도_최대          = 3000,
 		시설_내구도_회복          = 3001,
 		시설_내구도_현재          = 3002,
 		#endregion
 
-		#region 세력_능력치	   	        
+		#region 유지비용 관련
+		사용중_인력_병력,
+		사용중_인력_시설,
+		유지비_재료_시설,
+		유지비_전력_시설,
+
 
 		//세력_점령속도비율_c       = 5107,
 		#endregion

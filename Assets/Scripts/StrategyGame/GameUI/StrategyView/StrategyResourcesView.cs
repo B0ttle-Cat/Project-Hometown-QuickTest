@@ -22,6 +22,11 @@ public class StrategyResourcesView : PanelItemComponent, IShowHideAsync
 	[SerializeField]
 	private IShowHide electricShowHide;
 
+
+	private const string personnelStringFormat = "{0} {1..:(+0);(-0);#} / {max}";
+	private const string materialStringFormat = "{..} / {max}";
+	private const string electricStringFormat = "{..} / {max}";
+
 	public void SetTarget(ISupplyStats target)
 	{
 		if (supplyTarget == target) return;
@@ -57,6 +62,20 @@ public class StrategyResourcesView : PanelItemComponent, IShowHideAsync
 			electricShowHide = electric.GetComponent<IShowHide>();
 		if (electricShowHide.IsNotNullRef())
 			electricShowHide.OnHide();
+
+
+		if (personnel.IsNotNullRef())
+		{
+			personnel.TextFormat = personnelStringFormat;
+		}
+		if (material.IsNotNullRef())
+		{
+			material.TextFormat = materialStringFormat;
+		}
+		if (electric.IsNotNullRef())
+		{
+			electric.TextFormat = electricStringFormat;
+		}
 	}
 
 	void IShowHide.StartShow()
