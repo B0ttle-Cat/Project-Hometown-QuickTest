@@ -1,5 +1,7 @@
 ﻿using GameUI;
 
+using TMPro;
+
 using UnityEngine;
 
 using static StrategyGamePlayData;
@@ -16,10 +18,15 @@ public class StrategyResourcesView : PanelItemComponent, IShowHideAsync
 	private FillRectMultiPanelUI electric;
 
 	[SerializeField]
+	private TMP_Text personnelDetailInfoText;
+	[SerializeField]
+	private TMP_Text materialDetailInfoText;
+	[SerializeField]
+	private TMP_Text electricDetailInfoText;
+
+
 	private IShowHide personnelShowHide;
-	[SerializeField]
 	private IShowHide materialShowHide;
-	[SerializeField]
 	private IShowHide electricShowHide;
 
 
