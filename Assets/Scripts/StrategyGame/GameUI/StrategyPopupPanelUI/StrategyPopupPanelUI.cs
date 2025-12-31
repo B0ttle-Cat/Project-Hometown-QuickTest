@@ -9,23 +9,23 @@ namespace StrategyManagerModule
 	{
 		void IGamePanelUI.OpenUI()
 		{
-			gameObject.SetActive(true);
+//			gameObject.SetActive(true);
 		}
 		void IGamePanelUI.CloseUI()
 		{
-			gameObject.SetActive(false);
+			//gameObject.SetActive(false);
 		}
 
 		void IStrategyStartGame.OnStartGame()
 		{
-			if (this is IGamePanelUI panelUI)
-				panelUI.OpenUI();
+//			if (this is IGamePanelUI panelUI)
+//				panelUI.OpenUI();
 		}
 
 		void IStrategyStartGame.OnStopGame()
 		{
-			if (this is IGamePanelUI panelUI)
-				panelUI.CloseUI();
+//			if (this is IGamePanelUI panelUI)
+//				panelUI.CloseUI();
 		}
 	}
 

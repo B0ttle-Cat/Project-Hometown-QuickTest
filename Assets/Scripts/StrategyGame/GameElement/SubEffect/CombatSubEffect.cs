@@ -4,7 +4,7 @@ public abstract class CombatSubEffect : SubEffectObject, ICombatOffense
 {
     ICombatOffense ICombatOffense.ThisOffense => this;
     public int FactionID { get; }
-    public StrategyGamePlayData.IStatsValueControl StatsValue => this;
+    public StrategyGamePlayData.IStatsValueControl ThisStatsValue => this;
 
     int IStatsValueControl.GetStatsValue(StrategyGamePlayData.StatsType type)
     {

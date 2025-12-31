@@ -84,20 +84,11 @@ public class UnitCardGroupPanel : CardGroupPanelComponent, IShowHideAsync
 				cardUIObjectView.Attach(Item);
 			}
 		}
-
 		protected override void UpdateUI()
 		{
 			if (cardUIObjectView.IsNotNullRef())
 			{
-				cardUIObjectView.RePating();
-			}
-		}
-
-		protected override void ClearUI()
-		{
-			if (cardUIObjectView.IsNotNullRef())
-			{
-				cardUIObjectView.ClearUI();
+				cardUIObjectView.RePainting();
 			}
 		}
 	}

@@ -63,15 +63,15 @@ namespace StrategyManagerModule
 
 					if (tempValue.electricIsUpdate)
 					{
-						sector.StatsValue.SetStatsValue(StatsType.자원_전력_현재, Mathf.Clamp(tempValue.electric, 0, tempValue.electricMax));
+						sector.ThisStatsValue.SetStatsValue(StatsType.자원_전력_현재, Mathf.Clamp(tempValue.electric, 0, tempValue.electricMax));
 					}
 					if (tempValue.materialIsUpdate)
 					{
-						sector.StatsValue.SetStatsValue(StatsType.자원_전력_현재, Mathf.Clamp(tempValue.material, 0, tempValue.materialMax));
+						sector.ThisStatsValue.SetStatsValue(StatsType.자원_전력_현재, Mathf.Clamp(tempValue.material, 0, tempValue.materialMax));
 					}
 					if (tempValue.personnelIsUpdate)
 					{
-						sector.StatsValue.SetStatsValue(StatsType.자원_전력_현재, Mathf.Clamp(tempValue.personnel, 0, tempValue.personnelMax));
+						sector.ThisStatsValue.SetStatsValue(StatsType.자원_전력_현재, Mathf.Clamp(tempValue.personnel, 0, tempValue.personnelMax));
 					}
 				}
 			}

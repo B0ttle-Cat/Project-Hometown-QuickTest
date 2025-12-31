@@ -222,11 +222,10 @@ GameObject:
   - component: {fileID: 8432216839756467491}
   - component: {fileID: 6756693143679484275}
   - component: {fileID: 4795000185356466020}
-  - component: {fileID: 280288374765018908}
   - component: {fileID: 3171523238623551718}
   - component: {fileID: 2176819535080932272}
   m_Layer: 5
-  m_Name: FillRectPanelUI
+  m_Name: FillRectView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -292,28 +291,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 2
---- !u!114 &280288374765018908
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 841480262319291205}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30e7b83720c8fcf41ac0d86d7b2cdf2f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: GameUI::GameUI.FillRectPanelUI
-  showMaskRect: {fileID: 1478026480961023139}
-  fillImage: {fileID: 6676608944980757759}
-  backgroundFillImage: {fileID: 7291673545267124496}
-  textUI: {fileID: 291830927726348868}
-  minMax: {x: 0, y: 100}
-  valueRange: {x: 0, y: 50}
-  fillMethod: 0
-  floatToInt: 1
-  textFormat: '{0}'
-  textRectFitInFillRect: 0
 --- !u!114 &3171523238623551718
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -456,17 +433,17 @@ MonoBehaviour:
     Key: Title/NameRect/TitleText
     Target: {fileID: 6583849055252751737}
   - customKey: 0
-    Key: Body/Shield/FillRectPanelUI
-    Target: {fileID: 5504088907487896316}
+    Key: Body/Shield
+    Target: {fileID: 8032019219770640668}
   - customKey: 0
-    Key: Body/Personnel/FillRectPanelUI
-    Target: {fileID: 3592261444473377020}
+    Key: Body/Personnel
+    Target: {fileID: 1139721072414637927}
   - customKey: 0
-    Key: Body/Material/FillRectPanelUI
-    Target: {fileID: 1688360552792308926}
+    Key: Body/Material
+    Target: {fileID: 7604916124988161032}
   - customKey: 0
-    Key: Body/Electric/FillRectPanelUI
-    Target: {fileID: 841480262319291205}
+    Key: Body/Electric
+    Target: {fileID: 7572504378497077390}
 --- !u!114 &7665866781774565416
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -576,6 +553,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5800332001502993729}
   - component: {fileID: 6336210842862814637}
+  - component: {fileID: 3933142727569121337}
   m_Layer: 5
   m_Name: Personnel
   m_TagString: Untagged
@@ -625,6 +603,28 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &3933142727569121337
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1139721072414637927}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30e7b83720c8fcf41ac0d86d7b2cdf2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameUI::GameUI.FillRectPanelUI
+  showMaskRect: {fileID: 7792673604382453083}
+  fillImage: {fileID: 720249202161994295}
+  backgroundFillImage: {fileID: 6223217794947949901}
+  textUI: {fileID: 7686109742902410357}
+  minMax: {x: 0, y: 100}
+  valueRange: {x: 0, y: 50}
+  fillMethod: 0
+  floatToInt: 1
+  textFormat: '{0}'
+  textRectFitInFillRect: 0
 --- !u!1 &1189157821475119225
 GameObject:
   m_ObjectHideFlags: 0
@@ -807,11 +807,10 @@ GameObject:
   - component: {fileID: 6794854052443759774}
   - component: {fileID: 8472500047605538215}
   - component: {fileID: 5633785974310226801}
-  - component: {fileID: 5510935457391973780}
   - component: {fileID: 1891290423823920107}
   - component: {fileID: 3263770110755521815}
   m_Layer: 5
-  m_Name: FillRectPanelUI
+  m_Name: FillRectView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -877,28 +876,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 2
---- !u!114 &5510935457391973780
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1688360552792308926}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30e7b83720c8fcf41ac0d86d7b2cdf2f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: GameUI::GameUI.FillRectPanelUI
-  showMaskRect: {fileID: 8910798813334716496}
-  fillImage: {fileID: 3382823161069129191}
-  backgroundFillImage: {fileID: 449300094139389467}
-  textUI: {fileID: 6611938896555260952}
-  minMax: {x: 0, y: 100}
-  valueRange: {x: 0, y: 50}
-  fillMethod: 0
-  floatToInt: 1
-  textFormat: '{0}'
-  textRectFitInFillRect: 0
 --- !u!114 &1891290423823920107
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1410,11 +1387,10 @@ GameObject:
   - component: {fileID: 8518373473164000588}
   - component: {fileID: 5153036391721125495}
   - component: {fileID: 1690346969166260387}
-  - component: {fileID: 654341880759766610}
   - component: {fileID: 8727007359452099652}
   - component: {fileID: 29078571466046158}
   m_Layer: 5
-  m_Name: FillRectPanelUI
+  m_Name: FillRectView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1480,28 +1456,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 2
---- !u!114 &654341880759766610
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3592261444473377020}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30e7b83720c8fcf41ac0d86d7b2cdf2f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: GameUI::GameUI.FillRectPanelUI
-  showMaskRect: {fileID: 7792673604382453083}
-  fillImage: {fileID: 720249202161994295}
-  backgroundFillImage: {fileID: 6223217794947949901}
-  textUI: {fileID: 7686109742902410357}
-  minMax: {x: 0, y: 100}
-  valueRange: {x: 0, y: 50.25126}
-  fillMethod: 0
-  floatToInt: 1
-  textFormat: '{0}'
-  textRectFitInFillRect: 0
 --- !u!114 &8727007359452099652
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2280,11 +2234,10 @@ GameObject:
   - component: {fileID: 9049909479903875795}
   - component: {fileID: 7546977894099166081}
   - component: {fileID: 8769549145819901267}
-  - component: {fileID: 2799365014181410135}
   - component: {fileID: 8553467258376681687}
   - component: {fileID: 5868749664173056269}
   m_Layer: 5
-  m_Name: FillRectPanelUI
+  m_Name: FillRectView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2350,28 +2303,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 2
---- !u!114 &2799365014181410135
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5504088907487896316}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30e7b83720c8fcf41ac0d86d7b2cdf2f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: GameUI::GameUI.FillRectPanelUI
-  showMaskRect: {fileID: 4248750781413925897}
-  fillImage: {fileID: 3544078616234448306}
-  backgroundFillImage: {fileID: 1953735795802304616}
-  textUI: {fileID: 7240205182011363153}
-  minMax: {x: 0, y: 100}
-  valueRange: {x: 0, y: 50.25126}
-  fillMethod: 0
-  floatToInt: 1
-  textFormat: '{0}'
-  textRectFitInFillRect: 0
 --- !u!114 &8553467258376681687
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2786,6 +2717,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5618418781753963718}
   - component: {fileID: 3706712041638268601}
+  - component: {fileID: 2895953996733372651}
   m_Layer: 5
   m_Name: Electric
   m_TagString: Untagged
@@ -2835,6 +2767,28 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &2895953996733372651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7572504378497077390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30e7b83720c8fcf41ac0d86d7b2cdf2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameUI::GameUI.FillRectPanelUI
+  showMaskRect: {fileID: 1478026480961023139}
+  fillImage: {fileID: 6676608944980757759}
+  backgroundFillImage: {fileID: 7291673545267124496}
+  textUI: {fileID: 291830927726348868}
+  minMax: {x: 0, y: 100}
+  valueRange: {x: 0, y: 50}
+  fillMethod: 0
+  floatToInt: 1
+  textFormat: '{0}'
+  textRectFitInFillRect: 0
 --- !u!1 &7604916124988161032
 GameObject:
   m_ObjectHideFlags: 0
@@ -2845,6 +2799,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7476026203906811351}
   - component: {fileID: 3253981607245387116}
+  - component: {fileID: 7189614401464587941}
   m_Layer: 5
   m_Name: Material
   m_TagString: Untagged
@@ -2894,6 +2849,28 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &7189614401464587941
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7604916124988161032}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30e7b83720c8fcf41ac0d86d7b2cdf2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameUI::GameUI.FillRectPanelUI
+  showMaskRect: {fileID: 8910798813334716496}
+  fillImage: {fileID: 3382823161069129191}
+  backgroundFillImage: {fileID: 449300094139389467}
+  textUI: {fileID: 6611938896555260952}
+  minMax: {x: 0, y: 100}
+  valueRange: {x: 0, y: 50}
+  fillMethod: 0
+  floatToInt: 1
+  textFormat: '{0}'
+  textRectFitInFillRect: 0
 --- !u!1 &8032019219770640668
 GameObject:
   m_ObjectHideFlags: 0
@@ -2904,6 +2881,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6050127452286729140}
   - component: {fileID: 5286992437109325839}
+  - component: {fileID: 8476135952251227312}
   m_Layer: 5
   m_Name: Shield
   m_TagString: Untagged
@@ -2953,6 +2931,28 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &8476135952251227312
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8032019219770640668}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30e7b83720c8fcf41ac0d86d7b2cdf2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameUI::GameUI.FillRectPanelUI
+  showMaskRect: {fileID: 4248750781413925897}
+  fillImage: {fileID: 3544078616234448306}
+  backgroundFillImage: {fileID: 1953735795802304616}
+  textUI: {fileID: 7240205182011363153}
+  minMax: {x: 0, y: 100}
+  valueRange: {x: 0, y: 50}
+  fillMethod: 0
+  floatToInt: 1
+  textFormat: '{0}'
+  textRectFitInFillRect: 0
 --- !u!1 &8231879810876403278
 GameObject:
   m_ObjectHideFlags: 0

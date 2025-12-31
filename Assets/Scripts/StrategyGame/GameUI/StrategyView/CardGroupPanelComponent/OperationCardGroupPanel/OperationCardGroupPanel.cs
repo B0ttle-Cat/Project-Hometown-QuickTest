@@ -51,13 +51,7 @@ public class OperationCardGroupPanel : CardGroupPanelComponent, IShowHideAsync
 	{
 		private OperationCardItemPanel cardUIObjectView;
 
-		public OperationCard(GameObject thisObject, OperationObject item = null) : base(thisObject, item)
-		{
-			if (thisObject.TryGetComponent<OperationCardItemPanel>(out cardUIObjectView))
-			{
-				cardUIObjectView.SetUITarget(item);
-			}
-		}
+		public OperationCard(GameObject thisObject, OperationObject item = null) : base(thisObject, item) { }
 		public override void Dispose()
 		{
 			if (cardUIObjectView.IsNotNullRef())
@@ -88,15 +82,7 @@ public class OperationCardGroupPanel : CardGroupPanelComponent, IShowHideAsync
 		{
 			if (cardUIObjectView.IsNotNullRef())
 			{
-				cardUIObjectView.RePating();
-			}
-		}
-
-		protected override void ClearUI()
-		{
-			if (cardUIObjectView.IsNotNullRef())
-			{
-				cardUIObjectView.ClearUI();
+				cardUIObjectView.RePainting();
 			}
 		}
 	}

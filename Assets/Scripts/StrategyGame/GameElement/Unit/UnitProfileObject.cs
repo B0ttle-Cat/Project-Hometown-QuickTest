@@ -19,6 +19,12 @@ public class UnitProfileObject : ScriptableObject
 	public UnitKey unitKey;
 	public string displayName;
 
+	[BoxGroup("Sprite Image")]
+	[HorizontalGroup("Sprite Image/H"), HideLabel, PreviewField(100)]
+	public Sprite unitFullBodySprite;
+	[HorizontalGroup("Sprite Image/H"), HideLabel, PreviewField(100)]
+	public Sprite unitPortraitSprite;
+
 	[Title("Stats"), InlineProperty, HideLabel]
 	public UnitStatsData stats;
 

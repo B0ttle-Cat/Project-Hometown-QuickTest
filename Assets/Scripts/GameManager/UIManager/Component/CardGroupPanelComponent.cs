@@ -71,7 +71,6 @@ namespace GameUI
 			public abstract void OnRelease();
 			public abstract void OnAttach();
 			public abstract void OnUpdateUI();
-			public abstract void OnClear();
 		}
 		public abstract class CardPanel<T> : CardPanel, IPanelItem, IShowHide, IDisposable
 			where T : class, ICardUIObject
@@ -108,7 +107,7 @@ namespace GameUI
 				if (panelItem.IsNullRef()) return;
 
 				ThisShowHide.UnpairingShowHide();
-				OnClear();
+				OnRelease();
 
 				if (ThisPanel.ThisRect.IsNotNullRef())
 				{
@@ -161,17 +160,10 @@ namespace GameUI
 			{
 				if (Item.IsNullRef())
 				{
-					OnClear();
+					OnRelease();
 					return;
 				}
 				UpdateUI();
-			}
-			public override void OnClear()
-			{
-				if (Item.IsNullRef())
-				{
-					ClearUI();
-				}
 			}
 			internal bool Contains(T item)
 			{
@@ -180,7 +172,6 @@ namespace GameUI
 			protected abstract void ReleaseUI();
 			protected abstract void AttachUI();
 			protected abstract void UpdateUI();
-			protected abstract void ClearUI();
 		}
 		protected abstract CardPanel CardFactory<T>(GameObject newUIObject, T item) where T : class, ICardUIObject;
 		
@@ -306,7 +297,6 @@ namespace GameUI
 				{
 					if (poolingCardObject && PoolStack != null)
 					{
-						item.OnClear();
 						PoolStack.Push(item);
 					}
 					else

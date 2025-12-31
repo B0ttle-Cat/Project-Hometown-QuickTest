@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using GameUI;
@@ -63,7 +64,7 @@ public partial class OperationObject : MonoBehaviour  // Main
 public partial class OperationObject // StatsData
 {
 	int computeFrame = -1;
-	public void ComputeOperationValue()
+    public void ComputeOperationValue()
 	{
 		int thisFrame = Time.frameCount;
 		if (computeFrame == thisFrame) return;
@@ -73,7 +74,6 @@ public partial class OperationObject // StatsData
 		searchActionRange = ComputeActionRange();
 		(searchGroupCenter, searchGroupRadius) = ComputeCenter();
 	}
-
 	private float ComputeMoveSpeed()
 	{
 		return UnitOrganizationList.Count == 0 ? 0 : UnitOrganizationList.Select(i => i.StatsData.MovementSpeed).Average();
@@ -226,9 +226,6 @@ public partial class OperationObject : IOperationCardUIObject
 		if(faction == null) return "중립";
 		return faction.FactionName;
 	}
-
-  
-
     string ICardUIObject.GetTitleName()
 	{
 		return TeamName;
@@ -237,5 +234,124 @@ public partial class OperationObject : IOperationCardUIObject
 	{
 		return "";
 	}
+	public (float[] values, float total, float max) GetShieldDetailValue()
+	{
+		return (Array.Empty<float>(), 0, 0);
+	}
+	public (float[] values, float total, float max) GetPersonnelDetailValue()
+	{
+		return (Array.Empty<float>(), 0, 0);
+	}
+	public (float[] values, float total, float max) GetMaterialDetailValue()
+	{
+		return (Array.Empty<float>(), 0, 0);
+	}
+	public (float[] values, float total, float max) GetElectricDetailValue()
+	{
+		return (Array.Empty<float>(), 0, 0);
+	}
+	public (float total, float max) GetShieldSimpleValue()
+	{
+		return (0, 0);
+	}
+	public (float total, float max) GetPersonnelSimpleValue()
+	{
+		return (0, 0);
+	}
+	public (float total, float max) GetMaterialSimpleValue()
+	{
+		return (0, 0);
+	}
+	public (float total, float max) GetElectricSimpleValue()
+	{
+		return (0, 0);
+	}
+	public string GetShieldValueText(bool simpleText = false)
+	{
+		if (simpleText)
+		{
+			(float total, float max) = GetShieldSimpleValue();
+			string text = $"보호막: {total}/{max}";
+			return text;
+		}
+		else
+		{
+			(float[] values, float total, float max) = GetShieldDetailValue();
+			string text = $"보호막: {total}/{max}";
+			int length = values.Length;
+			for (int i = 0 ; i < length ; i++)
+			{
+				float value = values[i];
+				text += $"\t{value:+#;-#;0}";
+			}
 
+			return text;
+		}
+	}
+	public string GetPersonnelValueText(bool simpleText = false)
+	{
+		if (simpleText)
+		{
+			(float total, float max) = GetPersonnelSimpleValue();
+			string text = $"인력: {total}/{max}";
+			return text;
+		}
+		else
+		{
+			(float[] values, float total, float max) = GetPersonnelDetailValue();
+			string text = $"인력: {total}/{max}";
+			int length = values.Length;
+			for (int i = 0 ; i < length ; i++)
+			{
+				float value = values[i];
+				text += $"\t{value:+#;-#;0}";
+			}
+
+			return text;
+		}
+	}
+	public string GetMaterialValueText(bool simpleText = false)
+	{
+		if (simpleText)
+		{
+			(float total, float max) = GetMaterialSimpleValue();
+			string text = $"재료: {total}/{max}";
+			return text;
+		}
+		else
+		{
+			(float[] values, float total, float max) = GetMaterialDetailValue();
+			string text = $"재료: {total}/{max}";
+			int length = values.Length;
+			for (int i = 0 ; i < length ; i++)
+			{
+				float value = values[i];
+				text += $"\t{value:+#;-#;0}";
+			}
+
+			return text;
+		}
+	}
+	public string GetElectricValueText(bool simpleText = false)
+	{
+		if (simpleText)
+		{
+			(float total, float max) = GetElectricSimpleValue();
+			string text = $"전력: {total}/{max}";
+			return text;
+		}
+		else
+		{
+			(float[] values, float total, float max) = GetElectricDetailValue();
+			string text = $"전력: {total}/{max}";
+			int length = values.Length;
+			for (int i = 0 ; i < length ; i++)
+			{
+				float value = values[i];
+				text += $"\t{value:+#;-#;0}";
+			}
+
+			return text;
+		}
+	}
 }

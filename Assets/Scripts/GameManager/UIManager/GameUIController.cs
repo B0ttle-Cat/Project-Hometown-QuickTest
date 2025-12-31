@@ -311,6 +311,8 @@ namespace GameUI
 			int asyncCount = async.Count;
 			if (asyncCount > 0)
 			{
+				if(tokenSource.IsCancellationRequested) return;
+
 				CancellationToken token = tokenSource.Token;
 #if UNITY_EDITOR
 				EditrUpdate(token);

@@ -8,7 +8,7 @@ using UnityEngine;
 
 using static StrategyManagerModule.StrategyUpdate;
 
-public partial class StrategyGamePlayData // StatsValue
+public partial class StrategyGamePlayData // ThisStatsValue
 {
 	public static StatsType[] SectorCurrentStats =new StatsType[]
 	{
@@ -617,7 +617,7 @@ public partial class StrategyGamePlayData // StatsValue
 	public interface IStatsValueControl : IStrategyElement
 	{
 		// 데이터 저장소 접근을 위한 속성
-		public IStatsValueControl StatsValue { get; }
+		public IStatsValueControl ThisStatsValue { get; }
 		int GetStatsValue(StatsType type);
 		float GetStatsValuePrecent(StatsType type);
 		public void SetStatsValue(StatsType type, int value);
@@ -716,67 +716,30 @@ public partial class StrategyGamePlayData // StatsValue
 				out int integerMaterial,
 				out int integerElectric);
 
-			int maxPersonnel = StatsValue.GetStatsValue(StatsType.자원_인력_최대);
-			int maxMaterial = StatsValue.GetStatsValue(StatsType.자원_재료_최대);
-			int maxElectric = StatsValue.GetStatsValue(StatsType.자원_전력_최대);
+			int maxPersonnel = ThisStatsValue.GetStatsValue(StatsType.자원_인력_최대);
+			int maxMaterial = ThisStatsValue.GetStatsValue(StatsType.자원_재료_최대);
+			int maxElectric = ThisStatsValue.GetStatsValue(StatsType.자원_전력_최대);
 
-			integerPersonnel += StatsValue.GetStatsValue(StatsType.자원_인력_현재);
-			integerMaterial += StatsValue.GetStatsValue(StatsType.자원_재료_현재);
-			integerElectric += StatsValue.GetStatsValue(StatsType.자원_전력_현재);
+			integerPersonnel += ThisStatsValue.GetStatsValue(StatsType.자원_인력_현재);
+			integerMaterial += ThisStatsValue.GetStatsValue(StatsType.자원_재료_현재);
+			integerElectric += ThisStatsValue.GetStatsValue(StatsType.자원_전력_현재);
 
 			if (maxPersonnel < integerPersonnel) integerPersonnel = maxPersonnel;
 			if (maxMaterial < integerMaterial) integerMaterial = maxMaterial;
 			if (maxElectric < integerElectric) integerElectric = maxElectric;
 
-			StatsValue.SetStatsValue(StatsType.자원_인력_현재, integerPersonnel);
-			StatsValue.SetStatsValue(StatsType.자원_재료_현재, integerMaterial);
-			StatsValue.SetStatsValue(StatsType.자원_전력_현재, integerElectric);
+			ThisStatsValue.SetStatsValue(StatsType.자원_인력_현재, integerPersonnel);
+			ThisStatsValue.SetStatsValue(StatsType.자원_재료_현재, integerMaterial);
+			ThisStatsValue.SetStatsValue(StatsType.자원_전력_현재, integerElectric);
 
-			OnSupplyChange.Invoke(this);
+			OnSupplyChange?.Invoke(this);
 		}
 
-		public (float[] values, float total, float max) GetPersonnelDetailValue()
-		{
-			float max = StatsValue.GetStatsValue(StatsType.자원_인력_최대);
-			float total = StatsValue.GetStatsValue(StatsType.자원_인력_현재);
-			float[] values = new float[1];
-			values[0] = StatsValue.GetStatsValue(StatsType.자원_인력_현재);
-			return (values, total, max);
-		}
-		public (float[] values, float total, float max) GetMaterialDetailValue()
-		{
-			float max = StatsValue.GetStatsValue(StatsType.자원_재료_최대);
-			float total = StatsValue.GetStatsValue(StatsType.자원_재료_현재);
-			float[] values = new float[1];
-			values[0] = StatsValue.GetStatsValue(StatsType.자원_재료_현재);
-			return (values, total, max);
-		}
-		public (float[] values, float total, float max) GetElectricDetailValue()
-		{
-			float max = StatsValue.GetStatsValue(StatsType.자원_전력_최대);
-			float total = StatsValue.GetStatsValue(StatsType.자원_전력_현재);
-
-			float[] values = new float[1];
-			values[0] = StatsValue.GetStatsValue(StatsType.자원_전력_현재);
-			return (values, total, max);
-		}
-		public (float total, float max) GetPersonnelSimpleValue()
-		{
-			float max = StatsValue.GetStatsValue(StatsType.자원_인력_최대);
-			float total = StatsValue.GetStatsValue(StatsType.자원_인력_현재);
-			return (total, max);
-		}
-		public (float total, float max) GetMaterialSimpleValue()
-		{
-			float max = StatsValue.GetStatsValue(StatsType.자원_재료_최대);
-			float total = StatsValue.GetStatsValue(StatsType.자원_재료_현재);
-			return (total, max);
-		}
-		public (float total, float max) GetElectricSimpleValue()
-		{
-			float max = StatsValue.GetStatsValue(StatsType.자원_전력_최대);
-			float total = StatsValue.GetStatsValue(StatsType.자원_전력_현재);
-			return (total, max);
-		}
+		public (float[] values, float total, float max) GetPersonnelDetailValue();
+		public (float[] values, float total, float max) GetMaterialDetailValue();
+		public (float[] values, float total, float max) GetElectricDetailValue();
+		public (float total, float max) GetPersonnelSimpleValue();
+		public (float total, float max) GetMaterialSimpleValue();
+		public (float total, float max) GetElectricSimpleValue();
 	}
 }

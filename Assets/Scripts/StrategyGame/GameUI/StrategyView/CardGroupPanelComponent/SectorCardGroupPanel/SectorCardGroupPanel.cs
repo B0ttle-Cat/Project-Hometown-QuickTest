@@ -53,13 +53,7 @@ public class SectorCardGroupPanel : CardGroupPanelComponent, IShowHideAsync
 	{
 		private SectorCardItemPanel cardUIObjectView;
 
-		public SectorCard(GameObject thisObject, SectorObject item = null) : base(thisObject, item)
-		{
-			if(thisObject.TryGetComponent<SectorCardItemPanel>(out cardUIObjectView))
-			{
-				cardUIObjectView.SetUITarget(item);
-			}
-		}
+		public SectorCard(GameObject thisObject, SectorObject item = null) : base(thisObject, item){}
 		public override void Dispose()
 		{
 			if (cardUIObjectView.IsNotNullRef())
@@ -90,15 +84,7 @@ public class SectorCardGroupPanel : CardGroupPanelComponent, IShowHideAsync
 		{
 			if (cardUIObjectView.IsNotNullRef())
 			{
-				cardUIObjectView.RePating();
-			}
-		}
-
-		protected override void ClearUI()
-		{
-			if (cardUIObjectView.IsNotNullRef())
-			{
-				cardUIObjectView.ClearUI();
+				cardUIObjectView.RePainting();
 			}
 		}
 	}

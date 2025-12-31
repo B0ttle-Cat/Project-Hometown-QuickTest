@@ -3,7 +3,7 @@
 using static StrategyGamePlayData;
 public partial class UnitObject : IStatsValueControl
 {
-	public IStatsValueControl StatsValue => this;
+	public IStatsValueControl ThisStatsValue => this;
 
 	int IStatsValueControl.GetStatsValue(StatsType type)
 	{

@@ -95,7 +95,6 @@ namespace GameUI
 			find = FindInternal(key, condition);
 			return find != null;
 		}
-
 		public bool TryFind<T>(out T find) where T : class => TryFind<T>("..", null, out find);
 		public bool TryFind<T>(string key, out T find) where T : class => TryFind<T>(key, null, out find);
 		public bool TryFind<T>(Func<T, bool> condition, out T find) where T : class => TryFind<T>("..", condition, out find);

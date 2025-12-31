@@ -15,13 +15,15 @@ MonoBehaviour:
   prefab: {fileID: 3038614790925891562, guid: 219d37df2b43f224496eeb94cb96be94, type: 3}
   unitKey: 1312
   displayName: "LSW-SP-NL \uD3EC\uD2B8 \uBCF4\uAE09 \uB85C\uBD07"
+  unitFullBodySprite: {fileID: 0}
+  unitPortraitSprite: {fileID: 0}
   stats:
     cost:
       DeploymentCostPersonnel: 1
       DeploymentCostMaterial: 1
-      DeploymentCostPower: 1
+      DeploymentCostElectric: 0
       AttackCostMaterial: 1
-      AttackCostPower: 1
+      AttackCostElectric: 0
     common:
       MaxDurability: 1000
       HealingPower: 10

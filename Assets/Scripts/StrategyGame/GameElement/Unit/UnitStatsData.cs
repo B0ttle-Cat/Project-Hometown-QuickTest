@@ -239,9 +239,12 @@ public record UnitInstanceData
 {
 	public UnitKey unitKey;     // 원본과 매칭되는 키
 	public string displayName;  // 유닛 이름
+	public Sprite unitFullBodySprite;
+	public Sprite unitPortraitSprite;
 
 	public int unitID;
 	public int factionID;
+
 
 	[SerializeField]
 	private int lastVisiteSectorID;
