@@ -9,7 +9,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UnitCardItemPanel : PanelItemComponent, IFindUIObject
+using static StrategyGamePlayData;
+
+public class UnitCardItemPanel : CardItemPanelComponent<UnitObject>, IFindUIObject
 {
 	private IUnitCardUIObject unitCard;
 	public IFindUIObject ThisUIFinder => this;
@@ -29,9 +31,10 @@ public class UnitCardItemPanel : PanelItemComponent, IFindUIObject
 	private FillRectPanelUI materialFillRect;
 	private FillRectPanelUI electricFillRect;
 
-	internal void Attach(IUnitCardUIObject item)
+	protected override void AttachUI(ICardUIObject item)
 	{
-		unitCard = item;
+		if (item is not IUnitCardUIObject unitCard) return;
+		this.unitCard = unitCard;
 
 		if (titleImage.IsNotNullRef() || ThisUIFinder.TryFind<Image>("..TitleImage", out titleImage))
 			titleImage.sprite = unitCard.GetTitleImage();
@@ -50,15 +53,23 @@ public class UnitCardItemPanel : PanelItemComponent, IFindUIObject
 		if (electricFillRect.IsNotNullRef() || ThisUIFinder.TryFind<FillRectPanelUI>("../Electric", out electricFillRect))
 			showElectric = electricFillRect.gameObject.activeSelf;
 
-		RePainting();
+		if (unitCard is ISupplyStats supplyStats)
+		{
+			supplyStats.OnSupplyChange -= UpdateSupplyStats;
+			supplyStats.OnSupplyChange += UpdateSupplyStats;
+		}
 	}
 
-	internal void ClearUI()
+	protected override void ReleaseUI()
 	{
-	}
-
-	internal void Release()
-	{
+		if(unitCard.IsNotNullRef())
+		{
+			if (unitCard is ISupplyStats supplyStats)
+			{
+				supplyStats.OnSupplyChange -= UpdateSupplyStats;
+			}
+			unitCard = null;
+		}
 		unitCard = null;
 
 		titleImage = null;
@@ -67,9 +78,14 @@ public class UnitCardItemPanel : PanelItemComponent, IFindUIObject
 		materialFillRect = null;
 		electricFillRect = null;
 	}
-
-	internal void RePainting()
+	private void UpdateSupplyStats(ISupplyStats supplyStats)
 	{
+		UpdateUI();
+	}
+	protected override void UpdateUI()
+	{
+		if (unitCard.IsNullRef()) return;
+
 		RePainting_FillRect(shieldFillRect, ref showShield, unitCard.GetShieldSimpleValue());
 		RePainting_FillRect(materialFillRect, ref showMaterial, unitCard.GetMaterialSimpleValue());
 		RePainting_FillRect(electricFillRect, ref showElectric, unitCard.GetElectricSimpleValue());

@@ -7,7 +7,6 @@ using UnityEngine.UI;
 
 namespace GameUI
 {
-	[RequireComponent(typeof(CardGroupPanelComponent))]
 	public class PoolingScrollDataContainer : MonoBehaviour
 	{
 		[SerializeField, ReadOnly, Required]

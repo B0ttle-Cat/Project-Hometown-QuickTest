@@ -10,7 +10,7 @@ namespace GameUI
 {
 	[RequireComponent(typeof(RectTransform))]
 	public abstract class PanelGroupComponent<T> : PanelItemComponent, IPanelGroup<T>, IShowHideAsync
-		where T : IPanelItem, IDisposable
+		where T : IPanelItem
 	{
 
 		#region IPanelGroup<T>
@@ -50,7 +50,7 @@ namespace GameUI
 		{
 			if (Items.Remove(item))
 			{
-				item.Dispose();
+				GameObject.Destroy(item.ThisRect.gameObject);
 				return true;
 			}
 			return false;
@@ -71,7 +71,15 @@ namespace GameUI
 			int length = Count;
 			for (int i = 0 ; i < length ; i++)
 			{
-				this[i].Dispose();
+				var item = this[i];
+				var itemRect = item.ThisRect;
+				
+				if (item is IDisposable disposable) disposable.Dispose();
+
+				if (itemRect.IsNotNullRef())
+				{
+					GameObject.Destroy(itemRect.gameObject);
+				}
 			}
 			Items.Clear();
 		}

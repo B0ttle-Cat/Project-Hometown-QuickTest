@@ -9,7 +9,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class OperationCardItemPanel : PanelItemComponent, IFindUIObject
+using static StrategyGamePlayData;
+
+public class OperationCardItemPanel : CardItemPanelComponent<OperationObject>, IFindUIObject
 {
 	private IOperationCardUIObject operationCard;
 	public IFindUIObject ThisUIFinder => this;
@@ -26,9 +28,10 @@ public class OperationCardItemPanel : PanelItemComponent, IFindUIObject
 	private FillRectPanelUI materialFillRect;
 	private FillRectPanelUI electricFillRect;
 
-	internal void Attach(IOperationCardUIObject item)
+	protected override void AttachUI(ICardUIObject item)
 	{
-		operationCard = item;
+		if (item is not IOperationCardUIObject operationCard) return;
+		this.operationCard = operationCard;
 
 		if (titleImage.IsNotNullRef() || ThisUIFinder.TryFind<Image>("..TitleImage", out titleImage))
 			titleImage.sprite = operationCard.GetTitleImage();
@@ -47,16 +50,23 @@ public class OperationCardItemPanel : PanelItemComponent, IFindUIObject
 		if (electricFillRect.IsNotNullRef() || ThisUIFinder.TryFind<FillRectPanelUI>("../Electric", out electricFillRect))
 			showElectric = electricFillRect.gameObject.activeSelf;
 
-		RePainting();
-	}
 
-	internal void ClearUI()
-	{
+		if (operationCard is ISupplyStats supplyStats)
+		{
+			supplyStats.OnSupplyChange -= UpdateSupplyStats;
+			supplyStats.OnSupplyChange += UpdateSupplyStats;
+		}
 	}
-
-	internal void Release()
+	protected override void ReleaseUI()
 	{
-		operationCard = null;
+		if (operationCard.IsNotNullRef())
+		{
+			if (operationCard is ISupplyStats supplyStats)
+			{
+				supplyStats.OnSupplyChange -= UpdateSupplyStats;
+			}
+			operationCard = null;
+		}
 
 		titleImage = null;
 		titleText = null;
@@ -64,8 +74,11 @@ public class OperationCardItemPanel : PanelItemComponent, IFindUIObject
 		materialFillRect = null;
 		electricFillRect = null;
 	}
-
-	internal void RePainting()
+	private void UpdateSupplyStats(ISupplyStats supplyStats)
+	{
+		UpdateUI();
+	}
+	protected override void UpdateUI()
 	{
 		RePainting_FillRect(personnelFillRect, ref showPersonnel, operationCard.GetPersonnelSimpleValue());
 		RePainting_FillRect(materialFillRect, ref showMaterial, operationCard.GetMaterialSimpleValue());

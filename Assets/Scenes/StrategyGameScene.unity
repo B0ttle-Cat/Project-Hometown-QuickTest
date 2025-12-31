@@ -204,9 +204,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67787c6c02e394f468e1998b97658359, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitCardGroupPanel
-  CardPrefab: {fileID: 6497815980617949089, guid: fc35562ad7ae8914e8aff49a280cc4d9, type: 3}
+  CardPrefab: {fileID: 6682355681337195028, guid: fc35562ad7ae8914e8aff49a280cc4d9, type: 3}
   ContentParent: {fileID: 560685280}
-  poolingCardObject: 0
+  poolingCardObject: 1
   poolingScrollDataContainer: {fileID: 4796105}
 --- !u!114 &4796105
 MonoBehaviour:
@@ -425,9 +425,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abe0073b977f4194785669f476191d62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StrategySectorCardView
-  CardPrefab: {fileID: 6497815980617949089, guid: 1db8ce840c975564597ccd5a154d31c5, type: 3}
+  CardPrefab: {fileID: 8329387073843089986, guid: 1db8ce840c975564597ccd5a154d31c5, type: 3}
   ContentParent: {fileID: 44458275}
-  poolingCardObject: 0
+  poolingCardObject: 1
   poolingScrollDataContainer: {fileID: 58857483}
 --- !u!114 &58857483
 MonoBehaviour:
@@ -7437,9 +7437,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbee63441a005744da915de26c70be4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OperationCardGroupPanel
-  CardPrefab: {fileID: 159616052365629527, guid: cf76bf7b24cb3ae499488979c6537bfe, type: 3}
+  CardPrefab: {fileID: 7544981798547334151, guid: cf76bf7b24cb3ae499488979c6537bfe, type: 3}
   ContentParent: {fileID: 1307337658}
-  poolingCardObject: 0
+  poolingCardObject: 1
   poolingScrollDataContainer: {fileID: 955811208}
 --- !u!114 &955811208
 MonoBehaviour:

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using Sirenix.OdinInspector;
 
@@ -8,25 +7,35 @@ using UnityEngine;
 
 namespace GameUI
 {
-
-
-	public abstract class CardGroupPanelComponent : PanelGroupComponent<CardGroupPanelComponent.CardPanel>, IShowHideAsync
+	public abstract class CardGroupPanelComponent : PanelGroupComponent<CardItemPanelComponent>, IShowHideAsync
 	{
 		[SerializeField, Required]
-		protected RectTransform CardPrefab;
+		protected CardItemPanelComponent CardPrefab;
 		[SerializeField]
 		protected RectTransform ContentParent;
 
-		[SerializeField, ToggleGroup("poolingCardObject")]
-		private bool poolingCardObject;
-		[SerializeField, ToggleGroup("poolingCardObject")]
+		public Rect GetCardRect()
+		{
+			if (CardPrefab.IsNullRef()) return default;
+			return CardPrefab.ThisPanel.ThisRect.rect;
+		}
+
+		public abstract void AddItem(ICardUIObject item, bool addLast = true);
+		public abstract bool RemoveItem(ICardUIObject item);
+	}
+
+	public abstract class CardGroupPanelComponent<T> : CardGroupPanelComponent, IShowHideAsync
+		where T : class, ICardUIObject
+	{
+
+		protected bool PoolingCardObject => PoolingData.IsNotNullRef();
+		[SerializeField]
 		private PoolingScrollDataContainer poolingScrollDataContainer;
 		public PoolingScrollDataContainer PoolingData
 		{
 			get
 			{
-				if (!poolingCardObject) return null;
-				if(poolingScrollDataContainer.IsNullRef())
+				if (poolingScrollDataContainer.IsNullRef())
 				{
 					TryGetComponent<PoolingScrollDataContainer>(out poolingScrollDataContainer);
 				}
@@ -34,9 +43,9 @@ namespace GameUI
 			}
 		}
 
-		[ShowInInspector, ToggleGroup("poolingCardObject")]
+		[ShowInInspector, ShowIf("PoolingCardObject")]
 		[HideInEditorMode]
-		protected Stack<CardPanel> PoolStack;
+		protected Stack<CardItemPanelComponent> PoolStack;
 
 		protected void AllHideAndClear()
 		{
@@ -57,129 +66,16 @@ namespace GameUI
 			}
 		}
 
-
-
-		[Serializable]
-		public abstract class CardPanel : IPanelItem, IShowHide, IDisposable
+		protected virtual bool SetCardTarget(CardItemPanelComponent<T> newCardComponent, T item)
 		{
-			public abstract GameUIController RootUI { get; }
-			public abstract IPanelItem ThisPanel { get; }
-			public abstract RectTransform ThisRect { get; }
-			public abstract IShowHide ThisShowHide { get; }
-			public abstract bool IsShow { get; set; }
-			public abstract void Dispose();
-			public abstract void OnRelease();
-			public abstract void OnAttach();
-			public abstract void OnUpdateUI();
+			return newCardComponent.SetTarget(item);
 		}
-		public abstract class CardPanel<T> : CardPanel, IPanelItem, IShowHide, IDisposable
-			where T : class, ICardUIObject
-		{
-			protected IPanelItem panelItem;
-			public override IPanelItem ThisPanel => panelItem;
-			public override RectTransform ThisRect => panelItem.ThisRect;
-			public override GameUIController RootUI => panelItem.RootUI;
-			public override IShowHide ThisShowHide => this;
-			public override bool IsShow { get; set; }
-            [ShowInInspector]
-            public T Item { get ; private set; }
 
-            public CardPanel(GameObject thisObject, T item = null)
-			{
-				panelItem = thisObject.GetComponent<IPanelItem>();
-				ThisShowHide.PairingShowHide();
-				OnUpdateUI(item);
-			}
-			public CardPanel(RectTransform thisRect, T item = null)
-			{
-				panelItem = thisRect.gameObject.GetComponent<IPanelItem>();
-				ThisShowHide.PairingShowHide();
-				OnUpdateUI(item);
-			}
-			public CardPanel(IShowHide showHide, T item = null)
-			{
-				this.panelItem = showHide;
-				ThisShowHide.PairingShowHide();
-				OnUpdateUI(item);
-			}
-			public override void Dispose()
-			{
-				if (panelItem.IsNullRef()) return;
-
-				ThisShowHide.UnpairingShowHide();
-				OnRelease();
-
-				if (ThisPanel.ThisRect.IsNotNullRef())
-				{
-					Destroy(ThisPanel.ThisRect.gameObject);
-				}
-				panelItem = null;
-				Item = null;
-			}
-			public void OnUpdateUI(T item)
-			{
-				if (this.Item == item)
-				{
-					OnUpdateUI();
-					return;
-				}
-				else
-				{
-					if (this.Item.IsNotNullRef())
-					{
-						OnRelease();
-					}
-					this.Item = item;
-					if (this.Item.IsNotNullRef())
-					{
-						OnAttach();
-					}
-					OnUpdateUI();
-				}
-			}
-			public override void OnRelease()
-			{
-				if (Item.IsNullRef())
-				{
-					Item = null;
-					return;
-				}
-				ReleaseUI();
-				Item = null;
-			}
-			public override void OnAttach()
-			{
-				if (Item.IsNullRef())
-				{
-					Item = null;
-					return;
-				}
-				AttachUI();
-			}
-			public override void OnUpdateUI()
-			{
-				if (Item.IsNullRef())
-				{
-					OnRelease();
-					return;
-				}
-				UpdateUI();
-			}
-			internal bool Contains(T item)
-			{
-				return this.Item == item;
-			}
-			protected abstract void ReleaseUI();
-			protected abstract void AttachUI();
-			protected abstract void UpdateUI();
-		}
-		protected abstract CardPanel CardFactory<T>(GameObject newUIObject, T item) where T : class, ICardUIObject;
-		
-		protected void InitCardList<T>(IEnumerable<ICardUIObject> cardElements) where T : class, ICardUIObject
+		protected void InitCardList(IEnumerable<ICardUIObject> cardElements)
 		{
 			Clear();
 
-			if (PoolingData.IsNotNullRef())
+			if (PoolingCardObject)
 			{
 				PoolingData.SetData<T>(cardElements);
 				return;
@@ -188,92 +84,101 @@ namespace GameUI
 			foreach (var card in cardElements)
 			{
 				if (card is not T item) continue;
-				AddItem<T>(item);
+				AddItem(item);
 			}
 		}
-		public virtual void AddPoolData<T>(T item) where T : class, ICardUIObject
+		public virtual void AddPoolData(T item)
 		{
-			if (PoolingData.IsNotNullRef())
+			if (PoolingCardObject)
 			{
 				PoolingData.AddData<T>(item);
 				return;
 			}
-			AddItem<T>(item);
+			AddItem(item);
 		}
-		public virtual void RemovePoolData<T>(T item) where T : class, ICardUIObject
+		public virtual void RemovePoolData(T item)
 		{
-			if (PoolingData.IsNotNullRef())
+			if (PoolingCardObject)
 			{
 				PoolingData.RemoveData<T>(item);
 				return;
 			}
-			RemoveItem<T>(item);
+			RemoveItem(item);
 		}
-
-
-		public virtual void AddItem<T>(T item, bool addLast = true) where T : class, ICardUIObject
+		sealed public override void AddItem(ICardUIObject item, bool addLast = true)
 		{
 			if (item.IsNullRef()) return;
+			if (item is not T tItem) return;
 			if (CardPrefab.IsNullRef()) return;
-			if (Contains(item)) return;
+			if (Contains(tItem)) return;
 
-			if (poolingCardObject)
+			if (PoolingCardObject)
 			{
-				if (PoolStack == null) PoolStack = new Stack<CardPanel>();
+				if (PoolStack == null) PoolStack = new Stack<CardItemPanelComponent>();
 				while (PoolStack.TryPop(out var pop))
 				{
-					if (pop == null) continue;
+					if (pop.IsNullRef()) continue;
 					if (pop.ThisPanel.IsNullRef()) continue;
 					var thisRect = pop.ThisPanel.ThisRect;
 					if (thisRect.IsNullRef()) continue;
 					if (addLast) thisRect.transform.SetAsLastSibling();
 					else thisRect.transform.SetAsFirstSibling();
-					Add(pop);
+					if (pop.SetTarget(tItem))
+					{
+						Add(pop);
+					}
+					else
+					{
+						Remove(pop);
+					}
 					return;
 				}
 			}
-			var newUIObject = Instantiate(CardPrefab.gameObject, ContentParent.IsNullRef() ? transform : ContentParent);
-			if (newUIObject.IsNullRef()) return;
+			var tComponent = CardPrefab as CardItemPanelComponent<T>;
 
-			var newItem = CardFactory(newUIObject, item);
-			if (newItem.IsNullRef())
+			var newCardComponent = Instantiate<CardItemPanelComponent<T>>(tComponent, ContentParent.IsNullRef() ? transform : ContentParent);
+			if (newCardComponent.IsNullRef()) return;
+
+			var isInit =  SetCardTarget(newCardComponent, tItem);
+			if (!isInit)
 			{
-				GameObject.Destroy(newUIObject);
+				GameObject.Destroy(newCardComponent.gameObject);
 				return;
 			}
 
 			if (addLast)
 			{
-				newUIObject.transform.SetAsLastSibling();
-				Add(CardFactory(newUIObject, item));
+				newCardComponent.transform.SetAsLastSibling();
+				Add(newCardComponent);
 			}
 			else
 			{
-				newUIObject.transform.SetAsFirstSibling();
-				Insert(0, CardFactory(newUIObject, item));
+				newCardComponent.transform.SetAsFirstSibling();
+				Insert(0, newCardComponent);
 			}
-
 		}
-		public virtual bool RemoveItem<T>(T item) where T : class, ICardUIObject
+		sealed public override bool RemoveItem(ICardUIObject item)
 		{
+			if (item.IsNullRef()) return false;
+			if (item is not T tItem) return false;
+
 			int length = Count;
 			for (int i = 0 ; i < length ; i++)
 			{
-				if (Contains<T>(item))
+				if (Contains(tItem))
 				{
 					return Remove(this[i]);
 				}
 			}
 			return false;
 		}
-
-		public override void Add(CardPanel item)
+		public override void Add(CardItemPanelComponent item)
 		{
 			if (item == null) return;
 			Items.Add(item);
 			item.OnUpdateUI();
 		}
-		public override void Insert(int index, CardPanel item)
+		public override void Insert(int index, CardItemPanelComponent item)
 		{
 			if (item == null) return;
 			Items.Insert(index, item);
@@ -286,22 +191,21 @@ namespace GameUI
 			{
 				Remove(this[i]);
 			}
-			if (PoolStack != null) PoolStack.Clear();
 			Items.Clear();
 		}
-		public override bool Remove(CardPanel item)
+		public override bool Remove(CardItemPanelComponent item)
 		{
 			if (Items.Remove(item))
 			{
 				if (item.IsNotNullRef())
 				{
-					if (poolingCardObject && PoolStack != null)
+					if (PoolingCardObject && PoolStack != null)
 					{
 						PoolStack.Push(item);
 					}
 					else
 					{
-						item.Dispose();
+						GameObject.Destroy(item.gameObject);
 					}
 				}
 				return true;
@@ -315,25 +219,19 @@ namespace GameUI
 				Remove(this[index]);
 			}
 		}
-		public virtual bool Contains<T>(T item) where T : class, ICardUIObject
+		public virtual bool Contains(T item)
 		{
 			int length = Count;
 			for (int i = 0 ; i < length ; i++)
 			{
 				var panel = this[i];
-				if (panel is not CardPanel<T> tPanel) continue;
-				if(tPanel.Item == item)
+				if (panel is not CardItemPanelComponent<T> tPanel) continue;
+				if (tPanel.Item == item)
 				{
 					return true;
 				}
 			}
 			return false;
-		}
-
-		public Rect GetCardRect()
-		{
-			if (CardPrefab.IsNullRef()) return default;
-			return CardPrefab.rect;
 		}
 	}
 }

@@ -9,14 +9,14 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SectorCardItemPanel : PanelItemComponent, IFindUIObject
+using static StrategyGamePlayData;
+
+public class SectorCardItemPanel : CardItemPanelComponent<SectorObject>, IFindUIObject
 {
 	private ISectorCardUIObject sectorCard;
 	public IFindUIObject ThisUIFinder => this;
 	[SerializeField, PropertyOrder(-90)] private List<IFindUIObject.KeyPairObject> keyPairs;
 	List<IFindUIObject.KeyPairObject> IFindUIObject.KeyPairs { get => keyPairs; set => keyPairs = value; }
-
-
 
 	private Image titleImage;
 	private TMP_Text titleText;
@@ -29,14 +29,15 @@ public class SectorCardItemPanel : PanelItemComponent, IFindUIObject
 	private FillRectPanelUI materialFillRect;
 	private FillRectPanelUI electricFillRect;
 
-	internal void Attach(ISectorCardUIObject item)
+	protected override void AttachUI(ICardUIObject item)
 	{
-		sectorCard = item;
+		if (item is not ISectorCardUIObject sectorCard) return;
+		this.sectorCard = sectorCard;
 
-		if(titleImage.IsNotNullRef() || ThisUIFinder.TryFind<Image>("..TitleImage", out titleImage))
+		if (titleImage.IsNotNullRef() || ThisUIFinder.TryFind<Image>("..TitleImage", out titleImage))
 			titleImage.sprite = sectorCard.GetTitleImage();
 
-		if (titleText.IsNotNullRef() ||  ThisUIFinder.TryFind<TMP_Text>("..TitleText", out titleText))
+		if (titleText.IsNotNullRef() || ThisUIFinder.TryFind<TMP_Text>("..TitleText", out titleText))
 			titleText.text = sectorCard.GetTitleName();
 
 		showShield = false;
@@ -46,18 +47,30 @@ public class SectorCardItemPanel : PanelItemComponent, IFindUIObject
 
 		if (shieldFillRect.IsNotNullRef() || ThisUIFinder.TryFind<FillRectPanelUI>("../Shield", out shieldFillRect))
 			showShield = shieldFillRect.gameObject.activeSelf;
-		if (personnelFillRect .IsNotNullRef() || ThisUIFinder.TryFind<FillRectPanelUI>("../Personnel", out personnelFillRect))
+		if (personnelFillRect.IsNotNullRef() || ThisUIFinder.TryFind<FillRectPanelUI>("../Personnel", out personnelFillRect))
 			showPersonnel = personnelFillRect.gameObject.activeSelf;
 		if (materialFillRect.IsNotNullRef() || ThisUIFinder.TryFind<FillRectPanelUI>("../Material", out materialFillRect))
 			showMaterial = materialFillRect.gameObject.activeSelf;
 		if (electricFillRect.IsNotNullRef() || ThisUIFinder.TryFind<FillRectPanelUI>("../Electric", out electricFillRect))
 			showElectric = electricFillRect.gameObject.activeSelf;
 
-		RePainting();
+		if (sectorCard is ISupplyStats supplyStats)
+		{
+			supplyStats.OnSupplyChange -= UpdateSupplyStats;
+			supplyStats.OnSupplyChange += UpdateSupplyStats;
+		}
+
 	}
-	internal void Release()
+	protected override void ReleaseUI()
 	{
-		sectorCard = null;
+		if (sectorCard.IsNotNullRef())
+		{
+			if (sectorCard is ISupplyStats supplyStats)
+			{
+				supplyStats.OnSupplyChange -= UpdateSupplyStats;
+			}
+			sectorCard = null;
+		}
 
 		titleImage = null;
 		titleText = null;
@@ -66,8 +79,17 @@ public class SectorCardItemPanel : PanelItemComponent, IFindUIObject
 		materialFillRect = null;
 		electricFillRect = null;
 	}
-	internal void RePainting()
+
+	private void UpdateSupplyStats(ISupplyStats supplyStats)
 	{
+		UpdateUI();
+	}
+
+
+	protected override void UpdateUI()
+	{
+		if (sectorCard.IsNullRef()) return;
+
 		RePainting_FillRect(shieldFillRect, ref showShield, sectorCard.GetShieldSimpleValue());
 		RePainting_FillRect(personnelFillRect, ref showPersonnel, sectorCard.GetPersonnelSimpleValue());
 		RePainting_FillRect(materialFillRect, ref showMaterial, sectorCard.GetMaterialSimpleValue());

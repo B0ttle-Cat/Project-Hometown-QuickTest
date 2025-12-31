@@ -1,8 +1,6 @@
 ﻿using GameUI;
 
-using UnityEngine;
-
-public class UnitCardGroupPanel : CardGroupPanelComponent, IShowHideAsync
+public class UnitCardGroupPanel : CardGroupPanelComponent<UnitObject>, IShowHideAsync
 {
 	void IShowHide.EndedHide()
 	{
@@ -20,7 +18,7 @@ public class UnitCardGroupPanel : CardGroupPanelComponent, IShowHideAsync
 		if (playerFaction != null)
 		{
 			playerFaction.AddChangeUnit(OnChangeValue);
-			InitCardList<UnitObject>(playerFaction.UnitList.CardUIType);
+			InitCardList(playerFaction.UnitList.CardUIType);
 		}
 		AllShow();
 	}
@@ -38,58 +36,6 @@ public class UnitCardGroupPanel : CardGroupPanelComponent, IShowHideAsync
 		else
 		{
 			this.RemovePoolData(item);
-		}
-	}
-	protected override CardPanel CardFactory<T>(GameObject newUIObject, T item) where T : class
-	{
-		if (item is UnitObject sectorObject)
-		{
-			return new UnitCard(newUIObject, sectorObject);
-		}
-		return null;
-	}
-	public class UnitCard : CardPanel<IUnitCardUIObject>
-	{
-		private UnitCardItemPanel cardUIObjectView;
-
-		public UnitCard(GameObject thisObject, UnitObject item = null) : base(thisObject, item)
-		{
-			if (thisObject.TryGetComponent<UnitCardItemPanel>(out cardUIObjectView))
-			{
-				cardUIObjectView.SetUITarget(item);
-			}
-		}
-		public override void Dispose()
-		{
-			if (cardUIObjectView.IsNotNullRef())
-			{
-				cardUIObjectView.Release();
-				cardUIObjectView = null;
-			}
-
-			base.Dispose();
-		}
-		protected override void ReleaseUI()
-		{
-			if (cardUIObjectView.IsNotNullRef())
-			{
-				cardUIObjectView.Release();
-			}
-
-		}
-		protected override void AttachUI()
-		{
-			if (cardUIObjectView.IsNotNullRef())
-			{
-				cardUIObjectView.Attach(Item);
-			}
-		}
-		protected override void UpdateUI()
-		{
-			if (cardUIObjectView.IsNotNullRef())
-			{
-				cardUIObjectView.RePainting();
-			}
 		}
 	}
 }
