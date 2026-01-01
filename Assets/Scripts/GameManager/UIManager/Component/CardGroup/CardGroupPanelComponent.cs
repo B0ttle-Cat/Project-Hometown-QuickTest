@@ -26,19 +26,20 @@ namespace GameUI
 		{
 			if (item.IsNullRef()) return;
 			base.Add(item);
-			item.OnUpdateUI();
+			if(item is ISetTargetPanel setTargetPanel)
+				setTargetPanel.UpdateUI();
 		}
 		public override void Insert(int index, CardItemPanelComponent item)
 		{
 			if (item.IsNullRef()) return;
 			base.Insert(index, item);
-			item.OnUpdateUI();
+			if (item is ISetTargetPanel setTargetPanel)
+				setTargetPanel.UpdateUI();
 		}
 		public override bool Remove(CardItemPanelComponent item)
 		{
 			if (item.IsNullRef()) return false;
 			bool result = base.Remove(item);
-			item.OnUpdateUI();
 			return result;
 		}
 		public override void RemoveAt(int index)

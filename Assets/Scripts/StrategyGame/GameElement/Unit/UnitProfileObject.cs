@@ -21,6 +21,8 @@ public class UnitProfileObject : ScriptableObject
 
 	[BoxGroup("Sprite Image")]
 	[HorizontalGroup("Sprite Image/H"), HideLabel, PreviewField(100)]
+	public Sprite unitIconSprite;
+	[HorizontalGroup("Sprite Image/H"), HideLabel, PreviewField(100)]
 	public Sprite unitFullBodySprite;
 	[HorizontalGroup("Sprite Image/H"), HideLabel, PreviewField(100)]
 	public Sprite unitPortraitSprite;

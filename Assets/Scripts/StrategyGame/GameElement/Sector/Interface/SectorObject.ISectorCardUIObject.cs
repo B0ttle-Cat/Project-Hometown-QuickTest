@@ -4,21 +4,17 @@ using UnityEngine;
 
 using static StrategyGamePlayData;
 
-public partial class SectorObject : ISectorCardUIObject
+public partial class SectorObject : ISectorForPanel
 {
-	Sprite ITargetForCardPanel.GetTitleImage()
+	Sprite ITargetForCardPanel.GetCardImage()
 	{
 		return null;
 	}
-	string ITargetForCardPanel.GetTitleName()
+	string ITargetForCardPanel.GetCardName()
 	{
 		return StatsData.SectorName;
 	}
-	string ITargetForCardPanel.GetDescription()
-	{
-		return StatsData.SectorName;
-	}
-	string ITargetForCardPanel.GetFactionName()
+	string ISectorForPanel.GetFactionName()
 	{
 		Faction faction = FactionAPI.ID2Faction(RuntimeData.CaptureFactionID);
 		if (faction == null) return "점령 없음";

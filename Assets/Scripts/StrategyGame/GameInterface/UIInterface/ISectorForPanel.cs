@@ -1,7 +1,8 @@
 ﻿using GameUI;
 
-public interface ISectorCardUIObject : ITargetForCardPanel, IStrategyElement
+public interface ISectorForPanel : ITargetForCardPanel, IStrategyElement
 {
+	public string GetFactionName();
 	bool IsEnableResourcesSupply { get; set; }
 	public (float[] values, float total, float max) GetShieldDetailValue();
 	public (float[] values, float total, float max) GetPersonnelDetailValue();

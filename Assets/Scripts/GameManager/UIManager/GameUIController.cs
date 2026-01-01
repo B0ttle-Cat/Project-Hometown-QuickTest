@@ -46,7 +46,7 @@ namespace GameUI
 			int count = ThisUIFinder.KeyPairs == null ? 0 : ThisUIFinder.KeyPairs.Count;
 			for (int i = 0 ; i < count ; i++)
 			{
-				ThisUIFinder.KeyPairs[i].testFindit = ThisUIFinder.IsPathMatch(key, ThisUIFinder.KeyPairs[i].Key);
+				ThisUIFinder.KeyPairs[i].testFindit = ThisUIFinder.TestIsPathMatch(key, ThisUIFinder.KeyPairs[i].Key);
 			}
 		}
 #endif
@@ -91,7 +91,6 @@ namespace GameUI
 		}
 		protected abstract void Show();
 		protected abstract void Hide();
-
 
 	}
 

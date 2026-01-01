@@ -127,26 +127,35 @@ public partial class UnitObject // UnitCaptureTag
 }
 
 
-public partial class UnitObject : IUnitCardUIObject
+public partial class UnitObject : IUnitForPanel
 {
-	Sprite ITargetForCardPanel.GetTitleImage()
-	{
-		return InstanceData.unitFullBodySprite;
-	}
-	string ITargetForCardPanel.GetTitleName()
+	#region ITargetForLabelPanel
+	string ITargetForLabelPanel.GetLabelName()
 	{
 		return InstanceData.displayName;
 	}
-	string ITargetForCardPanel.GetFactionName()
+	Sprite ITargetForLabelPanel.GetLabelIcon()
+	{
+		return InstanceData.unitIconSprite;
+	}
+	#endregion
+
+	#region ITargetForCardPanel
+	Sprite ITargetForCardPanel.GetCardImage()
+	{
+		return InstanceData.unitFullBodySprite;
+	}
+	string ITargetForCardPanel.GetCardName()
+	{
+		return InstanceData.displayName;
+	}
+	#endregion
+
+	#region IUnitForPanel
+	string IUnitForPanel.GetFactionName()
 	{
 		return Faction.IsNullRef() ? "중립" : Faction.FactionName;
 	}
-	string ITargetForCardPanel.GetDescription()
-    {
-		return "";
-    }
-
-
 	public (float[] values, float total, float max) GetShieldDetailValue()
 	{
 		float max = ThisStatsValue.GetStatsValue(StatsType.시설_내구도_최대);
@@ -292,4 +301,5 @@ public partial class UnitObject : IUnitCardUIObject
 			return text;
 		}
 	}
+	#endregion
 }

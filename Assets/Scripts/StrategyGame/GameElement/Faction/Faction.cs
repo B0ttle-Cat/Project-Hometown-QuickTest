@@ -369,18 +369,18 @@ public partial class Faction // ElementSet
 	{
 		protected readonly List<ISectorController> controllerList = new List<ISectorController>();
 		protected readonly List<ISupplyStateForSector> supplyList = new List<ISupplyStateForSector>();
-		protected readonly List<ISectorCardUIObject> cardUIList = new List<ISectorCardUIObject>();
+		protected readonly List<ISectorForPanel> forPanel = new List<ISectorForPanel>();
 
 		public List<ISectorController> ControllerList => controllerList;
 		public List<ISupplyStateForSector> SupplyList => supplyList;
-		public List<ISectorCardUIObject> CardUIList => cardUIList;
+		public List<ISectorForPanel> ForPanel => forPanel;
 		public override bool Add(IStrategyElement item)
 		{
 			if (base.Add(item))
 			{
 				if (item is ISectorController control) controllerList.Add(control);
 				if (item is ISupplyStateForSector supply) supplyList.Add(supply);
-				if (item is ISectorCardUIObject card) cardUIList.Add(card);
+				if (item is ISectorForPanel panel) forPanel.Add(panel);
 				return true;
 			}
 			return false;
@@ -390,8 +390,8 @@ public partial class Faction // ElementSet
 			if (base.Remove(item))
 			{
 				if (item is ISectorController control) controllerList.Remove(control);
-				if (item is ISectorCardUIObject card) cardUIList.Remove(card);
 				if (item is ISupplyStateForSector supply) supplyList.Remove(supply);
+				if (item is ISectorForPanel panel) forPanel.Remove(panel);
 				return true;
 			}
 			return false;
@@ -401,25 +401,25 @@ public partial class Faction // ElementSet
 			base.Clear();
 			controllerList.Clear();
 			supplyList.Clear();
-			cardUIList.Clear();
+			forPanel.Clear();
 		}
 	}
 	public class OperationSet : ElementSet
 	{
 		protected readonly List<IOperationController> controllerList = new List<IOperationController>();
 		protected readonly List<IUnitOrganization> organizationList = new List<IUnitOrganization>();
-		protected readonly List<IOperationCardUIObject> cardUIList = new List<IOperationCardUIObject>();
+		protected readonly List<IOperationForPanel> forPanel = new List<IOperationForPanel>();
 
 		public List<IOperationController> ControllerList => controllerList;
 		public List<IUnitOrganization> OrganizationList => organizationList;
-		public List<IOperationCardUIObject> CardUIList => cardUIList;
+		public List<IOperationForPanel> ForPanel => forPanel;
 		public override bool Add(IStrategyElement item)
 		{
 			if (base.Add(item))
 			{
 				if (item is IOperationController control) controllerList.Add(control);
 				if (item is IUnitOrganization organization) organizationList.Add(organization);
-				if (item is IOperationCardUIObject card) cardUIList.Add(card);
+				if (item is IOperationForPanel panel) forPanel.Add(panel);
 				return true;
 			}
 			return false;
@@ -430,7 +430,7 @@ public partial class Faction // ElementSet
 			{
 				if (item is IOperationController control) controllerList.Remove(control);
 				if (item is IUnitOrganization organization) organizationList.Remove(organization);
-				if (item is IOperationCardUIObject card) cardUIList.Remove(card);
+				if (item is IOperationForPanel panel) forPanel.Remove(panel);
 				return true;
 			}
 			return false;
@@ -440,17 +440,17 @@ public partial class Faction // ElementSet
 			base.Clear();
 			controllerList.Clear();
 			organizationList.Clear();
-			cardUIList.Clear();
+			forPanel.Clear();
 		}
 	}
 	public class UnitSet : ElementSet
 	{
 		protected readonly List<ITargetableCombatant> targetableList = new List<ITargetableCombatant>();
 		protected readonly List<INearbyElement> nearbyList = new List<INearbyElement>();
-		protected readonly List<IUnitCardUIObject> cardUIList = new List<IUnitCardUIObject>();
+		protected readonly List<IUnitForPanel> forPanel = new List<IUnitForPanel>();
 		public List<ITargetableCombatant> TargetableType => targetableList;
 		public List<INearbyElement> NearbyType => nearbyList;
-		public List<IUnitCardUIObject> CardUIType => cardUIList;
+		public List<IUnitForPanel> ForPanel => forPanel;
 
 		public override bool Add(IStrategyElement item)
 		{
@@ -458,7 +458,7 @@ public partial class Faction // ElementSet
 			{
 				if (item is INearbyElement nearby) nearbyList.Add(nearby);
 				if (item is ITargetableCombatant target) targetableList.Add(target);
-				if (item is IUnitCardUIObject card) cardUIList.Add(card);
+				if (item is IUnitForPanel panel) forPanel.Add(panel);
 				return true;
 			}
 			return false;
@@ -469,7 +469,7 @@ public partial class Faction // ElementSet
 			{
 				if (item is INearbyElement nearby) nearbyList.Remove(nearby);
 				if (item is ITargetableCombatant target) targetableList.Remove(target);
-				if (item is IUnitCardUIObject card) cardUIList.Remove(card);
+				if (item is IUnitForPanel panel) forPanel.Remove(panel);
 				return true;
 			}
 			return false;
@@ -479,7 +479,7 @@ public partial class Faction // ElementSet
 			base.Clear();
 			nearbyList.Clear();
 			targetableList.Clear();
-			cardUIList.Clear();
+			forPanel.Clear();
 		}
 	}
 }

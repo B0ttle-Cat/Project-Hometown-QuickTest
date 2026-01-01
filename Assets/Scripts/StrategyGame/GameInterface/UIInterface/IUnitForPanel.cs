@@ -1,7 +1,8 @@
 ﻿using GameUI;
 
-public interface IUnitCardUIObject : ITargetForCardPanel , IStrategyElement
+public interface IUnitForPanel : ITargetForCardPanel , ITargetForLabelPanel, IStrategyElement
 {
+	public string GetFactionName();
 	public (float[] values, float total, float max) GetShieldDetailValue();
 	public (float[] values, float total, float max) GetMaterialDetailValue();
 	public (float[] values, float total, float max) GetElectricDetailValue();

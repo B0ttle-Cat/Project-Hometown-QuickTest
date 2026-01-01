@@ -18,7 +18,7 @@ public class SectorCardGroupPanel : CardGroupPanelComponent, IShowHideAsync
 		if (playerFaction != null)
 		{
 			playerFaction.AddChangeCaptured(OnChangeValue, false);
-			InitObjects(playerFaction.CapturedList.CardUIList);
+			InitObjects(playerFaction.CapturedList.ForPanel);
 		}
 		AllShow();
 	}

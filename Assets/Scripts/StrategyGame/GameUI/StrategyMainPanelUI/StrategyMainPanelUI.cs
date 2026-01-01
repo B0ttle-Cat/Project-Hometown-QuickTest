@@ -37,7 +37,7 @@ public class StrategyMainPanelUI : GameUIController
 	{
 		if (ThisUIFinder.TryFind<StrategyResourcesView>(out var resourcesView))
 		{
-			resourcesView.SetTarget(FactionAPI.ID2Faction(StrategyManager.PlayerFactionID));
+			resourcesView.SetTarget(null);
 		}
 	}
 }

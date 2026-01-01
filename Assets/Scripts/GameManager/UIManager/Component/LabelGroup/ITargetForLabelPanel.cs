@@ -1,7 +1,10 @@
-﻿namespace GameUI
+﻿using UnityEngine;
+
+namespace GameUI
 {
-    public interface ITargetForLabelPanel : IObjectForPanel
+    public interface ITargetForLabelPanel : ITargetToPanelAPI
     {
-		public string GetTitleName();
+		public string GetLabelName();
+		public Sprite GetLabelIcon();
 	}
 }

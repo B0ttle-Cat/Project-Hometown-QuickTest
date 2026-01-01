@@ -17,7 +17,7 @@ public class UnitCardGroupPanel : CardGroupPanelComponent, IShowHideAsync
 		if (playerFaction != null)
 		{
 			playerFaction.AddChangeUnit(OnChangeValue);
-			InitObjects(playerFaction.UnitList.CardUIType);
+			InitObjects(playerFaction.UnitList.ForPanel);
 		}
 		AllShow();
 	}

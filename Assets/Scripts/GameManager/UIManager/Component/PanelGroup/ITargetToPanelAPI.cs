@@ -1,6 +1,6 @@
 ﻿namespace GameUI
 {
-    public interface IObjectForPanel
+    public interface ITargetToPanelAPI
     {
        
     }

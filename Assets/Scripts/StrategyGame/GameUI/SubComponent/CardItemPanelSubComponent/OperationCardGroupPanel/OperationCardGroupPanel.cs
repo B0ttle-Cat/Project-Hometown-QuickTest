@@ -17,7 +17,7 @@ public class OperationCardGroupPanel : CardGroupPanelComponent, IShowHideAsync
 		if (playerFaction != null)
 		{
 			playerFaction.AddChangeOperation(OnChangeValue, false);
-			InitObjects(playerFaction.OperationList.CardUIList);
+			InitObjects(playerFaction.OperationList.ForPanel);
 		}
 		AllShow();
 	}

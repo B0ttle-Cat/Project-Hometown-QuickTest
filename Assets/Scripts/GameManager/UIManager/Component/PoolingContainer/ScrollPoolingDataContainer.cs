@@ -87,7 +87,7 @@ namespace GameUI
 			}
 		}
 
-		public override void InitData(IEnumerable<IObjectForPanel> cardElements) 
+		public override void InitData(IEnumerable<ITargetToPanelAPI> cardElements) 
 		{
 			dataList.Clear();
 			foreach (var item in cardElements)
@@ -99,17 +99,17 @@ namespace GameUI
 		public override void ClearData() { 
 			dataList.Clear(); 
 		}
-		public override void AddData(IObjectForPanel item)
+		public override void AddData(ITargetToPanelAPI item)
 		{
 			dataList.Add(item);
 			Refresh();
 		}
-		public override void RemoveData(IObjectForPanel item) 
+		public override void RemoveData(ITargetToPanelAPI item) 
 		{
 			dataList.Remove(item);
 			Refresh();
 		}
-		public override void AddData(IEnumerable<IObjectForPanel> cardElements) 
+		public override void AddData(IEnumerable<ITargetToPanelAPI> cardElements) 
 		{
 			foreach (var item in cardElements)
 			{
@@ -117,7 +117,7 @@ namespace GameUI
 			}
 			Refresh();
 		}
-		public override void RemoveData(IEnumerable<IObjectForPanel> cardElements)
+		public override void RemoveData(IEnumerable<ITargetToPanelAPI> cardElements)
 		{
 			foreach (var item in cardElements)
 			{

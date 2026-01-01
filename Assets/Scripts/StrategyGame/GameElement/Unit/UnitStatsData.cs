@@ -239,6 +239,7 @@ public record UnitInstanceData
 {
 	public UnitKey unitKey;     // 원본과 매칭되는 키
 	public string displayName;  // 유닛 이름
+	public Sprite unitIconSprite;
 	public Sprite unitFullBodySprite;
 	public Sprite unitPortraitSprite;
 
@@ -282,6 +283,10 @@ public record UnitInstanceData
 		unitKey = data.unitKey;
 		displayName = data.displayName;
 		this.factionID = factionID;
+
+		unitIconSprite = data.unitIconSprite;
+		unitFullBodySprite = data.unitFullBodySprite;
+		unitPortraitSprite = data.unitPortraitSprite;
 
 		unitID = -1;
 		lastVisiteSectorID = -1;

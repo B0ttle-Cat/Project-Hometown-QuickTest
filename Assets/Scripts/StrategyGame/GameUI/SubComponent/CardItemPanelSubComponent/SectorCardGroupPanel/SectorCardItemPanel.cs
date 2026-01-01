@@ -13,7 +13,7 @@ using static StrategyGamePlayData;
 
 public class SectorCardItemPanel : CardItemPanelComponent, IFindUIObject
 {
-	private ISectorCardUIObject sectorCard;
+	private ISectorForPanel sectorCard;
 	public IFindUIObject ThisUIFinder => this;
 	[SerializeField, PropertyOrder(-90)] private List<IFindUIObject.KeyPairObject> keyPairs;
 	List<IFindUIObject.KeyPairObject> IFindUIObject.KeyPairs { get => keyPairs; set => keyPairs = value; }
@@ -29,16 +29,16 @@ public class SectorCardItemPanel : CardItemPanelComponent, IFindUIObject
 	private FillRectPanelUI materialFillRect;
 	private FillRectPanelUI electricFillRect;
 
-	protected override void AttachUI(IObjectForPanel item)
+	protected override void OnAttachUI(ITargetToPanelAPI item)
 	{
-		if (item is not ISectorCardUIObject sectorCard) return;
+		if (item is not ISectorForPanel sectorCard) return;
 		this.sectorCard = sectorCard;
 
 		if (titleImage.IsNotNullRef() || ThisUIFinder.TryFind<Image>("..TitleImage", out titleImage))
-			titleImage.sprite = sectorCard.GetTitleImage();
+			titleImage.sprite = sectorCard.GetCardImage();
 
 		if (titleText.IsNotNullRef() || ThisUIFinder.TryFind<TMP_Text>("..TitleText", out titleText))
-			titleText.text = sectorCard.GetTitleName();
+			titleText.text = sectorCard.GetCardName();
 
 		showShield = false;
 		showPersonnel = false;
@@ -61,7 +61,7 @@ public class SectorCardItemPanel : CardItemPanelComponent, IFindUIObject
 		}
 
 	}
-	protected override void ReleaseUI()
+	protected override void OnReleaseUI()
 	{
 		if (sectorCard.IsNotNullRef())
 		{
@@ -82,11 +82,11 @@ public class SectorCardItemPanel : CardItemPanelComponent, IFindUIObject
 
 	private void UpdateSupplyStats(ISupplyStats supplyStats)
 	{
-		UpdateUI();
+		OnUpdateUI();
 	}
 
 
-	protected override void UpdateUI()
+	protected override void OnUpdateUI()
 	{
 		if (sectorCard.IsNullRef()) return;
 

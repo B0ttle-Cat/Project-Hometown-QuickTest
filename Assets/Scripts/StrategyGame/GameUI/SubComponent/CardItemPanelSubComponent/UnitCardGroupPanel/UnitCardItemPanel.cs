@@ -13,7 +13,7 @@ using static StrategyGamePlayData;
 
 public class UnitCardItemPanel : CardItemPanelComponent, IFindUIObject
 {
-	private IUnitCardUIObject unitCard;
+	private IUnitForPanel unitCard;
 	public IFindUIObject ThisUIFinder => this;
 	[SerializeField, PropertyOrder(-90)] private List<IFindUIObject.KeyPairObject> keyPairs;
 	List<IFindUIObject.KeyPairObject> IFindUIObject.KeyPairs { get => keyPairs; set => keyPairs = value; }
@@ -31,16 +31,16 @@ public class UnitCardItemPanel : CardItemPanelComponent, IFindUIObject
 	private FillRectPanelUI materialFillRect;
 	private FillRectPanelUI electricFillRect;
 
-	protected override void AttachUI(IObjectForPanel item)
+	protected override void OnAttachUI(ITargetToPanelAPI item)
 	{
-		if (item is not IUnitCardUIObject unitCard) return;
+		if (item is not IUnitForPanel unitCard) return;
 		this.unitCard = unitCard;
 
 		if (titleImage.IsNotNullRef() || ThisUIFinder.TryFind<Image>("..TitleImage", out titleImage))
-			titleImage.sprite = unitCard.GetTitleImage();
+			titleImage.sprite = unitCard.GetCardImage();
 
 		if (titleText.IsNotNullRef() || ThisUIFinder.TryFind<TMP_Text>("..TitleText", out titleText))
-			titleText.text = unitCard.GetTitleName();
+			titleText.text = unitCard.GetLabelName();
 
 		showShield = false;
 		showMaterial = false;
@@ -59,7 +59,7 @@ public class UnitCardItemPanel : CardItemPanelComponent, IFindUIObject
 			supplyStats.OnSupplyChange += UpdateSupplyStats;
 		}
 	}
-	protected override void ReleaseUI()
+	protected override void OnReleaseUI()
 	{
 		if(unitCard.IsNotNullRef())
 		{
@@ -79,9 +79,9 @@ public class UnitCardItemPanel : CardItemPanelComponent, IFindUIObject
 	}
 	private void UpdateSupplyStats(ISupplyStats supplyStats)
 	{
-		UpdateUI();
+		OnUpdateUI();
 	}
-	protected override void UpdateUI()
+	protected override void OnUpdateUI()
 	{
 		if (unitCard.IsNullRef()) return;
 

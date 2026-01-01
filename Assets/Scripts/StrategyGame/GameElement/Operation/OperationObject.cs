@@ -5,6 +5,8 @@ using System.Linq;
 using GameUI;
 
 using UnityEngine;
+
+using static StrategyGamePlayData;
 public partial class OperationObject : MonoBehaviour  // Main
 {
 	[SerializeField]
@@ -64,7 +66,7 @@ public partial class OperationObject : MonoBehaviour  // Main
 public partial class OperationObject // StatsData
 {
 	int computeFrame = -1;
-    public void ComputeOperationValue()
+	public void ComputeOperationValue()
 	{
 		int thisFrame = Time.frameCount;
 		if (computeFrame == thisFrame) return;
@@ -111,6 +113,61 @@ public partial class OperationObject // StatsData
 		return (center, maxDistance);
 	}
 }
+
+public partial class OperationObject : ISupplyStats
+{
+	bool ISupplyStats.IsEnableResourcesSupply { get; set; }
+	Action<ISupplyStats> ISupplyStats.OnSupplyChange { get; set; }
+	IStatsValueControl IStatsValueControl.ThisStatsValue { get; }
+
+	int IStatsValueControl.GetStatsValue(StatsType type)
+	{
+		int baseValue = type switch
+		{
+			StatsType.자원_인력_최대 => 0,
+			StatsType.자원_재료_최대 => 0,
+			StatsType.자원_전력_최대 => 0,
+
+			StatsType.자원_인력_회복 => 0,
+			StatsType.자원_재료_회복 => 0,
+			StatsType.자원_전력_회복 => 0,
+
+			StatsType.자원_인력_현재 => 0,
+			StatsType.자원_재료_현재 => 0,
+			StatsType.자원_전력_현재 => 0,
+			_ => 0,
+		};
+		return baseValue;
+	}
+
+	float IStatsValueControl.GetStatsValuePrecent(StatsType type)
+	{
+		int baseValue = type switch
+		{
+			StatsType.자원_인력_최대 => 0,
+			StatsType.자원_재료_최대 => 0,
+			StatsType.자원_전력_최대 => 0,
+
+			StatsType.자원_인력_회복 => 0,
+			StatsType.자원_재료_회복 => 0,
+			StatsType.자원_전력_회복 => 0,
+
+			StatsType.자원_인력_현재 => 0,
+			StatsType.자원_재료_현재 => 0,
+			StatsType.자원_전력_현재 => 0,
+			_ => 0,
+		};
+		return baseValue;
+	}
+
+	void IStatsValueControl.SetStatsValue(StatsType type, int value)
+	{
+	}
+
+	void IStatsValueControl.SetStatsValuePrecent(StatsType type, float valuePercent)
+	{
+	}
+}
 public partial class OperationObject : IStrategyMonoElement, IStrategyElementDestroyer
 {
 	public IStrategyElement ThisElement => this;
@@ -131,7 +188,7 @@ public partial class OperationObject : IStrategyMonoElement, IStrategyElementDes
 	}
 	void IStrategyStartGame.OnStartGame()
 	{
-		if(FactionID >=0)
+		if (FactionID >= 0)
 		{
 			Faction.AddOperation(this);
 		}
@@ -213,26 +270,37 @@ public partial class OperationObject : ISelectable
 		}
 	}
 }
-
-public partial class OperationObject : IOperationCardUIObject
+public partial class OperationObject : IOperationForPanel
 {
-	Sprite ITargetForCardPanel.GetTitleImage()
-	{
-		return null;
-	}
-	string ITargetForCardPanel.GetFactionName()
-    {
-		var faction = FactionAPI.ID2Faction(FactionID);
-		if(faction == null) return "중립";
-		return faction.FactionName;
-	}
-    string ITargetForCardPanel.GetTitleName()
+	#region ITargetForLabelPanel
+	string ITargetForLabelPanel.GetLabelName()
 	{
 		return TeamName;
 	}
-	string ITargetForCardPanel.GetDescription()
+
+	Sprite ITargetForLabelPanel.GetLabelIcon()
 	{
-		return "";
+		return null;
+	}
+	#endregion
+
+	#region ITargetForCardPanel
+	Sprite ITargetForCardPanel.GetCardImage()
+	{
+		return null;
+	}
+	string ITargetForCardPanel.GetCardName()
+	{
+		return TeamName;
+	}
+	#endregion
+
+	#region IOperationForPanel
+	string IOperationForPanel.GetFactionName()
+	{
+		var faction = FactionAPI.ID2Faction(FactionID);
+		if (faction == null) return "중립";
+		return faction.FactionName;
 	}
 	public (float[] values, float total, float max) GetShieldDetailValue()
 	{
@@ -354,4 +422,5 @@ public partial class OperationObject : IOperationCardUIObject
 			return text;
 		}
 	}
+	#endregion
 }

@@ -15,8 +15,8 @@ namespace GameUI
 		public abstract void Insert(int index, IPanelItem item);
 		public abstract bool Remove(IPanelItem item);
 		public abstract bool Contains(IPanelItem item);
-		public abstract void AddItem(IObjectForPanel item, bool addLast = true);
-		public abstract bool RemoveItem(IObjectForPanel item);
+		internal abstract void AddItem(ITargetToPanelAPI item, bool addLast = true);
+		internal abstract bool RemoveItem(ITargetToPanelAPI item);
 	}
 	public abstract class PanelGroupComponent<T> : PanelGroupComponent, IPanelGroup<T>, IShowHideAsync
 		where T : class , IPanelItem
@@ -135,7 +135,7 @@ namespace GameUI
 		protected bool PoolingCardObject
 			=> PoolingData.IsNotNullRef()
 			&& PanelPrefab.IsNotNullRef()
-			&& PanelPrefab is IPanelSetObject and T;
+			&& PanelPrefab is ISetTargetPanel and T;
 
 		[SerializeField]
 		private PoolingDataContainer poolingDataContainer;
@@ -159,7 +159,7 @@ namespace GameUI
 		[HideInEditorMode]
 		protected Stack<PanelItemComponent> PoolStack;
 
-		protected virtual void InitObjects(IEnumerable<IObjectForPanel> cardElements)
+		protected virtual void InitObjects(IEnumerable<ITargetToPanelAPI> cardElements)
 		{
 			Clear();
 
@@ -175,7 +175,7 @@ namespace GameUI
 				AddItem(item);
 			}
 		}
-		public void AddObject(IObjectForPanel item)
+		public void AddObject(ITargetToPanelAPI item)
 		{
 			if (PoolingCardObject)
 			{
@@ -183,7 +183,7 @@ namespace GameUI
 				return;
 			}
 		}
-		public void RemoveObject(IObjectForPanel item)
+		public void RemoveObject(ITargetToPanelAPI item)
 		{
 			if (PoolingCardObject)
 			{
@@ -191,7 +191,7 @@ namespace GameUI
 				return;
 			}
 		}
-		public override void AddItem(IObjectForPanel item, bool addLast = true)
+		internal override void AddItem(ITargetToPanelAPI item, bool addLast = true)
 		{
 			if (!PoolingCardObject) return;
 			if (item.IsNullRef() || Contains(item)) return;
@@ -206,7 +206,7 @@ namespace GameUI
 				if (thisRect.IsNullRef()) continue;
 				if (addLast) thisRect.transform.SetAsLastSibling();
 				else thisRect.transform.SetAsFirstSibling();
-				if (pop is IPanelSetObject setPop && setPop.SetTarget(item))
+				if (pop is ISetTargetPanel setPop && setPop.SetTarget(item))
 				{
 					Add(tPanel);
 				}
@@ -244,7 +244,7 @@ namespace GameUI
 				Insert(0, tNewPanel);
 			}
 		}
-		public override bool RemoveItem(IObjectForPanel item)
+		internal override bool RemoveItem(ITargetToPanelAPI item)
 		{
 			if (!PoolingCardObject) return false;
 			if (item.IsNullRef()) return false;
@@ -275,22 +275,22 @@ namespace GameUI
 			}
 			return false;
 		}
-		protected virtual bool SetPanelObject(T newPanel, IObjectForPanel item)
+		protected virtual bool SetPanelObject(T newPanel, ITargetToPanelAPI item)
 		{
-			if (newPanel is IPanelSetObject setPanel)
+			if (newPanel is ISetTargetPanel setPanel)
 			{
 				return setPanel.SetTarget(item);
 			}
 			return false;
 		}
-		public virtual bool Contains(IObjectForPanel item)
+		public virtual bool Contains(ITargetToPanelAPI item)
 		{
 			int length = Count;
 			for (int i = 0 ; i < length ; i++)
 			{
 				var panel = this[i];
 				if (panel.IsNullRef()) continue;
-				if (panel is not IPanelSetObject setPanel) continue;
+				if (panel is not ISetTargetPanel setPanel) continue;
 				if (setPanel.Target == item)
 				{
 					return true;
