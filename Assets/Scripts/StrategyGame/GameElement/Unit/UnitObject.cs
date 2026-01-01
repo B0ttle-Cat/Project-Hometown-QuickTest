@@ -127,32 +127,36 @@ public partial class UnitObject // UnitCaptureTag
 }
 
 
-public partial class UnitObject : IUnitForPanel
+public partial class UnitObject : IUnitForPanelAPI
 {
-	#region ITargetForLabelPanel
-	string ITargetForLabelPanel.GetLabelName()
+	#region ITargetToLabelAPI
+	string ITargetToLabelAPI.GetLabelName()
 	{
 		return InstanceData.displayName;
 	}
-	Sprite ITargetForLabelPanel.GetLabelIcon()
+	Sprite ITargetToLabelAPI.GetLabelIcon()
 	{
 		return InstanceData.unitIconSprite;
 	}
+	Vector3 ITargetToLabelAPI.LabelWorldPosition()
+	{
+		return ThisMovement.CurrentPosition;
+	}
 	#endregion
 
-	#region ITargetForCardPanel
-	Sprite ITargetForCardPanel.GetCardImage()
+	#region ITargetForCardAPI
+	Sprite ITargetForCardAPI.GetCardImage()
 	{
 		return InstanceData.unitFullBodySprite;
 	}
-	string ITargetForCardPanel.GetCardName()
+	string ITargetForCardAPI.GetCardName()
 	{
 		return InstanceData.displayName;
 	}
 	#endregion
 
 	#region IUnitForPanel
-	string IUnitForPanel.GetFactionName()
+	string IUnitForPanelAPI.GetFactionName()
 	{
 		return Faction.IsNullRef() ? "중립" : Faction.FactionName;
 	}

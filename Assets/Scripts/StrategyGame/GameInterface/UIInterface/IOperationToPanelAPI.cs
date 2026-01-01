@@ -1,6 +1,6 @@
 ﻿using GameUI;
 
-public interface IOperationForPanel : ITargetForCardPanel, ITargetForLabelPanel, IStrategyElement
+public interface IOperationToPanelAPI : ITargetForCardAPI, ITargetToLabelAPI, IStrategyElement
 {
 	public string GetFactionName();
 	public (float[] values, float total, float max) GetPersonnelDetailValue();

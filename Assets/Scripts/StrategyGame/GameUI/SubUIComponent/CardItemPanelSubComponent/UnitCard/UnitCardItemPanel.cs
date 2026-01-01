@@ -11,47 +11,49 @@ using UnityEngine.UI;
 
 using static StrategyGamePlayData;
 
-public class OperationCardItemPanel : CardItemPanelComponent, IFindUIObject
+public class UnitCardItemPanel : CardItemPanelComponent, IFindUIObject
 {
-	private IOperationForPanel operationCard;
+	private IUnitForPanelAPI unitCard;
 	public IFindUIObject ThisUIFinder => this;
 	[SerializeField, PropertyOrder(-90)] private List<IFindUIObject.KeyPairObject> keyPairs;
 	List<IFindUIObject.KeyPairObject> IFindUIObject.KeyPairs { get => keyPairs; set => keyPairs = value; }
-
+	public void SetUITarget(UnitObject operationObject)
+	{
+		unitCard = operationObject;
+	}
 
 	private Image titleImage;
 	private TMP_Text titleText;
-	private bool showPersonnel;
+	private bool showShield;
 	private bool showMaterial;
 	private bool showElectric;
-	private FillRectPanelUI personnelFillRect;
+	private FillRectPanelUI shieldFillRect;
 	private FillRectPanelUI materialFillRect;
 	private FillRectPanelUI electricFillRect;
 
 	protected override void OnAttachUI(ITargetToPanelAPI item)
 	{
-		if (item is not IOperationForPanel operationCard) return;
-		this.operationCard = operationCard;
+		if (item is not IUnitForPanelAPI unitCard) return;
+		this.unitCard = unitCard;
 
 		if (titleImage.IsNotNullRef() || ThisUIFinder.TryFind<Image>("..TitleImage", out titleImage))
-			titleImage.sprite = operationCard.GetCardImage();
+			titleImage.sprite = unitCard.GetCardImage();
 
 		if (titleText.IsNotNullRef() || ThisUIFinder.TryFind<TMP_Text>("..TitleText", out titleText))
-			titleText.text = operationCard.GetCardName();
+			titleText.text = unitCard.GetLabelName();
 
-		showPersonnel = false;
+		showShield = false;
 		showMaterial = false;
 		showElectric = false;
 
-		if (personnelFillRect.IsNotNullRef() || ThisUIFinder.TryFind<FillRectPanelUI>("../Personnel", out personnelFillRect))
-			showPersonnel = personnelFillRect.gameObject.activeSelf;
+		if (shieldFillRect.IsNotNullRef() || ThisUIFinder.TryFind<FillRectPanelUI>("../Shield", out shieldFillRect))
+			showShield = shieldFillRect.gameObject.activeSelf;
 		if (materialFillRect.IsNotNullRef() || ThisUIFinder.TryFind<FillRectPanelUI>("../Material", out materialFillRect))
 			showMaterial = materialFillRect.gameObject.activeSelf;
 		if (electricFillRect.IsNotNullRef() || ThisUIFinder.TryFind<FillRectPanelUI>("../Electric", out electricFillRect))
 			showElectric = electricFillRect.gameObject.activeSelf;
 
-
-		if (operationCard is ISupplyStats supplyStats)
+		if (unitCard is ISupplyStats supplyStats)
 		{
 			supplyStats.OnSupplyChange -= UpdateSupplyStats;
 			supplyStats.OnSupplyChange += UpdateSupplyStats;
@@ -59,18 +61,19 @@ public class OperationCardItemPanel : CardItemPanelComponent, IFindUIObject
 	}
 	protected override void OnReleaseUI()
 	{
-		if (operationCard.IsNotNullRef())
+		if(unitCard.IsNotNullRef())
 		{
-			if (operationCard is ISupplyStats supplyStats)
+			if (unitCard is ISupplyStats supplyStats)
 			{
 				supplyStats.OnSupplyChange -= UpdateSupplyStats;
 			}
-			operationCard = null;
+			unitCard = null;
 		}
+		unitCard = null;
 
 		titleImage = null;
 		titleText = null;
-		personnelFillRect = null;
+		shieldFillRect = null;
 		materialFillRect = null;
 		electricFillRect = null;
 	}
@@ -80,9 +83,11 @@ public class OperationCardItemPanel : CardItemPanelComponent, IFindUIObject
 	}
 	protected override void OnUpdateUI()
 	{
-		RePainting_FillRect(personnelFillRect, ref showPersonnel, operationCard.GetPersonnelSimpleValue());
-		RePainting_FillRect(materialFillRect, ref showMaterial, operationCard.GetMaterialSimpleValue());
-		RePainting_FillRect(electricFillRect, ref showElectric, operationCard.GetElectricSimpleValue());
+		if (unitCard.IsNullRef()) return;
+
+		RePainting_FillRect(shieldFillRect, ref showShield, unitCard.GetShieldSimpleValue());
+		RePainting_FillRect(materialFillRect, ref showMaterial, unitCard.GetMaterialSimpleValue());
+		RePainting_FillRect(electricFillRect, ref showElectric, unitCard.GetElectricSimpleValue());
 
 		static void RePainting_FillRect(FillRectPanelUI fillRect, ref bool isShow, (float total, float max) value)
 		{

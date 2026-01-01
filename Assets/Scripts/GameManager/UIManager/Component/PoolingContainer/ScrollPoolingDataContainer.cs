@@ -9,7 +9,7 @@ namespace GameUI
 {
 	public class ScrollPoolingDataContainer : PoolingDataContainer
 	{
-		[SerializeField]
+		[SerializeField, Required]
 		private RectTransform poolItemRect;
 
 
@@ -253,7 +253,7 @@ namespace GameUI
 				{
 					if (i < newMin || i > newMax)
 					{
-						targetComponent.RemoveItem(dataList[i]);
+						RemoveItem(dataList[i]);
 					}
 				}
 			}
@@ -263,8 +263,8 @@ namespace GameUI
 				if (i < minIndex || i > maxIndex)
 				{
 					// 리니어 레이아웃의 경우 순서가 중요하므로 인덱스에 맞춰 삽입 로직 분기 가능
-					if (i < minIndex) targetComponent.AddItem(dataList[i], false);
-					else targetComponent.AddItem(dataList[i], true);
+					if (i < minIndex) AddItem(dataList[i], false);
+					else AddItem(dataList[i], true);
 				}
 			}
 

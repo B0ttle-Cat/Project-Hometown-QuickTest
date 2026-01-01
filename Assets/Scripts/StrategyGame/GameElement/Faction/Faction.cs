@@ -408,18 +408,18 @@ public partial class Faction // ElementSet
 	{
 		protected readonly List<IOperationController> controllerList = new List<IOperationController>();
 		protected readonly List<IUnitOrganization> organizationList = new List<IUnitOrganization>();
-		protected readonly List<IOperationForPanel> forPanel = new List<IOperationForPanel>();
+		protected readonly List<IOperationToPanelAPI> forPanel = new List<IOperationToPanelAPI>();
 
 		public List<IOperationController> ControllerList => controllerList;
 		public List<IUnitOrganization> OrganizationList => organizationList;
-		public List<IOperationForPanel> ForPanel => forPanel;
+		public List<IOperationToPanelAPI> ForPanel => forPanel;
 		public override bool Add(IStrategyElement item)
 		{
 			if (base.Add(item))
 			{
 				if (item is IOperationController control) controllerList.Add(control);
 				if (item is IUnitOrganization organization) organizationList.Add(organization);
-				if (item is IOperationForPanel panel) forPanel.Add(panel);
+				if (item is IOperationToPanelAPI panel) forPanel.Add(panel);
 				return true;
 			}
 			return false;
@@ -430,7 +430,7 @@ public partial class Faction // ElementSet
 			{
 				if (item is IOperationController control) controllerList.Remove(control);
 				if (item is IUnitOrganization organization) organizationList.Remove(organization);
-				if (item is IOperationForPanel panel) forPanel.Remove(panel);
+				if (item is IOperationToPanelAPI panel) forPanel.Remove(panel);
 				return true;
 			}
 			return false;
@@ -447,10 +447,10 @@ public partial class Faction // ElementSet
 	{
 		protected readonly List<ITargetableCombatant> targetableList = new List<ITargetableCombatant>();
 		protected readonly List<INearbyElement> nearbyList = new List<INearbyElement>();
-		protected readonly List<IUnitForPanel> forPanel = new List<IUnitForPanel>();
+		protected readonly List<IUnitForPanelAPI> forPanel = new List<IUnitForPanelAPI>();
 		public List<ITargetableCombatant> TargetableType => targetableList;
 		public List<INearbyElement> NearbyType => nearbyList;
-		public List<IUnitForPanel> ForPanel => forPanel;
+		public List<IUnitForPanelAPI> ForPanel => forPanel;
 
 		public override bool Add(IStrategyElement item)
 		{
@@ -458,7 +458,7 @@ public partial class Faction // ElementSet
 			{
 				if (item is INearbyElement nearby) nearbyList.Add(nearby);
 				if (item is ITargetableCombatant target) targetableList.Add(target);
-				if (item is IUnitForPanel panel) forPanel.Add(panel);
+				if (item is IUnitForPanelAPI panel) forPanel.Add(panel);
 				return true;
 			}
 			return false;
@@ -469,7 +469,7 @@ public partial class Faction // ElementSet
 			{
 				if (item is INearbyElement nearby) nearbyList.Remove(nearby);
 				if (item is ITargetableCombatant target) targetableList.Remove(target);
-				if (item is IUnitForPanel panel) forPanel.Remove(panel);
+				if (item is IUnitForPanelAPI panel) forPanel.Remove(panel);
 				return true;
 			}
 			return false;

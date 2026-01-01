@@ -2,9 +2,10 @@
 
 namespace GameUI
 {
-    public interface ITargetForLabelPanel : ITargetToPanelAPI
+    public interface ITargetToLabelAPI : ITargetToPanelAPI
     {
 		public string GetLabelName();
 		public Sprite GetLabelIcon();
+		public Vector3 LabelWorldPosition();
 	}
 }

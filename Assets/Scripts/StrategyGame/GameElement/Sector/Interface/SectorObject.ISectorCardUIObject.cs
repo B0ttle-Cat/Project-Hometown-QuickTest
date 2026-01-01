@@ -6,11 +6,11 @@ using static StrategyGamePlayData;
 
 public partial class SectorObject : ISectorForPanel
 {
-	Sprite ITargetForCardPanel.GetCardImage()
+	Sprite ITargetForCardAPI.GetCardImage()
 	{
 		return null;
 	}
-	string ITargetForCardPanel.GetCardName()
+	string ITargetForCardAPI.GetCardName()
 	{
 		return StatsData.SectorName;
 	}

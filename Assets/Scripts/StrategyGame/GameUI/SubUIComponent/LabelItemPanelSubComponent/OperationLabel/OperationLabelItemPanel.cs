@@ -17,7 +17,7 @@ public class OperationLabelItemPanel : LabelItemPanelComponent, IFindUIObject, I
 	public IFindUIObject ThisUIFinder => this;
 	[SerializeField, PropertyOrder(-90)] private List<IFindUIObject.KeyPairObject> keyPairs;
 	List<IFindUIObject.KeyPairObject> IFindUIObject.KeyPairs { get => keyPairs; set => keyPairs = value; }
-	public IOperationForPanel Operation { get; private set; }
+	public IOperationToPanelAPI Operation { get; private set; }
 
 	private Image iconImage;
 	private Button select;
@@ -33,7 +33,7 @@ public class OperationLabelItemPanel : LabelItemPanelComponent, IFindUIObject, I
 
 	protected override void OnAttachUI(ITargetToPanelAPI target)
 	{
-		if (target is not IOperationForPanel operation) return;
+		if (target is not IOperationToPanelAPI operation) return;
 		Operation = operation;
 
 		if (iconImage.IsNotNullRef() || ThisUIFinder.TryFind<Image>("..Icon", out iconImage))

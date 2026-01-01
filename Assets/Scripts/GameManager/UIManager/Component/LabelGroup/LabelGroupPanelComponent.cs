@@ -2,6 +2,6 @@
 {
     public class LabelGroupPanelComponent : PanelGroupComponent<LabelItemPanelComponent>
     {
-		public ITargetForLabelPanel Item { get; private set; }
+		public ITargetToLabelAPI Item { get; private set; }
 	}
 }

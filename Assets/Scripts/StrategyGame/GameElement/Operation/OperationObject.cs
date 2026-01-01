@@ -270,33 +270,37 @@ public partial class OperationObject : ISelectable
 		}
 	}
 }
-public partial class OperationObject : IOperationForPanel
+public partial class OperationObject : IOperationToPanelAPI
 {
-	#region ITargetForLabelPanel
-	string ITargetForLabelPanel.GetLabelName()
+	#region ITargetToLabelAPI
+	string ITargetToLabelAPI.GetLabelName()
 	{
 		return TeamName;
 	}
 
-	Sprite ITargetForLabelPanel.GetLabelIcon()
+	Sprite ITargetToLabelAPI.GetLabelIcon()
 	{
 		return null;
+	}
+	Vector3 ITargetToLabelAPI.LabelWorldPosition()
+	{
+		return ThisMovement.CurrentPosition;
 	}
 	#endregion
 
-	#region ITargetForCardPanel
-	Sprite ITargetForCardPanel.GetCardImage()
+	#region ITargetForCardAPI
+	Sprite ITargetForCardAPI.GetCardImage()
 	{
 		return null;
 	}
-	string ITargetForCardPanel.GetCardName()
+	string ITargetForCardAPI.GetCardName()
 	{
 		return TeamName;
 	}
 	#endregion
 
 	#region IOperationForPanel
-	string IOperationForPanel.GetFactionName()
+	string IOperationToPanelAPI.GetFactionName()
 	{
 		var faction = FactionAPI.ID2Faction(FactionID);
 		if (faction == null) return "중립";

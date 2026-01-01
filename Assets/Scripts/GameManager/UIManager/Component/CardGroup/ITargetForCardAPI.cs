@@ -2,7 +2,7 @@
 
 namespace GameUI
 {
-    public interface ITargetForCardPanel : ITargetToPanelAPI
+    public interface ITargetForCardAPI : ITargetToPanelAPI
 	{
 		public Sprite GetCardImage();
 		public string GetCardName();

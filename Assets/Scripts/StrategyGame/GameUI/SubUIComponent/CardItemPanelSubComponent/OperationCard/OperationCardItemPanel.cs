@@ -11,49 +11,47 @@ using UnityEngine.UI;
 
 using static StrategyGamePlayData;
 
-public class UnitCardItemPanel : CardItemPanelComponent, IFindUIObject
+public class OperationCardItemPanel : CardItemPanelComponent, IFindUIObject
 {
-	private IUnitForPanel unitCard;
+	private IOperationToPanelAPI operationCard;
 	public IFindUIObject ThisUIFinder => this;
 	[SerializeField, PropertyOrder(-90)] private List<IFindUIObject.KeyPairObject> keyPairs;
 	List<IFindUIObject.KeyPairObject> IFindUIObject.KeyPairs { get => keyPairs; set => keyPairs = value; }
-	public void SetUITarget(UnitObject operationObject)
-	{
-		unitCard = operationObject;
-	}
+
 
 	private Image titleImage;
 	private TMP_Text titleText;
-	private bool showShield;
+	private bool showPersonnel;
 	private bool showMaterial;
 	private bool showElectric;
-	private FillRectPanelUI shieldFillRect;
+	private FillRectPanelUI personnelFillRect;
 	private FillRectPanelUI materialFillRect;
 	private FillRectPanelUI electricFillRect;
 
 	protected override void OnAttachUI(ITargetToPanelAPI item)
 	{
-		if (item is not IUnitForPanel unitCard) return;
-		this.unitCard = unitCard;
+		if (item is not IOperationToPanelAPI operationCard) return;
+		this.operationCard = operationCard;
 
 		if (titleImage.IsNotNullRef() || ThisUIFinder.TryFind<Image>("..TitleImage", out titleImage))
-			titleImage.sprite = unitCard.GetCardImage();
+			titleImage.sprite = operationCard.GetCardImage();
 
 		if (titleText.IsNotNullRef() || ThisUIFinder.TryFind<TMP_Text>("..TitleText", out titleText))
-			titleText.text = unitCard.GetLabelName();
+			titleText.text = operationCard.GetCardName();
 
-		showShield = false;
+		showPersonnel = false;
 		showMaterial = false;
 		showElectric = false;
 
-		if (shieldFillRect.IsNotNullRef() || ThisUIFinder.TryFind<FillRectPanelUI>("../Shield", out shieldFillRect))
-			showShield = shieldFillRect.gameObject.activeSelf;
+		if (personnelFillRect.IsNotNullRef() || ThisUIFinder.TryFind<FillRectPanelUI>("../Personnel", out personnelFillRect))
+			showPersonnel = personnelFillRect.gameObject.activeSelf;
 		if (materialFillRect.IsNotNullRef() || ThisUIFinder.TryFind<FillRectPanelUI>("../Material", out materialFillRect))
 			showMaterial = materialFillRect.gameObject.activeSelf;
 		if (electricFillRect.IsNotNullRef() || ThisUIFinder.TryFind<FillRectPanelUI>("../Electric", out electricFillRect))
 			showElectric = electricFillRect.gameObject.activeSelf;
 
-		if (unitCard is ISupplyStats supplyStats)
+
+		if (operationCard is ISupplyStats supplyStats)
 		{
 			supplyStats.OnSupplyChange -= UpdateSupplyStats;
 			supplyStats.OnSupplyChange += UpdateSupplyStats;
@@ -61,19 +59,18 @@ public class UnitCardItemPanel : CardItemPanelComponent, IFindUIObject
 	}
 	protected override void OnReleaseUI()
 	{
-		if(unitCard.IsNotNullRef())
+		if (operationCard.IsNotNullRef())
 		{
-			if (unitCard is ISupplyStats supplyStats)
+			if (operationCard is ISupplyStats supplyStats)
 			{
 				supplyStats.OnSupplyChange -= UpdateSupplyStats;
 			}
-			unitCard = null;
+			operationCard = null;
 		}
-		unitCard = null;
 
 		titleImage = null;
 		titleText = null;
-		shieldFillRect = null;
+		personnelFillRect = null;
 		materialFillRect = null;
 		electricFillRect = null;
 	}
@@ -83,11 +80,9 @@ public class UnitCardItemPanel : CardItemPanelComponent, IFindUIObject
 	}
 	protected override void OnUpdateUI()
 	{
-		if (unitCard.IsNullRef()) return;
-
-		RePainting_FillRect(shieldFillRect, ref showShield, unitCard.GetShieldSimpleValue());
-		RePainting_FillRect(materialFillRect, ref showMaterial, unitCard.GetMaterialSimpleValue());
-		RePainting_FillRect(electricFillRect, ref showElectric, unitCard.GetElectricSimpleValue());
+		RePainting_FillRect(personnelFillRect, ref showPersonnel, operationCard.GetPersonnelSimpleValue());
+		RePainting_FillRect(materialFillRect, ref showMaterial, operationCard.GetMaterialSimpleValue());
+		RePainting_FillRect(electricFillRect, ref showElectric, operationCard.GetElectricSimpleValue());
 
 		static void RePainting_FillRect(FillRectPanelUI fillRect, ref bool isShow, (float total, float max) value)
 		{
