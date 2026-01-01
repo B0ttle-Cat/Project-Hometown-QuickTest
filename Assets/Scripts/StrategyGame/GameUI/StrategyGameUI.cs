@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace StrategyManagerModule
 {
-	public class StrategyGameUI : MonoBehaviour
+	public class StrategyGameUI : MonoBehaviour, IStrategyStartGame
 	{
 		[SerializeField, ReadOnly] private StrategyMapPanelUI mapPanelUI;
 		[SerializeField, ReadOnly] private StrategyControlPanelUI controlPanelUI;
@@ -48,5 +48,15 @@ namespace StrategyManagerModule
 			DetailsPanelUI = null;
 			PopupPanelUI = null;
 		}
-	} 
+        void IStrategyStartGame.OnStartGame()
+        {
+			MapPanelUI.OnShow();
+			MainPanelUI.OnShow();
+		}
+        void IStrategyStartGame.OnStopGame()
+        {
+			MainPanelUI.OnHide();
+			MapPanelUI.OnHide();
+		}
+    } 
 }

@@ -112,7 +112,6 @@ public class RectUICollisionAvoidance : MonoBehaviour
 			l.currentPos = l.rect.position;
 		}
 	}
-
 	Rect GetRect(RectTransform rt)
 	{
 		Vector3[] corners = new Vector3[4];
@@ -123,5 +122,4 @@ public class RectUICollisionAvoidance : MonoBehaviour
 		float yMax = corners.Max(c => c.y);
 		return Rect.MinMaxRect(xMin, yMin, xMax, yMax);
 	}
-
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using Sirenix.OdinInspector;
 
@@ -8,9 +9,9 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-using static StrategyMapPanelUI.OperationLabelGroup;
 
-public partial class StrategyMapPanelUI // OperationLabelGroup
+
+public partial class Old_StrategyMapPanelUI // OperationLabelGroup
 {
 	[SerializeField, FoldoutGroup("OperationLabel")]
 	private GameObject operationLabelPreafab;
@@ -39,11 +40,11 @@ public partial class StrategyMapPanelUI // OperationLabelGroup
 		if (operationLabelGroup == null) return;
 		operationLabelGroup.Update();
 	}
-
-	public class OperationLabelGroup : MapLabelGroup<OperationLabel>
+	[Obsolete("새로운 StrategyMapPanelUI 사용할 것", true)]
+	public class OperationLabelGroup : MapLabelGroup<OperationLabelGroup.OperationLabel>
 	{
 		HashSet<OperationObject> aliveOperation;
-		public OperationLabelGroup(GameObject preafab, Transform root, StrategyMapPanelUI panel) : base(preafab, root, panel)
+		public OperationLabelGroup(GameObject preafab, Transform root, Old_StrategyMapPanelUI panel) : base(preafab, root, panel)
 		{
 			aliveOperation = new HashSet<OperationObject>();
 		}
@@ -146,6 +147,7 @@ public partial class StrategyMapPanelUI // OperationLabelGroup
 			}
 		}
 
+		[Obsolete("새로운 StrategyMapPanelUI 사용할 것", true)]
 		public class OperationLabel : MapLabel
 		{
 			private readonly OperationObject operation;

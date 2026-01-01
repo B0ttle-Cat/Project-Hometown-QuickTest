@@ -23,7 +23,6 @@ namespace GameUI
 		public IFindUIObject ThisUIFinder => this;
 		public IPanelItem ThisPanel => this;
 		public GameUIController RootUI { get => this; set { } }
-
 		public RectTransform ThisRect
 		{
 			get

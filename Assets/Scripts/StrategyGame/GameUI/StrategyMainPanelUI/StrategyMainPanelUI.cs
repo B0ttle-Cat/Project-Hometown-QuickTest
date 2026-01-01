@@ -3,21 +3,8 @@
 using UnityEngine;
 
 [RequireComponent(typeof(RectTransform))]
-public class StrategyMainPanelUI : GameUIController	,IStrategyStartGame
+public class StrategyMainPanelUI : GameUIController
 {
-	protected override void Awake()
-	{
-		base.Awake();
-	}
-	void IStrategyStartGame.OnStartGame()
-	{
-		OnShow();
-	}
-	void IStrategyStartGame.OnStopGame()
-	{
-		OnHide();
-	}
-
 	protected override void Hide()
 	{
 		DeinitStrategyResourcesView();
@@ -38,9 +25,6 @@ public class StrategyMainPanelUI : GameUIController	,IStrategyStartGame
 			finds[i].OnShow();
 		}
 	}
-
-
-
 
 	private void InitStrategyResourcesView()
 	{

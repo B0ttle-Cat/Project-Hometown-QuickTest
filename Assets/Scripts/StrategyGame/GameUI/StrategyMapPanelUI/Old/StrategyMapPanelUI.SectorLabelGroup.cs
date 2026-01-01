@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using Sirenix.OdinInspector;
 
@@ -7,7 +8,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public partial class StrategyMapPanelUI // SectorLabelGroup
+public partial class Old_StrategyMapPanelUI // SectorLabelGroup
 {
 	[SerializeField, FoldoutGroup("SectorLabel")]
 	private GameObject sectorLabelPreafab;
@@ -33,12 +34,12 @@ public partial class StrategyMapPanelUI // SectorLabelGroup
 		if (sectorLabelGroup == null) return;
 		sectorLabelGroup.Update();
 	}
-
+	[Obsolete("새로운 StrategyMapPanelUI 사용할 것", true)]
 	public class SectorLabelGroup : MapLabelGroup<SectorLabelGroup.SectorLabel>
 	{
 		HashSet<CameraVisibilityGroup> aliveVisibility;
 
-		public SectorLabelGroup(GameObject preafab, Transform parent, StrategyMapPanelUI panel) : base(preafab, parent, panel)
+		public SectorLabelGroup(GameObject preafab, Transform parent, Old_StrategyMapPanelUI panel) : base(preafab, parent, panel)
 		{
 			aliveVisibility = new HashSet<CameraVisibilityGroup>();
 		}

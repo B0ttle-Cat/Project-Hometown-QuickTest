@@ -206,7 +206,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitCardGroupPanel
   CardPrefab: {fileID: 6682355681337195028, guid: fc35562ad7ae8914e8aff49a280cc4d9, type: 3}
   ContentParent: {fileID: 560685280}
-  poolingCardObject: 1
   poolingScrollDataContainer: {fileID: 4796105}
 --- !u!114 &4796105
 MonoBehaviour:
@@ -427,7 +426,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StrategySectorCardView
   CardPrefab: {fileID: 8329387073843089986, guid: 1db8ce840c975564597ccd5a154d31c5, type: 3}
   ContentParent: {fileID: 44458275}
-  poolingCardObject: 1
   poolingScrollDataContainer: {fileID: 58857483}
 --- !u!114 &58857483
 MonoBehaviour:
@@ -3599,7 +3597,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 489642285}
-  - component: {fileID: 489642286}
   m_Layer: 5
   m_Name: Simple Info Panel
   m_TagString: Untagged
@@ -3631,18 +3628,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 25}
   m_SizeDelta: {x: 0, y: -50}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &489642286
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 489642284}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e2dc5652770363e4f86b2979cf6e8b24, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::StrategyMainTabContentUI
 --- !u!1 &492795966
 GameObject:
   m_ObjectHideFlags: 0
@@ -5401,7 +5386,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e21bacf2343620448a71d39573d3119, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StrategyGameUI
-  mapPanelUI: {fileID: 1711988335}
+  mapPanelUI: {fileID: 1711988337}
   controlPanelUI: {fileID: 117014630}
   mainPanelUI: {fileID: 1962822529}
   detailsPanelUI: {fileID: 151981716}
@@ -7439,7 +7424,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::OperationCardGroupPanel
   CardPrefab: {fileID: 7544981798547334151, guid: cf76bf7b24cb3ae499488979c6537bfe, type: 3}
   ContentParent: {fileID: 1307337658}
-  poolingCardObject: 1
   poolingScrollDataContainer: {fileID: 955811208}
 --- !u!114 &955811208
 MonoBehaviour:
@@ -10638,7 +10622,7 @@ GameObject:
   - component: {fileID: 1711988332}
   - component: {fileID: 1711988334}
   - component: {fileID: 1711988333}
-  - component: {fileID: 1711988335}
+  - component: {fileID: 1711988337}
   - component: {fileID: 1711988336}
   m_Layer: 5
   m_Name: MapPanelUI
@@ -10646,7 +10630,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1711988332
 RectTransform:
   m_ObjectHideFlags: 0
@@ -10708,22 +10692,6 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
---- !u!114 &1711988335
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1711988331}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5fbc767c7681fbe448377b547da23c17, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::StrategyMapPanelUI
-  operationLabelPreafab: {fileID: 7158623961847931186, guid: 9cc50d14d0ed9064d9fbbf7a5e186d85, type: 3}
-  operationLabelRoot: {fileID: 906578735}
-  sectorLabelPreafab: {fileID: 7158623961847931186, guid: 06101bf9da42dbf4fbca0f7c222cc4fa, type: 3}
-  sectorLabelRoot: {fileID: 2010381860}
 --- !u!114 &1711988336
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10738,6 +10706,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RectUICollisionAvoidance
   repulsionStrength: 80
   smoothTime: 0.1
+--- !u!114 &1711988337
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1711988331}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72b96119440ef314baac8d8a7b446227, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StrategyMapPanelUI
+  thisRect: {fileID: 0}
+  keyPairs: []
 --- !u!1 &1722983209
 GameObject:
   m_ObjectHideFlags: 0
