@@ -1,6 +1,6 @@
 ﻿using GameUI;
 
-public class UnitCardGroupPanel : CardGroupPanelComponent<UnitObject>, IShowHideAsync
+public class UnitCardGroupPanel : CardGroupPanelComponent, IShowHideAsync
 {
 	void IShowHide.EndedHide()
 	{
@@ -11,31 +11,27 @@ public class UnitCardGroupPanel : CardGroupPanelComponent<UnitObject>, IShowHide
 		}
 		AllHideAndClear();
 	}
-
 	void IShowHide.StartShow()
 	{
 		Faction playerFaction = FactionAPI.ID2Faction(StrategyManager.PlayerFactionID);
 		if (playerFaction != null)
 		{
 			playerFaction.AddChangeUnit(OnChangeValue);
-			InitCardList(playerFaction.UnitList.CardUIType);
+			InitObjects(playerFaction.UnitList.CardUIType);
 		}
 		AllShow();
 	}
-
-
 	private void OnChangeValue(IStrategyElement element, bool added)
 	{
 		if (element is not UnitObject item) return;
 
 		if (added)
 		{
-			this.AddPoolData(item);
-
+			this.AddObject(item);
 		}
 		else
 		{
-			this.RemovePoolData(item);
+			this.RemoveObject(item);
 		}
 	}
 }

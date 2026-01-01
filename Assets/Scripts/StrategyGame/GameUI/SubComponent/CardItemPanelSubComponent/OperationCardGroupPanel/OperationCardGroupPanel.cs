@@ -1,6 +1,6 @@
 ﻿using GameUI;
 
-public class OperationCardGroupPanel : CardGroupPanelComponent<OperationObject>, IShowHideAsync
+public class OperationCardGroupPanel : CardGroupPanelComponent, IShowHideAsync
 {
 	void IShowHide.EndedHide()
 	{
@@ -11,30 +11,28 @@ public class OperationCardGroupPanel : CardGroupPanelComponent<OperationObject>,
 		}
 		AllHideAndClear();
 	}
-
 	void IShowHide.StartShow()
 	{
 		Faction playerFaction = FactionAPI.ID2Faction(StrategyManager.PlayerFactionID);
 		if (playerFaction != null)
 		{
 			playerFaction.AddChangeOperation(OnChangeValue, false);
-			InitCardList(playerFaction.OperationList.CardUIList);
+			InitObjects(playerFaction.OperationList.CardUIList);
 		}
 		AllShow();
 	}
-
 	private void OnChangeValue(IStrategyElement element, bool added)
 	{
 		if (element is not OperationObject item) return;
 
 		if (added)
 		{
-			this.AddPoolData(item);
+			this.AddObject(item);
 
 		}
 		else
 		{
-			this.RemovePoolData(item);
+			this.RemoveObject(item);
 		}
 	}
 }

@@ -1,4 +1,6 @@
-﻿public class OperationLabelGroupPanel //: PanelGroupComponent<>
+﻿using GameUI;
+
+public class OperationLabelGroupPanel : PanelGroupComponent<OperationLabelItemPanel>
 {
 
 }

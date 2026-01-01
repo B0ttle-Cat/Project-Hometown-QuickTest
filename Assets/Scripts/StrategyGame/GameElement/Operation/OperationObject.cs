@@ -216,21 +216,21 @@ public partial class OperationObject : ISelectable
 
 public partial class OperationObject : IOperationCardUIObject
 {
-	Sprite ICardUIObject.GetTitleImage()
+	Sprite ITargetForCardPanel.GetTitleImage()
 	{
 		return null;
 	}
-	string ICardUIObject.GetFactionName()
+	string ITargetForCardPanel.GetFactionName()
     {
 		var faction = FactionAPI.ID2Faction(FactionID);
 		if(faction == null) return "중립";
 		return faction.FactionName;
 	}
-    string ICardUIObject.GetTitleName()
+    string ITargetForCardPanel.GetTitleName()
 	{
 		return TeamName;
 	}
-	string ICardUIObject.GetDescription()
+	string ITargetForCardPanel.GetDescription()
 	{
 		return "";
 	}

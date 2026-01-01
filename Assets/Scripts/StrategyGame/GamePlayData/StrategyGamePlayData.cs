@@ -305,7 +305,7 @@ public partial class StrategyGamePlayData // Mission Info
 		}
 	}
 }
-public partial class StrategyGamePlayData // Play ContentParent Info
+public partial class StrategyGamePlayData // Play PanelParent Info
 {
 	[Serializable]
 	[Obsolete("SectorStatsData / SectorRuntimeData .를 사용", true)]

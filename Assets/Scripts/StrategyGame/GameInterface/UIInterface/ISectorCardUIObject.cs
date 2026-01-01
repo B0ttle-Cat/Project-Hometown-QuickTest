@@ -1,6 +1,6 @@
 ﻿using GameUI;
 
-public interface ISectorCardUIObject : ICardUIObject, IStrategyElement
+public interface ISectorCardUIObject : ITargetForCardPanel, IStrategyElement
 {
 	bool IsEnableResourcesSupply { get; set; }
 	public (float[] values, float total, float max) GetShieldDetailValue();

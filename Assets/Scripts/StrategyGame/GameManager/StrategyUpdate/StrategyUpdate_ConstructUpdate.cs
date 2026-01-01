@@ -82,7 +82,7 @@ namespace StrategyManagerModule
 				//			finishList.Enqueue((slotIndex, facilitiesKey));
 				//		}
 				//	}
-				//	data.SetData(_data, ignoreChangeEvent: true);
+				//	data.InitData(_data, ignoreChangeEvent: true);
 				//	if (finishList.Count > 0)
 				//	{
 				//		while (finishList.Count > 0)

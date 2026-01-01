@@ -11,7 +11,7 @@ using UnityEngine.UI;
 
 using static StrategyGamePlayData;
 
-public class UnitCardItemPanel : CardItemPanelComponent<UnitObject>, IFindUIObject
+public class UnitCardItemPanel : CardItemPanelComponent, IFindUIObject
 {
 	private IUnitCardUIObject unitCard;
 	public IFindUIObject ThisUIFinder => this;
@@ -31,7 +31,7 @@ public class UnitCardItemPanel : CardItemPanelComponent<UnitObject>, IFindUIObje
 	private FillRectPanelUI materialFillRect;
 	private FillRectPanelUI electricFillRect;
 
-	protected override void AttachUI(ICardUIObject item)
+	protected override void AttachUI(IObjectForPanel item)
 	{
 		if (item is not IUnitCardUIObject unitCard) return;
 		this.unitCard = unitCard;
@@ -59,7 +59,6 @@ public class UnitCardItemPanel : CardItemPanelComponent<UnitObject>, IFindUIObje
 			supplyStats.OnSupplyChange += UpdateSupplyStats;
 		}
 	}
-
 	protected override void ReleaseUI()
 	{
 		if(unitCard.IsNotNullRef())

@@ -2,19 +2,8 @@
 
 namespace GameUI
 {
-	public abstract class CardItemPanelComponent : PanelItemComponent, IPanelItem, IShowHide
+	public abstract class CardItemPanelComponent : PanelItemComponent, IPanelItem, IShowHide, IPanelSetObject
 	{
-		public abstract void OnRelease();
-		public abstract void OnAttach();
-		public abstract void OnUpdateUI();
-		public abstract bool SetTarget(ICardUIObject target);
-	}
-	public abstract class CardItemPanelComponent<T> : CardItemPanelComponent, IPanelItem, IShowHide
-		where T : class, ICardUIObject
-	{
-		[ShowInInspector]
-		public T Item { get; private set; }
-
 		protected override void Awake()
 		{
 			base.Awake();
@@ -24,63 +13,67 @@ namespace GameUI
 		{
 			base.OnDestroy();
 			ThisShowHide.UnpairingShowHide();
-			Item = null;
+			Target = null;
 		}
-		sealed public override bool SetTarget(ICardUIObject target)
-		{
-			if (target is not T item) return false;
 
-			if (this.Item == item)
+		[ShowInInspector]
+		public IObjectForPanel Target { get; private set; }
+
+		public bool SetTarget(IObjectForPanel item)
+		{
+			if (item.IsNotNullRef()) return false;
+
+			if (this.Target == item)
 			{
 				OnUpdateUI();
 				return true;
 			}
-			if (this.Item.IsNotNullRef())
+			if (this.Target.IsNotNullRef())
 			{
 				OnRelease();
 			}
-			this.Item = item;
-			if (this.Item.IsNotNullRef())
+			this.Target = item;
+			if (this.Target.IsNotNullRef())
 			{
 				OnAttach();
 				OnUpdateUI();
 			}
 			return true;
 		}
-		sealed public override void OnRelease()
+		public void OnRelease()
 		{
-			if (Item.IsNullRef())
+			if (Target.IsNullRef())
 			{
-				Item = null;
+				Target = null;
 				return;
 			}
 			ReleaseUI();
-			Item = null;
+			Target = null;
 		}
-		sealed public override void OnAttach()
+		public void OnAttach()
 		{
-			if (Item.IsNullRef())
+			if (Target.IsNullRef())
 			{
-				Item = null;
+				Target = null;
 				return;
 			}
-			AttachUI(Item);
+			AttachUI(Target);
 		}
-		sealed public override void OnUpdateUI()
+		public void OnUpdateUI()
 		{
-			if (Item.IsNullRef())
+			if (Target.IsNullRef())
 			{
 				OnRelease();
 				return;
 			}
 			UpdateUI();
 		}
-		internal bool Contains(T item)
+		internal bool Contains(IObjectForPanel item)
 		{
-			return this.Item == item;
+			return this.Target == item;
 		}
 		protected abstract void ReleaseUI();
-		protected abstract void AttachUI(ICardUIObject card);
+		protected abstract void AttachUI(IObjectForPanel card);
 		protected abstract void UpdateUI();
 	}
 }

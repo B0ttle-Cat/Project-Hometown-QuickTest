@@ -129,19 +129,19 @@ public partial class UnitObject // UnitCaptureTag
 
 public partial class UnitObject : IUnitCardUIObject
 {
-	Sprite ICardUIObject.GetTitleImage()
+	Sprite ITargetForCardPanel.GetTitleImage()
 	{
 		return InstanceData.unitFullBodySprite;
 	}
-	string ICardUIObject.GetTitleName()
+	string ITargetForCardPanel.GetTitleName()
 	{
 		return InstanceData.displayName;
 	}
-	string ICardUIObject.GetFactionName()
+	string ITargetForCardPanel.GetFactionName()
 	{
 		return Faction.IsNullRef() ? "중립" : Faction.FactionName;
 	}
-	string ICardUIObject.GetDescription()
+	string ITargetForCardPanel.GetDescription()
     {
 		return "";
     }

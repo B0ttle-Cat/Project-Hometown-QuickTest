@@ -11,7 +11,7 @@ using UnityEngine.UI;
 
 using static StrategyGamePlayData;
 
-public class OperationCardItemPanel : CardItemPanelComponent<OperationObject>, IFindUIObject
+public class OperationCardItemPanel : CardItemPanelComponent, IFindUIObject
 {
 	private IOperationCardUIObject operationCard;
 	public IFindUIObject ThisUIFinder => this;
@@ -28,7 +28,7 @@ public class OperationCardItemPanel : CardItemPanelComponent<OperationObject>, I
 	private FillRectPanelUI materialFillRect;
 	private FillRectPanelUI electricFillRect;
 
-	protected override void AttachUI(ICardUIObject item)
+	protected override void AttachUI(IObjectForPanel item)
 	{
 		if (item is not IOperationCardUIObject operationCard) return;
 		this.operationCard = operationCard;

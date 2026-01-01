@@ -6618,7 +6618,7 @@ GameObject:
   m_Component:
   - component: {fileID: 906578735}
   m_Layer: 5
-  m_Name: OperationLabelRoot
+  m_Name: OperationLabelGroup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12091,7 +12091,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2010381860}
   m_Layer: 5
-  m_Name: SectorLabelRoot
+  m_Name: SectorLabelGroup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

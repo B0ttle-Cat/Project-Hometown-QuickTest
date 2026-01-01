@@ -7,8 +7,62 @@ using UnityEngine.UI;
 
 namespace GameUI
 {
-	public class PoolingScrollDataContainer : MonoBehaviour
+
+	public class PoolingDataContainer : MonoBehaviour
 	{
+		[SerializeField, ReadOnly, Required]
+		protected PanelGroupComponent targetComponent; 
+		protected List<IObjectForPanel> dataList = new List<IObjectForPanel>();
+
+		protected virtual void OnValidate()
+		{
+			targetComponent = GetComponent<CardGroupPanelComponent>();
+		}
+
+		protected virtual void Awake()
+		{
+			targetComponent = GetComponent<CardGroupPanelComponent>();
+		}
+
+		public virtual void InitData(IEnumerable<IObjectForPanel> elements)
+		{
+			dataList.Clear();
+			AddData(elements);
+		}
+		public virtual void ClearData() { dataList.Clear(); }
+		public virtual void AddData(IObjectForPanel item)
+		{
+			dataList.Add(item);
+			targetComponent.AddItem(item);
+		}
+		public virtual void RemoveData(IObjectForPanel item)
+		{
+			dataList.Remove(item);
+			targetComponent.RemoveItem(item);
+		}
+		public virtual void AddData(IEnumerable<IObjectForPanel> elements)
+		{
+			foreach (var item in elements)
+			{
+				dataList.Add(item);
+				targetComponent.AddItem(item);
+			}
+		}
+		public virtual void RemoveData(IEnumerable<IObjectForPanel> elements)
+		{
+			foreach (var item in elements)
+			{
+				dataList.Remove(item);
+				targetComponent.RemoveItem(item);
+			}
+		}
+	}
+	public class PoolingScrollDataContainer : PoolingDataContainer
+	{
+		[SerializeField]
+		private RectTransform poolItemRect;
+
+
 		[SerializeField, ReadOnly, Required]
 		private ScrollRect scrollRect;
 		[SerializeField, ReadOnly, Required]
@@ -19,15 +73,11 @@ namespace GameUI
 		[Header("Settings")]
 		[SerializeField]
 		private int viewBufferCount = 2;
-		[SerializeField, ReadOnly, Required]
-		private CardGroupPanelComponent targetComponent;
 
 		[SerializeField,ReadOnly,HorizontalGroup]
 		private int minIndex = -1;
 		[SerializeField,ReadOnly,HorizontalGroup]
 		private int maxIndex = -1;
-
-		private List<ICardUIObject> dataList = new List<ICardUIObject>();
 
 		public ScrollRect ScrollRect
 		{
@@ -70,24 +120,24 @@ namespace GameUI
 			OnValidate();
 		}
 
-		private void OnValidate()
+		protected override void OnValidate()
 		{
 			scrollRect = ScrollRect;
 			content = Content;
+			base.OnValidate();
 			layoutGroup = LayoutGroup;
-			targetComponent = GetComponent<CardGroupPanelComponent>();
 		}
 
-		private void Awake()
+		protected override void Awake()
 		{
-			targetComponent = GetComponent<CardGroupPanelComponent>();
+			base.Awake();
 			if (scrollRect != null)
 			{
 				scrollRect.onValueChanged.AddListener(OnScrollValueChanged);
 			}
 		}
 
-		public void SetData<T>(IEnumerable<ICardUIObject> cardElements) where T : class, ICardUIObject
+		public override void InitData(IEnumerable<IObjectForPanel> cardElements) 
 		{
 			dataList.Clear();
 			foreach (var item in cardElements)
@@ -96,17 +146,20 @@ namespace GameUI
 			}
 			Refresh();
 		}
-		public void AddData<T>(ICardUIObject item) where T : class, ICardUIObject
+		public override void ClearData() { 
+			dataList.Clear(); 
+		}
+		public override void AddData(IObjectForPanel item)
 		{
 			dataList.Add(item);
 			Refresh();
 		}
-		public void RemoveData<T>(ICardUIObject item) where T : class, ICardUIObject
+		public override void RemoveData(IObjectForPanel item) 
 		{
 			dataList.Remove(item);
 			Refresh();
 		}
-		public void AddData<T>(IEnumerable<ICardUIObject> cardElements) where T : class, ICardUIObject
+		public override void AddData(IEnumerable<IObjectForPanel> cardElements) 
 		{
 			foreach (var item in cardElements)
 			{
@@ -114,7 +167,7 @@ namespace GameUI
 			}
 			Refresh();
 		}
-		public void RemoveData<T>(IEnumerable<ICardUIObject> cardElements) where T : class, ICardUIObject
+		public override void RemoveData(IEnumerable<IObjectForPanel> cardElements)
 		{
 			foreach (var item in cardElements)
 			{
@@ -122,21 +175,16 @@ namespace GameUI
 			}
 			Refresh();
 		}
-
 		private void OnScrollValueChanged(Vector2 value)
 		{
 			UpdateVisibleRange();
 		}
-
-		[Button]
-		public void Refresh()
+		[Button] public void Refresh()
 		{
 			minIndex = -1;
 			maxIndex = -1;
-			targetComponent.Clear();
 			UpdateVisibleRange();
 		}
-
 		private void UpdateVisibleRange()
 		{
 			if (scrollRect == null || content == null || layoutGroup == null || dataList.Count == 0) return;
@@ -233,11 +281,9 @@ namespace GameUI
 				ApplyIndexChanges(currentMinIndex, currentMaxIndex);
 			}
 		}
-
 		private float GetItemSize(HorizontalOrVerticalLayoutGroup layout)
 		{
-
-			var cardRect = targetComponent.GetCardRect();
+			var cardRect = poolItemRect.IsNullRef()? default : poolItemRect.rect;
 			if (cardRect.size == Vector2.zero)
 			{
 				if (layout.transform.childCount == 0) return 1;
@@ -249,7 +295,6 @@ namespace GameUI
 				return (layout is VerticalLayoutGroup) ? cardRect.height : cardRect.width;
 			}
 		}
-
 		private void ApplyIndexChanges(int newMin, int newMax)
 		{
 			if (minIndex != -1 && maxIndex != -1)

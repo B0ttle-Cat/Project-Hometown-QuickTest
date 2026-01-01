@@ -6,19 +6,19 @@ using static StrategyGamePlayData;
 
 public partial class SectorObject : ISectorCardUIObject
 {
-	Sprite ICardUIObject.GetTitleImage()
+	Sprite ITargetForCardPanel.GetTitleImage()
 	{
 		return null;
 	}
-	string ICardUIObject.GetTitleName()
+	string ITargetForCardPanel.GetTitleName()
 	{
 		return StatsData.SectorName;
 	}
-	string ICardUIObject.GetDescription()
+	string ITargetForCardPanel.GetDescription()
 	{
 		return StatsData.SectorName;
 	}
-	string ICardUIObject.GetFactionName()
+	string ITargetForCardPanel.GetFactionName()
 	{
 		Faction faction = FactionAPI.ID2Faction(RuntimeData.CaptureFactionID);
 		if (faction == null) return "점령 없음";

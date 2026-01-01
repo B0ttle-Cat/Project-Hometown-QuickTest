@@ -2,8 +2,8 @@
 
 namespace GameUI
 {
-    public interface ICardUIObject
-    {
+    public interface ITargetForCardPanel : IObjectForPanel
+	{
 		public Sprite GetTitleImage();
 		public string GetTitleName();
 		public string GetDescription();

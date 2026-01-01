@@ -11,7 +11,7 @@ using UnityEngine.UI;
 
 using static StrategyGamePlayData;
 
-public class SectorCardItemPanel : CardItemPanelComponent<SectorObject>, IFindUIObject
+public class SectorCardItemPanel : CardItemPanelComponent, IFindUIObject
 {
 	private ISectorCardUIObject sectorCard;
 	public IFindUIObject ThisUIFinder => this;
@@ -29,7 +29,7 @@ public class SectorCardItemPanel : CardItemPanelComponent<SectorObject>, IFindUI
 	private FillRectPanelUI materialFillRect;
 	private FillRectPanelUI electricFillRect;
 
-	protected override void AttachUI(ICardUIObject item)
+	protected override void AttachUI(IObjectForPanel item)
 	{
 		if (item is not ISectorCardUIObject sectorCard) return;
 		this.sectorCard = sectorCard;
