@@ -1,105 +1,63 @@
-﻿using System.Collections.Generic;
-
-using GameUI;
-
-using Sirenix.OdinInspector;
-
-using TMPro;
-
-using UnityEngine;
-using UnityEngine.UI;
+﻿using GameUI;
 
 using static StrategyGamePlayData;
 
-public class OperationCardItemPanel : CardItemPanelComponent, IFindUIObject
+public class OperationCardItemPanel : CardItemPanelComponent
 {
-	private IOperationToPanelAPI operationCard;
-	public IFindUIObject ThisUIFinder => this;
-	[SerializeField, PropertyOrder(-90)] private List<IFindUIObject.KeyPairObject> keyPairs;
-	List<IFindUIObject.KeyPairObject> IFindUIObject.KeyPairs { get => keyPairs; set => keyPairs = value; }
-
-
-	private Image titleImage;
-	private TMP_Text titleText;
-	private bool showPersonnel;
-	private bool showMaterial;
-	private bool showElectric;
-	private FillRectPanelUI personnelFillRect;
-	private FillRectPanelUI materialFillRect;
-	private FillRectPanelUI electricFillRect;
-
-	protected override void OnAttachUI(ITargetToPanelAPI item)
-	{
-		if (item is not IOperationToPanelAPI operationCard) return;
-		this.operationCard = operationCard;
-
-		if (titleImage.IsNotNullRef() || ThisUIFinder.TryFind<Image>("..TitleImage", out titleImage))
-			titleImage.sprite = operationCard.GetCardImage();
-
-		if (titleText.IsNotNullRef() || ThisUIFinder.TryFind<TMP_Text>("..TitleText", out titleText))
-			titleText.text = operationCard.GetCardName();
-
-		showPersonnel = false;
-		showMaterial = false;
-		showElectric = false;
-
-		if (personnelFillRect.IsNotNullRef() || ThisUIFinder.TryFind<FillRectPanelUI>("../Personnel", out personnelFillRect))
-			showPersonnel = personnelFillRect.gameObject.activeSelf;
-		if (materialFillRect.IsNotNullRef() || ThisUIFinder.TryFind<FillRectPanelUI>("../Material", out materialFillRect))
-			showMaterial = materialFillRect.gameObject.activeSelf;
-		if (electricFillRect.IsNotNullRef() || ThisUIFinder.TryFind<FillRectPanelUI>("../Electric", out electricFillRect))
-			showElectric = electricFillRect.gameObject.activeSelf;
-
-
-		if (operationCard is ISupplyStats supplyStats)
-		{
-			supplyStats.OnSupplyChange -= UpdateSupplyStats;
-			supplyStats.OnSupplyChange += UpdateSupplyStats;
-		}
-	}
+	private CardItemElementReferrer referrer;
+	private CardItemElementReferrer Referrer => referrer.IsNotNullRef() ? referrer : TryGetComponent<CardItemElementReferrer>(out referrer) ? referrer : null;
+	public OperationObject CardTarget { get; private set; }
 	protected override void OnReleaseUI()
 	{
-		if (operationCard.IsNotNullRef())
+		if (CardTarget.IsNotNullRef())
 		{
-			if (operationCard is ISupplyStats supplyStats)
+			if (CardTarget is IPersonnelStats personnel)
 			{
-				supplyStats.OnSupplyChange -= UpdateSupplyStats;
+
 			}
-			operationCard = null;
+			CardTarget = null;
+		}
+		if (referrer.IsNotNullRef())
+		{
+
+			referrer = null;
+		}
+	}
+	protected override void OnAttachUI(ITargetToPanelAPI item)
+	{
+		if (item is not OperationObject operation) return;
+		CardTarget = operation;
+		if (CardTarget.IsNullRef()) return;
+
+		referrer = Referrer;
+		if (referrer.IsNullRef()) return;
+
+
+
+		if (CardTarget is ITargetToCardAPI cardAPI)
+		{
+			referrer.SetTitleImage(cardAPI.GetCardImage());
+			referrer.SetTItleText(cardAPI.GetCardName());
+		}
+		if (CardTarget is IPersonnelStats personnel)
+		{
 		}
 
-		titleImage = null;
-		titleText = null;
-		personnelFillRect = null;
-		materialFillRect = null;
-		electricFillRect = null;
+		referrer.SetShildFillAmount(0,0);
+		referrer.SetPersonnelFillAmount(0, 0);
+		referrer.SetMaterialFillAmount(0, 0);
+		referrer.SetElectricFillAmount(0, 0);
 	}
-	private void UpdateSupplyStats(ISupplyStats supplyStats)
+
+	private void OnChangePersonnel(IPersonnelStats personnel)
 	{
-		OnUpdateUI();
+		if (personnel.IsNullRef()) return;
+		if (referrer.IsNullRef()) return;
+
+		referrer.SetPersonnelFillAmount(personnel.GetPersonnelSimpleValue());
 	}
 	protected override void OnUpdateUI()
 	{
-		RePainting_FillRect(personnelFillRect, ref showPersonnel, operationCard.GetPersonnelSimpleValue());
-		RePainting_FillRect(materialFillRect, ref showMaterial, operationCard.GetMaterialSimpleValue());
-		RePainting_FillRect(electricFillRect, ref showElectric, operationCard.GetElectricSimpleValue());
-
-		static void RePainting_FillRect(FillRectPanelUI fillRect, ref bool isShow, (float total, float max) value)
-		{
-			if (fillRect.IsNotNullRef())
-			{
-				var (total, max) = value;
-				bool nextShow = max > 0f;
-				if (isShow != nextShow)
-				{
-					isShow = nextShow;
-					fillRect.gameObject.SetActive(nextShow);
-				}
-				if (!isShow) return;
-
-				fillRect.MinMax = new Vector2(0f, max);
-				fillRect.Value = new Vector2(0f, total);
-			}
-		}
+		if (CardTarget.IsNullRef()) return;
 	}
 }

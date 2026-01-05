@@ -189,9 +189,11 @@ namespace GameUI
 				if (Mathf.Approximately(minValue, maxValue))
 				{
 					fillImage.enabled = false;
+					if (textUI.IsNotNullRef()) textUI.enabled = false;
 					return;
 				}
 				fillImage.enabled = true;
+				if (textUI.IsNotNullRef()) textUI.enabled = true;
 			}
 			if (minValue > maxValue)
 			{
@@ -335,8 +337,6 @@ namespace GameUI
 				_ => (int)value,
 			};
 		}
-
-
 		private void ApplyBackgroundImage()
 		{
 			if (backgroundFillImage.IsNullRef()) return;

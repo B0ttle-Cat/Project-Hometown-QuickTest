@@ -33,6 +33,7 @@ namespace GameUI
 			if (Target.IsNullRef()) return;
 			OnReleaseUI();
 			Target = null;
+			LabelAPI = null;
 		}
 		void ISetTargetPanel.OnAttachUI(ITargetToPanelAPI target)
 		{

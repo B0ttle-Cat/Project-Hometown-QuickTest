@@ -3,7 +3,7 @@
 using UnityEngine;
 
 
-public class UnitLabelItemPanel : LabelItemPanelComponent, ISetTargetPanel
+public class UnitLabelItemPanel : LabelItemPanelComponent
 {
 	private LabelItemElementReferrer referrer;
 	public LabelItemElementReferrer Referrer => referrer.IsNotNullRef() ? referrer : TryGetComponent<LabelItemElementReferrer>(out referrer) ? referrer : null;
@@ -11,16 +11,21 @@ public class UnitLabelItemPanel : LabelItemPanelComponent, ISetTargetPanel
 
 	protected override void OnReleaseUI()
 	{
-		if (Unit.IsNullRef()) return;
-
-		if (Unit is IDurabilityValue durability)
+		if (Unit.IsNotNullRef())
 		{
-			durability.OnChangeDurability -= OnChangeDurability;
-			durability.OnChangeDurability += OnChangeDurability;
+			if (Unit is IDurabilityValue durability)
+			{
+				durability.OnChangeDurability -= OnChangeDurability;
+				durability.OnChangeDurability += OnChangeDurability;
+			}
+			Unit = null;
 		}
 
-		Unit = null;
-		referrer = null;
+		if (referrer.IsNotNullRef())
+		{
+			referrer.OnClickRemoveListener(OnClickLabel);
+			referrer = null;
+		}
 	}
 
 	protected override void OnAttachUI(ITargetToPanelAPI target)
@@ -31,6 +36,8 @@ public class UnitLabelItemPanel : LabelItemPanelComponent, ISetTargetPanel
 
 		referrer = Referrer;
 		if (referrer.IsNullRef()) return;
+
+		referrer.OnClickAddListener(OnClickLabel);
 
 		if (Unit is ITargetToLabelAPI labelAPI)
 		{
@@ -51,9 +58,12 @@ public class UnitLabelItemPanel : LabelItemPanelComponent, ISetTargetPanel
 		referrer.SetMaterialFillAmount(0);
 		referrer.SetElectricFillAmount(0);
 	}
+	private void OnClickLabel()
+	{
 
-    private void OnChangeDurability(IDurabilityValue durability)
-    {
+	}
+	private void OnChangeDurability(IDurabilityValue durability)
+	{
 		if (referrer.IsNullRef()) return;
 		float max = durability.MaxDurability;
 		float current = durability.CurrentDurability;
@@ -61,9 +71,9 @@ public class UnitLabelItemPanel : LabelItemPanelComponent, ISetTargetPanel
 		referrer.SetShieldFillAmount(Mathf.Clamp01(ratio * 0.5f));
 	}
 
-    protected override void OnUpdateUI()
+	protected override void OnUpdateUI()
 	{
-		if(Unit.IsNullRef()) return;
+		if (Unit.IsNullRef()) return;
 
 		OnChangeDurability(Unit);
 	}

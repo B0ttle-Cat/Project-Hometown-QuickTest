@@ -32,7 +32,7 @@ namespace StrategyManagerModule
 	/// 
 	/// // 변경 리스너
 	/// collector.AddChangeListener<UnitObject>((u, added) => {
-	/// 	Debug.Log($"Unit {u?.ID} {(added ? "added" : "removed")}");
+	/// 	Debug.Log($"CardTarget {u?.ID} {(added ? "added" : "removed")}");
 	/// }, invokeForExisting: true);
 	/// --------------------------- 
 

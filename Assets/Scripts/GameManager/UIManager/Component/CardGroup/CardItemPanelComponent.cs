@@ -3,8 +3,8 @@
 	public abstract class CardItemPanelComponent : PanelItemComponent, IPanelItem, IShowHide, ISetTargetPanel
 	{
         public ITargetToPanelAPI Target { get; set; }
-
-        protected override void Awake()
+		public ITargetToCardAPI CardlAPI { get; set; }
+		protected override void Awake()
 		{
 			base.Awake();
 			ThisShowHide.PairingShowHide();
@@ -20,19 +20,29 @@
 			return this.Target == item;
 		}
 		void ISetTargetPanel.OnReleaseUI()
-        {
-        }
-
-        void ISetTargetPanel.OnAttachUI(ITargetToPanelAPI target)
-        {
-        }
-
-        void ISetTargetPanel.OnUpdateUI()
-        {
-        }
-
+		{
+			if (Target.IsNullRef()) return;
+			OnReleaseUI();
+			Target = null;
+			CardlAPI = null;
+		}
+		void ISetTargetPanel.OnAttachUI(ITargetToPanelAPI target)
+		{
+			Target = target;
+			if (Target.IsNullRef()) return;
+			if (target is ITargetToCardAPI)
+			{
+				CardlAPI = target as ITargetToCardAPI;
+			}
+			OnAttachUI(target);
+		}
+		void ISetTargetPanel.OnUpdateUI()
+		{
+			if (Target.IsNullRef()) return;
+			OnUpdateUI();
+		}
 		protected abstract void OnReleaseUI();
-		protected abstract void OnAttachUI(ITargetToPanelAPI card);
+		protected abstract void OnAttachUI(ITargetToPanelAPI target);
 		protected abstract void OnUpdateUI();
 	}
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 using static StrategyGamePlayData;
 
 
-public class SectorLabelItemPanel : LabelItemPanelComponent, ISetTargetPanel
+public class SectorLabelItemPanel : LabelItemPanelComponent
 {
 	private LabelItemElementReferrer referrer;
 	public LabelItemElementReferrer Referrer => referrer.IsNotNullRef() ? referrer : TryGetComponent<LabelItemElementReferrer>(out referrer) ? referrer : null;
@@ -13,22 +13,29 @@ public class SectorLabelItemPanel : LabelItemPanelComponent, ISetTargetPanel
 
 	protected override void OnReleaseUI()
 	{
-		if (Sector.IsNullRef()) return;
+		if (Sector.IsNotNullRef())
+		{
 
-		if (Sector is IDurabilityValue durability)
-		{
-			durability.OnChangeDurability -= OnChangeDurability;
+			if (Sector is IDurabilityValue durability)
+			{
+				durability.OnChangeDurability -= OnChangeDurability;
+			}
+			if (Sector is ISupplyStats supplyStats)
+			{
+				supplyStats.OnSupplyChange -= UpdateSupplyStats;
+			}
+			if (Sector is IChangeOrderFaction changeOrderFaction)
+			{
+				changeOrderFaction.OnChangeFaction -= OnChangeFaction;
+			}
+			Sector = null;
 		}
-		if (Sector is ISupplyStats supplyStats)
+
+		if (referrer.IsNotNullRef())
 		{
-			supplyStats.OnSupplyChange -= UpdateSupplyStats;
+			referrer.OnClickRemoveListener(OnClickLabel);
+			referrer = null;
 		}
-		if (Sector is IChangeOrderFaction changeOrderFaction)
-		{
-			changeOrderFaction.OnChangeFaction -= OnChangeFaction;
-		}
-		Sector = null;
-		referrer = null;
 	}
 
 	protected override void OnAttachUI(ITargetToPanelAPI target)
@@ -39,6 +46,9 @@ public class SectorLabelItemPanel : LabelItemPanelComponent, ISetTargetPanel
 
 		referrer = Referrer;
 		if (referrer.IsNullRef()) return;
+		
+		referrer.OnClickAddListener(OnClickLabel);
+
 
 		if (Sector is ITargetToLabelAPI labelAPI)
 		{
@@ -67,7 +77,12 @@ public class SectorLabelItemPanel : LabelItemPanelComponent, ISetTargetPanel
 			changeOrderFaction.OnChangeFaction += OnChangeFaction;
 		}
 	}
+	private void OnClickLabel()
+	{
+		if(Sector is not ISelectable selectable) return;
 
+		StrategyManager.Selecter.OnSystemSelectObject(selectable);
+	}
 	private void OnChangeFaction(IStrategyElement element, int factionID)
 	{
 		if (StrategyManager.PlayerFactionID == factionID)
@@ -81,8 +96,8 @@ public class SectorLabelItemPanel : LabelItemPanelComponent, ISetTargetPanel
 		}
 	}
 
-    private void OnChangeDurability(IDurabilityValue durability)
-    {
+	private void OnChangeDurability(IDurabilityValue durability)
+	{
 		if (durability.IsNullRef()) return;
 		if (referrer.IsNullRef()) return;
 		float current = durability.CurrentDurability;
@@ -91,7 +106,7 @@ public class SectorLabelItemPanel : LabelItemPanelComponent, ISetTargetPanel
 		referrer.SetShieldFillAmount(Mathf.Clamp01(ratio * 0.5f));
 	}
 
-    private void UpdateSupplyStats(ISupplyStats supplyStats)
+	private void UpdateSupplyStats(ISupplyStats supplyStats)
 	{
 		if (supplyStats.IsNullRef()) return;
 		if (referrer.IsNullRef()) return;
@@ -114,4 +129,6 @@ public class SectorLabelItemPanel : LabelItemPanelComponent, ISetTargetPanel
 		UpdateSupplyStats(Sector);
 		OnChangeFaction(Sector, Sector.CaptureFactionID);
 	}
+
+
 }

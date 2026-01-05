@@ -205,8 +205,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitCardGroupPanel
   poolingDataContainer: {fileID: 4796105}
-  PanelPrefab: {fileID: 6682355681337195028, guid: fc35562ad7ae8914e8aff49a280cc4d9, type: 3}
-  PanelParent: {fileID: 0}
+  PanelPrefab: {fileID: 5980830682754211231, guid: be8e9e2cc169223428ce8f62b5617d95, type: 3}
+  PanelParent: {fileID: 560685280}
 --- !u!114 &4796105
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -220,7 +220,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: GameUI::GameUI.ScrollRectIndexCallbackHelper
   targetComponent: {fileID: 4796104}
-  poolItemRect: {fileID: 6497815980617949089, guid: fc35562ad7ae8914e8aff49a280cc4d9, type: 3}
+  poolItemRect: {fileID: 7333357138829244404, guid: be8e9e2cc169223428ce8f62b5617d95, type: 3}
   scrollRect: {fileID: 1421464715}
   content: {fileID: 560685280}
   layoutGroup: {fileID: 560685282}
@@ -426,8 +426,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StrategySectorCardView
   poolingDataContainer: {fileID: 58857483}
-  PanelPrefab: {fileID: 8329387073843089986, guid: 1db8ce840c975564597ccd5a154d31c5, type: 3}
-  PanelParent: {fileID: 0}
+  PanelPrefab: {fileID: 769253120651724256, guid: ea01ae432f06d5b41859d7ecc4386b23, type: 3}
+  PanelParent: {fileID: 44458275}
 --- !u!114 &58857483
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -441,7 +441,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: GameUI::GameUI.ScrollRectIndexCallbackHelper
   targetComponent: {fileID: 58857482}
-  poolItemRect: {fileID: 6497815980617949089, guid: 1db8ce840c975564597ccd5a154d31c5, type: 3}
+  poolItemRect: {fileID: 7333357138829244404, guid: ea01ae432f06d5b41859d7ecc4386b23, type: 3}
   scrollRect: {fileID: 806062829}
   content: {fileID: 44458275}
   layoutGroup: {fileID: 44458276}
@@ -3624,7 +3624,6 @@ GameObject:
   - component: {fileID: 331655815}
   - component: {fileID: 331655814}
   - component: {fileID: 331655813}
-  - component: {fileID: 331655812}
   m_Layer: 5
   m_Name: MapPanelUI
   m_TagString: Untagged
@@ -3654,20 +3653,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &331655812
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 331655810}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96f2b2972cb8f7d44ad9586cb4485435, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RectUICollisionAvoidance
-  repulsionStrength: 80
-  smoothTime: 0.1
 --- !u!114 &331655813
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10064,8 +10049,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OperationCardGroupPanel
   poolingDataContainer: {fileID: 955811208}
-  PanelPrefab: {fileID: 7544981798547334151, guid: cf76bf7b24cb3ae499488979c6537bfe, type: 3}
-  PanelParent: {fileID: 0}
+  PanelPrefab: {fileID: -3986479686907317285, guid: 4cdf249ee6155a84d8b99407b1b9b79b, type: 3}
+  PanelParent: {fileID: 1307337658}
 --- !u!114 &955811208
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10079,7 +10064,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: GameUI::GameUI.ScrollRectIndexCallbackHelper
   targetComponent: {fileID: 955811207}
-  poolItemRect: {fileID: 159616052365629527, guid: cf76bf7b24cb3ae499488979c6537bfe, type: 3}
+  poolItemRect: {fileID: 7333357138829244404, guid: 4cdf249ee6155a84d8b99407b1b9b79b, type: 3}
   scrollRect: {fileID: 721551565}
   content: {fileID: 1307337658}
   layoutGroup: {fileID: 1307337660}

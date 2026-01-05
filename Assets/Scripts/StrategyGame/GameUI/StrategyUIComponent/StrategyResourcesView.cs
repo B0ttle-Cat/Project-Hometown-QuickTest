@@ -107,19 +107,19 @@ public class StrategyResourcesView : PanelItemComponent, IShowHideAsync
 	{
 		if (personnel.IsNotNullRef())
 		{
-			(float[] values, float total, float max) = statsValue.GetPersonnelDetailValue();
+			(int[] values, int total, int max) = statsValue.GetPersonnelDetailValue();
 			personnel.MinMax = new Vector2(0, max);
 			personnel.SetValue(values);
 		}
 		if (material.IsNotNullRef())
 		{
-			(float[] values, float total, float max) = statsValue.GetMaterialDetailValue();
+			(int[] values, int total, int max) = statsValue.GetMaterialDetailValue();
 			material.MinMax = new Vector2(0, max);
 			material.SetValue(values);
 		}
 		if (electric.IsNotNullRef())
 		{
-			(float[] values, float total, float max) = statsValue.GetElectricDetailValue();
+			(int[] values, int total, int max) = statsValue.GetElectricDetailValue();
 			electric.MinMax = new Vector2(0, max);
 			electric.SetValue(values);
 		}

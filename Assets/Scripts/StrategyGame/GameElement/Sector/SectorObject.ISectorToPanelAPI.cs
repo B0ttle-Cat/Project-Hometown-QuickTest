@@ -46,79 +46,79 @@ public partial class SectorObject : ISectorToPanelAPI
 		return faction.FactionName;
 	}
 
-	public (float[] values, float total, float max) GetShieldDetailValue()
+	public (int[] values, int total, int max) GetShieldDetailValue()
 	{
-		float max = ThisStatsValue.GetStatsValue(StatsType.시설_내구도_최대);
-		float total = ThisStatsValue.GetStatsValue(StatsType.시설_내구도_현재);
-		float[] values = new float[1];
+		int max = ThisStatsValue.GetStatsValue(StatsType.시설_내구도_최대);
+		int total = ThisStatsValue.GetStatsValue(StatsType.시설_내구도_현재);
+		int[] values = new int[1];
 		values[0] = ThisStatsValue.GetStatsValue(StatsType.시설_내구도_현재);
 		return (values, total, max);
 	}
-	public (float[] values, float total, float max) GetPersonnelDetailValue()
+	public (int[] values, int total, int max) GetPersonnelDetailValue()
 	{
-		float max = ThisStatsValue.GetStatsValue(StatsType.자원_인력_최대);
-		float total = ThisStatsValue.GetStatsValue(StatsType.자원_인력_현재);
-		float[] values = new float[1];
+		int max = ThisStatsValue.GetStatsValue(StatsType.자원_인력_최대);
+		int total = ThisStatsValue.GetStatsValue(StatsType.자원_인력_현재);
+		int[] values = new int[1];
 		values[0] = ThisStatsValue.GetStatsValue(StatsType.자원_인력_현재);
 		return (values, total, max);
 	}
-	public (float[] values, float total, float max) GetMaterialDetailValue()
+	public (int[] values, int total, int max) GetMaterialDetailValue()
 	{
-		float max = ThisStatsValue.GetStatsValue(StatsType.자원_재료_최대);
-		float total = ThisStatsValue.GetStatsValue(StatsType.자원_재료_현재);
-		float[] values = new float[1];
+		int max = ThisStatsValue.GetStatsValue(StatsType.자원_재료_최대);
+		int total = ThisStatsValue.GetStatsValue(StatsType.자원_재료_현재);
+		int[] values = new int[1];
 		values[0] = ThisStatsValue.GetStatsValue(StatsType.자원_재료_현재);
 		return (values, total, max);
 	}
-	public (float[] values, float total, float max) GetElectricDetailValue()
+	public (int[] values, int total, int max) GetElectricDetailValue()
 	{
-		float max = ThisStatsValue.GetStatsValue(StatsType.자원_전력_최대);
-		float total = ThisStatsValue.GetStatsValue(StatsType.자원_전력_현재);
+		int max = ThisStatsValue.GetStatsValue(StatsType.자원_전력_최대);
+		int total = ThisStatsValue.GetStatsValue(StatsType.자원_전력_현재);
 
-		float[] values = new float[1];
+		int[] values = new int[1];
 		values[0] = ThisStatsValue.GetStatsValue(StatsType.자원_전력_현재);
 		return (values, total, max);
 	}
-	public (float total, float max) GetShieldSimpleValue()
+	public (int total, int max) GetShieldSimpleValue()
 	{
-		float max = ThisStatsValue.GetStatsValue(StatsType.시설_내구도_최대);
-		float total = ThisStatsValue.GetStatsValue(StatsType.시설_내구도_현재);
+		int max = ThisStatsValue.GetStatsValue(StatsType.시설_내구도_최대);
+		int total = ThisStatsValue.GetStatsValue(StatsType.시설_내구도_현재);
 		return (total, max);
 	}
-	public (float total, float max) GetPersonnelSimpleValue()
+	public (int total, int max) GetPersonnelSimpleValue()
 	{
-		float max = ThisStatsValue.GetStatsValue(StatsType.자원_인력_최대);
-		float total = ThisStatsValue.GetStatsValue(StatsType.자원_인력_현재);
+		int max = ThisStatsValue.GetStatsValue(StatsType.자원_인력_최대);
+		int total = ThisStatsValue.GetStatsValue(StatsType.자원_인력_현재);
 		return (total, max);
 	}
-	public (float total, float max) GetMaterialSimpleValue()
+	public (int total, int max) GetMaterialSimpleValue()
 	{
-		float max = ThisStatsValue.GetStatsValue(StatsType.자원_재료_최대);
-		float total = ThisStatsValue.GetStatsValue(StatsType.자원_재료_현재);
+		int max = ThisStatsValue.GetStatsValue(StatsType.자원_재료_최대);
+		int total = ThisStatsValue.GetStatsValue(StatsType.자원_재료_현재);
 		return (total, max);
 	}
-	public (float total, float max) GetElectricSimpleValue()
+	public (int total, int max) GetElectricSimpleValue()
 	{
-		float max = ThisStatsValue.GetStatsValue(StatsType.자원_전력_최대);
-		float total = ThisStatsValue.GetStatsValue(StatsType.자원_전력_현재);
+		int max = ThisStatsValue.GetStatsValue(StatsType.자원_전력_최대);
+		int total = ThisStatsValue.GetStatsValue(StatsType.자원_전력_현재);
 		return (total, max);
 	}
 	public string GetShieldValueText(bool simpleText = false)
 	{
 		if (simpleText)
 		{
-			(float total, float max) = GetShieldSimpleValue();
+			(int total, int max) = GetShieldSimpleValue();
 			string text = $"보호막: {total}/{max}";
 			return text;
 		}
 		else
 		{
-			(float[] values, float total, float max) = GetShieldDetailValue();
+			(int[] values, int total, int max) = GetShieldDetailValue();
 			string text = $"보호막: {total}/{max}";
 			int length = values.Length;
 			for (int i = 0 ; i < length ; i++)
 			{
-				float value = values[i];
+				int value = values[i];
 				text += $"\t{value:+#;-#;0}";
 			}
 
@@ -129,18 +129,18 @@ public partial class SectorObject : ISectorToPanelAPI
 	{
 		if (simpleText)
 		{
-			(float total, float max) = GetPersonnelSimpleValue();
+			(int total, int max) = GetPersonnelSimpleValue();
 			string text = $"인력: {total}/{max}";
 			return text;
 		}
 		else
 		{
-			(float[] values, float total, float max) = GetPersonnelDetailValue();
+			(int[] values, int total, int max) = GetPersonnelDetailValue();
 			string text = $"인력: {total}/{max}";
 			int length = values.Length;
 			for (int i = 0 ; i < length ; i++)
 			{
-				float value = values[i];
+				int value = values[i];
 				text += $"\t{value:+#;-#;0}";
 			}
 
@@ -151,18 +151,18 @@ public partial class SectorObject : ISectorToPanelAPI
 	{
 		if (simpleText)
 		{
-			(float total, float max) = GetMaterialSimpleValue();
+			(int total, int max) = GetMaterialSimpleValue();
 			string text = $"재료: {total}/{max}";
 			return text;
 		}
 		else
 		{
-			(float[] values, float total, float max) = GetMaterialDetailValue();
+			(int[] values, int total, int max) = GetMaterialDetailValue();
 			string text = $"재료: {total}/{max}";
 			int length = values.Length;
 			for (int i = 0 ; i < length ; i++)
 			{
-				float value = values[i];
+				int value = values[i];
 				text += $"\t{value:+#;-#;0}";
 			}
 
@@ -173,18 +173,18 @@ public partial class SectorObject : ISectorToPanelAPI
 	{
 		if (simpleText)
 		{
-			(float total, float max) = GetElectricSimpleValue();
+			(int total, int max) = GetElectricSimpleValue();
 			string text = $"전력: {total}/{max}";
 			return text;
 		}
 		else
 		{
-			(float[] values, float total, float max) = GetElectricDetailValue();
+			(int[] values, int total, int max) = GetElectricDetailValue();
 			string text = $"전력: {total}/{max}";
 			int length = values.Length;
 			for (int i = 0 ; i < length ; i++)
 			{
-				float value = values[i];
+				int value = values[i];
 				text += $"\t{value:+#;-#;0}";
 			}
 

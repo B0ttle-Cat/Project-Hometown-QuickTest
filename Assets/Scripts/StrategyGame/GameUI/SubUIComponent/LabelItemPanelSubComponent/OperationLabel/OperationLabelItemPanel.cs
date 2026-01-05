@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 [RequireComponent(typeof(LabelItemElementReferrer))]
-public class OperationLabelItemPanel : LabelItemPanelComponent, ISetTargetPanel
+public class OperationLabelItemPanel : LabelItemPanelComponent
 {
 	private LabelItemElementReferrer referrer;
 	public LabelItemElementReferrer Referrer => referrer.IsNotNullRef() ? referrer : TryGetComponent<LabelItemElementReferrer>(out referrer) ? referrer : null;
@@ -12,10 +12,17 @@ public class OperationLabelItemPanel : LabelItemPanelComponent, ISetTargetPanel
 
 	protected override void OnReleaseUI()
 	{
-		if (Operation.IsNullRef()) return;
+		if (Operation.IsNotNullRef())
+		{
 
-		Operation = null;
-		referrer = null;
+			Operation = null;
+		}
+
+		if (referrer.IsNotNullRef())
+		{
+			referrer.OnClickRemoveListener(OnClickLabel);
+			referrer = null;
+		}
 	}
 
 	protected override void OnAttachUI(ITargetToPanelAPI target)
@@ -26,6 +33,8 @@ public class OperationLabelItemPanel : LabelItemPanelComponent, ISetTargetPanel
 
 		referrer = Referrer;
 		if (referrer.IsNullRef()) return;
+
+		referrer.OnClickAddListener(OnClickLabel);
 
 		if (Operation is ITargetToLabelAPI labelAPI)
 		{
@@ -42,7 +51,12 @@ public class OperationLabelItemPanel : LabelItemPanelComponent, ISetTargetPanel
 		referrer.SetElectricFillAmount(0);
 	}
 
-    protected override void OnUpdateUI()
+	private void OnClickLabel()
+	{
+
+	}
+
+	protected override void OnUpdateUI()
     {
     }
 }

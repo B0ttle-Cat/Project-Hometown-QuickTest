@@ -450,10 +450,10 @@ public partial class Faction // ElementSet
 	{
 		protected readonly List<ITargetableCombatant> targetableList = new List<ITargetableCombatant>();
 		protected readonly List<INearbyElement> nearbyList = new List<INearbyElement>();
-		protected readonly List<IUnitForPanelAPI> forPanel = new List<IUnitForPanelAPI>();
+		protected readonly List<IUnitToPanelAPI> forPanel = new List<IUnitToPanelAPI>();
 		public List<ITargetableCombatant> TargetableType => targetableList;
 		public List<INearbyElement> NearbyType => nearbyList;
-		public List<IUnitForPanelAPI> ForPanel => forPanel;
+		public List<IUnitToPanelAPI> ForPanel => forPanel;
 
 		public override bool Add(IStrategyElement item)
 		{
@@ -461,7 +461,7 @@ public partial class Faction // ElementSet
 			{
 				if (item is INearbyElement nearby) nearbyList.Add(nearby);
 				if (item is ITargetableCombatant target) targetableList.Add(target);
-				if (item is IUnitForPanelAPI panel) forPanel.Add(panel);
+				if (item is IUnitToPanelAPI panel) forPanel.Add(panel);
 				return true;
 			}
 			return false;
@@ -472,7 +472,7 @@ public partial class Faction // ElementSet
 			{
 				if (item is INearbyElement nearby) nearbyList.Remove(nearby);
 				if (item is ITargetableCombatant target) targetableList.Remove(target);
-				if (item is IUnitForPanelAPI panel) forPanel.Remove(panel);
+				if (item is IUnitToPanelAPI panel) forPanel.Remove(panel);
 				return true;
 			}
 			return false;
@@ -623,49 +623,49 @@ public partial class Faction : IStatsValueControl, ISupplyStats
 
 		OnSupplyChange?.Invoke(this);
 	}
-	public (float[] values, float total, float max) GetPersonnelDetailValue()
+	public (int[] values, int total, int max) GetPersonnelDetailValue()
 	{
-		float max = ThisStatsValue.GetStatsValue(StatsType.자원_인력_최대);
-		float[] values = new float[3];
+		int max = ThisStatsValue.GetStatsValue(StatsType.자원_인력_최대);
+		int[] values = new int[3];
 		values[0] = ThisStatsValue.GetStatsValue(StatsType.자원_인력_현재);
 		values[1] = ThisStatsValue.GetStatsValue(StatsType.사용중_인력_병력);
 		values[2] = ThisStatsValue.GetStatsValue(StatsType.사용중_인력_시설);
-		float total =  values[0] + values[1] + values[2];
+		int total =  values[0] + values[1] + values[2];
 		return (values, total, max);
 	}
-	public (float[] values, float total, float max) GetMaterialDetailValue()
+	public (int[] values, int total, int max) GetMaterialDetailValue()
 	{
-		float max = ThisStatsValue.GetStatsValue(StatsType.자원_재료_최대);
-		float total = ThisStatsValue.GetStatsValue(StatsType.자원_재료_현재);
-		float[] values = new float[1];
+		int max = ThisStatsValue.GetStatsValue(StatsType.자원_재료_최대);
+		int total = ThisStatsValue.GetStatsValue(StatsType.자원_재료_현재);
+		int[] values = new int[1];
 		values[0] = ThisStatsValue.GetStatsValue(StatsType.자원_재료_현재);
 		return (values, total, max);
 	}
-	public (float[] values, float total, float max) GetElectricDetailValue()
+	public (int[] values, int total, int max) GetElectricDetailValue()
 	{
-		float max = ThisStatsValue.GetStatsValue(StatsType.자원_전력_최대);
-		float total = ThisStatsValue.GetStatsValue(StatsType.자원_전력_현재);
+		int max = ThisStatsValue.GetStatsValue(StatsType.자원_전력_최대);
+		int total = ThisStatsValue.GetStatsValue(StatsType.자원_전력_현재);
 
-		float[] values = new float[1];
+		int[] values = new int[1];
 		values[0] = ThisStatsValue.GetStatsValue(StatsType.자원_전력_현재);
 		return (values, total, max);
 	}
-	public (float total, float max) GetPersonnelSimpleValue()
+	public (int total, int max) GetPersonnelSimpleValue()
 	{
-		float max = ThisStatsValue.GetStatsValue(StatsType.자원_인력_최대);
-		float total = ThisStatsValue.GetStatsValue(StatsType.자원_인력_현재);
+		int max = ThisStatsValue.GetStatsValue(StatsType.자원_인력_최대);
+		int total = ThisStatsValue.GetStatsValue(StatsType.자원_인력_현재);
 		return (total, max);
 	}
-	public (float total, float max) GetMaterialSimpleValue()
+	public (int total, int max) GetMaterialSimpleValue()
 	{
-		float max = ThisStatsValue.GetStatsValue(StatsType.자원_재료_최대);
-		float total = ThisStatsValue.GetStatsValue(StatsType.자원_재료_현재);
+		int max = ThisStatsValue.GetStatsValue(StatsType.자원_재료_최대);
+		int total = ThisStatsValue.GetStatsValue(StatsType.자원_재료_현재);
 		return (total, max);
 	}
-	public (float total, float max) GetElectricSimpleValue()
+	public (int total, int max) GetElectricSimpleValue()
 	{
-		float max = ThisStatsValue.GetStatsValue(StatsType.자원_전력_최대);
-		float total = ThisStatsValue.GetStatsValue(StatsType.자원_전력_현재);
+		int max = ThisStatsValue.GetStatsValue(StatsType.자원_전력_최대);
+		int total = ThisStatsValue.GetStatsValue(StatsType.자원_전력_현재);
 		return (total, max);
 	}
 	#endregion

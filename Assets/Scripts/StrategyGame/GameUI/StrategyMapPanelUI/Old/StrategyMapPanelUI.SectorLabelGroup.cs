@@ -208,9 +208,9 @@ public partial class Old_StrategyMapPanelUI // SectorLabelGroup
 				}
 
 				if (selectButton != null) selectButton.onClick.RemoveAllListeners();
-				//if (Unit != null)
+				//if (CardTarget != null)
 				//{
-				//	Unit.SectorStatsGroup.RemoveListener(OnChangeStatsGroup, OnChangeStatsGroup);
+				//	CardTarget.SectorStatsGroup.RemoveListener(OnChangeStatsGroup, OnChangeStatsGroup);
 				//}
 			}
 
@@ -225,9 +225,9 @@ public partial class Old_StrategyMapPanelUI // SectorLabelGroup
 
 				selectButton.onClick.RemoveAllListeners();
 				selectButton.onClick.AddListener(() => StrategyManager.Selecter.OnSystemSelectObject(Sector));
-				//if (Unit != null)
+				//if (CardTarget != null)
 				//{
-				//	Unit.SectorStatsGroup.AddListener(OnChangeStatsGroup, OnChangeStatsGroup);
+				//	CardTarget.SectorStatsGroup.AddListener(OnChangeStatsGroup, OnChangeStatsGroup);
 				//}
 			}
 
@@ -248,7 +248,7 @@ public partial class Old_StrategyMapPanelUI // SectorLabelGroup
 					iconlist ??= new List<GameObject>();
 					iconlist.Clear();
 
-					//var keyList = Unit.GetStatsKeyListInGroup(SectorObject.StatsGroupName_StatusEffect);
+					//var keyList = CardTarget.GetStatsKeyListInGroup(SectorObject.StatsGroupName_StatusEffect);
 					//int substringCount = SectorObject.StatsGroupName_StatusEffect.Length;
 					//foreach (string key in keyList)
 					//{

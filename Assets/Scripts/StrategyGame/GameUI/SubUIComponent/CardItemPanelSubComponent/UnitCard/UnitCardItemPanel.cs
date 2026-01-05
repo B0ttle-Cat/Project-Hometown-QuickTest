@@ -1,110 +1,76 @@
-﻿using System.Collections.Generic;
+﻿using GameUI;
 
-using GameUI;
-
-using Sirenix.OdinInspector;
-
-using TMPro;
-
-using UnityEngine;
-using UnityEngine.UI;
-
-using static StrategyGamePlayData;
-
-public class UnitCardItemPanel : CardItemPanelComponent, IFindUIObject
+public class UnitCardItemPanel : CardItemPanelComponent
 {
-	private IUnitForPanelAPI unitCard;
-	public IFindUIObject ThisUIFinder => this;
-	[SerializeField, PropertyOrder(-90)] private List<IFindUIObject.KeyPairObject> keyPairs;
-	List<IFindUIObject.KeyPairObject> IFindUIObject.KeyPairs { get => keyPairs; set => keyPairs = value; }
-	public void SetUITarget(UnitObject operationObject)
-	{
-		unitCard = operationObject;
-	}
+	private CardItemElementReferrer referrer;
+	private CardItemElementReferrer Referrer => referrer.IsNotNullRef() ? referrer : TryGetComponent<CardItemElementReferrer>(out referrer) ? referrer : null;
 
-	private Image titleImage;
-	private TMP_Text titleText;
-	private bool showShield;
-	private bool showMaterial;
-	private bool showElectric;
-	private FillRectPanelUI shieldFillRect;
-	private FillRectPanelUI materialFillRect;
-	private FillRectPanelUI electricFillRect;
+	public UnitObject CardTarget { get; private set; }
 
-	protected override void OnAttachUI(ITargetToPanelAPI item)
-	{
-		if (item is not IUnitForPanelAPI unitCard) return;
-		this.unitCard = unitCard;
-
-		if (titleImage.IsNotNullRef() || ThisUIFinder.TryFind<Image>("..TitleImage", out titleImage))
-			titleImage.sprite = unitCard.GetCardImage();
-
-		if (titleText.IsNotNullRef() || ThisUIFinder.TryFind<TMP_Text>("..TitleText", out titleText))
-			titleText.text = unitCard.GetLabelName();
-
-		showShield = false;
-		showMaterial = false;
-		showElectric = false;
-
-		if (shieldFillRect.IsNotNullRef() || ThisUIFinder.TryFind<FillRectPanelUI>("../Shield", out shieldFillRect))
-			showShield = shieldFillRect.gameObject.activeSelf;
-		if (materialFillRect.IsNotNullRef() || ThisUIFinder.TryFind<FillRectPanelUI>("../Material", out materialFillRect))
-			showMaterial = materialFillRect.gameObject.activeSelf;
-		if (electricFillRect.IsNotNullRef() || ThisUIFinder.TryFind<FillRectPanelUI>("../Electric", out electricFillRect))
-			showElectric = electricFillRect.gameObject.activeSelf;
-
-		if (unitCard is ISupplyStats supplyStats)
-		{
-			supplyStats.OnSupplyChange -= UpdateSupplyStats;
-			supplyStats.OnSupplyChange += UpdateSupplyStats;
-		}
-	}
 	protected override void OnReleaseUI()
 	{
-		if(unitCard.IsNotNullRef())
+		if (CardTarget.IsNotNullRef())
 		{
-			if (unitCard is ISupplyStats supplyStats)
+			if (CardTarget is IDurabilityValue durability)
 			{
-				supplyStats.OnSupplyChange -= UpdateSupplyStats;
+				durability.OnChangeDurability -= OnChangeDurability;
 			}
-			unitCard = null;
+			CardTarget = null;
 		}
-		unitCard = null;
+		if (referrer.IsNotNullRef())
+		{
 
-		titleImage = null;
-		titleText = null;
-		shieldFillRect = null;
-		materialFillRect = null;
-		electricFillRect = null;
+			referrer = null;
+		}
 	}
-	private void UpdateSupplyStats(ISupplyStats supplyStats)
+	protected override void OnAttachUI(ITargetToPanelAPI item)
 	{
-		OnUpdateUI();
+		if (item is not UnitObject unitCard) return;
+		CardTarget = unitCard;
+		if (CardTarget.IsNullRef()) return;
+
+		referrer = Referrer;
+		if (referrer.IsNullRef()) return;
+
+
+
+		if (CardTarget is ITargetToCardAPI cardAPI)
+		{
+			referrer.SetTitleImage(cardAPI.GetCardImage());
+			referrer.SetTItleText(cardAPI.GetCardName());
+		}
+
+		referrer.SetShildFillAmount(0,0);
+		referrer.SetPersonnelFillAmount(0, 0);
+		referrer.SetMaterialFillAmount(0, 0);
+		referrer.SetElectricFillAmount(0, 0);
+
+		if (CardTarget is IDurabilityValue durability)
+		{
+			durability.OnChangeDurability -= OnChangeDurability;
+			durability.OnChangeDurability += OnChangeDurability;
+		}
+	}
+
+	private void OnChangeDurability(IDurabilityValue durability)
+	{
+		if (durability.IsNullRef()) return;
+		if (referrer.IsNullRef()) return;
+
+		referrer.SetShildFillAmount(durability.CurrentDurability, durability.MaxDurability);
 	}
 	protected override void OnUpdateUI()
 	{
-		if (unitCard.IsNullRef()) return;
-
-		RePainting_FillRect(shieldFillRect, ref showShield, unitCard.GetShieldSimpleValue());
-		RePainting_FillRect(materialFillRect, ref showMaterial, unitCard.GetMaterialSimpleValue());
-		RePainting_FillRect(electricFillRect, ref showElectric, unitCard.GetElectricSimpleValue());
-
-		static void RePainting_FillRect(FillRectPanelUI fillRect, ref bool isShow, (float total, float max) value)
-		{
-			if (fillRect.IsNotNullRef())
-			{
-				var (total, max) = value;
-				bool nextShow = max > 0f;
-				if (isShow != nextShow)
-				{
-					isShow = nextShow;
-					fillRect.gameObject.SetActive(nextShow);
-				}
-				if (!isShow) return;
-
-				fillRect.MinMax = new Vector2(0f, max);
-				fillRect.Value = new Vector2(0f, total);
-			}
-		}
+		if (CardTarget.IsNullRef()) return;
+		OnChangeDurability(CardTarget);
+	}
+	float FillRatio((float current, float max) value)
+	{
+		return Ratio(value.current, value.max);
+	}
+	private float Ratio(float current, float max)
+	{
+		if (max < 0) return 0;
+		return current / max;
 	}
 }

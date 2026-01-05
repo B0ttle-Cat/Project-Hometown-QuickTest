@@ -215,7 +215,7 @@ public partial class ProjectileObject : IProjectileHit
 	private HashSet<Collider> alreadyHit;
 	partial void InitHitReporting()
 	{
-		hitLayerMask = LayerMask.GetMask("Ground", "HardObject", "Hitable", "Unit");
+		hitLayerMask = LayerMask.GetMask("Ground", "HardObject", "Hitable", "CardTarget");
 		alreadyHit = new HashSet<Collider>();
 	}
 	partial void DeinitHitReporting()

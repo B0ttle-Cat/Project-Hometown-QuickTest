@@ -625,18 +625,18 @@ public partial class StrategyGamePlayData // ThisStatsValue
 	}
 	public interface IPersonnelStats
 	{
-		public (float[] values, float total, float max) GetPersonnelDetailValue();
-		public (float total, float max) GetPersonnelSimpleValue();
+		public (int[] values, int total, int max) GetPersonnelDetailValue();
+		public (int total, int max) GetPersonnelSimpleValue();
 	}
 	public interface IMaterialStats
 	{
-		public (float[] values, float total, float max) GetMaterialDetailValue();
-		public (float total, float max) GetMaterialSimpleValue();
+		public (int[] values, int total, int max) GetMaterialDetailValue();
+		public (int total, int max) GetMaterialSimpleValue();
 	}
 	public interface IElectricStats
 	{
-		public (float[] values, float total, float max) GetElectricDetailValue();
-		public (float total, float max) GetElectricSimpleValue();
+		public (int[] values, int total, int max) GetElectricDetailValue();
+		public (int total, int max) GetElectricSimpleValue();
 	}
 	public interface ISupplyStats : IPersonnelStats, IMaterialStats, IElectricStats, IStatsValueControl
 	{

@@ -229,16 +229,16 @@ public class StrategyManager : MonoBehaviour
 		setter.OnStartSetter_FactionRelation(factionRelation);
 		setter.OnStartSetter_FactionViewer();
 
-		// Unit 세팅
+		// CardTarget 세팅
 		await setter.OnStartSetter_Sector();
 
-		// Unit Network 세팅
+		// CardTarget Network 세팅
 		await setter.OnStartSetter_SectorNetwork(pathfinding);
 
 		// SectorAPI 세팅
 		await setter.OnStartSetter_Operation();
 
-		// Unit 세팅
+		// CardTarget 세팅
 		await setter.OnStartSetter_Unit();
 
 		// 점령 지역 세팅
