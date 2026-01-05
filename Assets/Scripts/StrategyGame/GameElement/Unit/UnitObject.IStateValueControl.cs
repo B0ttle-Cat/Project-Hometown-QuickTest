@@ -177,7 +177,7 @@ public partial class UnitObject : IStatsValueControl
 
 		if(type is StatsType.전투_현재내구도 or StatsType.전투_최대내구도)
 		{
-			OnChangeDurability?.Invoke((ThisCombatStats.GetStatsValue(StatsType.전투_현재내구도), ThisCombatStats.GetStatsValue(StatsType.전투_최대내구도)));
+			OnChangeDurability?.Invoke(this);
 		}
 	}
 }
@@ -187,7 +187,7 @@ public partial class UnitObject : ICombatCommon, ICombatOffense, ICombatDefance
 	public ICombatOffense ThisOffense => this;
 	public ICombatDefance ThisDefance => this;
 
-    public event Action<(int current, int max)> OnChangeDurability;
+    public event Action<IDurabilityValue> OnChangeDurability;
 
     public void TakeDamage(int damage, DamageCommander.DamageFlag flag)
 	{

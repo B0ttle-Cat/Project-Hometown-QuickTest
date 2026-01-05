@@ -39,7 +39,7 @@ public interface ICombatHandler : ICombatCommon, IStrategyElement
 	//void ChangeCombatActionTarget(in ITargetableCombatant newTarget);
 	event Action<ITargetableCombatant> OnChangeCurrentCombatTarget;
 }
-public interface ICombatCommon : IStatsValueControl, IStrategyElement
+public interface ICombatCommon : IDurabilityValue, IStatsValueControl, IStrategyElement
 {
 	ICombatCommon ThisCombatStats { get; }
 	ICombatOffense ThisOffense { get; }
@@ -47,8 +47,6 @@ public interface ICombatCommon : IStatsValueControl, IStrategyElement
 	int FactionID { get; }
 
 	// 🛡️ 내구도 및 회복 스탯 (Durability & Recovery)
-	int MaxDurability => GetStatsValue(StatsType.전투_최대내구도);
-	int CurrentDurability => GetStatsValue(StatsType.전투_현재내구도);
 	int HealingPower => GetStatsValue(StatsType.전투_치유력);
 	int RecoveryPower => GetStatsValue(StatsType.전투_회복력);
 
@@ -102,15 +100,13 @@ public interface ICombatOffense : IStatsValueControl, IStrategyElement
 	int HitChanceScore => GetStatsValue(StatsType.전투_공격명중기회);
 	int CriticalChanceScore => GetStatsValue(StatsType.전투_치명명중기회);
 }
-public interface ICombatDefance : IStatsValueControl, IStrategyElement
+public interface ICombatDefance : IDurabilityValue, IStatsValueControl, IStrategyElement
 {
 	ICombatDefance ThisDefance { get; }
 	int FactionID { get; }
 	ProtectionType ProtectionType => ProtectionType.일반;
 
-	event Action<(int current, int max)> OnChangeDurability;
-	int MaxDurability => GetStatsValue(StatsType.전투_최대내구도);
-	int CurrentDurability => GetStatsValue(StatsType.전투_현재내구도);
+
 
 	// 🛡️ 기본 방어 스탯 (Base Defense)
 	int AntiAttackPower => GetStatsValue(StatsType.전투_방어력);
@@ -129,4 +125,10 @@ public interface ICombatDefance : IStatsValueControl, IStrategyElement
 
 
 	void TakeDamage(int damage, DamageCommander.DamageFlag flag);
+}
+public interface IDurabilityValue : IStatsValueControl, IStrategyElement
+{
+	event Action<IDurabilityValue> OnChangeDurability;
+	int MaxDurability => GetStatsValue(StatsType.전투_최대내구도);
+	int CurrentDurability => GetStatsValue(StatsType.전투_현재내구도);
 }

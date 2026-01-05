@@ -2,8 +2,6 @@
 
 using UnityEngine;
 
-using static StrategyGamePlayData;
-
 
 [RequireComponent(typeof(LabelItemElementReferrer))]
 public class OperationLabelItemPanel : LabelItemPanelComponent, ISetTargetPanel
@@ -15,11 +13,6 @@ public class OperationLabelItemPanel : LabelItemPanelComponent, ISetTargetPanel
 	protected override void OnReleaseUI()
 	{
 		if (Operation.IsNullRef()) return;
-
-		if (Operation is ISupplyStats supplyStats)
-		{
-			supplyStats.OnSupplyChange -= UpdateSupplyStats;
-		}
 
 		Operation = null;
 		referrer = null;
@@ -44,29 +37,12 @@ public class OperationLabelItemPanel : LabelItemPanelComponent, ISetTargetPanel
 		}
 
 		referrer.SetShieldFillAmount(0);
-
-		if (Operation is ISupplyStats supplyStats)
-		{
-			supplyStats.OnSupplyChange -= UpdateSupplyStats;
-			supplyStats.OnSupplyChange += UpdateSupplyStats;
-		}
+		referrer.SetPersonnelFillAmount(0);
+		referrer.SetMaterialFillAmount(0);
+		referrer.SetElectricFillAmount(0);
 	}
-	private void UpdateSupplyStats(ISupplyStats supplyStats)
-	{
-		if (supplyStats.IsNullRef()) return;
 
-		referrer.SetPersonnelFillAmount(FillAmount(supplyStats.GetPersonnelSimpleValue(), 1f));
-		referrer.SetMaterialFillAmount(FillAmount(supplyStats.GetMaterialSimpleValue(), 0.5f));
-		referrer.SetElectricFillAmount(FillAmount(supplyStats.GetElectricSimpleValue(), 0.5f));
-
-		float FillAmount((float total, float max) value, float fillScale)
-		{
-			float ratio = value.max <= 0 ? 0 : (value.total / value.max);
-			return Mathf.Clamp01(ratio * fillScale);
-		}
-	}
-	protected override void OnUpdateUI()
-	{
-		UpdateSupplyStats(Operation);
-	}
+    protected override void OnUpdateUI()
+    {
+    }
 }

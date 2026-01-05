@@ -27,7 +27,9 @@ public partial class Faction : IDisposable
 		runtimeData = new FactionRuntimeData();
 
 		statsData.FactionName = data.FactionName;
-		statsData.FactionColor = data.FactionColor;
+		Color factionColor = data.FactionColor;
+		factionColor.a = 1f;
+		statsData.FactionColor = factionColor;
 		statsData.FactionIcon = data.FactionIcon;
 		statsData.EnableResourcesSupply = data.EnableResourcesSupply;
 		statsData.AvailableUnitKeyList = data.AvailableUnitKeyList();

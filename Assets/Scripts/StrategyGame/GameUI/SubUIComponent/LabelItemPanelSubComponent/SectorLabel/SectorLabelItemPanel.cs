@@ -15,18 +15,18 @@ public class SectorLabelItemPanel : LabelItemPanelComponent, ISetTargetPanel
 	{
 		if (Sector.IsNullRef()) return;
 
-		if (Sector is ICombatDefance defance)
+		if (Sector is IDurabilityValue durability)
 		{
-			defance.OnChangeDurability -= OnChangeDurability;
-			defance.OnChangeDurability += OnChangeDurability;
+			durability.OnChangeDurability -= OnChangeDurability;
 		}
-
 		if (Sector is ISupplyStats supplyStats)
 		{
 			supplyStats.OnSupplyChange -= UpdateSupplyStats;
-			supplyStats.OnSupplyChange += UpdateSupplyStats;
 		}
-
+		if (Sector is IChangeOrderFaction changeOrderFaction)
+		{
+			changeOrderFaction.OnChangeFaction -= OnChangeFaction;
+		}
 		Sector = null;
 		referrer = null;
 	}
@@ -49,10 +49,10 @@ public class SectorLabelItemPanel : LabelItemPanelComponent, ISetTargetPanel
 			referrer.SetTextColor(labelAPI.GetLabelTextColor());
 		}
 
-		if (Sector is ICombatDefance defance)
+		if (Sector is IDurabilityValue durability)
 		{
-			defance.OnChangeDurability -= OnChangeDurability;
-			defance.OnChangeDurability += OnChangeDurability;
+			durability.OnChangeDurability -= OnChangeDurability;
+			durability.OnChangeDurability += OnChangeDurability;
 		}
 
 		if (Sector is ISupplyStats supplyStats)
@@ -60,12 +60,34 @@ public class SectorLabelItemPanel : LabelItemPanelComponent, ISetTargetPanel
 			supplyStats.OnSupplyChange -= UpdateSupplyStats;
 			supplyStats.OnSupplyChange += UpdateSupplyStats;
 		}
+
+		if (Sector is IChangeOrderFaction changeOrderFaction)
+		{
+			changeOrderFaction.OnChangeFaction -= OnChangeFaction;
+			changeOrderFaction.OnChangeFaction += OnChangeFaction;
+		}
 	}
 
-    private void OnChangeDurability((int current, int max) obj)
+	private void OnChangeFaction(IStrategyElement element, int factionID)
+	{
+		if (StrategyManager.PlayerFactionID == factionID)
+		{
+			referrer.ShowDetailElement();
+
+		}
+		else
+		{
+			referrer.ShowSimpleElement();
+		}
+	}
+
+    private void OnChangeDurability(IDurabilityValue durability)
     {
+		if (durability.IsNullRef()) return;
 		if (referrer.IsNullRef()) return;
-		float ratio = obj.max <= 0 ? 0 : (obj.current / (float)obj.max);
+		float current = durability.CurrentDurability;
+		float max = durability.MaxDurability;
+		float ratio = max <= 0 ? 0 : (current / max);
 		referrer.SetShieldFillAmount(Mathf.Clamp01(ratio * 0.5f));
 	}
 
@@ -85,6 +107,11 @@ public class SectorLabelItemPanel : LabelItemPanelComponent, ISetTargetPanel
 	}
 	protected override void OnUpdateUI()
 	{
+		if (Sector.IsNullRef()) return;
+		if (referrer.IsNullRef()) return;
+
+		OnChangeDurability(Sector);
 		UpdateSupplyStats(Sector);
+		OnChangeFaction(Sector, Sector.CaptureFactionID);
 	}
 }

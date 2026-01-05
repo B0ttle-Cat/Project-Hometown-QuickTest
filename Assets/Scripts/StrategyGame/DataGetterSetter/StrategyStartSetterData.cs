@@ -693,11 +693,11 @@ namespace StrategyManagerModule
 		[Serializable]
 		public struct SectorLinkData
 		{
-			[HorizontalGroup, ValueDropdown("@GetSectorNames($property)"), HideLabel, SuffixLabel("Sector A  ",overlay: true)]
+			[HorizontalGroup, ValueDropdown("@GetSectorNames($property)"), HideLabel, SuffixLabel("Unit A  ",overlay: true)]
 			public string sectorA;
 			[HorizontalGroup(width:80), HideLabel]
 			public NetworkLink.ConnectDirType connectDir;
-			[HorizontalGroup, ValueDropdown("@GetSectorNames($property)"), HideLabel, SuffixLabel("Sector B  ",overlay: true)]
+			[HorizontalGroup, ValueDropdown("@GetSectorNames($property)"), HideLabel, SuffixLabel("Unit B  ",overlay: true)]
 			public string sectorB;
 			[TableList]
 			public WaypointUtility.Waypoint[] waypoint;

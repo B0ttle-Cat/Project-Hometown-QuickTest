@@ -11,7 +11,7 @@ using UnityEngine.UI;
 
 
 
-public partial class Old_StrategyMapPanelUI // OperationLabelGroup
+public partial class Old_StrategyMapPanelUI // operationLabelGroup
 {
 	[SerializeField, FoldoutGroup("OperationLabel")]
 	private GameObject operationLabelPreafab;

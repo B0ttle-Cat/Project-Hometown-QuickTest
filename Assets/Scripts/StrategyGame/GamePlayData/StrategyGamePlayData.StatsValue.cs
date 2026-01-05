@@ -623,8 +623,22 @@ public partial class StrategyGamePlayData // ThisStatsValue
 		public void SetStatsValue(StatsType type, int value);
 		void SetStatsValuePrecent(StatsType type, float valuePercent);
 	}
-
-	public interface ISupplyStats : IStatsValueControl
+	public interface IPersonnelStats
+	{
+		public (float[] values, float total, float max) GetPersonnelDetailValue();
+		public (float total, float max) GetPersonnelSimpleValue();
+	}
+	public interface IMaterialStats
+	{
+		public (float[] values, float total, float max) GetMaterialDetailValue();
+		public (float total, float max) GetMaterialSimpleValue();
+	}
+	public interface IElectricStats
+	{
+		public (float[] values, float total, float max) GetElectricDetailValue();
+		public (float total, float max) GetElectricSimpleValue();
+	}
+	public interface ISupplyStats : IPersonnelStats, IMaterialStats, IElectricStats, IStatsValueControl
 	{
 		public struct TempSupplyValue
 		{
@@ -707,14 +721,7 @@ public partial class StrategyGamePlayData // ThisStatsValue
 
 		public bool IsEnableResourcesSupply { get; set; }
 		public event Action<ISupplyStats> OnSupplyChange;
-		public void OnSupplyUpdate(SupplyRequest supplyRequest);
-
-		public (float[] values, float total, float max) GetPersonnelDetailValue();
-		public (float[] values, float total, float max) GetMaterialDetailValue();
-		public (float[] values, float total, float max) GetElectricDetailValue();
-		public (float total, float max) GetPersonnelSimpleValue();
-		public (float total, float max) GetMaterialSimpleValue();
-		public (float total, float max) GetElectricSimpleValue();
+		public void OnSupplyUpdate(SupplyRequest supplyRequest);	
 	}
 	public interface ISupplyStateForSector : ISupplyStats
 	{

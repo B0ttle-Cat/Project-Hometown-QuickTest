@@ -1,10 +1,19 @@
 ﻿using GameUI;
 
+using UnityEngine;
+
 public class StrategyMapPanelUI : GameUIController
 {
+	[SerializeField]
+	private Camera uiCamera;
+
+	SectorLabelGroupPanel sectorLabelGroup;
+	OperationLabelGroupPanel operationLabelGroup;
+	UnitLabelGroupPanel unitLabelGroup;
+
 	protected override void Hide()
 	{
-		DeinitOperationLabelGroupPanel();
+		DeinitLabelGroupPanel();
 
 		int count = ThisUIFinder.TryFinds<IShowHide>(out var finds);
 		for (int i = 0 ; i < count ; i++)
@@ -14,7 +23,7 @@ public class StrategyMapPanelUI : GameUIController
 	}
 	protected override void Show()
 	{
-		InitOperationLabelGroupPanel();
+		InitLabelGroupPanel();
 
 		int count = ThisUIFinder.TryFinds<IShowHide>(out var finds);
 		for (int i = 0 ; i < count ; i++)
@@ -22,19 +31,66 @@ public class StrategyMapPanelUI : GameUIController
 			finds[i].OnShow();
 		}
 	}
-
-
-
-	private void InitOperationLabelGroupPanel()
+	private void InitLabelGroupPanel()
 	{
-		if (!ThisUIFinder.TryFind<OperationLabelGroupPanel>(out var find)) return;
+		Faction playerFaction = FactionAPI.ID2Faction(StrategyManager.PlayerFactionID);
 
-		find.SetTargetFaction(FactionAPI.ID2Faction(StrategyManager.PlayerFactionID));
+		if (ThisUIFinder.TryFind<SectorLabelGroupPanel>(out sectorLabelGroup))
+			sectorLabelGroup.SetPlayerFaction(playerFaction);
+
+		if (ThisUIFinder.TryFind<OperationLabelGroupPanel>(out operationLabelGroup))
+			operationLabelGroup.SetPlayerFaction(playerFaction);
+
+		if (ThisUIFinder.TryFind<UnitLabelGroupPanel>(out unitLabelGroup))
+			unitLabelGroup.SetPlayerFaction(playerFaction);
+
 	}
-	private void DeinitOperationLabelGroupPanel()
+	private void DeinitLabelGroupPanel()
 	{
-		if (!ThisUIFinder.TryFind<OperationLabelGroupPanel>(out var find)) return;
+		if (sectorLabelGroup.IsNotNullRef())
+			sectorLabelGroup.SetPlayerFaction(null);
 
-		find.SetTargetFaction(null);
+		if (operationLabelGroup.IsNotNullRef())
+			operationLabelGroup.SetPlayerFaction(null);
+
+		if (unitLabelGroup.IsNotNullRef())
+			unitLabelGroup.SetPlayerFaction(null);
+	}
+
+
+	private void LateUpdate()
+	{
+		if (uiCamera.IsNullRef()) return;
+	
+		int length = 0;
+		if (sectorLabelGroup.IsNotNullRef())
+		{
+			length = sectorLabelGroup.Count;
+            for (int i = 0 ; i < length ; i++)
+            {
+				var item = sectorLabelGroup[i];
+				item.UpdateLabelPosition(uiCamera);
+			}
+        }
+
+		if (operationLabelGroup.IsNotNullRef())
+		{
+			length = operationLabelGroup.Count;
+			for (int i = 0 ; i < length ; i++)
+			{
+				var item = operationLabelGroup[i];
+				item.UpdateLabelPosition(uiCamera);
+			}
+		}
+
+		if (unitLabelGroup.IsNotNullRef())
+		{
+			length = unitLabelGroup.Count;
+			for (int i = 0 ; i < length ; i++)
+			{
+				var item = unitLabelGroup[i];
+				item.UpdateLabelPosition(uiCamera);
+			}
+		}
 	}
 }

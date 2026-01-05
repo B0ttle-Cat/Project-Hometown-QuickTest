@@ -2,11 +2,17 @@
 
 using Sirenix.Utilities;
 
+using UnityEngine;
+
 public class SectorLabelGroupPanel : PanelGroupComponent<SectorLabelItemPanel>
 {
+	[SerializeField]
+	private Camera uiCamera;
+
+
 	Faction playerFaction;
 
-	internal void SetTargetFaction(Faction faction)
+	internal void SetPlayerFaction(Faction faction)
 	{
 		if (playerFaction.IsNotNullRef())
 		{
@@ -41,4 +47,5 @@ public class SectorLabelGroupPanel : PanelGroupComponent<SectorLabelItemPanel>
 			RemoveObject(sector);
 		}
 	}
+
 }

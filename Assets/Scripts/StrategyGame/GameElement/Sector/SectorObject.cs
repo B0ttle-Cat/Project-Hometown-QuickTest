@@ -91,7 +91,6 @@ public partial class SectorObject : IStrategyMonoElement, IStrategyStartGame
 		}
 	}
 }
-
 public partial class SectorObject : IStatsValueControl, ISupplyStateForSector
 {
 	public IStatsValueControl ThisStatsValue => this;
@@ -106,6 +105,10 @@ public partial class SectorObject : IStatsValueControl, ISupplyStateForSector
 	{
 		int baseValue = type switch
 		{
+
+			StatsType.전투_최대내구도  => TotalFacilitiesDurability(),
+			StatsType.전투_현재내구도  => TotalFacilitiesMaxDurability(),
+
 			StatsType.자원_인력_최대   => StatsData.CapacityPersonnel,
 			StatsType.자원_인력_회복   => StatsData.RecoveryPersonnel,
 			StatsType.자원_인력_현재   => RuntimeData.LocalPersonnel,
@@ -227,4 +230,32 @@ public partial class SectorObject : IStatsValueControl, ISupplyStateForSector
 
 		OnSupplyChange?.Invoke(this);
 	}
+
+	public int TotalFacilitiesDurability()
+	{
+		return 0;
+	}
+	public int TotalFacilitiesMaxDurability()
+	{
+		return 0;
+	}
+}
+public partial class SectorObject : IDurabilityValue
+{
+
+	public event Action<IDurabilityValue> OnChangeDurability;
+}
+public partial class SectorObject : IChangeOrderFaction
+{
+	public void CaptureUpdate(int nextFaction, float nextProgress)
+	{
+		RuntimeData.CaptureProgress = nextProgress;
+		if(RuntimeData.CaptureFactionID != nextFaction)
+		{
+			RuntimeData.CaptureFactionID = nextFaction;
+			OnChangeFaction?.Invoke(this, nextFaction);
+		}
+	}
+
+	public event Action<IStrategyElement, int> OnChangeFaction;
 }

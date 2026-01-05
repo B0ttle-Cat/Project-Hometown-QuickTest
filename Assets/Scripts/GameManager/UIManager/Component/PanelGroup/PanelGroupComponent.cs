@@ -57,7 +57,7 @@ namespace GameUI
 		{
 			if (Items.Remove(item))
 			{
-				if (!PoolingCardObject)
+				if (!PoolingUIObject)
 				{
 					GameObject.Destroy(item.ThisRect.gameObject);
 				}
@@ -90,7 +90,7 @@ namespace GameUI
 					GameObject.Destroy(itemRect.gameObject);
 				}
 			}
-			if (PoolingCardObject)
+			if (PoolingUIObject)
 			{
 				ClearPoolStack();
 			}
@@ -131,16 +131,16 @@ namespace GameUI
 		}
 
 		#region PoolingDataContainer
-
-		protected bool PoolingCardObject
+		protected bool PoolingUIObject
 			=> PoolingData.IsNotNullRef()
 			&& PanelPrefab.IsNotNullRef()
+			&& PanelPrefab is PanelItemComponent
 			&& PanelPrefab is ISetTargetPanel and T;
 
 		[SerializeField]
 		private PoolingDataContainer poolingDataContainer;
 		[SerializeField]
-		protected PanelItemComponent PanelPrefab;
+		protected T PanelPrefab;
 		[SerializeField]
 		protected RectTransform PanelParent;
 		public PoolingDataContainer PoolingData
@@ -155,7 +155,7 @@ namespace GameUI
 			}
 		}
 
-		[ShowInInspector, ShowIf("PoolingCardObject")]
+		[ShowInInspector, ShowIf("PoolingUIObject")]
 		[HideInEditorMode]
 		protected Stack<PanelItemComponent> PoolStack;
 
@@ -163,7 +163,7 @@ namespace GameUI
 		{
 			Clear();
 
-			if (PoolingCardObject)
+			if (PoolingUIObject)
 			{
 				PoolingData.InitData(targets);
 				return;
@@ -177,7 +177,7 @@ namespace GameUI
 		}
 		public void AddObject(ITargetToPanelAPI item)
 		{
-			if (PoolingCardObject)
+			if (PoolingUIObject)
 			{
 				PoolingData.AddData(item);
 				return;
@@ -185,7 +185,7 @@ namespace GameUI
 		}
 		public void RemoveObject(ITargetToPanelAPI item)
 		{
-			if (PoolingCardObject)
+			if (PoolingUIObject)
 			{
 				PoolingData.RemoveData(item);
 				return;
@@ -193,7 +193,9 @@ namespace GameUI
 		}
 		internal override void AddItem(ITargetToPanelAPI item, bool addLast = true)
 		{
-			if (!PoolingCardObject) return;
+			if (!PoolingUIObject) return;
+			if (PanelPrefab is not PanelItemComponent PanelComponentPrefab) return;
+
 			if (item.IsNullRef() || Contains(item)) return;
 
 			while (PoolStack != null && PoolStack.Count > 0 && PoolStack.TryPop(out PanelItemComponent pop))
@@ -217,7 +219,7 @@ namespace GameUI
 				return;
 			}
 
-			var newPanel = Instantiate(PanelPrefab, PanelParent.IsNullRef() ? transform : PanelParent);
+			var newPanel = Instantiate(PanelComponentPrefab, PanelParent.IsNullRef() ? transform : PanelParent);
 			if (newPanel.IsNullRef()) return;
 
 			if (newPanel is not T tNewPanel)
@@ -246,7 +248,7 @@ namespace GameUI
 		}
 		internal override bool RemoveItem(ITargetToPanelAPI item)
 		{
-			if (!PoolingCardObject) return false;
+			if (!PoolingUIObject) return false;
 			if (item.IsNullRef()) return false;
 
 			int length = Count;

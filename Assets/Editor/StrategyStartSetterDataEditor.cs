@@ -279,6 +279,7 @@ namespace StrategyManagerModule
 			{
 				var faction = factions[unit.factionID];
 				factionColor = faction.FactionColor;
+				factionColor.a = 1f;
 			}
 			if (unit.belongedOperation >= 0)
 			{

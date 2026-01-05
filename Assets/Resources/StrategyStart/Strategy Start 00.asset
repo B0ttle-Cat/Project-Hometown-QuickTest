@@ -45,7 +45,7 @@ MonoBehaviour:
         unitKey: 2100
         endUnitKey: 2121
     - FactionName: Faction_01
-      FactionColor: {r: 0, g: 0, b: 1, a: 0}
+      FactionColor: {r: 0, g: 0, b: 1, a: 1}
       FactionIcon: {fileID: 21300000, guid: b4e5b9fc3aa67354090d09fa2ca83c1b, type: 3}
       EnableResourcesSupply: 0
       CapacityPersonnel: 0

@@ -2277,6 +2277,7 @@ GameObject:
   - component: {fileID: 173531667}
   - component: {fileID: 173531666}
   - component: {fileID: 173531665}
+  - component: {fileID: 173531671}
   m_Layer: 5
   m_Name: OperationLabel
   m_TagString: Untagged
@@ -2322,6 +2323,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40e3be434ea1cf84784f9137edd5c41a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OperationLabelItemPanel
+  labelOffset: {x: 0, y: 0}
 --- !u!114 &173531667
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2375,6 +2377,32 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 173531664}
   m_CullTransparentMesh: 1
+--- !u!114 &173531671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 173531664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95751f4c551259440863f84e9c02ef1b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LabelItemElementReferrer
+  mainIcon: {fileID: 0}
+  subIcon: {fileID: 0}
+  select: {fileID: 0}
+  displayText: {fileID: 0}
+  FillShild: {fileID: 0}
+  FillPersonnel: {fileID: 0}
+  FillMaterial: {fileID: 0}
+  FillElectric: {fileID: 0}
+  effectIconGroup: {fileID: 0}
+  guideIconPrefab: {fileID: 0}
+  accentColorTarget:
+    targetGraphics: []
+  textColorTarget:
+    targetGraphics: []
 --- !u!1 &193831781
 GameObject:
   m_ObjectHideFlags: 0
@@ -3618,6 +3646,7 @@ RectTransform:
   m_Children:
   - {fileID: 1913101966}
   - {fileID: 1036277709}
+  - {fileID: 1623927634}
   m_Father: {fileID: 1858625863}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -3659,6 +3688,7 @@ MonoBehaviour:
   - customKey: 0
     Key: OperationLabelGroup
     Target: {fileID: 1036277708}
+  uiCamera: {fileID: 330585545}
 --- !u!114 &331655814
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9239,7 +9269,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OperationLabelGroupPanel
   poolingDataContainer: {fileID: 906578738}
-  PanelPrefab: {fileID: 173531663}
+  PanelPrefab: {fileID: 0}
   PanelParent: {fileID: 906578735}
 --- !u!114 &906578738
 MonoBehaviour:
@@ -10414,7 +10444,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OperationLabelGroupPanel
   poolingDataContainer: {fileID: 1036277712}
-  PanelPrefab: {fileID: 7263961940590624896, guid: c7a486d73968272418bcdac56b6bed2d, type: 3}
+  PanelPrefab: {fileID: -6143401685498670631, guid: c7a486d73968272418bcdac56b6bed2d, type: 3}
   PanelParent: {fileID: 1036277709}
 --- !u!114 &1036277712
 MonoBehaviour:
@@ -10744,7 +10774,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StrategyMainTabButtonUI
   poolingDataContainer: {fileID: 0}
-  PanelPrefab: {fileID: 0}
+  PanelPrefab:
+    toggle: {fileID: 0}
   PanelParent: {fileID: 0}
   toggleGroup: {fileID: 1081975520}
   canvasGroupUI: {fileID: 1081975522}
@@ -11549,7 +11580,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StrategyMainInfoView
   poolingDataContainer: {fileID: 0}
-  PanelPrefab: {fileID: 0}
   PanelParent: {fileID: 0}
   ShowMainScenario: 1
   mainScenario:
@@ -13478,6 +13508,73 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1615963576}
   m_CullTransparentMesh: 1
+--- !u!1 &1623927633
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1623927634}
+  - component: {fileID: 1623927636}
+  - component: {fileID: 1623927635}
+  m_Layer: 5
+  m_Name: UnitLabelGroup
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1623927634
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1623927633}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 331655811}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1623927635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1623927633}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6878de1f3d565ef4bafffbd2007fbada, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameUI::GameUI.InScreenPoolingDataContainer
+  targetComponent: {fileID: 1623927636}
+  poolItemRect: {fileID: 2599062358636060035, guid: 6b2c095af3e60bc48a9e690c1663c47e, type: 3}
+  screenCamera: {fileID: 330585545}
+--- !u!114 &1623927636
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1623927633}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae5a9cb0509c0714791bea01a3f6291d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnitLabelGroupPanel
+  poolingDataContainer: {fileID: 1623927635}
+  PanelPrefab: {fileID: -1730813350621981111, guid: 6b2c095af3e60bc48a9e690c1663c47e, type: 3}
+  PanelParent: {fileID: 1623927634}
 --- !u!4 &1643786649 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7324596390385222986, guid: 65b2fe5c02731a74dae76d0e92cc7e7c, type: 3}
@@ -14545,6 +14642,7 @@ MonoBehaviour:
   - customKey: 0
     Key: OperationLabelGroup
     Target: {fileID: 906578734}
+  uiCamera: {fileID: 0}
 --- !u!1001 &1716269757
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16018,8 +16116,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SectorLabelGroupPanel
   poolingDataContainer: {fileID: 1913101967}
-  PanelPrefab: {fileID: 7263961940590624896, guid: 0f3aebc36de4bf440a219b216a1af171, type: 3}
+  PanelPrefab: {fileID: 1053000799072036036, guid: 0f3aebc36de4bf440a219b216a1af171, type: 3}
   PanelParent: {fileID: 1913101966}
+  uiCamera: {fileID: 0}
 --- !u!1001 &1959845627
 PrefabInstance:
   m_ObjectHideFlags: 0

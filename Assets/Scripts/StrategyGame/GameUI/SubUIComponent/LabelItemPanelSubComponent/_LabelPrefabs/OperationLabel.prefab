@@ -50,19 +50,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3397114932609982484, guid: fe8b3de3735be484a947b5ac59c7d585, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3397114932609982484, guid: fe8b3de3735be484a947b5ac59c7d585, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3397114932609982484, guid: fe8b3de3735be484a947b5ac59c7d585, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3397114932609982484, guid: fe8b3de3735be484a947b5ac59c7d585, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3397114932609982484, guid: fe8b3de3735be484a947b5ac59c7d585, type: 3}
       propertyPath: m_SizeDelta.x
@@ -70,7 +70,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3397114932609982484, guid: fe8b3de3735be484a947b5ac59c7d585, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 30
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 3397114932609982484, guid: fe8b3de3735be484a947b5ac59c7d585, type: 3}
       propertyPath: m_LocalPosition.x
@@ -185,3 +185,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40e3be434ea1cf84784f9137edd5c41a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OperationLabelItemPanel
+  labelOffset: {x: 0, y: 0}

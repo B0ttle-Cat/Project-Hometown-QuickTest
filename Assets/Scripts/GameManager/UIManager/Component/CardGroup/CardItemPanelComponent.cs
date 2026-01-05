@@ -15,8 +15,11 @@
 			ThisShowHide.UnpairingShowHide();
 			Target = null;
 		}
-
-        void ISetTargetPanel.OnReleaseUI()
+		bool ISetTargetPanel.Contains(ITargetToPanelAPI item)
+		{
+			return this.Target == item;
+		}
+		void ISetTargetPanel.OnReleaseUI()
         {
         }
 

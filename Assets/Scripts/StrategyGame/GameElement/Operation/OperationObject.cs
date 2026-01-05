@@ -5,9 +5,6 @@ using System.Linq;
 using GameUI;
 
 using UnityEngine;
-
-using static StrategyGamePlayData;
-using static StrategyManagerModule.StrategyUpdate;
 public partial class OperationObject : MonoBehaviour  // Main
 {
 	[SerializeField]
@@ -115,88 +112,6 @@ public partial class OperationObject // StatsData
 	}
 }
 
-public partial class OperationObject : ISupplyStats
-{
-	public IStatsValueControl ThisStatsValue => this;
-	bool ISupplyStats.IsEnableResourcesSupply { get; set; }
-	public event Action<ISupplyStats> OnSupplyChange;
-
-	int IStatsValueControl.GetStatsValue(StatsType type)
-	{
-		int baseValue = type switch
-		{
-			StatsType.자원_인력_최대 => 0,
-			StatsType.자원_재료_최대 => 0,
-			StatsType.자원_전력_최대 => 0,
-
-			StatsType.자원_인력_회복 => 0,
-			StatsType.자원_재료_회복 => 0,
-			StatsType.자원_전력_회복 => 0,
-
-			StatsType.자원_인력_현재 => 0,
-			StatsType.자원_재료_현재 => 0,
-			StatsType.자원_전력_현재 => 0,
-			_ => 0,
-		};
-		return baseValue;
-	}
-
-	float IStatsValueControl.GetStatsValuePrecent(StatsType type)
-	{
-		int baseValue = type switch
-		{
-			StatsType.자원_인력_최대 => 0,
-			StatsType.자원_재료_최대 => 0,
-			StatsType.자원_전력_최대 => 0,
-
-			StatsType.자원_인력_회복 => 0,
-			StatsType.자원_재료_회복 => 0,
-			StatsType.자원_전력_회복 => 0,
-
-			StatsType.자원_인력_현재 => 0,
-			StatsType.자원_재료_현재 => 0,
-			StatsType.자원_전력_현재 => 0,
-			_ => 0,
-		};
-		return baseValue;
-	}
-
-	void IStatsValueControl.SetStatsValue(StatsType type, int value)
-	{
-	}
-
-	void IStatsValueControl.SetStatsValuePrecent(StatsType type, float valuePercent)
-	{
-	}
-
-	void ISupplyStats.OnSupplyUpdate(SupplyRequest supplyRequest)
-	{
-		if (!supplyRequest.IsUpdateFlag()) return;
-
-		supplyRequest.ResetAndLeaveDecimal(
-			out int integerPersonnel,
-			out int integerMaterial,
-			out int integerElectric);
-
-		int maxPersonnel = ThisStatsValue.GetStatsValue(StatsType.자원_인력_최대);
-		int maxMaterial = ThisStatsValue.GetStatsValue(StatsType.자원_재료_최대);
-		int maxElectric = ThisStatsValue.GetStatsValue(StatsType.자원_전력_최대);
-
-		integerPersonnel += ThisStatsValue.GetStatsValue(StatsType.자원_인력_현재);
-		integerMaterial += ThisStatsValue.GetStatsValue(StatsType.자원_재료_현재);
-		integerElectric += ThisStatsValue.GetStatsValue(StatsType.자원_전력_현재);
-
-		if (maxPersonnel < integerPersonnel) integerPersonnel = maxPersonnel;
-		if (maxMaterial < integerMaterial) integerMaterial = maxMaterial;
-		if (maxElectric < integerElectric) integerElectric = maxElectric;
-
-		ThisStatsValue.SetStatsValue(StatsType.자원_인력_현재, integerPersonnel);
-		ThisStatsValue.SetStatsValue(StatsType.자원_재료_현재, integerMaterial);
-		ThisStatsValue.SetStatsValue(StatsType.자원_전력_현재, integerElectric);
-
-		OnSupplyChange?.Invoke(this);
-	}
-}
 public partial class OperationObject : IStrategyMonoElement, IStrategyElementDestroyer
 {
 	public IStrategyElement ThisElement => this;

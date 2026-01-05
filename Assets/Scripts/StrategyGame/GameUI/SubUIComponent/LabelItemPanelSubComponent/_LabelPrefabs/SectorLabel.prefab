@@ -16,6 +16,14 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 644985124979461765, guid: fe8b3de3735be484a947b5ac59c7d585, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 644985124979461765, guid: fe8b3de3735be484a947b5ac59c7d585, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 845973678183294397, guid: fe8b3de3735be484a947b5ac59c7d585, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -50,19 +58,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3397114932609982484, guid: fe8b3de3735be484a947b5ac59c7d585, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3397114932609982484, guid: fe8b3de3735be484a947b5ac59c7d585, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3397114932609982484, guid: fe8b3de3735be484a947b5ac59c7d585, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3397114932609982484, guid: fe8b3de3735be484a947b5ac59c7d585, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3397114932609982484, guid: fe8b3de3735be484a947b5ac59c7d585, type: 3}
       propertyPath: m_SizeDelta.x
@@ -70,7 +78,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3397114932609982484, guid: fe8b3de3735be484a947b5ac59c7d585, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 30
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 3397114932609982484, guid: fe8b3de3735be484a947b5ac59c7d585, type: 3}
       propertyPath: m_LocalPosition.x
@@ -156,6 +164,14 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5069058778847471391, guid: fe8b3de3735be484a947b5ac59c7d585, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5069058778847471391, guid: fe8b3de3735be484a947b5ac59c7d585, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5123136343325967311, guid: fe8b3de3735be484a947b5ac59c7d585, type: 3}
       propertyPath: m_text
       value: Sector Label
@@ -186,3 +202,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 425a50b09db7d014b87563197d95c501, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SectorLabelItemPanel
+  labelOffset: {x: 0, y: 0}

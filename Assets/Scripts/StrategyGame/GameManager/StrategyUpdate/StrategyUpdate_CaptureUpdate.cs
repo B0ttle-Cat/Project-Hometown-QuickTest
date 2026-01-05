@@ -336,9 +336,7 @@ namespace StrategyManagerModule
 
 					if (oldFaction != nextFaction || changeProgress)
 					{
-						sector.RuntimeData.CaptureFactionID = nextFaction;
-						sector.RuntimeData.CaptureProgress = nextProgress;
-
+						sector.CaptureUpdate(nextFaction, nextProgress);
 
 						if (oldFaction != nextFaction)
 						{

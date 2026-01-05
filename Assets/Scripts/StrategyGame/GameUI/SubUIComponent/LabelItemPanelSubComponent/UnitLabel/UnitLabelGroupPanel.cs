@@ -2,7 +2,7 @@
 
 using Sirenix.Utilities;
 
-public class OperationLabelGroupPanel : PanelGroupComponent<OperationLabelItemPanel>
+public class UnitLabelGroupPanel : PanelGroupComponent<UnitLabelItemPanel>
 {
 	Faction playerFaction;
 
@@ -21,10 +21,8 @@ public class OperationLabelGroupPanel : PanelGroupComponent<OperationLabelItemPa
 
 	private void Init()
 	{
-		InitObjects(StrategyManager.Collector.GetList<OperationObject>()
+		InitObjects(StrategyManager.Collector.GetList<UnitObject>()
 			.Convert<ITargetToPanelAPI>(i => i as ITargetToPanelAPI));
-		//playerFaction.AddChangeOperation(ChangeValue, false);
-		//InitObjects(playerFaction.OperationList.ForPanel);
 	}
 	private void Deinit()
 	{
@@ -32,15 +30,15 @@ public class OperationLabelGroupPanel : PanelGroupComponent<OperationLabelItemPa
 	}
 	private void ChangeValue(IStrategyElement element, bool added)
 	{
-		if (element is not OperationObject operation) return;
+		if (element is not UnitObject sector) return;
 
         if (added)
         {
-			AddObject(operation);
+			AddObject(sector);
         }
 		else 
 		{
-			RemoveObject(operation);
+			RemoveObject(sector);
 		}
 	}
 }
