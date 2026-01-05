@@ -24,7 +24,15 @@ public partial class SectorObject : ISectorToPanelAPI
 	{
 		return StatsData.SectorIcon;
 	}
-
+	Color ITargetToLabelAPI.GetLabelAccentColor()
+	{
+		if (CaptureFactionID < 0) return Color.white;
+		return CaptureFaction.FactionColor;
+	}
+	Color ITargetToLabelAPI.GetLabelTextColor()
+	{
+		return Color.black;
+	}
 	Vector3 ITargetToLabelAPI.LabelWorldPosition()
 	{
 		return transform.position;

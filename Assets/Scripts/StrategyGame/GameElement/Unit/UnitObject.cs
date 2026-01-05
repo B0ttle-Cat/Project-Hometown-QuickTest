@@ -142,6 +142,15 @@ public partial class UnitObject : IUnitForPanelAPI
 	{
 		return ThisMovement.CurrentPosition;
 	}
+	Color ITargetToLabelAPI.GetLabelAccentColor()
+	{
+		return Faction.FactionColor;
+	}
+	Color ITargetToLabelAPI.GetLabelTextColor()
+	{
+		return Color.black;
+	}
+
 	#endregion
 
 	#region ITargetForCardAPI

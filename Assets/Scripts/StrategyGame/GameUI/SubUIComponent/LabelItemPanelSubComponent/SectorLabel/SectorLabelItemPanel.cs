@@ -45,6 +45,8 @@ public class SectorLabelItemPanel : LabelItemPanelComponent, ISetTargetPanel
 			referrer.SetMainIcon(labelAPI.GetLabelIcon());
 			referrer.SetSubIcon(labelAPI.GetLabelIcon());
 			referrer.SetDisplayText(labelAPI.GetLabelName());
+			referrer.SetAccentColor(labelAPI.GetLabelAccentColor());
+			referrer.SetTextColor(labelAPI.GetLabelTextColor());
 		}
 
 		if (Sector is ICombatDefance defance)

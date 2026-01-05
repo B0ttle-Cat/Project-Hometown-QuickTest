@@ -237,7 +237,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.5019608}
+  m_Color: {r: 0.8, g: 0.8, b: 0.8, a: 0.5}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -936,6 +936,22 @@ MonoBehaviour:
   FillElectric: {fileID: 3591069737971646502}
   effectIconGroup: {fileID: 8272280710487040165}
   guideIconPrefab: {fileID: 5253364238246051322}
+  accentColorTarget:
+    targetGraphics:
+    - iamge: {fileID: 7819592281402154052}
+      saturation: 0
+      brightness: 0.8
+      alpha: 0.5
+    - iamge: {fileID: 8293658519039982704}
+      saturation: 0
+      brightness: 0
+      alpha: 1
+  textColorTarget:
+    targetGraphics:
+    - iamge: {fileID: 5123136343325967311}
+      saturation: 0
+      brightness: 0
+      alpha: 1
 --- !u!1 &4308092411493380588
 GameObject:
   m_ObjectHideFlags: 0

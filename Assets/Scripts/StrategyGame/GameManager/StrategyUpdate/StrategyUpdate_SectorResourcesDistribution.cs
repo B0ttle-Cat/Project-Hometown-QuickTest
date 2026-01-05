@@ -130,11 +130,11 @@ namespace StrategyManagerModule
 					//
 					//for (int i = 0 ; i < neigh.Count ; i++)
 					//{
-					//	SectorObject targetSector = neigh[i].target;
+					//	SectorObject targetSector = neigh[i].iamge;
 					//	int found = -1;
 					//	for (int j = 0 ; j < list.Count ; j++)
 					//	{
-					//		if (list[j].target == targetSector)
+					//		if (list[j].iamge == targetSector)
 					//		{
 					//			found = j;
 					//			break;

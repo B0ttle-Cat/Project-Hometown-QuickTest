@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+
+using Sirenix.OdinInspector;
 
 using TMPro;
 
@@ -10,6 +13,63 @@ using static StrategyGamePlayData;
 
 public class LabelItemElementReferrer : MonoBehaviour
 {
+	[Serializable]
+	public class ColorTarget
+	{
+
+		[ShowInInspector, OnValueChanged("ColorUpdate")]
+		private Color targetColor;
+
+		[SerializeField, InlineProperty]
+		private TargetGraphic[] targetGraphics;
+
+        public Color TargetColor { get => targetColor; set { targetColor = value; ColorUpdate(); } }
+
+        [Serializable]
+		public class TargetGraphic
+		{
+			public Graphic iamge;
+			[HorizontalGroup("Color"), LabelText("S"), LabelWidth(20), Range(0,1), OnValueChanged("@TestColor($property.Parent.Parent.Parent.Parent.ValueEntry.WeakSmartValue)")]
+			public float saturation = 1f;
+			[HorizontalGroup("Color"), LabelText("V"), LabelWidth(20), Range(0,1), OnValueChanged("@TestColor($property.Parent.Parent.Parent.Parent.ValueEntry.WeakSmartValue)")]
+			public float brightness = 1f;
+			[HorizontalGroup("Color"), LabelText("A"), LabelWidth(20), Range(0,1),  OnValueChanged("@TestColor($property.Parent.Parent.Parent.Parent.ValueEntry.WeakSmartValue)")]
+			public float alpha = 1f;
+#if UNITY_EDITOR
+			public void TestColor(object parentValue)
+			{
+				if (iamge.IsNullRef() || parentValue == null) return;
+				if (parentValue is ColorTarget parent)
+				{
+					Color baseColor = parent.targetColor;
+					Color.RGBToHSV(baseColor, out float h, out float s, out float v);
+					SetColor(h, s, v, baseColor.a);
+				}
+			}
+#endif
+			public void SetColor(float h , float s , float v, float a)
+			{
+				if (iamge.IsNullRef()) return;
+				var targetColor = Color.HSVToRGB(h, s * saturation, v * brightness);
+				targetColor.a = a * alpha;
+				iamge.color = targetColor;
+			}
+		}
+		public void ColorUpdate()
+		{
+			Color.RGBToHSV(targetColor, out float h, out float s, out float v);
+			float a = targetColor.a;
+			int length = targetGraphics == null ? 0 : targetGraphics.Length;
+			for (int i = 0 ; i < length ; i++)
+			{
+				var target = targetGraphics[i];
+				if (target.IsNullRef()) continue;
+
+				target.SetColor(h, s, v, a);
+			}
+		}
+	}
+
 	[SerializeField] private Image mainIcon;
 	[SerializeField] private Image subIcon;
 	[Space]
@@ -26,7 +86,18 @@ public class LabelItemElementReferrer : MonoBehaviour
 	private Dictionary<StatusEffectsFlag,GameObject> effectIcons;
 	[SerializeField] private HorizontalLayoutGroup guideIconPrefab;
 	private Dictionary<StatusEffectsFlag,GameObject> guideIcons;
-	public void SetMainIcon(Sprite sprite)
+
+	[Space]
+	[SerializeField, InlineProperty, BoxGroup("Accent Color Target"), HideLabel]
+	private ColorTarget accentColorTarget;
+	[SerializeField, InlineProperty, BoxGroup("Text Color Target"), HideLabel]
+	private ColorTarget textColorTarget;
+    public void Awake()
+    {
+		accentColorTarget.ColorUpdate();
+		textColorTarget.ColorUpdate();
+	}
+    public void SetMainIcon(Sprite sprite)
 	{
 		if (mainIcon.IsNotNullRef())
 			mainIcon.sprite = sprite;
@@ -35,6 +106,15 @@ public class LabelItemElementReferrer : MonoBehaviour
 	{
 		if (subIcon.IsNotNullRef())
 			subIcon.sprite = sprite;
+	}
+	internal void SetAccentColor(Color color)
+	{
+		accentColorTarget.TargetColor = color;
+	}
+
+	internal void SetTextColor(Color color)
+	{
+		textColorTarget.TargetColor = color;
 	}
 	public void SetDisplayText(string displayText)
 	{
@@ -71,7 +151,7 @@ public class LabelItemElementReferrer : MonoBehaviour
 	}
 	public void OnClickAddListener(UnityAction action)
 	{
-		if(select.IsNullRef()) return;
+		if (select.IsNullRef()) return;
 		select.onClick.AddListener(action);
 	}
 	public void OnClickRemoveListener(UnityAction action)
@@ -81,7 +161,16 @@ public class LabelItemElementReferrer : MonoBehaviour
 	}
 	public void OnClickRemoveAllListeners()
 	{
-		if(select.IsNullRef()) return;
+		if (select.IsNullRef()) return;
 		select.onClick.RemoveAllListeners();
+	}
+
+	public void ShowSimpleElement()
+	{
+
+	}
+	public void ShowDetailElement()
+	{
+
 	}
 }

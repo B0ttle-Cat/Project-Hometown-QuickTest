@@ -311,6 +311,14 @@ public partial class OperationObject : IOperationToPanelAPI
 	{
 		return null;
 	}
+	Color ITargetToLabelAPI.GetLabelAccentColor()
+	{
+		return Faction.FactionColor;
+	}
+	Color ITargetToLabelAPI.GetLabelTextColor()
+	{
+		return Color.black;
+	}
 	Vector3 ITargetToLabelAPI.LabelWorldPosition()
 	{
 		return ThisMovement.CurrentPosition;

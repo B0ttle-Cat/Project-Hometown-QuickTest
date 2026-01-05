@@ -77,9 +77,9 @@
 //							if (searcher.IsNullRef() || searcher.SearcherAPI.IsNullRef() || searcher.FactionID != thisFactionID) continue;
 
 //							var nearbyItems = searcher.SearcherAPI.GetNearbyItemsType<INearbyElement>(i => i.FactionID != thisFactionID);
-//							foreach (var target in nearbyItems)
+//							foreach (var iamge in nearbyItems)
 //							{
-//								faction.AddElementSet(target as IStrategyElement);
+//								faction.AddElementSet(iamge as IStrategyElement);
 //							}
 //						}
 //					}

@@ -34,7 +34,7 @@
 
 //		public class ResourcesSupply : UpdateLogic
 //		{
-//			private SectorObject target;
+//			private SectorObject iamge;
 //			private const StatsType MaxType = StatsType.자원_인력_최대;
 //			private const StatsType OrganizationList = StatsType.자원_인력_회복;
 //			private const StatsType CurrType = StatsType.자원_인력_현재;
@@ -43,33 +43,33 @@
 //			float currentResupplyTime; // 다음 보충까지 남은 시간.
 //			float supplement; // 다음에 보충될 양
 
-//			public ResourcesSupply(StrategyUpdateSubClass<ResourcesSupply> thisSubClass, SectorObject target) : base(thisSubClass)
+//			public ResourcesSupply(StrategyUpdateSubClass<ResourcesSupply> thisSubClass, SectorObject iamge) : base(thisSubClass)
 //			{
-//				this.target = target;
+//				this.iamge = iamge;
 //				currentResupplyTime = resetResupplyTime;
 //				supplement = 0f;
 //			}
 //			protected override void OnDispose()
 //			{
-//				target = null;
+//				iamge = null;
 //			}
 //			protected override void OnUpdate(in float deltaTime)
 //			{
-//				if (target == null || !target.isActiveAndEnabled) return;
-//				if (target.CaptureData.captureFactionID < 0) return;
+//				if (iamge == null || !iamge.isActiveAndEnabled) return;
+//				if (iamge.CaptureData.captureFactionID < 0) return;
 
-//				int max = target.SectorStatsGroup.GetValue(MaxType);
-//				int supply = target.SectorStatsGroup.GetValue(OrganizationList);
-//				int curr = target.CurrStatsList.GetValue(CurrType);
+//				int max = iamge.SectorStatsGroup.GetValue(MaxType);
+//				int supply = iamge.SectorStatsGroup.GetValue(OrganizationList);
+//				int curr = iamge.CurrStatsList.GetValue(CurrType);
 
 //				if (ResourcesUpdate(ref curr, in max, in supply, ref supplement, ref currentResupplyTime, resetResupplyTime, in deltaTime))
 //				{
-//					target.SetPersonnel(curr);
+//					iamge.SetPersonnel(curr);
 
-//					string key = $"{target.SectorName}_{UpdateLogicSort.거점_자원갱신종료}";
+//					string key = $"{iamge.SectorName}_{UpdateLogicSort.거점_자원갱신종료}";
 //					TempData.SetTrigger(key, UpdateLogicSort.거점_자원갱신종료);
 
-//					int elementID = target.CaptureData.captureFactionID;
+//					int elementID = iamge.CaptureData.captureFactionID;
 //					key = $"{elementID}_{UpdateLogicSort.세력_자원갱신종료}";
 //					TempData.SetTrigger(key, UpdateLogicSort.세력_자원갱신종료);
 //					if (TempData.TryGetValue<TempSupplyValue>(FactionTempSupplyValueKey(elementID), out var tempValue))
