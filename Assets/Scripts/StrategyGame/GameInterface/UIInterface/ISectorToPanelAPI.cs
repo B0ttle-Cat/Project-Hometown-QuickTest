@@ -1,6 +1,6 @@
 ﻿using GameUI;
 
-public interface ISectorForPanel : ITargetForCardAPI, IStrategyElement
+public interface ISectorToPanelAPI : ITargetToCardAPI, ITargetToLabelAPI, IStrategyElement
 {
 	public string GetFactionName();
 	bool IsEnableResourcesSupply { get; set; }

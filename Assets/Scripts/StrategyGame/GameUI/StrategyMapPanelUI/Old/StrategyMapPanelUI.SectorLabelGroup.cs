@@ -255,10 +255,10 @@ public partial class Old_StrategyMapPanelUI // SectorLabelGroup
 					//	string iconKey = $"Icon_status_effect_{key.Substring(substringCount)}";
 					//	if (StrategyManager.Key2Sprite.TryGetAsset(iconKey, out var sprite) && sprite != null)
 					//	{
-					//		KeyPair.FindPairChainAndCopy<Image>("Icon", iconParent, out var iconImage);
-					//		iconImage.sprite = sprite;
-					//		iconlist.AddItem(iconImage.Target);
-					//		iconImage.Target.SetActive(true);
+					//		KeyPair.FindPairChainAndCopy<Image>("Icon", iconParent, out var mainIcon);
+					//		mainIcon.sprite = sprite;
+					//		iconlist.AddItem(mainIcon.Target);
+					//		mainIcon.Target.SetActive(true);
 					//	}
 					//}
 				}

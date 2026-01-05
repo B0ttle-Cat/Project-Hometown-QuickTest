@@ -13,6 +13,7 @@ using static StrategyGamePlayData;
 public record SectorStatsData
 {
 	public string SectorName;
+	public Sprite SectorIcon;
 
 	public bool IsEnableResourcesSupply;
 

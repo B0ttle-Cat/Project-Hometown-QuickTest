@@ -122,7 +122,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4079200100886976727, guid: fe8b3de3735be484a947b5ac59c7d585, type: 3}
       propertyPath: m_Name
-      value: OperationLabel
+      value: SectorLabel
       objectReference: {fileID: 0}
     - target: {fileID: 4983644763986509286, guid: fe8b3de3735be484a947b5ac59c7d585, type: 3}
       propertyPath: m_AnchorMax.y
@@ -158,22 +158,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5123136343325967311, guid: fe8b3de3735be484a947b5ac59c7d585, type: 3}
       propertyPath: m_text
-      value: Operation Label
+      value: Sector Label
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7535518656816232259, guid: fe8b3de3735be484a947b5ac59c7d585, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 4079200100886976727, guid: fe8b3de3735be484a947b5ac59c7d585, type: 3}
       insertIndex: -1
-      addedObject: {fileID: -6143401685498670631}
+      addedObject: {fileID: 1053000799072036036}
   m_SourcePrefab: {fileID: 100100000, guid: fe8b3de3735be484a947b5ac59c7d585, type: 3}
 --- !u!1 &3722640263389701440 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4079200100886976727, guid: fe8b3de3735be484a947b5ac59c7d585, type: 3}
   m_PrefabInstance: {fileID: 807625897450667415}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &-6143401685498670631
+--- !u!114 &1053000799072036036
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -182,6 +183,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 3722640263389701440}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 40e3be434ea1cf84784f9137edd5c41a, type: 3}
+  m_Script: {fileID: 11500000, guid: 425a50b09db7d014b87563197d95c501, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::OperationLabelItemPanel
+  m_EditorClassIdentifier: Assembly-CSharp::SectorLabelItemPanel

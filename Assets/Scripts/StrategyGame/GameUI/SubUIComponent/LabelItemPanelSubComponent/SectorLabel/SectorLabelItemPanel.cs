@@ -5,55 +5,73 @@ using UnityEngine;
 using static StrategyGamePlayData;
 
 
-[RequireComponent(typeof(LabelItemElementReferrer))]
-public class OperationLabelItemPanel : LabelItemPanelComponent, ISetTargetPanel
+public class SectorLabelItemPanel : LabelItemPanelComponent, ISetTargetPanel
 {
 	private LabelItemElementReferrer referrer;
 	public LabelItemElementReferrer Referrer => referrer.IsNotNullRef() ? referrer : TryGetComponent<LabelItemElementReferrer>(out referrer) ? referrer : null;
-	public OperationObject Operation { get; private set; }
+	public SectorObject Sector { get; private set; }
 
 	protected override void OnReleaseUI()
 	{
-		if (Operation.IsNullRef()) return;
+		if (Sector.IsNullRef()) return;
 
-		if (Operation is ISupplyStats supplyStats)
+		if (Sector is ICombatDefance defance)
 		{
-			supplyStats.OnSupplyChange -= UpdateSupplyStats;
+			defance.OnChangeDurability -= OnChangeDurability;
+			defance.OnChangeDurability += OnChangeDurability;
 		}
 
-		Operation = null;
+		if (Sector is ISupplyStats supplyStats)
+		{
+			supplyStats.OnSupplyChange -= UpdateSupplyStats;
+			supplyStats.OnSupplyChange += UpdateSupplyStats;
+		}
+
+		Sector = null;
 		referrer = null;
 	}
 
 	protected override void OnAttachUI(ITargetToPanelAPI target)
 	{
-		if (target is not OperationObject operation) return;
-		Operation = operation;
-		if (Operation.IsNullRef()) return;
+		if (target is not SectorObject sector) return;
+		Sector = sector;
+		if (Sector.IsNullRef()) return;
 
 		referrer = Referrer;
 		if (referrer.IsNullRef()) return;
 
-		if (Operation is ITargetToLabelAPI labelAPI)
+		if (Sector is ITargetToLabelAPI labelAPI)
 		{
 			referrer.SetMainIcon(labelAPI.GetLabelIcon());
 			referrer.SetSubIcon(labelAPI.GetLabelIcon());
 			referrer.SetDisplayText(labelAPI.GetLabelName());
 		}
 
-		referrer.SetShieldFillAmount(0);
+		if (Sector is ICombatDefance defance)
+		{
+			defance.OnChangeDurability -= OnChangeDurability;
+			defance.OnChangeDurability += OnChangeDurability;
+		}
 
-		if (Operation is ISupplyStats supplyStats)
+		if (Sector is ISupplyStats supplyStats)
 		{
 			supplyStats.OnSupplyChange -= UpdateSupplyStats;
 			supplyStats.OnSupplyChange += UpdateSupplyStats;
 		}
 	}
-	private void UpdateSupplyStats(ISupplyStats supplyStats)
+
+    private void OnChangeDurability((int current, int max) obj)
+    {
+		if (referrer.IsNullRef()) return;
+		float ratio = obj.max <= 0 ? 0 : (obj.current / (float)obj.max);
+		referrer.SetShieldFillAmount(Mathf.Clamp01(ratio * 0.5f));
+	}
+
+    private void UpdateSupplyStats(ISupplyStats supplyStats)
 	{
 		if (supplyStats.IsNullRef()) return;
-
-		referrer.SetPersonnelFillAmount(FillAmount(supplyStats.GetPersonnelSimpleValue(), 1f));
+		if (referrer.IsNullRef()) return;
+		referrer.SetPersonnelFillAmount(FillAmount(supplyStats.GetPersonnelSimpleValue(), 0.5f));
 		referrer.SetMaterialFillAmount(FillAmount(supplyStats.GetMaterialSimpleValue(), 0.5f));
 		referrer.SetElectricFillAmount(FillAmount(supplyStats.GetElectricSimpleValue(), 0.5f));
 
@@ -65,6 +83,6 @@ public class OperationLabelItemPanel : LabelItemPanelComponent, ISetTargetPanel
 	}
 	protected override void OnUpdateUI()
 	{
-		UpdateSupplyStats(Operation);
+		UpdateSupplyStats(Sector);
 	}
 }

@@ -52,7 +52,7 @@ public partial class UnitObject : IIFSMControllerAttack
 
 	private void AttackState_OnReloadingTiming()
 	{
-		ThisStatsValue.SetStatsValue(StrategyGamePlayData.StatsType.유닛_사용탄수, 0);
+		ThisStatsValue.SetStatsValue(StrategyGamePlayData.StatsType.전투_사용탄수, 0);
 	}
 
 	private void AttackState_OnAttackReady(int continuousAttackCount, int simultaneousAttackCount, float continuousAttackDelay)

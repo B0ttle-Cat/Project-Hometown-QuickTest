@@ -9,6 +9,7 @@ using StrategyManagerModule;
 using UnityEngine;
 
 using static StrategyGamePlayData;
+using static StrategyManagerModule.StrategyUpdate;
 
 [Serializable]
 public partial class Faction : IDisposable
@@ -369,18 +370,18 @@ public partial class Faction // ElementSet
 	{
 		protected readonly List<ISectorController> controllerList = new List<ISectorController>();
 		protected readonly List<ISupplyStateForSector> supplyList = new List<ISupplyStateForSector>();
-		protected readonly List<ISectorForPanel> forPanel = new List<ISectorForPanel>();
+		protected readonly List<ISectorToPanelAPI> forPanel = new List<ISectorToPanelAPI>();
 
 		public List<ISectorController> ControllerList => controllerList;
 		public List<ISupplyStateForSector> SupplyList => supplyList;
-		public List<ISectorForPanel> ForPanel => forPanel;
+		public List<ISectorToPanelAPI> ForPanel => forPanel;
 		public override bool Add(IStrategyElement item)
 		{
 			if (base.Add(item))
 			{
 				if (item is ISectorController control) controllerList.Add(control);
 				if (item is ISupplyStateForSector supply) supplyList.Add(supply);
-				if (item is ISectorForPanel panel) forPanel.Add(panel);
+				if (item is ISectorToPanelAPI panel) forPanel.Add(panel);
 				return true;
 			}
 			return false;
@@ -391,7 +392,7 @@ public partial class Faction // ElementSet
 			{
 				if (item is ISectorController control) controllerList.Remove(control);
 				if (item is ISupplyStateForSector supply) supplyList.Remove(supply);
-				if (item is ISectorForPanel panel) forPanel.Remove(panel);
+				if (item is ISectorToPanelAPI panel) forPanel.Remove(panel);
 				return true;
 			}
 			return false;
@@ -486,7 +487,7 @@ public partial class Faction // ElementSet
 public partial class Faction : IStatsValueControl, ISupplyStats
 {
 	public IStatsValueControl ThisStatsValue => this;
-	public Action<ISupplyStats> OnSupplyChange { get; set; }
+	public event Action<ISupplyStats> OnSupplyChange;
 
 	partial void InitSupply()
 	{
@@ -593,6 +594,33 @@ public partial class Faction : IStatsValueControl, ISupplyStats
 
 
 	#region ISupplyStats
+	void ISupplyStats.OnSupplyUpdate(SupplyRequest supplyRequest)
+	{
+		if (!supplyRequest.IsUpdateFlag()) return;
+
+		supplyRequest.ResetAndLeaveDecimal(
+			out int integerPersonnel,
+			out int integerMaterial,
+			out int integerElectric);
+
+		int maxPersonnel = ThisStatsValue.GetStatsValue(StatsType.자원_인력_최대);
+		int maxMaterial = ThisStatsValue.GetStatsValue(StatsType.자원_재료_최대);
+		int maxElectric = ThisStatsValue.GetStatsValue(StatsType.자원_전력_최대);
+
+		integerPersonnel += ThisStatsValue.GetStatsValue(StatsType.자원_인력_현재);
+		integerMaterial += ThisStatsValue.GetStatsValue(StatsType.자원_재료_현재);
+		integerElectric += ThisStatsValue.GetStatsValue(StatsType.자원_전력_현재);
+
+		if (maxPersonnel < integerPersonnel) integerPersonnel = maxPersonnel;
+		if (maxMaterial < integerMaterial) integerMaterial = maxMaterial;
+		if (maxElectric < integerElectric) integerElectric = maxElectric;
+
+		ThisStatsValue.SetStatsValue(StatsType.자원_인력_현재, integerPersonnel);
+		ThisStatsValue.SetStatsValue(StatsType.자원_재료_현재, integerMaterial);
+		ThisStatsValue.SetStatsValue(StatsType.자원_전력_현재, integerElectric);
+
+		OnSupplyChange?.Invoke(this);
+	}
 	public (float[] values, float total, float max) GetPersonnelDetailValue()
 	{
 		float max = ThisStatsValue.GetStatsValue(StatsType.자원_인력_최대);

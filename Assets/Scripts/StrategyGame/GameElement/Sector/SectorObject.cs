@@ -7,6 +7,7 @@ using StrategyManagerModule;
 using UnityEngine;
 
 using static StrategyGamePlayData;
+using static StrategyManagerModule.StrategyUpdate;
 
 //using static StrategyGamePlayData.SectorData;
 //using static StrategyGamePlayData.SectorData.Support;
@@ -95,7 +96,7 @@ public partial class SectorObject : IStatsValueControl, ISupplyStateForSector
 {
 	public IStatsValueControl ThisStatsValue => this;
 
-	public Action<ISupplyStats> OnSupplyChange { get; set; }
+	public event Action<ISupplyStats> OnSupplyChange;
 	public bool IsEnableResourcesSupply { get => StatsData.IsEnableResourcesSupply; set => StatsData.IsEnableResourcesSupply = value; }
 	int ISupplyStateForSector.MaxPersonnelCapacityBonus => StatsData.MaxPersonnelCapacityBonusOfFaction;
 	int ISupplyStateForSector.MaxMaterialCapacityBonus => StatsData.MaxMaterialCapacityBonusOfFaction;
@@ -196,5 +197,34 @@ public partial class SectorObject : IStatsValueControl, ISupplyStateForSector
 			case StatsType.시설_내구도_현재: break;
 			default: break;
 		}
+	}
+
+
+	void ISupplyStats.OnSupplyUpdate(SupplyRequest supplyRequest)
+	{
+		if (!supplyRequest.IsUpdateFlag()) return;
+
+		supplyRequest.ResetAndLeaveDecimal(
+			out int integerPersonnel,
+			out int integerMaterial,
+			out int integerElectric);
+
+		int maxPersonnel = ThisStatsValue.GetStatsValue(StatsType.자원_인력_최대);
+		int maxMaterial = ThisStatsValue.GetStatsValue(StatsType.자원_재료_최대);
+		int maxElectric = ThisStatsValue.GetStatsValue(StatsType.자원_전력_최대);
+
+		integerPersonnel += ThisStatsValue.GetStatsValue(StatsType.자원_인력_현재);
+		integerMaterial += ThisStatsValue.GetStatsValue(StatsType.자원_재료_현재);
+		integerElectric += ThisStatsValue.GetStatsValue(StatsType.자원_전력_현재);
+
+		if (maxPersonnel < integerPersonnel) integerPersonnel = maxPersonnel;
+		if (maxMaterial < integerMaterial) integerMaterial = maxMaterial;
+		if (maxElectric < integerElectric) integerElectric = maxElectric;
+
+		ThisStatsValue.SetStatsValue(StatsType.자원_인력_현재, integerPersonnel);
+		ThisStatsValue.SetStatsValue(StatsType.자원_재료_현재, integerMaterial);
+		ThisStatsValue.SetStatsValue(StatsType.자원_전력_현재, integerElectric);
+
+		OnSupplyChange?.Invoke(this);
 	}
 }

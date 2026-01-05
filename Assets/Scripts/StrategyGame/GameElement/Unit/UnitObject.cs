@@ -145,11 +145,11 @@ public partial class UnitObject : IUnitForPanelAPI
 	#endregion
 
 	#region ITargetForCardAPI
-	Sprite ITargetForCardAPI.GetCardImage()
+	Sprite ITargetToCardAPI.GetCardImage()
 	{
 		return InstanceData.unitFullBodySprite;
 	}
-	string ITargetForCardAPI.GetCardName()
+	string ITargetToCardAPI.GetCardName()
 	{
 		return InstanceData.displayName;
 	}

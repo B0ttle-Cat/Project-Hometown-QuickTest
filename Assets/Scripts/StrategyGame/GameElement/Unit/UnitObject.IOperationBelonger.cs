@@ -4,7 +4,7 @@ using UnityEngine;
 
 public partial class UnitObject : IOperationBelonger
 {
-	[HideInEditorMode, FoldoutGroup("Operation", VisibleIf = "HasOperation"), InlineProperty, HideLabel]
+	[HideInEditorMode, FoldoutGroup("SectorAPI", VisibleIf = "HasOperation"), InlineProperty, HideLabel]
 	[SerializeField]
 	private OperationObject operationObject;
 	public OperationObject Operation => operationObject;

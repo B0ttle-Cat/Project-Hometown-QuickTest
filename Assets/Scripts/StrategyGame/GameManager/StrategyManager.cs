@@ -235,7 +235,7 @@ public class StrategyManager : MonoBehaviour
 		// Sector Network 세팅
 		await setter.OnStartSetter_SectorNetwork(pathfinding);
 
-		// Operation 세팅
+		// SectorAPI 세팅
 		await setter.OnStartSetter_Operation();
 
 		// Unit 세팅

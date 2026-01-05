@@ -13,7 +13,7 @@ using static StrategyGamePlayData;
 
 public class SectorCardItemPanel : CardItemPanelComponent, IFindUIObject
 {
-	private ISectorForPanel sectorCard;
+	private ISectorToPanelAPI sectorCard;
 	public IFindUIObject ThisUIFinder => this;
 	[SerializeField, PropertyOrder(-90)] private List<IFindUIObject.KeyPairObject> keyPairs;
 	List<IFindUIObject.KeyPairObject> IFindUIObject.KeyPairs { get => keyPairs; set => keyPairs = value; }
@@ -31,7 +31,7 @@ public class SectorCardItemPanel : CardItemPanelComponent, IFindUIObject
 
 	protected override void OnAttachUI(ITargetToPanelAPI item)
 	{
-		if (item is not ISectorForPanel sectorCard) return;
+		if (item is not ISectorToPanelAPI sectorCard) return;
 		this.sectorCard = sectorCard;
 
 		if (titleImage.IsNotNullRef() || ThisUIFinder.TryFind<Image>("..TitleImage", out titleImage))

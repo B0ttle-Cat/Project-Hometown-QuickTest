@@ -237,7 +237,7 @@ public partial class StrategyControlPanelUI // SectorSelectPanel
 			//private void UpdateFillRectUI()
 			//{
 			//	SetFillRectUI("Fill Durability", Value.GetDurability());
-			//	SetFillRectUI("Fill Operation", Value.GetPersonnel());
+			//	SetFillRectUI("Fill SectorAPI", Value.GetPersonnel());
 			//	SetFillRectUI("Fill Material", Value.GetMaterial());
 			//	SetFillRectUI("Fill Electric", Value.GetElectric());
 			//}

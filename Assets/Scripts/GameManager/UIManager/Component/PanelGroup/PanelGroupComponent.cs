@@ -159,17 +159,17 @@ namespace GameUI
 		[HideInEditorMode]
 		protected Stack<PanelItemComponent> PoolStack;
 
-		protected virtual void InitObjects(IEnumerable<ITargetToPanelAPI> cardElements)
+		protected virtual void InitObjects(IEnumerable<ITargetToPanelAPI> targets)
 		{
 			Clear();
 
 			if (PoolingCardObject)
 			{
-				PoolingData.InitData(cardElements);
+				PoolingData.InitData(targets);
 				return;
 			}
 
-			foreach (var item in cardElements)
+			foreach (var item in targets)
 			{
 				if (item.IsNullRef()) continue;
 				AddItem(item);

@@ -138,52 +138,52 @@ public partial class StrategyGamePlayData // ThisStatsValue
 		public static StatsList Empty => new StatsList(new StatsValue(StatsType.None));
 		public static StatsList UnitStatsList => new StatsList(
 				// 🛡️ 기본 내구도 및 회복 (Durability & Recovery)
-				new StatsValue(StatsType.유닛_최대내구도),
-				new StatsValue(StatsType.유닛_현재내구도),
-				new StatsValue(StatsType.유닛_치유력),
-				new StatsValue(StatsType.유닛_회복력),
+				new StatsValue(StatsType.전투_최대내구도),
+				new StatsValue(StatsType.전투_현재내구도),
+				new StatsValue(StatsType.전투_치유력),
+				new StatsValue(StatsType.전투_회복력),
 				// ⚔️ 기본 전투 능력 (Base Combat)
-				new StatsValue(StatsType.유닛_공격력),
-				new StatsValue(StatsType.유닛_방어력),
+				new StatsValue(StatsType.전투_공격력),
+				new StatsValue(StatsType.전투_방어력),
 				// 🎯 치명타 스탯 (Critical Stats_old) 
-				new StatsValue(StatsType.유닛_치명공격력),
-				new StatsValue(StatsType.유닛_치명피해율),
-				new StatsValue(StatsType.유닛_치명방어력),
+				new StatsValue(StatsType.전투_치명공격력),
+				new StatsValue(StatsType.전투_치명피해율),
+				new StatsValue(StatsType.전투_치명방어력),
 				// 🛡️ 관통 및 저항 레벨 (Level Stats_old)
-				new StatsValue(StatsType.유닛_관통레벨),
-				new StatsValue(StatsType.유닛_장갑레벨),
-				new StatsValue(StatsType.유닛_EMP충격레벨), 
-				new StatsValue(StatsType.유닛_EMP방호레벨), 
-				new StatsValue(StatsType.유닛_상태이상적용레벨),
-				new StatsValue(StatsType.유닛_상태이상저항레벨),
+				new StatsValue(StatsType.전투_관통레벨),
+				new StatsValue(StatsType.전투_장갑레벨),
+				new StatsValue(StatsType.전투_EMP충격레벨), 
+				new StatsValue(StatsType.전투_EMP방호레벨), 
+				new StatsValue(StatsType.전투_상태이상적용레벨),
+				new StatsValue(StatsType.전투_상태이상저항레벨),
 				// 🎲 명중 및 회피 확률 (Chance Score)
-				new StatsValue(StatsType.유닛_공격명중기회),
-				new StatsValue(StatsType.유닛_공격회피기회),
-				new StatsValue(StatsType.유닛_치명명중기회),
-				new StatsValue(StatsType.유닛_치명회피기회),
+				new StatsValue(StatsType.전투_공격명중기회),
+				new StatsValue(StatsType.전투_공격회피기회),
+				new StatsValue(StatsType.전투_치명명중기회),
+				new StatsValue(StatsType.전투_치명회피기회),
 				// 탄약 (Ammunition)
 				// ⚙️ 공격 시스템 계수 (Cycle Multipliers)
-				new StatsValue(StatsType.유닛_탄용량),
-				new StatsValue(StatsType.유닛_사용탄수),
-				new StatsValue(StatsType.유닛_연속공격횟수),
-				new StatsValue(StatsType.유닛_동시공격개수), 
+				new StatsValue(StatsType.전투_탄용량),
+				new StatsValue(StatsType.전투_사용탄수),
+				new StatsValue(StatsType.전투_연속공격횟수),
+				new StatsValue(StatsType.전투_동시공격개수), 
 				// ⏱️ 시간 및 딜레이 (Time Delays)
-				new StatsValue(StatsType.유닛_조준지연시간_c),
-				new StatsValue(StatsType.유닛_재공격지연시간_c),
-				new StatsValue(StatsType.유닛_연속공격지연시간_c),
-				new StatsValue(StatsType.유닛_재장전시간_c),
+				new StatsValue(StatsType.전투_조준지연시간_c),
+				new StatsValue(StatsType.전투_재공격지연시간_c),
+				new StatsValue(StatsType.전투_연속공격지연시간_c),
+				new StatsValue(StatsType.전투_재장전시간_c),
 				// 💸 공격 소모 자원 (Cycle Cost)
-				new StatsValue(StatsType.유닛_공격소모_전력),
-				new StatsValue(StatsType.유닛_공격소모_물자),
+				new StatsValue(StatsType.전투_공격소모_전력),
+				new StatsValue(StatsType.전투_공격소모_물자),
 				// 🔭 범위 및 이동 (Range & Movement)
 				new StatsValue(StatsType.유닛_이동속도_c),
 				new StatsValue(StatsType.유닛_점령점수),
-				new StatsValue(StatsType.유닛_행동범위_c),
-				new StatsValue(StatsType.유닛_시야범위_c),
-				new StatsValue(StatsType.유닛_공격범위_종료최소_c),
-				new StatsValue(StatsType.유닛_공격범위_시작최소_c),
-				new StatsValue(StatsType.유닛_공격범위_시작최대_c),
-				new StatsValue(StatsType.유닛_공격범위_종료최대_c)
+				new StatsValue(StatsType.전투_행동범위_c),
+				new StatsValue(StatsType.전투_시야범위_c),
+				new StatsValue(StatsType.전투_공격범위_종료최소_c),
+				new StatsValue(StatsType.전투_공격범위_시작최소_c),
+				new StatsValue(StatsType.전투_공격범위_시작최대_c),
+				new StatsValue(StatsType.전투_공격범위_종료최대_c)
 			);
 		public static StatsList SectorStatsList => new StatsList(
 
@@ -706,34 +706,8 @@ public partial class StrategyGamePlayData // ThisStatsValue
 
 
 		public bool IsEnableResourcesSupply { get; set; }
-		public Action<ISupplyStats> OnSupplyChange { get; set; }
-		public void OnSupplyUpdate(SupplyRequest supplyRequest)
-		{
-			if (!supplyRequest.IsUpdateFlag()) return;
-
-			supplyRequest.ResetAndLeaveDecimal(
-				out int integerPersonnel,
-				out int integerMaterial,
-				out int integerElectric);
-
-			int maxPersonnel = ThisStatsValue.GetStatsValue(StatsType.자원_인력_최대);
-			int maxMaterial = ThisStatsValue.GetStatsValue(StatsType.자원_재료_최대);
-			int maxElectric = ThisStatsValue.GetStatsValue(StatsType.자원_전력_최대);
-
-			integerPersonnel += ThisStatsValue.GetStatsValue(StatsType.자원_인력_현재);
-			integerMaterial += ThisStatsValue.GetStatsValue(StatsType.자원_재료_현재);
-			integerElectric += ThisStatsValue.GetStatsValue(StatsType.자원_전력_현재);
-
-			if (maxPersonnel < integerPersonnel) integerPersonnel = maxPersonnel;
-			if (maxMaterial < integerMaterial) integerMaterial = maxMaterial;
-			if (maxElectric < integerElectric) integerElectric = maxElectric;
-
-			ThisStatsValue.SetStatsValue(StatsType.자원_인력_현재, integerPersonnel);
-			ThisStatsValue.SetStatsValue(StatsType.자원_재료_현재, integerMaterial);
-			ThisStatsValue.SetStatsValue(StatsType.자원_전력_현재, integerElectric);
-
-			OnSupplyChange?.Invoke(this);
-		}
+		public event Action<ISupplyStats> OnSupplyChange;
+		public void OnSupplyUpdate(SupplyRequest supplyRequest);
 
 		public (float[] values, float total, float max) GetPersonnelDetailValue();
 		public (float[] values, float total, float max) GetMaterialDetailValue();
