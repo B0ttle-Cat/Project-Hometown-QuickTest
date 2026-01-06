@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 
-using static StrategyManagerModule.StrategyGameUX;
-
 namespace StrategyManagerModule
 {
 	public interface IStrategyProcess
@@ -13,8 +11,24 @@ namespace StrategyManagerModule
 
 
 		List<ProcessOverrider> OverriderList { get; }
-		void OnAddProcessOverride(ProcessOverrider processOverrider);
-		void OnRemoveProcessOverride(ProcessOverrider processOverrider);
+		void OnRemoveProcessOverride(ProcessOverrider processOverride)
+		{
+			OverriderList.Remove(processOverride);
+		}
+		void OnAddProcessOverride(ProcessOverrider processOverride)
+		{
+			if (OverriderList.Contains(processOverride))
+			{
+				if(OverriderList[^1] == processOverride) return;
+				OverriderList.Remove(processOverride);
+				OverriderList.Add(processOverride);
+			}
+			else
+			{
+				OverriderList.Add(processOverride);
+			}
+			
+		}
 		bool TryGetProcessOverrider<T>(out T processOverrider) where T : ProcessOverrider
 		{
 			int length = OverriderList == null ? 0 : OverriderList.Count;

@@ -3,8 +3,6 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-using static StrategyManagerModule.StrategyGameUX;
-
 namespace StrategyManagerModule
 {
 	public partial class StrategyPointingProcess : MonoBehaviour, IStrategyProcess
@@ -52,7 +50,7 @@ namespace StrategyManagerModule
 		}
 		private void OnPointingAtGround(Vector3 pointing)
 		{
-			if (ThisProcess.TryGetProcessOverrider<OverridePointingAtGround>(out var hack))
+			if (ThisProcess.TryGetProcessOverrider<ProcessPointingAtGround>(out var hack))
 			{
 				hack.OnPointingAtGround(pointing);
 				return;
@@ -68,7 +66,7 @@ namespace StrategyManagerModule
 		}
 		private void OnPointingAtSector(SectorObject pointing)
 		{
-			if (ThisProcess.TryGetProcessOverrider<OverridePointingAtSector>(out var hack))
+			if (ThisProcess.TryGetProcessOverrider<ProcessPointingAtSector>(out var hack))
 			{
 				hack.OnPointingAtSector(pointing);
 				return;
@@ -83,11 +81,11 @@ namespace StrategyManagerModule
 			}
 		}
 	}
-	public class OverridePointingAtGround : ProcessOverrider
+	public record ProcessPointingAtGround : ProcessOverrider
 	{
 		readonly Action<Vector3> onPointingAtGround;
 
-		public OverridePointingAtGround(Action<Vector3> onPointingAtGround) : base()
+		public ProcessPointingAtGround(object equality, Action<Vector3> onPointingAtGround) : base(equality)
 		{
 			this.onPointingAtGround = onPointingAtGround;
 		}
@@ -105,11 +103,11 @@ namespace StrategyManagerModule
 			onPointingAtGround?.Invoke(pointing);
 		}
 	}
-	public class OverridePointingAtSector : ProcessOverrider
+	public record ProcessPointingAtSector : ProcessOverrider
 	{
 		readonly Action<SectorObject> onPointingAtSector;
 
-		public OverridePointingAtSector(Action<SectorObject> onPointingAtSector) : base()
+		public ProcessPointingAtSector(object equality,Action<SectorObject> onPointingAtSector) : base(equality)
 		{
 			this.onPointingAtSector = onPointingAtSector;
 		}

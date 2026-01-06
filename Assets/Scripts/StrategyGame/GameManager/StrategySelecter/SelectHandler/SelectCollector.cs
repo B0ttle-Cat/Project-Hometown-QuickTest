@@ -19,20 +19,20 @@ namespace StrategyManagerModule
 	public abstract class SelectCollector<T> : SelectCollector , IList<T> where T : class , ISelectable
 	{
 		protected StrategySelecter ThisSelecter { get; private set; }
-		public List<T> SelectedItems { get; private set; }
+		public List<T> Items { get; private set; }
 
 		sealed public override void OnInit(StrategySelecter selecter)
 		{
 			ThisSelecter = selecter;
-			SelectedItems ??= new List<T>();
-			SelectedItems.Clear();
+			Items ??= new List<T>();
+			Items.Clear();
 			Init();
 		}
 		sealed public override void OnDeinit()
 		{
 			Deinit();
-			SelectedItems?.Clear();
-			SelectedItems = null;
+			Items?.Clear();
+			Items = null;
 			ThisSelecter = null;
 		}
 		protected abstract void Init();
@@ -43,7 +43,7 @@ namespace StrategyManagerModule
 			{
 				try
 				{
-					SelectedItems.Add(selectItem);
+					Items.Add(selectItem);
 					OnSelected(selectItem);
 				}
 				catch
@@ -61,8 +61,10 @@ namespace StrategyManagerModule
 			{
 				try
 				{
-					SelectedItems.Remove(selectItem);
-					OnDeselected(selectItem);
+					if (Items.Remove(selectItem))
+					{
+						OnDeselected(selectItem);
+					}
 				}
 				catch
 				{
@@ -96,22 +98,22 @@ namespace StrategyManagerModule
 
 
 
-		public int Count => SelectedItems.Count;
+		public int Count => Items == null ? 0 : Items.Count;
 		public bool IsReadOnly => false;
 		public T this[int index]
 		{
-			get => SelectedItems[index];
-			set => SelectedItems[index] = value;
+			get => Items[index];
+			set => Items[index] = value;
 		}
-		public void Add(T item) => SelectedItems.Add(item);
-		public void Clear() => SelectedItems.Clear();
-		public bool Contains(T item) => SelectedItems.Contains(item);
-		public void CopyTo(T[] array, int arrayIndex) => SelectedItems.CopyTo(array, arrayIndex);
-		public bool Remove(T item) => SelectedItems.Remove(item);
-		public int IndexOf(T item) => SelectedItems.IndexOf(item);
-		public void Insert(int index, T item) => SelectedItems.Insert(index, item);
-		public void RemoveAt(int index) => SelectedItems.RemoveAt(index);
-		public IEnumerator<T> GetEnumerator() => SelectedItems.GetEnumerator();
+		public void Add(T item) => Items.Add(item);
+		public void Clear() => Items.Clear();
+		public bool Contains(T item) => Items.Contains(item);
+		public void CopyTo(T[] array, int arrayIndex) => Items.CopyTo(array, arrayIndex);
+		public bool Remove(T item) => Items.Remove(item);
+		public int IndexOf(T item) => Items.IndexOf(item);
+		public void Insert(int index, T item) => Items.Insert(index, item);
+		public void RemoveAt(int index) => Items.RemoveAt(index);
+		public IEnumerator<T> GetEnumerator() => Items.GetEnumerator();
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	}
 }

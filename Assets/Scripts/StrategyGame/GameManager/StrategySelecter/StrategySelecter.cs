@@ -94,10 +94,10 @@ namespace StrategyManagerModule
 			}
 		}
 
-		public void OnSystemSelectObject(ISelectable target, bool beforeClearList = true)
+		public void OnSystemSelectObject(ISelectable target, bool clearOldSelect = true)
 		{
 			if (target == null) return;
-			if (beforeClearList) ClearInSelectItemList();
+			if (clearOldSelect) ClearInSelectItemList();
 			AddInSelectItemList(target);
 		}
 		public void OnSystemDeselectObject(ISelectable target)

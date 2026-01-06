@@ -3,17 +3,48 @@ using System.Collections.Generic;
 
 namespace StrategyManagerModule
 {
-	public class SectorSelectCollector : SelectCollector<SectorObject>,  IList<SectorObject>
+	public class SectorSelectCollector : SelectCollector<SectorObject>, IList<SectorObject>
 	{
+		ProcessOverrider sectorSelect;
+
 		protected override void Init()
 		{
+			sectorSelect?.Dispose();
+			sectorSelect = null;
 		}
 		protected override void Deinit()
 		{
+			sectorSelect?.Dispose();
+			sectorSelect = null;
 		}
-		protected override void OnSelected(SectorObject selectItem) => ThisSelecter.CallSectorSelected(selectItem);
-		protected override void OnDeselected(SectorObject selectItem) => ThisSelecter.CallSectorDeselected(selectItem);
+		protected override void OnSelected(SectorObject selectItem)
+		{
+			(sectorSelect ??= new ProcessPointingAtSector(this, PointingAtSector)).OnProcess();
+
+			ThisSelecter.CallSectorSelected(selectItem);
+		}
+        protected override void OnDeselected(SectorObject selectItem)
+		{
+			if (Count == 0)
+			{
+				sectorSelect?.Dispose();
+				sectorSelect = null;
+			}
+			ThisSelecter.CallSectorDeselected(selectItem);
+		}
 		protected override void OnPointing(SectorObject selectable) => ThisSelecter.CallSectorPointing(selectable);
+		private void PointingAtSector(SectorObject selectable)
+		{
+			var target = selectable;
+			
+			int length = Count;
+			for (int i = 0 ; i < length ; i++)
+            {
+				var start = Items[i];
+
+
+			}
+        }
 	}
 	public partial class StrategySelecter
 	{

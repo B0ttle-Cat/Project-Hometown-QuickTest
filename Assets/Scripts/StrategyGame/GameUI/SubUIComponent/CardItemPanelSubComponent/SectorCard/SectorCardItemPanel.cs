@@ -23,7 +23,7 @@ public class SectorCardItemPanel : CardItemPanelComponent
 		}
 		if (referrer.IsNotNullRef())
 		{
-
+			referrer.OnClickRemoveAllListeners();
 			referrer = null;
 		}
 	}
@@ -48,6 +48,11 @@ public class SectorCardItemPanel : CardItemPanelComponent
 		referrer.SetPersonnelFillAmount(0, 0);
 		referrer.SetMaterialFillAmount(0, 0);
 		referrer.SetElectricFillAmount(0, 0);
+
+		referrer.OnClickAddListener(() =>
+		{
+			StrategyManager.Selecter.OnSystemSelectObject(CardTarget);
+		});
 
 		if (CardTarget is IDurabilityValue durability)
 		{
