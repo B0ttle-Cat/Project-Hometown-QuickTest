@@ -4,7 +4,6 @@ namespace StrategyManagerModule
 {
 	public class UnitSelectCollector : SelectCollector<UnitObject>
 	{
-
 		protected override void Deinit()
 		{
 		}

@@ -252,18 +252,6 @@ public interface INavMovement : IMovement
 	INavMovement ThisNavMovement => this;
 	void SetMovePath(params Transform[] waypointTarget) => SetMovePath(true, waypointTarget);
 	void SetMovePath(bool clearPath, params Transform[] waypointTarget) => SetMovePath(clearPath, waypointTarget.Select(i => i.transform.position).ToArray());
-	void SetMovePath(params Vector2[] screenPoint)
-	{
-		int length = screenPoint.Length;
-		if (length == 0) return;
-		Vector3[] waypoints = new Vector3[length];
-		for (int i = 0 ; i < length ; i++)
-		{
-			Vector3 worldPoint = StrategyManager.Pathfinding.ScreenToWorldPoint(screenPoint[i]);
-			waypoints[i] = worldPoint;
-		}
-		SetMovePath(true, waypoints);
-	}
 	void SetMovePath(params Vector3[] waypoints) => SetMovePath(null, true, waypoints);
 	void SetMovePath(Action callback, params Vector3[] waypoints) => SetMovePath(callback, true, waypoints);
 	void SetMovePath(bool clearPath, params Vector3[] waypoints) => SetMovePath(null, clearPath, waypoints);

@@ -1,5 +1,34 @@
-﻿public interface IStrategyProcess
+﻿using System.Collections.Generic;
+
+using static StrategyManagerModule.StrategyGameUX;
+
+namespace StrategyManagerModule
 {
-	void OnStart();
-    void OnStop();
+	public interface IStrategyProcess
+	{
+		IStrategyProcess ThisProcess { get; }
+
+		void OnStart();
+		void OnStop();
+
+
+		List<ProcessOverrider> OverriderList { get; }
+		void OnAddProcessOverride(ProcessOverrider processOverrider);
+		void OnRemoveProcessOverride(ProcessOverrider processOverrider);
+		bool TryGetProcessOverrider<T>(out T processOverrider) where T : ProcessOverrider
+		{
+			int length = OverriderList == null ? 0 : OverriderList.Count;
+			for (int i = length - 1 ; i >= 0 ; i--)
+			{
+				var item = OverriderList[^i];
+				if (item.IsNullRef()) continue;
+				if (item is not T tItem) continue;
+				processOverrider = tItem;
+				return true;
+			}
+			processOverrider = null;
+			return false;
+		}
+	}
+
 }

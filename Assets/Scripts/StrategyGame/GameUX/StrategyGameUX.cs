@@ -1,33 +1,33 @@
 ﻿using UnityEngine;
 
-public class StrategyGameUX : MonoBehaviour, IStrategyStartGame
+namespace StrategyManagerModule
 {
-	IStrategyProcess[] strategyProcesses;
-	public void Awake()
+	public partial class StrategyGameUX : MonoBehaviour, IStrategyStartGame
 	{
-		strategyProcesses = GetComponentsInChildren<IStrategyProcess>(true);
-	}
-	void IStrategyStartGame.OnStartGame()
-	{
-		if(strategyProcesses == null)
+		void IStrategyStartGame.OnStartGame()
 		{
-			return;
+			var strategyProcesses = GetComponentsInChildren<IStrategyProcess>(true);
+			if (strategyProcesses == null)
+			{
+				return;
+			}
+			foreach (var process in strategyProcesses)
+			{
+				process.OnStart();
+			}
 		}
-		foreach (var process in strategyProcesses)
+		void IStrategyStartGame.OnStopGame()
 		{
-			process.OnStart();
+			var strategyProcesses = GetComponentsInChildren<IStrategyProcess>(true);
+			if (strategyProcesses == null)
+			{
+				return;
+			}
+			foreach (var process in strategyProcesses)
+			{
+				process.OnStop();
+			}
 		}
 	}
 
-	void IStrategyStartGame.OnStopGame()
-	{
-		if (strategyProcesses == null)
-		{
-			return;
-		}
-		foreach (var process in strategyProcesses)
-		{
-			process.OnStop();
-		}
-	}
 }

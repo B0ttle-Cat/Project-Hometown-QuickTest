@@ -16,6 +16,7 @@ public class StrategyManager : MonoBehaviour
 	public static bool IsDestroy => Manager == null;
 	public static Camera MainCamera => Manager == null ? null : Manager.mainCamera;
 	public static StrategyGameUI GameUI => Manager == null ? null : Manager.gameUI;
+	public static StrategyGameUX GameUX => Manager == null ? null : Manager.gameUX;
 	public static StrategyPopupPanelUI PopupUI => GameUI.PopupPanelUI;
 	public static KeyValueData GamePlayTempData => Manager == null ? null : Manager.gamePlayTempData;
 	public static StrategyElementCollector Collector => Manager == null ? null : Manager.collector;
@@ -50,6 +51,7 @@ public class StrategyManager : MonoBehaviour
 	[SerializeField]
 	private Camera mainCamera;
 	private StrategyGameUI gameUI;
+	private StrategyGameUX gameUX;
 	private KeyValueData gamePlayTempData;
 	private StrategyElementCollector collector;
 	private StrategyPoolingCollector pooling;
@@ -73,6 +75,7 @@ public class StrategyManager : MonoBehaviour
 		Manager = this;
 		mainCamera = mainCamera == null ? Camera.main : mainCamera;
 		gameUI = FindAnyObjectByType<StrategyGameUI>();
+		gameUX = FindAnyObjectByType<StrategyGameUX>();
 		gamePlayTempData = KeyValueData.Empty;
 		collector = new StrategyElementCollector();
 		pooling = new StrategyPoolingCollector();
