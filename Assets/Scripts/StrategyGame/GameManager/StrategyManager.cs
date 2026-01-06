@@ -24,10 +24,10 @@ public class StrategyManager : MonoBehaviour
 	public static StrategyStatistics Statistics => Manager == null ? null : Manager.statistics;
 	public static StrategyTime Time => Manager == null ? null : Manager.time;
 	public static StrategyUpdate Updater => Manager == null ? null : Manager.updater;
-	public static StrategyMouseSelecter Selecter => Manager == null ? null : Manager.selecter;
+	public static StrategySelecter Selecter => Manager == null ? null : Manager.selecter;
 	public static StrategyPathfinding Pathfinding => Manager == null ? null : Manager.pathfinding;
 	public static StrategyViewAndControlModeChanger ViewAndControl => Manager == null ? null : Manager.viewAndControl;
-	public static StrategyFactionRelation FactionRelation => Manager == null? null : Manager.factionRelation;
+	public static StrategyFactionRelation FactionRelation => Manager == null ? null : Manager.factionRelation;
 	public static KeyPairDisplayName Key2Name => Manager == null || Manager.key2Name == null
 		? KeyPairDisplayName.Load(Language.Type.Korean, "_Default")
 		: Manager.key2Name;
@@ -57,7 +57,7 @@ public class StrategyManager : MonoBehaviour
 	private StrategyStatistics statistics;
 	private StrategyTime time;
 	private StrategyUpdate updater;
-	private StrategyMouseSelecter selecter;
+	private StrategySelecter selecter;
 	private StrategyPathfinding pathfinding;
 	private StrategyViewAndControlModeChanger viewAndControl;
 	private StrategyFactionRelation factionRelation;
@@ -79,19 +79,21 @@ public class StrategyManager : MonoBehaviour
 		mission = GetComponentInChildren<StrategyMissionTree>();
 		statistics = GetComponentInChildren<StrategyStatistics>();
 		updater = GetComponentInChildren<StrategyUpdate>();
-		selecter = GetComponentInChildren<StrategyMouseSelecter>();
+		selecter = GetComponentInChildren<StrategySelecter>();
 		pathfinding = GetComponentInChildren<StrategyPathfinding>();
 		viewAndControl = GetComponentInChildren<StrategyViewAndControlModeChanger>();
 		factionRelation = GetComponentInChildren<StrategyFactionRelation>();
 	}
-    private void OnDestroy()
+	private void OnDestroy()
 	{
+		OnStopGame();
+
 		IsGameSceneReady = false;
 		IsGameManagerReady = false;
 
 		Manager = null;
 
-		if(gameUI != null)
+		if (gameUI != null)
 		{
 			gameUI.enabled = false;
 			gameUI = null;
@@ -111,12 +113,12 @@ public class StrategyManager : MonoBehaviour
 			statistics.Dispose();
 			statistics = null;
 		}
-		if(updater != null)
+		if (updater != null)
 		{
 			updater.enabled = false;
 			updater = null;
 		}
-		if(selecter != null)
+		if (selecter != null)
 		{
 			selecter.enabled = false;
 			selecter = null;
@@ -141,7 +143,7 @@ public class StrategyManager : MonoBehaviour
 		Debug.Log("GameStart: Start");
 		IsGameSceneReady = true;
 
-		OnStopGame();
+		//OnStopGame();
 
 		#region 기초적인 유효성 검사
 		if ((gameUI = gameUI != null ? gameUI : FindAnyObjectByType<StrategyGameUI>()) != null)
@@ -157,7 +159,7 @@ public class StrategyManager : MonoBehaviour
 		{
 			updater.enabled = false;
 		}
-		if ((selecter = selecter != null ? selecter : GetComponentInChildren<StrategyMouseSelecter>()) != null)
+		if ((selecter = selecter != null ? selecter : GetComponentInChildren<StrategySelecter>()) != null)
 		{
 			selecter.enabled = false;
 		}
@@ -269,10 +271,10 @@ public class StrategyManager : MonoBehaviour
 		if (updater == null) updater = gameObject.AddComponent<StrategyUpdate>();
 		else updater.enabled = true;
 
-		if (selecter == null) selecter = gameObject.AddComponent<StrategyMouseSelecter>();
+		if (selecter == null) selecter = gameObject.AddComponent<StrategySelecter>();
 		else selecter.enabled = true;
 
-		if(time != null)
+		if (time != null)
 		{
 			updater.SetTime(time);
 			time.enabled = true;
@@ -281,6 +283,16 @@ public class StrategyManager : MonoBehaviour
 
 		OnStartGame();
 	}
+
+	public void GamePause()
+	{
+
+	}
+	public void GameResume()
+	{
+
+	}
+
 	private void OnStopGame()
 	{
 		var allComponent = GameObject.FindObjectsByType<Component>(FindObjectsInactive.Include, FindObjectsSortMode.InstanceID);
@@ -300,3 +312,4 @@ public class StrategyManager : MonoBehaviour
 		}
 	}
 }
+

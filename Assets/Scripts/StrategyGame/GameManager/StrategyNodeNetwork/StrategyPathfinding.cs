@@ -290,5 +290,14 @@ namespace StrategyManagerModule
 				depthCount--;
 			}
 		}
-	}
+
+        internal Vector3 ScreenToWorldPoint(Vector2 mousePoint)
+        {
+			if(Physics.Raycast(StrategyManager.MainCamera.ScreenPointToRay(mousePoint), out var hit, Mathf.Infinity, groundLayerMask))
+			{
+				return hit.point;
+			}
+			return Vector3.positiveInfinity;
+		}
+    }
 }

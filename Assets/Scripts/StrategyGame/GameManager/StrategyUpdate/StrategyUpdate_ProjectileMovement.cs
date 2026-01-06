@@ -358,7 +358,7 @@ namespace StrategyManagerModule
 						continue;
 					}
 
-					// ensure curve sampling is prepared by the Mono object (we assume Mono did this on Init/SetTarget)
+					// ensure curve sampling is prepared by the Mono object (we assume Mono did this on OnInit/SetTarget)
 					// but check defensively:
 					entry.JobDataUpdate();
 					var pd = entry.movementJobData;

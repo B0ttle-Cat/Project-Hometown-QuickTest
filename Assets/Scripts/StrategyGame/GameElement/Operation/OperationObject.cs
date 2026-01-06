@@ -190,29 +190,32 @@ public partial class OperationObject : ISelectable
 	{
 
 	}
-	void ISelectable.OnFirstSelect()
+	void ISelectable.OnPointing()
 	{
 	}
-	void ISelectable.OnLastDeselect()
-	{
-	}
-	void ISelectable.OnSingleSelect()
-	{
-		if (StrategyManager.ViewAndControl.CurrentMode == ViewAndControlModeType.OperationsMode)
-		{
-			StrategyManager.GameUI.ControlPanelUI.OpenUI();
-			var setTarget = StrategyManager.GameUI.ControlPanelUI.ShowOperationPlannerPanel();
-			if (setTarget == null) return;
-			setTarget.AddTarget(this);
-		}
-	}
-	void ISelectable.OnSingleDeselect()
-	{
-		if (StrategyManager.ViewAndControl.CurrentMode == ViewAndControlModeType.OperationsMode)
-		{
-			StrategyManager.GameUI.ControlPanelUI.HideOperationPlannerPanel();
-		}
-	}
+	//void ISelectable.OnFirstSelect()
+	//{
+	//}
+	//void ISelectable.OnLastDeselect()
+	//{
+	//}
+	//void ISelectable.OnSingleSelect()
+	//{
+	//	if (StrategyManager.ViewAndControl.CurrentMode == ViewAndControlModeType.OperationsMode)
+	//	{
+	//		StrategyManager.GameUI.ControlPanelUI.OpenUI();
+	//		var setTarget = StrategyManager.GameUI.ControlPanelUI.ShowOperationPlannerPanel();
+	//		if (setTarget == null) return;
+	//		setTarget.AddTarget(this);
+	//	}
+	//}
+	//void ISelectable.OnSingleDeselect()
+	//{
+	//	if (StrategyManager.ViewAndControl.CurrentMode == ViewAndControlModeType.OperationsMode)
+	//	{
+	//		StrategyManager.GameUI.ControlPanelUI.HideOperationPlannerPanel();
+	//	}
+	//}
 }
 public partial class OperationObject : IOperationToPanelAPI
 {

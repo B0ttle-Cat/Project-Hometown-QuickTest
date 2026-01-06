@@ -1,18 +1,17 @@
 ﻿using UnityEngine;
 
-public partial class UnitObject : ISelectableByMouse
+public partial class UnitObject : IMouseSelectable
 {
 	partial void DeselectSelf()
 	{
 		(this as ISelectable).SelfDeselect();
 	}
-	bool ISelectableByMouse.IsSelectMouse { get; set; }
-	bool ISelectableByMouse.IsPointEnter { get; set; }
-	Vector3 ISelectableByMouse.ClickCenter => transform.position;
-	void ISelectableByMouse.OnPointEnter()
+
+	Vector3 IMouseSelectable.SelectCenter => transform.position;
+	void IMouseSelectable.OnPointEnter()
 	{
 	}
-	void ISelectableByMouse.OnPointExit()
+	void IMouseSelectable.OnPointExit()
 	{
 	}
 	void ISelectable.OnSelect()
@@ -21,19 +20,7 @@ public partial class UnitObject : ISelectableByMouse
 	void ISelectable.OnDeselect()
 	{
 	}
-	void ISelectable.OnSingleSelect()
-	{
-	}
-
-	void ISelectable.OnSingleDeselect()
-	{
-	}
-
-	void ISelectable.OnFirstSelect()
-	{
-	}
-
-	void ISelectable.OnLastDeselect()
+	void ISelectable.OnPointing()
 	{
 	}
 }

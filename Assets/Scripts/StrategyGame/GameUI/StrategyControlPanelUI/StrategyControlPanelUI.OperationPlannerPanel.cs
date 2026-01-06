@@ -65,13 +65,13 @@ shift를 누르고 선택하면 경로를 지정할 수 있습니다.";
 		protected override void OnHide()
 		{
 			StrategyManager.PopupUI.HideTopMessage(this);
-			StrategyManager.Selecter.RemoveListener_OnPointingTarget(OnPointing);
+			StrategyManager.Selecter.OnPointing -= OnPointing;
 			RemoveTarget(selectOperation);
 		}
 		protected override void OnShow()
 		{
 			StrategyManager.PopupUI.ShowTopMessage(this, infoMessage);
-			StrategyManager.Selecter.AddListener_OnPointingTarget(OnPointing);
+			StrategyManager.Selecter.OnPointing += OnPointing;
 		}
 		private void OnPointing(ISelectable selectable)
 		{

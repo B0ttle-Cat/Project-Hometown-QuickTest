@@ -1,17 +1,15 @@
 ﻿using UnityEngine;
 
-public partial class SectorObject : ISelectableByMouse
+public partial class SectorObject : IMouseSelectable
 {
 	public Vector3 clickCenter => visibilityGroup == null ? transform.position : visibilityGroup.VisibleWorldBounds.center;
-	bool ISelectableByMouse.IsSelectMouse { get; set; }
-	bool ISelectableByMouse.IsPointEnter { get; set; }
-	Vector3 ISelectableByMouse.ClickCenter => clickCenter;
+	Vector3 IMouseSelectable.SelectCenter => clickCenter;
 
 
-    void ISelectableByMouse.OnPointEnter()
+    void IMouseSelectable.OnPointEnter()
 	{
 	}
-	void ISelectableByMouse.OnPointExit()
+	void IMouseSelectable.OnPointExit()
 	{
 
 	}
@@ -22,21 +20,24 @@ public partial class SectorObject : ISelectableByMouse
 	void ISelectable.OnDeselect()
 	{
 	}
-	void ISelectable.OnSingleSelect()
+	void ISelectable.OnPointing()
 	{
-		Controller.OnShowUI_SelectUI();
 	}
+	//void ISelectable.OnSingleSelect()
+	//{
+	//	Controller.OnShowUI_SelectUI();
+	//}
 
-	void ISelectable.OnSingleDeselect()
-	{
-		Controller.OnHideUI_SelectUI();
-	}
+	//void ISelectable.OnSingleDeselect()
+	//{
+	//	Controller.OnHideUI_SelectUI();
+	//}
 
-	void ISelectable.OnFirstSelect()
-	{
-	}
+	//void ISelectable.OnFirstSelect()
+	//{
+	//}
 
-	void ISelectable.OnLastDeselect()
-	{
-	}
+	//void ISelectable.OnLastDeselect()
+	//{
+	//}
 }
