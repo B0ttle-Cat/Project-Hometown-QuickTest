@@ -94,10 +94,7 @@ public partial class Faction : IDisposable
 	{
 
 	}
-	public void ComputeDynamicAvailableUnitKeyList()
-	{
 
-	}
 	public void ComputeDynamicKeyStatsList()
 	{
 
@@ -144,10 +141,14 @@ public partial class Faction // ElementSet
 	private OperationSet operationList;
 	[ShowInInspector,ReadOnly]
 	private UnitSet unitList;
+	[ShowInInspector, ReadOnly]
+	private FacilitySet facilityList;
+
 	private Action<IStrategyElement, bool> onChangeDetected;
 	private Action<IStrategyElement, bool> onChangeCaptured;
 	private Action<IStrategyElement, bool> onChangeOperation;
 	private Action<IStrategyElement, bool> onChangeUnit;
+	private Action<IStrategyElement, bool> onChangeFacility;
 	private void AddChangeEvent(ref Action<IStrategyElement, bool> action, ElementSet elementsSet, Action<IStrategyElement, bool> onChange, bool invokeForExisting)
 	{
 		action -= onChange;
@@ -160,7 +161,6 @@ public partial class Faction // ElementSet
 			}
 		}
 	}
-
 	public void AddChangeDetected(Action<IStrategyElement, bool> onChange, bool invokeForExisting = true)
 	{
 		AddChangeEvent(ref onChangeDetected, detectedList, onChange, invokeForExisting);
@@ -193,12 +193,20 @@ public partial class Faction // ElementSet
 	{
 		onChangeUnit -= onChange;
 	}
+	public void AddChangeFacility(Action<IStrategyElement, bool> onChange, bool invokeForExisting = true)
+	{
+		AddChangeEvent(ref onChangeFacility, facilityList, onChange, invokeForExisting);
+	}
+	public void RemoveChangeFacility(Action<IStrategyElement, bool> onChange)
+	{
+		onChangeFacility -= onChange;
+	}
 
 	public DetectedSet DetectedList => detectedList;
 	public CaptureSectorSet CapturedList => capturedList;
 	public OperationSet OperationList => operationList;
 	public UnitSet UnitList => unitList;
-
+	public FacilitySet FacilityList => facilityList;
 
 	partial void InitElementSet()
 	{
@@ -206,11 +214,13 @@ public partial class Faction // ElementSet
 		capturedList = new CaptureSectorSet();
 		operationList = new OperationSet();
 		unitList = new UnitSet();
+		facilityList = new FacilitySet();
 
 		onChangeDetected = null;
 		onChangeCaptured = null;
 		onChangeOperation = null;
 		onChangeUnit = null;
+		onChangeFacility = null;
 	}
 	partial void DeinitElementSet()
 	{
@@ -226,38 +236,30 @@ public partial class Faction // ElementSet
 		unitList?.Dispose();
 		unitList = null;
 
+		facilityList?.Dispose();
+		facilityList = null;
+
 		onChangeDetected = null;
 		onChangeCaptured = null;
 		onChangeOperation = null;
 		onChangeUnit = null;
+		onChangeFacility = null;
 	}
 
 	public void OnChangeElementSetEvent()
 	{
-		ClearHasChange(DetectedList);
-		ClearHasChange(CapturedList);
-		ClearHasChange(OperationList);
-		ClearHasChange(UnitList);
-
-		void ClearHasChange(ElementSet elementset)
-		{
-			if (elementset.HasChange)
-			{
-				foreach (var item in elementset.ChangeRemvoe)
-					onChangeCaptured?.Invoke(item, false);
-				foreach (var item in elementset.ChangeAdd)
-					onChangeCaptured?.Invoke(item, true);
-
-				elementset.ClearHasChange();
-			}
-		}
+		DetectedList.ClearAndChangeInvoke(onChangeDetected);
+		CapturedList.ClearAndChangeInvoke(onChangeCaptured);
+		OperationList.ClearAndChangeInvoke(onChangeOperation);
+		UnitList.ClearAndChangeInvoke(onChangeUnit);
+		FacilityList.ClearAndChangeInvoke(onChangeFacility);
 	}
 	public class ElementSet : ISet<IStrategyElement>, IDisposable
 	{
 		public bool HasChange { get; private set; }
 		protected readonly HashSet<IStrategyElement> elementList = new HashSet<IStrategyElement>();
-		public readonly HashSet<IStrategyElement> ChangeAdd = new HashSet<IStrategyElement>();
-		public readonly HashSet<IStrategyElement> ChangeRemvoe = new HashSet<IStrategyElement>();
+		protected readonly HashSet<IStrategyElement> ChangeAdd = new HashSet<IStrategyElement>();
+		protected readonly HashSet<IStrategyElement> ChangeRemvoe = new HashSet<IStrategyElement>();
 		public int Count => elementList.Count;
 		public readonly List<IStrategyElement> ElementList = new List<IStrategyElement>();
 		public IStrategyElement this[int index] => ElementList[index];
@@ -309,8 +311,16 @@ public partial class Faction // ElementSet
 			ElementList.Clear();
 		}
 		public bool Contains(IStrategyElement item) => elementList.Contains(item);
-		public void ClearHasChange()
+		public void ClearAndChangeInvoke(Action<IStrategyElement, bool> onChangeAction)
 		{
+			if (onChangeAction != null)
+			{
+				foreach (var item in ChangeRemvoe)
+					onChangeAction.Invoke(item, false);
+				foreach (var item in ChangeAdd)
+					onChangeAction.Invoke(item, true);
+			}
+
 			ChangeAdd.Clear();
 			ChangeRemvoe.Clear();
 		}
@@ -485,7 +495,36 @@ public partial class Faction // ElementSet
 			forPanel.Clear();
 		}
 	}
+	public class FacilitySet : ElementSet
+	{
+		protected readonly List<ITargetableCombatant> targetableList = new List<ITargetableCombatant>();
+
+		public override bool Add(IStrategyElement item)
+		{
+			if (base.Add(item))
+			{
+				if (item is ITargetableCombatant target) targetableList.Add(target);
+				return true;
+			}
+			return false;
+		}
+		public override bool Remove(IStrategyElement item)
+		{
+			if (base.Remove(item))
+			{
+				if (item is ITargetableCombatant target) targetableList.Remove(target);
+				return true;
+			}
+			return false;
+		}
+		public override void Clear()
+		{
+			base.Clear();
+			targetableList.Clear();
+		}
+	}
 }
+
 public partial class Faction : IStatsValueControl, ISupplyStats
 {
 	public IStatsValueControl ThisStatsValue => this;
@@ -499,8 +538,6 @@ public partial class Faction : IStatsValueControl, ISupplyStats
 	{
 		OnSupplyChange = null;
 	}
-
-
 	int IStatsValueControl.GetStatsValue(StatsType type)
 	{
 		int baseValue = type switch
@@ -560,12 +597,10 @@ public partial class Faction : IStatsValueControl, ISupplyStats
 			return sum;
 		}
 	}
-
 	float IStatsValueControl.GetStatsValuePrecent(StatsType type)
 	{
 		return 0;
 	}
-
 	void IStatsValueControl.SetStatsValue(StatsType type, int value)
 	{
 		switch (type)
@@ -581,7 +616,6 @@ public partial class Faction : IStatsValueControl, ISupplyStats
 			default: DynamicKeyStatsList.SetValue(type, value); break;
 		}
 	}
-
 	void IStatsValueControl.SetStatsValuePrecent(StatsType type, float valuePercent)
 	{
 		int value = Mathf.FloorToInt(valuePercent * 100);
@@ -593,8 +627,6 @@ public partial class Faction : IStatsValueControl, ISupplyStats
 		//	default: DynamicKeyStatsList.SetValue(type, value); break;
 		//}
 	}
-
-
 	#region ISupplyStats
 	void ISupplyStats.OnSupplyUpdate(SupplyRequest supplyRequest)
 	{

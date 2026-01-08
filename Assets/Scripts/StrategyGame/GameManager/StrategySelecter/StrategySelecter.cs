@@ -113,9 +113,6 @@ namespace StrategyManagerModule
 		{
 			OnPointingTarget(target);
 		}
-
-
-
 		internal void AddInSelectItemList(ISelectable selectable)
 		{
 			if (SelectFlag == SelectType.None)

@@ -2,6 +2,7 @@
 
 public class OperationCardGroupPanel : CardGroupPanelComponent, IShowHideAsync
 {
+
 	void IShowHide.EndedHide()
 	{
 		Faction playerFaction = FactionAPI.ID2Faction(StrategyManager.PlayerFactionID);

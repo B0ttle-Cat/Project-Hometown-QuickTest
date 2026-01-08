@@ -18,8 +18,8 @@ public class CanvasGroupUI : PanelItemComponent, IShowHideAsync
 		AlphaOnOffValue = Vector2.up;
 		changeTime = 0.25f;
 		timeMode = ChangeTimeMode.UnscaleTime;
-		controlBlocksRaycasts = false;
-		controlInteractable = false;
+		ControlInteractableMode = ControlMode.ZeroSwitch;
+		ControlBlocksRaycastsMode = ControlMode.ZeroSwitch;
 		interactableOnAlpha = 0.0f;
 		interactableOffAlpha = 0.0f;
 		blocksRaycastsOnAlpha = 0.0f;
@@ -48,17 +48,21 @@ public class CanvasGroupUI : PanelItemComponent, IShowHideAsync
 	[SerializeField, HorizontalGroup, HideLabel, EnumToggleButtons]
 	private ChangeTimeMode timeMode;
 	public enum ChangeTimeMode { UnscaleTime = 0, DeltaTime, FixedMode, }
-
-	[SerializeField]
-	private bool controlInteractable;
-	[SerializeField, Range(0f, 1f), HorizontalGroup("controlInteractable", VisibleIf = "@controlInteractable"), LabelText("On Alpha")]
+	public enum ControlMode { None, ZeroSwitch, OneSwitch, Custom }
+	[SerializeField, LabelText("Interactable"), EnumToggleButtons]
+	public ControlMode ControlInteractableMode;
+	private bool controlInteractable => ControlInteractableMode != ControlMode.None;
+	private bool customControlInteractable => ControlInteractableMode == ControlMode.Custom;
+	[SerializeField, Range(0f, 1f), HorizontalGroup("controlInteractable", VisibleIf = "@customControlInteractable"), LabelText("On Alpha")]
 	private float interactableOnAlpha;
 	[SerializeField, Range(0f, 1f), HorizontalGroup("controlInteractable"), LabelText("Off Alpha")]
 	private float interactableOffAlpha;
 
-	[SerializeField]
-	private bool controlBlocksRaycasts;
-	[SerializeField, Range(0f, 1f), HorizontalGroup("controlBlocksRaycasts", VisibleIf = "@controlBlocksRaycasts"), LabelText("On Alpha")]
+	[SerializeField, LabelText("Blocks Raycasts"), EnumToggleButtons]
+	public ControlMode ControlBlocksRaycastsMode;
+	private bool controlBlocksRaycasts => ControlBlocksRaycastsMode != ControlMode.None;
+	private bool customControlBlocksRaycasts => ControlBlocksRaycastsMode == ControlMode.Custom;
+	[SerializeField, Range(0f, 1f), HorizontalGroup("controlBlocksRaycasts", VisibleIf = "@customControlBlocksRaycasts"), LabelText("On Alpha")]
 	private float blocksRaycastsOnAlpha;
 	[SerializeField, Range(0f, 1f), HorizontalGroup("controlBlocksRaycasts"), LabelText("Off Alpha")]
 	private float blocksRaycastsOffAlpha;
@@ -134,13 +138,37 @@ public class CanvasGroupUI : PanelItemComponent, IShowHideAsync
 		bool isIncreasing = delta > 0;
 		if (controlInteractable)
 		{
-			if (isIncreasing) ThisCanvasGroup.interactable = alpha >= interactableOnAlpha;
-			else ThisCanvasGroup.interactable = alpha > interactableOffAlpha;
+			if (isIncreasing) ThisCanvasGroup.interactable = alpha >= ControlInteractableMode switch
+            {
+                ControlMode.ZeroSwitch => 0,
+                ControlMode.OneSwitch => 1,
+                ControlMode.Custom => interactableOnAlpha,
+				_ => 1,
+            };
+			else ThisCanvasGroup.interactable = alpha > ControlInteractableMode switch
+			{
+				ControlMode.ZeroSwitch => 0,
+				ControlMode.OneSwitch => 1,
+				ControlMode.Custom => interactableOffAlpha,
+				_ => 1,
+			}; ;
 		}
 		if (controlBlocksRaycasts)
 		{
-			if (isIncreasing) ThisCanvasGroup.blocksRaycasts = alpha >= blocksRaycastsOnAlpha;
-			else ThisCanvasGroup.blocksRaycasts = alpha > blocksRaycastsOffAlpha;
+			if (isIncreasing) ThisCanvasGroup.blocksRaycasts = alpha >= ControlBlocksRaycastsMode switch
+			{
+				ControlMode.ZeroSwitch => 0,
+				ControlMode.OneSwitch => 1,
+				ControlMode.Custom => blocksRaycastsOnAlpha,
+				_ => 1,
+			}; 
+			else ThisCanvasGroup.blocksRaycasts = alpha > ControlBlocksRaycastsMode switch
+			{
+				ControlMode.ZeroSwitch => 0,
+				ControlMode.OneSwitch => 1,
+				ControlMode.Custom => blocksRaycastsOffAlpha,
+				_ => 1,
+			};
 		}
 	}
 }

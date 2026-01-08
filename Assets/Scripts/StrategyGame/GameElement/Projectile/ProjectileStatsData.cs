@@ -24,13 +24,13 @@ public record ProjectileStatsData // ProfileStats
 	[BoxGroup("Movement")]
 	[LabelText("이동 시작 속도"), SerializeField]
 	private float moveStartSpeed = 10f;
-	[ToggleGroup("isShiftSpeed", GroupID = "Movement/T", ToggleGroupTitle = "가속 여부"), SerializeField]
+	[ToggleGroup("isShiftSpeed", GroupID = "Movement/TResult", ToggleGroupTitle = "가속 여부"), SerializeField]
 	private bool isShiftSpeed = false;
-	[ToggleGroup("isShiftSpeed",GroupID = "Movement/T"), LabelText("최대 속도"), SerializeField]
+	[ToggleGroup("isShiftSpeed",GroupID = "Movement/TResult"), LabelText("최대 속도"), SerializeField]
 	private float moveMaxSpeed = 20f;
-	[ToggleGroup("isShiftSpeed",GroupID = "Movement/T"), LabelText("속도 커브"), SerializeField]
+	[ToggleGroup("isShiftSpeed",GroupID = "Movement/TResult"), LabelText("속도 커브"), SerializeField]
 	private AnimationCurve moveSpeedCurve = AnimationCurve.Linear(0,0,1,1);
-	[ToggleGroup("isShiftSpeed",GroupID = "Movement/T"), LabelText("최대 속도 도달 시간"), SerializeField]
+	[ToggleGroup("isShiftSpeed",GroupID = "Movement/TResult"), LabelText("최대 속도 도달 시간"), SerializeField]
 	private float timeFromStartToMaxSpeed = 1f;
 
 	[ToggleGroup("homingEnabled", GroupID = "Movement/H", ToggleGroupTitle ="유도 여부"), SerializeField]

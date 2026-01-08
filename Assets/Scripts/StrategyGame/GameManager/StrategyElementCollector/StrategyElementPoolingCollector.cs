@@ -23,11 +23,11 @@ namespace StrategyManagerModule
 			if (!typeof(IStrategyPoolingElement).IsAssignableFrom(type))
 				throw new NotSupportedException($"{type.FullName} 타입은 IStrategyPoolingElement 인터페이스를 구현하지 않았습니다.");
 
-			// PoolElementList<T> 생성
+			// PoolElementList<TResult> 생성
 			Type listType = typeof(PoolElementList<>).MakeGenericType(type);
 			object list = Activator.CreateInstance(listType, capacity);
 
-			// PoolingElementStore<T> 생성
+			// PoolingElementStore<TResult> 생성
 			Type storeType = typeof(PoolingElementStore<>).MakeGenericType(type);
 			IElementStore store = Activator.CreateInstance(storeType, prefabObject, list) as IElementStore;
 

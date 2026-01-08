@@ -111,7 +111,7 @@ public static class StrategyElementFactory
 
 		var sector = StrategyManager.Collector.Find<SectorObject>(visiteSectorID);
 		if (sector.IsNullRef()) return null;
-		return Instantiate(sector, new SpawnTroopsInfo(factionID, null), teamName);
+		return Instantiate(sector, new SpawnTroopsInfo(factionID, new (UnitKey key, int count)[0]), teamName);
 	}
 	public static OperationObject Instantiate(SectorObject sector, in SpawnTroopsInfo spawnTroopsInfo, string teamName = "")
 	{

@@ -11,7 +11,7 @@ namespace StrategyManagerModule
 	/// StrategyElementCollector: 외부에 노출되는 API. 
 	/// 내부 구현은 IElementStore 들에 위임한다. 
 	/// - 타입을 Register 해서 사용한다. (DIP: 등록은 외부 조립 코드에서)
-	/// - 기본적으로 Register<T>()는 BaseList<T> 또는 ElementList<T>를 자동 선택한다.
+	/// - 기본적으로 Register<TResult>()는 BaseList<TResult> 또는 ElementList<TResult>를 자동 선택한다.
 	/// </summary>
 	/// 
 	/// --------------------------
@@ -51,8 +51,8 @@ namespace StrategyManagerModule
 
 			// ----------------------------------------------------------
 			// 1) 타입별로 사용할 리스트 타입을 결정한다.
-			//    IStrategyElement 를 구현했다면 ElementList<T> 를,
-			//    아니라면 BaseList<T> 를 사용한다.
+			//    IStrategyElement 를 구현했다면 ElementList<TResult> 를,
+			//    아니라면 BaseList<TResult> 를 사용한다.
 			// ----------------------------------------------------------
 			Type listType = typeof(IStrategyElement).IsAssignableFrom(type) 
 				? listType = typeof(ElementList<>).MakeGenericType(type)
@@ -62,9 +62,9 @@ namespace StrategyManagerModule
 			object listInstance = Activator.CreateInstance(listType, capacity);
 
 			// ----------------------------------------------------------
-			// 2) ElementStore<T> 생성
-			//    ElementStore<T> 생성자의 시그니처는
-			//        (IList<T> list)
+			// 2) ElementStore<TResult> 생성
+			//    ElementStore<TResult> 생성자의 시그니처는
+			//        (IList<TResult> list)
 			//    형태라고 가정하고 리스트 인스턴스를 넘긴다.
 			// ----------------------------------------------------------
 			Type storeType = typeof(ElementStore<>).MakeGenericType(type);
@@ -124,7 +124,7 @@ namespace StrategyManagerModule
 		public bool IsRegistered<T>() => IsRegistered(typeof(T));
 		private bool IsRegistered(Type type) => stores.ContainsKey(type);
 
-		/// <summary>타입의 BaseList<T> 얻기(등록되어 있어야 함)</summary>
+		/// <summary>타입의 BaseList<TResult> 얻기(등록되어 있어야 함)</summary>
 		public BaseList<T> GetList<T>() where T : class
 		{
 			if (stores.TryGetValue(typeof(T), out var s) && s is IElementStore<T> es)
@@ -208,7 +208,7 @@ namespace StrategyManagerModule
 		}
 
 		/// <summary>
-		/// 이벤트 연결: IStrategyElement 타입이면 IStrategyElement 형식의 핸들러를, 일반 타입이면 T 형식 핸들러를 사용
+		/// 이벤트 연결: IStrategyElement 타입이면 IStrategyElement 형식의 핸들러를, 일반 타입이면 TResult 형식 핸들러를 사용
 		/// invokeForExisting 가 true 이 경우 기존 아이템에 대해 onChangeListener 콜백을 즉시 호출한다.
 		/// </summary>
 		public void AddChangeListener<T>(Action<T, bool> onChange, bool invokeForExisting = true) where T : class
@@ -269,7 +269,7 @@ namespace StrategyManagerModule
 				// kv.Value : IElementStore
 				var store = kv.Value;
 
-				// store는 ElementStore<T>, store.List가 IDisposable(BaseList<T>)이다.
+				// store는 ElementStore<TResult>, store.List가 IDisposable(BaseList<TResult>)이다.
 				var storeType = store.GetType();
 				var listProp = storeType.GetProperty("PoolList");
 				if (listProp == null) continue;

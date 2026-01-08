@@ -334,7 +334,7 @@ namespace StrategyManagerModule
 	}
 
 	/// <summary>
-	/// 기본 ElementStore 구현: ElementList<T> 또는 BaseList<T>를 래핑한다.
+	/// 기본 ElementStore 구현: ElementList<TResult> 또는 BaseList<TResult>를 래핑한다.
 	/// </summary>
 	public class ElementStore<T> : IElementStore<T> where T : class
 	{

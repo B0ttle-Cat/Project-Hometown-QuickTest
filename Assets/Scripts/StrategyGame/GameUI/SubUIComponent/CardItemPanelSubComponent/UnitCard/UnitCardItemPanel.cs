@@ -7,25 +7,9 @@ public class UnitCardItemPanel : CardItemPanelComponent
 
 	public UnitObject CardTarget { get; private set; }
 
-	protected override void OnReleaseUI()
+	protected override void OnAttachUI(ITargetToPanelAPI target)
 	{
-		if (CardTarget.IsNotNullRef())
-		{
-			if (CardTarget is IDurabilityValue durability)
-			{
-				durability.OnChangeDurability -= OnChangeDurability;
-			}
-			CardTarget = null;
-		}
-		if (referrer.IsNotNullRef())
-		{
-
-			referrer = null;
-		}
-	}
-	protected override void OnAttachUI(ITargetToPanelAPI item)
-	{
-		if (item is not UnitObject unitCard) return;
+		if (target is not UnitObject unitCard) return;
 		CardTarget = unitCard;
 		if (CardTarget.IsNullRef()) return;
 
@@ -49,6 +33,22 @@ public class UnitCardItemPanel : CardItemPanelComponent
 		{
 			durability.OnChangeDurability -= OnChangeDurability;
 			durability.OnChangeDurability += OnChangeDurability;
+		}
+	}
+	protected override void OnReleaseUI()
+	{
+		if (CardTarget.IsNotNullRef())
+		{
+			if (CardTarget is IDurabilityValue durability)
+			{
+				durability.OnChangeDurability -= OnChangeDurability;
+			}
+			CardTarget = null;
+		}
+		if (referrer.IsNotNullRef())
+		{
+
+			referrer = null;
 		}
 	}
 

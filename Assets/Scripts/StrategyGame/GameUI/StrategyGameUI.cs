@@ -58,5 +58,9 @@ namespace StrategyManagerModule
 			MainPanelUI.OnHide();
 			MapPanelUI.OnHide();
 		}
+
+        internal void OpenGameSystemMenu()
+        {
+        }
     } 
 }

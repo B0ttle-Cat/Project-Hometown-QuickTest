@@ -19,7 +19,8 @@ namespace StrategyManagerModule
 		}
 		protected override void OnSelected(SectorObject selectItem)
 		{
-			(sectorSelect ??= new ProcessPointingAtSector(this, PointingAtSector)).OnProcess();
+			if (sectorSelect == null) sectorSelect = new ProcessOverrider_PointingAtSector(PointingAtSector);
+			else sectorSelect.ReProcess();
 
 			ThisSelecter.CallSectorSelected(selectItem);
 		}

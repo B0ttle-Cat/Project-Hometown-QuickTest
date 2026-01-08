@@ -1,5 +1,7 @@
 ﻿using System;
 
+using GameUI;
+
 using Sirenix.OdinInspector;
 
 using UnityEditor;
@@ -11,7 +13,7 @@ using static StrategyGamePlayData;
 using Object = UnityEngine.Object;
 
 [CreateAssetMenu(fileName = "ProjectileProfileObject", menuName = "Scriptable Objects/StrategyGame/ProjectileProfileObject")]
-public class UnitProfileObject : ScriptableObject
+public class UnitProfileObject : ScriptableObject, ITargetToPanelAPI
 {
 	[InlineButton("CreatePrefab","New",ShowIf = "@prefab == null")]
 	public GameObject prefab;

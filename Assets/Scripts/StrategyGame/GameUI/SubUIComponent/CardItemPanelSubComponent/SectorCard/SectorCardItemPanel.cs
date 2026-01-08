@@ -65,7 +65,6 @@ public class SectorCardItemPanel : CardItemPanelComponent
 			supplyStats.OnSupplyChange += OnSupplyChange;
 		}
 	}
-
 	private void OnChangeDurability(IDurabilityValue durability)
 	{
 		if (durability.IsNullRef()) return;
@@ -73,7 +72,6 @@ public class SectorCardItemPanel : CardItemPanelComponent
 
 		referrer.SetShildFillAmount(durability.CurrentDurability, durability.MaxDurability);
 	}
-
 	private void OnSupplyChange(ISupplyStats supplyStats)
 	{
 		if (supplyStats.IsNullRef()) return;

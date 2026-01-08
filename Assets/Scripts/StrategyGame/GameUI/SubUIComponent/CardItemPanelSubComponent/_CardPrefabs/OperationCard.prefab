@@ -369,4 +369,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ded935c39b884bb4e9d693e916712052, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OperationCardItemPanel
-  keyPairs: []
