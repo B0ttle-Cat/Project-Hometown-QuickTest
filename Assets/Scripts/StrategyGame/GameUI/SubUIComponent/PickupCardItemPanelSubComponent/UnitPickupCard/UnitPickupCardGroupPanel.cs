@@ -11,7 +11,7 @@ using UnityEngine;
 
 using static StrategyGamePlayData;
 
-public class UnitPickupCardGroupPanel : CardGroupPanelComponent, IShowHideAsync
+public class UnitPickupCardGroupPanel : CardGroupPanelComponent<UnitPickupCardItemPanel>, IShowHideAsync
 {
 	[SerializeField,InlineButton("ResetTextFormat")]
 	private TMP_Text pickUpInfoText;
@@ -69,6 +69,7 @@ public class UnitPickupCardGroupPanel : CardGroupPanelComponent, IShowHideAsync
 			InitObjects(unitProfileList);
 		}
 		AllShow();
+		OnChangePickupCount();
 	}
 	private void OnChangeValue(IStrategyElement element, bool added)
 	{
@@ -130,15 +131,12 @@ public class UnitPickupCardGroupPanel : CardGroupPanelComponent, IShowHideAsync
 		}
 	}
 
-	protected override bool SetPanelObject(CardItemPanelComponent newPanel, ITargetToPanelAPI item)
+	protected override bool SetPanelObject(UnitPickupCardItemPanel newPanel, ITargetToPanelAPI item)
 	{
 		if (base.SetPanelObject(newPanel, item))
 		{
-			if (newPanel is UnitPickupCardItemPanel pickupCard)
-			{
-				pickupCard.OnChangeCount += OnChangePickupCount;
-				return true;
-			}
+			newPanel.OnChangeCount += OnChangePickupCount;
+			return true;
 		}
 		return false;
 	}
@@ -193,5 +191,22 @@ public class UnitPickupCardGroupPanel : CardGroupPanelComponent, IShowHideAsync
 			}
 		}
 		return new SpawnTroopsInfo(factionID, spawnTroopsInfo, costPersonnel, costMaterial, costElectric);
+	}
+
+	internal void SetPickupData(in SpawnTroopsInfo spawnTroopsInfo)
+	{
+		var organizations = spawnTroopsInfo.organizations;
+		int length = organizations.Length;
+
+		for (int i = 0 ; i < length ; i++)
+		{
+			(UnitKey key, int count) = organizations[i];
+
+			int index = Items.FindIndex(i=>i.unitKey == key);
+			UnitPickupCardItemPanel item = Items[index];
+			if (item.IsNullRef()) continue;
+			item.SetData(count);
+		}
+		OnChangePickupCount();
 	}
 }

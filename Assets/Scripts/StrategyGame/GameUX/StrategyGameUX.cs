@@ -138,7 +138,7 @@ namespace StrategyManagerModule
 
         private void Update()
         {
-            if (hashSetProcess == null || hashSetProcess.Count > 0) return;
+            if (hashSetProcess == null || hashSetProcess.Count == 0) return;
             foreach (var item in ProcessList)
             {
                 item.Update();

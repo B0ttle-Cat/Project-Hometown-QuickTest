@@ -207,6 +207,10 @@ namespace StrategyManagerModule
 			{
 				updater?.Start();
 			}
+			foreach ((UpdateLogicSort type, IStrategyUpdater updater) in lateUpdateList)
+			{
+				updater?.Start();
+			}
 		}
 		public void OnDisable()
 		{
@@ -218,6 +222,15 @@ namespace StrategyManagerModule
 				}
 				updateList.Clear();
 				updateList = null;
+			}
+			if (lateUpdateList != null)
+			{
+				foreach ((_, IStrategyUpdater updater) in lateUpdateList)
+				{
+					updater?.Dispose();
+				}
+				lateUpdateList.Clear();
+				lateUpdateList = null;
 			}
 
 			if (tempData != null)
@@ -256,7 +269,6 @@ namespace StrategyManagerModule
 		}
 		private void LateUpdate()
 		{
-			if (ThisTime != null) ThisTime.TimeUpdate();
 			float deltaTime = Time.deltaTime;
 			foreach ((UpdateLogicSort type, IStrategyUpdater updater) in lateUpdateList)
 			{

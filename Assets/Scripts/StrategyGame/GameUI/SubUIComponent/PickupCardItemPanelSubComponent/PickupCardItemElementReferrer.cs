@@ -50,21 +50,19 @@ public class PickupCardItemElementReferrer : MonoBehaviour
 		if (plusButton.IsNotNullRef())
 		{
 			plusButton.onClick.RemoveAllListeners();
-			plusButton.onClick.AddListener(OnPlusButtonClick);
+			plusButton.onClick.AddListener(_OnPlusButtonClick);
 		}
 
 		if (minusButton.IsNotNullRef())
 		{
-			plusButton.onClick.RemoveAllListeners();
-			plusButton.onClick.AddListener(OnPlusButtonClick);
+			minusButton.onClick.RemoveAllListeners();
+			minusButton.onClick.AddListener(_OnMinusButtonClick);
 		}
 
 		if (cardEventTrigger.IsNotNullRef())
 		{
-			cardEventTrigger.RemoveAllListeners(EventTriggerType.PointerEnter);
-			cardEventTrigger.RemoveAllListeners(EventTriggerType.PointerExit);
-			cardEventTrigger.AddListener(EventTriggerType.PointerEnter, OnPointEnterInCard);
-			cardEventTrigger.AddListener(EventTriggerType.PointerExit, OnPointExitInCard);
+			cardEventTrigger.AddListener(EventTriggerType.PointerEnter, _OnPointEnterInCard);
+			cardEventTrigger.AddListener(EventTriggerType.PointerExit, _OnPointExitInCard);
 		}
 	}
 	public void Deinit()
@@ -76,7 +74,7 @@ public class PickupCardItemElementReferrer : MonoBehaviour
 
 		if (minusButton.IsNotNullRef())
 		{
-			plusButton.onClick.RemoveAllListeners();
+			minusButton.onClick.RemoveAllListeners();
 		}
 
 		if (cardEventTrigger.IsNotNullRef())
@@ -85,6 +83,10 @@ public class PickupCardItemElementReferrer : MonoBehaviour
 			cardEventTrigger.RemoveAllListeners(EventTriggerType.PointerExit);
 		}
 	}
+	private void _OnPlusButtonClick() => OnPlusButtonClick.Invoke();
+	private void _OnMinusButtonClick() => OnMinusButtonClick?.Invoke();
+	private void _OnPointEnterInCard(BaseEventData data) => OnPointEnterInCard?.Invoke(data);
+	private void _OnPointExitInCard(BaseEventData data) => OnPointExitInCard?.Invoke(data);
 
 	public void SetTItleText(string text)
 	{

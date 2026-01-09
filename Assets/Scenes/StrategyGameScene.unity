@@ -204,9 +204,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67787c6c02e394f468e1998b97658359, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitCardGroupPanel
-  poolingDataContainer: {fileID: 4796105}
   PanelPrefab: {fileID: 5980830682754211231, guid: be8e9e2cc169223428ce8f62b5617d95, type: 3}
   PanelParent: {fileID: 560685280}
+  poolingDataContainer: {fileID: 4796105}
 --- !u!114 &4796105
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -425,9 +425,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abe0073b977f4194785669f476191d62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StrategySectorCardView
-  poolingDataContainer: {fileID: 58857483}
   PanelPrefab: {fileID: 769253120651724256, guid: ea01ae432f06d5b41859d7ecc4386b23, type: 3}
   PanelParent: {fileID: 44458275}
+  poolingDataContainer: {fileID: 58857483}
 --- !u!114 &58857483
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6089,9 +6089,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbee63441a005744da915de26c70be4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OperationCardGroupPanel
-  poolingDataContainer: {fileID: 721551566}
   PanelPrefab: {fileID: -3986479686907317285, guid: 4cdf249ee6155a84d8b99407b1b9b79b, type: 3}
   PanelParent: {fileID: 1307337658}
+  poolingDataContainer: {fileID: 721551566}
 --- !u!114 &721551568
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8165,7 +8165,7 @@ GameObject:
   - component: {fileID: 947852125}
   - component: {fileID: 947852124}
   m_Layer: 5
-  m_Name: SelectSector Button
+  m_Name: Instance Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8357,9 +8357,9 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 955811203}
   m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
+  m_Alpha: 0
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
 --- !u!114 &955811207
 MonoBehaviour:
@@ -8375,7 +8375,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StrategyMainPanel_OperationCardRoot
   onShowCardGroupButton: {fileID: 559277274}
   onShowPickupButton: {fileID: 5703156812662072161}
-  onInstanceOperationButton: {fileID: 0}
+  onInstanceOperationButton: {fileID: 947852125}
   CardPanel: {fileID: 721551567}
   PickupPanel: {fileID: 1643173479}
   showInstanceOperationGuide: {fileID: 1607882236}
@@ -8854,9 +8854,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ceb92a160b67e254495c3e54304d59db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OperationLabelGroupPanel
-  poolingDataContainer: {fileID: 1036277712}
   PanelPrefab: {fileID: -6143401685498670631, guid: c7a486d73968272418bcdac56b6bed2d, type: 3}
   PanelParent: {fileID: 1036277709}
+  poolingDataContainer: {fileID: 1036277712}
 --- !u!114 &1036277712
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9184,10 +9184,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d782bccc91345064c9b0c71c21e5dd4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StrategyMainTabButtonUI
-  poolingDataContainer: {fileID: 0}
   PanelPrefab:
     toggle: {fileID: 0}
   PanelParent: {fileID: 0}
+  poolingDataContainer: {fileID: 0}
   toggleGroup: {fileID: 1081975520}
   canvasGroupUI: {fileID: 1081975522}
   initItemPairs:
@@ -9840,8 +9840,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f8c656feedb494449ba80bb4dd59e94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StrategyMainInfoView
-  poolingDataContainer: {fileID: 0}
   PanelParent: {fileID: 0}
+  poolingDataContainer: {fileID: 0}
   ShowMainScenario: 1
   mainScenario:
     thisRect: {fileID: 1401314288}
@@ -11452,9 +11452,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae5a9cb0509c0714791bea01a3f6291d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitLabelGroupPanel
-  poolingDataContainer: {fileID: 1623927635}
   PanelPrefab: {fileID: -1730813350621981111, guid: 6b2c095af3e60bc48a9e690c1663c47e, type: 3}
   PanelParent: {fileID: 1623927634}
+  poolingDataContainer: {fileID: 1623927635}
 --- !u!1 &1626657480
 GameObject:
   m_ObjectHideFlags: 0
@@ -11583,9 +11583,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6ddb02532c90454282781958333868c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitPickupCardGroupPanel
-  poolingDataContainer: {fileID: 0}
   PanelPrefab: {fileID: -4860156986906012337, guid: 8931d61ea4f75964282f42d89a30e2b3, type: 3}
   PanelParent: {fileID: 1987593882}
+  poolingDataContainer: {fileID: 0}
   pickUpInfoText: {fileID: 1422986000}
   pickInfoTextFormat: "<line-height=0%><align=left>\uBC30\uCE58\uC778\uC6D0<br><line-height=120%><align=right>{0}\r\n<size=80%><line-height=100%><align=left>\uC0DD\uC0B0\uBE44\uC6A9\r\n<line-height=0%><align=left>\uC778\uB825<br><line-height=100%><align=right>{1}\r\n<line-height=0%><align=left>\uC7AC\uB8CC<br><line-height=100%><align=right>{2}\r\n<line-height=0%><align=left>\uC804\uB825<br><line-height=100%><align=right>{3}"
 --- !u!114 &1643173480
@@ -13448,9 +13448,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3bbbf18e9e31203478b55893e7ceb931, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SectorLabelGroupPanel
-  poolingDataContainer: {fileID: 1913101967}
   PanelPrefab: {fileID: 1053000799072036036, guid: 0f3aebc36de4bf440a219b216a1af171, type: 3}
   PanelParent: {fileID: 1913101966}
+  poolingDataContainer: {fileID: 1913101967}
   uiCamera: {fileID: 0}
 --- !u!1001 &1959845627
 PrefabInstance:

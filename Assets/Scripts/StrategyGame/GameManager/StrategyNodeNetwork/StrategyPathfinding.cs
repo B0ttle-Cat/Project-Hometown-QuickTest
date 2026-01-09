@@ -222,17 +222,26 @@ namespace StrategyManagerModule
 			{
 				ActiveAstarPath.AddWorkItem(() =>
 				{
-					if (thisPointGraph != null)
+					try
 					{
-						thisPointGraph.Clear();
-						AstarPath.active.data.RemoveGraph(thisPointGraph);
-						thisPointGraph = null;
-					}
+						if (!AstarPath.active.isActiveAndEnabled) return;
 
-					if (thisRecastGraph != null)
+						if (thisPointGraph != null)
+						{
+							thisPointGraph.Clear();
+							AstarPath.active.data.RemoveGraph(thisPointGraph);
+							thisPointGraph = null;
+						}
+
+						if (thisRecastGraph != null)
+						{
+							AstarPath.active.data.RemoveGraph(thisRecastGraph);
+							thisRecastGraph = null;
+						}
+					}
+					catch (Exception ex)
 					{
-						AstarPath.active.data.RemoveGraph(thisRecastGraph);
-						thisRecastGraph = null;
+						Debug.LogException(ex);
 					}
 				});
 				ActiveAstarPath.FlushWorkItems();
@@ -271,7 +280,7 @@ namespace StrategyManagerModule
 				{
 					if (findingNode.Add(node))
 					{
-						if(!result.ContainsKey(depthCount))
+						if (!result.ContainsKey(depthCount))
 						{
 							result.Add(depthCount, new HashSet<SectorObject>());
 						}
@@ -291,13 +300,13 @@ namespace StrategyManagerModule
 			}
 		}
 
-        internal Vector3 ScreenToWorldPoint(Vector2 mousePoint)
-        {
-			if(Physics.Raycast(StrategyManager.MainCamera.ScreenPointToRay(mousePoint), out var hit, Mathf.Infinity, groundLayerMask))
+		internal Vector3 ScreenToWorldPoint(Vector2 mousePoint)
+		{
+			if (Physics.Raycast(StrategyManager.MainCamera.ScreenPointToRay(mousePoint), out var hit, Mathf.Infinity, groundLayerMask))
 			{
 				return hit.point;
 			}
 			return Vector3.positiveInfinity;
 		}
-    }
+	}
 }

@@ -23,7 +23,6 @@ namespace GameUI
 	{
 
 		#region IPanelGroup<T>
-
 		[HideIf("@true")]
 		private List<T> items;
 		[ShowInInspector]
@@ -131,18 +130,25 @@ namespace GameUI
 		}
 
 		#region PoolingDataContainer
-		protected bool PoolingUIObject
-			=> PoolingData.IsNotNullRef()
-			&& PanelPrefab.IsNotNullRef()
-			&& PanelPrefab is PanelItemComponent
-			&& PanelPrefab is ISetTargetPanel and T;
+
 
 		[SerializeField]
-		private PoolingDataContainer poolingDataContainer;
-		[SerializeField]
+		[InfoBox("@TypeErrorMessage", VisibleIf ="NotPrefabIsUsable", InfoMessageType = InfoMessageType.Error)]
 		protected T PanelPrefab;
 		[SerializeField]
 		protected RectTransform PanelParent;
+		private bool PrefabIsUsable => PanelPrefab.IsNotNullRef() && PanelPrefab is PanelItemComponent and ISetTargetPanel and T;
+#if UNITY_EDITOR
+		private bool NotPrefabIsUsable => !PrefabIsUsable;
+		private string TypeErrorMessage =>
+			PanelPrefab.IsNullRef() ? "PanelPrefab 이 Null 입니다. 정상동작을 위해 값을 세팅해 주세요." :
+			$"사용 가능한 컴퍼넌트를 가지고 있지 않습니다.\n\"{nameof(T)}\"티압을 상속받은 컴퍼넌트가 필요합니다.";
+		private bool ShowPoolingField => PrefabIsUsable && PanelParent.IsNotNullRef();
+#endif
+
+		[SerializeField, ShowIf("ShowPoolingField")]
+		[Tooltip("선택사항: PanelPrefab를 풀링하여 사용하고 싶은 경우 할당할 것.")]
+		private PoolingDataContainer poolingDataContainer;
 		public PoolingDataContainer PoolingData
 		{
 			get
@@ -154,6 +160,7 @@ namespace GameUI
 				return poolingDataContainer;
 			}
 		}
+		protected bool PoolingUIObject => PoolingData.IsNotNullRef() && PrefabIsUsable;
 
 		[ShowInInspector, ShowIf("PoolingUIObject")]
 		[HideInEditorMode]
@@ -193,7 +200,7 @@ namespace GameUI
 		}
 		internal override void AddItem(ITargetToPanelAPI item, bool addLast = true)
 		{
-			if (!PoolingUIObject) return;
+			if (!PrefabIsUsable) return;
 			if (PanelPrefab is not PanelItemComponent PanelComponentPrefab) return;
 
 			if (item.IsNullRef() || Contains(item)) return;
@@ -248,7 +255,7 @@ namespace GameUI
 		}
 		internal override bool RemoveItem(ITargetToPanelAPI item)
 		{
-			if (!PoolingUIObject) return false;
+			if (!PrefabIsUsable) return false;
 			if (item.IsNullRef()) return false;
 
 			int length = Count;

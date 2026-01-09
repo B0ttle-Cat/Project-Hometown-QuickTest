@@ -1,6 +1,6 @@
 ﻿using GameUI;
 
-public class UnitCardGroupPanel : CardGroupPanelComponent, IShowHideAsync
+public class UnitCardGroupPanel : CardGroupPanelComponent<UnitCardItemPanel>, IShowHideAsync
 {
 	void IShowHide.EndedHide()
 	{

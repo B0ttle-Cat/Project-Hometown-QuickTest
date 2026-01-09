@@ -1,10 +1,11 @@
+﻿using System.Collections.Generic;
+
+using Pathfinding.Drawing;
+
+using Unity.Mathematics;
+
 using UnityEngine;
 using UnityEngine.Profiling;
-using Unity.Jobs;
-using UnityEngine.Assertions;
-using System.Collections.Generic;
-using Pathfinding.Drawing;
-using Unity.Mathematics;
 
 namespace Pathfinding {
 	/// <summary>

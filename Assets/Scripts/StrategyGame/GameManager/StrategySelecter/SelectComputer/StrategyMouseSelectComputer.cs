@@ -126,7 +126,6 @@ namespace StrategyManagerModule
 			LeftMouseUpdate(leftNextSelecterState);
 			RightMouseUpdate(rightNextSelecterState);
 		}
-
 		private void LeftMouseUpdate(MouseState nextSelecterState)
 		{
 			if (nextSelecterState != leftSelecterState)
@@ -396,6 +395,7 @@ namespace StrategyManagerModule
 				{
 					ClearSelect();
 				}
+				if (mouseDownTarget.IsNullRef()) return;
 
 				if (mouseDownTarget != GetTargetUnderMouse(InputData.mouseCurrPosition)) return;
 
@@ -543,6 +543,8 @@ namespace StrategyManagerModule
 			}
 			public override void Released()
 			{
+				if (mouseDownTarget.IsNullRef()) return;
+
 				if (mouseDownTarget != GetTargetUnderMouse(InputData.mouseCurrPosition)) return;
 
 				OnSelect(mouseDownTarget);

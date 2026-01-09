@@ -57,21 +57,41 @@ public class UnitPickupCardItemPanel : CardItemPanelComponent
 
 		OnChangeCount = null;
 	}
+	public void SetData(int pickupCount)
+	{
+		this.pickupCount = pickupCount;
+		referrer.SetCountText(pickupCount);
+		referrer.OnShowCountRect(pickupCount > 0);
+	}
 	private void Referrer_OnPlusButtonClick()
 	{
+		if (referrer.IsNullRef()) return;
+
 		pickupCount++;
+
+		referrer.SetCountText(pickupCount);
 		OnChangeCount?.Invoke();
 	}
 
 	private void Referrer_OnMinusButtonClick()
 	{
+		if (referrer.IsNullRef()) return;
+
 		pickupCount--;
+		if (pickupCount < 0)
+		{
+			pickupCount = 0;
+			return;
+		}
+
+		referrer.SetCountText(pickupCount);
 		OnChangeCount?.Invoke();
 	}
 	private void Referrer_OnPointEnterInCard(UnityEngine.EventSystems.BaseEventData arg0)
 	{
 		if (referrer.IsNullRef()) return;
 
+		referrer.SetCountText(pickupCount);
 		referrer.OnShowCountRect(true);
 	}
 	private void Referrer_OnPointExitInCard(UnityEngine.EventSystems.BaseEventData arg0)

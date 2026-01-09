@@ -195,7 +195,7 @@ namespace StrategyManagerModule
 					coll.OnDeselected(selectable);
 				}
 			}
-			selectCollectors.Clear();
+			selectItemList.Clear();
 		}
 		internal void OnPointingTarget(ISelectable selectable)
 		{

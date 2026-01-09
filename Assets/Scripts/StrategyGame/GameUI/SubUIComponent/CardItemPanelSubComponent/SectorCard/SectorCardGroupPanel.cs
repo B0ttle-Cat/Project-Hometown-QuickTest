@@ -1,7 +1,7 @@
 ﻿using GameUI;
 
 
-public class SectorCardGroupPanel : CardGroupPanelComponent, IShowHideAsync
+public class SectorCardGroupPanel : CardGroupPanelComponent<SectorCardItemPanel>, IShowHideAsync
 {
 	void IShowHide.EndedHide()
 	{

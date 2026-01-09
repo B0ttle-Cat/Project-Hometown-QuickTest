@@ -3,7 +3,8 @@
 
 namespace GameUI
 {
-	public abstract class CardGroupPanelComponent : PanelGroupComponent<CardItemPanelComponent>, IShowHideAsync
+	public abstract class CardGroupPanelComponent<T> : PanelGroupComponent<T>, IShowHideAsync
+		where T : CardItemPanelComponent
 	{
 		protected void AllHideAndClear()
 		{
@@ -22,21 +23,21 @@ namespace GameUI
 				this[i].ThisShowHide.OnShow();
 			}
 		}
-		public override void Add(CardItemPanelComponent item)
+		public override void Add(T item)
 		{
 			if (item.IsNullRef()) return;
 			base.Add(item);
 			if(item is ISetTargetPanel setTargetPanel)
 				setTargetPanel.OnUpdateUI();
 		}
-		public override void Insert(int index, CardItemPanelComponent item)
+		public override void Insert(int index, T item)
 		{
 			if (item.IsNullRef()) return;
 			base.Insert(index, item);
 			if (item is ISetTargetPanel setTargetPanel)
 				setTargetPanel.OnUpdateUI();
 		}
-		public override bool Remove(CardItemPanelComponent item)
+		public override bool Remove(T item)
 		{
 			if (item.IsNullRef()) return false;
 			bool result = base.Remove(item);

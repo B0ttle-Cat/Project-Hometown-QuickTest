@@ -1,5 +1,7 @@
 ﻿using System;
 
+using Sirenix.OdinInspector;
+
 using UnityEngine;
 
 namespace GameUI
@@ -13,6 +15,7 @@ namespace GameUI
 		RectTransform IPanelItem.ThisRect => rectTransform.IsNotNullRef() ? rectTransform : rectTransform = GetComponent<RectTransform>();
 		GameUIController IPanelItem.RootUI => root.IsNotNullRef() ? root : root = ThisPanel.FindRoot();
 		public IShowHide ThisShowHide => this;
+		[ShowInInspector,PropertyOrder(-9999), ReadOnly, HideInEditorMode]
 		bool IShowHide.IsShow { get; set; } = false;
 
 

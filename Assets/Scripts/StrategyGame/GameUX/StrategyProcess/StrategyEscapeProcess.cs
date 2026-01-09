@@ -23,9 +23,7 @@ namespace StrategyManagerModule
 				OnPressedEscapeKey();
 			}
 		}
-	}
-	public partial class StrategyEscapeProcess : IStrategyProcess
-	{
+
 		private void OnPressedEscapeKey()
 		{
 			if (ThisProcess.TryGetProcessOverrider<ProcessOverrider_OnPressedEscapeKey>(out var hack))

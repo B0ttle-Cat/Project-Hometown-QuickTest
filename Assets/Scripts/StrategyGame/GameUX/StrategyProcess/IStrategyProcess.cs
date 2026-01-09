@@ -32,7 +32,7 @@ namespace StrategyManagerModule
 			int length = OverriderList == null ? 0 : OverriderList.Count;
 			for (int i = length - 1 ; i >= 0 ; i--)
 			{
-				var item = OverriderList[^i];
+				var item = OverriderList[i];
 				if (item.IsNullRef()) continue;
 				if (item is not T tItem) continue;
 				processOverrider = tItem;

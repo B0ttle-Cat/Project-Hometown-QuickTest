@@ -29,8 +29,18 @@ public partial class OperationObject : MonoBehaviour  // Main
 	}
 	internal void Init(int factionID, string teamName)
 	{
+		if (FactionID >= 0 && factionID < 0)
+		{
+			Faction.RemoveOperation(this);
+		}
+
 		this.factionID = factionID;
 		this.teamName = teamName;
+
+		if (FactionID >= 0)
+		{
+			Faction.AddOperation(this);
+		}
 	}
 	public void Init(in List<int> unitList)
 	{
@@ -48,9 +58,10 @@ public partial class OperationObject : MonoBehaviour  // Main
 	partial void InitNearby();
 	public void DeInit()
 	{
-		var faction = FactionAPI.ID2Faction(FactionID);
-		faction.RemoveOperation(this);
-
+		if (FactionID >= 0)
+		{
+			Faction.RemoveOperation(this);
+		}
 		DeInitOrganization();
 		DeselectSelf();
 		DeinitFSM();
@@ -118,31 +129,19 @@ public partial class OperationObject : IStrategyMonoElement, IStrategyElementDes
 	int IStrategyElement.ID { get => operationID; set => operationID = value; }
 	void IStrategyElement.InStrategyCollector()
 	{
-		if (FactionID >= 0)
-		{
-			Faction.AddOperation(this);
-		}
+	
 	}
 	void IStrategyElement.OutStrategyCollector()
 	{
-		if (FactionID >= 0)
-		{
-			Faction.RemoveOperation(this);
-		}
+
 	}
 	void IStrategyStartGame.OnStartGame()
 	{
-		if (FactionID >= 0)
-		{
-			Faction.AddOperation(this);
-		}
+
 	}
 	void IStrategyStartGame.OnStopGame()
 	{
-		if (FactionID >= 0)
-		{
-			Faction.RemoveOperation(this);
-		}
+
 	}
 
 	public IStrategyElementDestroyer ThisDestroyer => this;

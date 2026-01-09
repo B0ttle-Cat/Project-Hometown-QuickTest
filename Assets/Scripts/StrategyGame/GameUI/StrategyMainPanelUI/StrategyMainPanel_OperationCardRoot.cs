@@ -31,6 +31,10 @@ public class StrategyMainPanel_OperationCardRoot : PanelItemComponent, IShowHide
 		onShowPickupButton.onClick.RemoveAllListeners();
 		onInstanceOperationButton.onClick.RemoveAllListeners();
 
+		SowCardGroupView(false);
+		ShowPickupView(false);
+		ShowInstanceGuideView(false);
+
 		awaitInstanceOperation = false;
 	}
 	void IShowHide.StartShow()
@@ -62,11 +66,13 @@ public class StrategyMainPanel_OperationCardRoot : PanelItemComponent, IShowHide
 	{
 		if (awaitInstanceOperation) return;
 		if (PickupPanel.IsNullRef()) return;
+		SpawnTroopsInfo spawnTroopsInfo = PickupPanel.GetSpawnTroopsInfo();
+		if (spawnTroopsInfo.totalCount == 0) return;
 
 		bool isCancel = true;
 		SowCardGroupView(false);
 		ShowPickupView(false);
-		ShowInstanceGuideView(false);
+		ShowInstanceGuideView(true);
 
 		awaitInstanceOperation = true;
 		{
@@ -80,18 +86,26 @@ public class StrategyMainPanel_OperationCardRoot : PanelItemComponent, IShowHide
 		}
 		awaitInstanceOperation = false;
 
-		if (isCancel) OnShowPickupButton();
-		else OnShowCardGroupButton();
+		if (isCancel)
+		{
+			OnShowPickupButton();
+			PickupPanel.SetPickupData(in spawnTroopsInfo);
+		}
+		else
+		{
+			OnShowCardGroupButton();
+		}
 
 		void OnProcessOverrider_PointingAtSector(SectorObject pointing)
 		{
-			SpawnTroopsInfo spawnTroopsInfo = PickupPanel.GetSpawnTroopsInfo();
-			StrategyElementFactory.Instantiate(pointing, spawnTroopsInfo);
+			if (!awaitInstanceOperation) return;
 			awaitInstanceOperation = false;
+			StrategyElementFactory.Instantiate(pointing, in spawnTroopsInfo);
 			isCancel = false;
 		}
 		void OnProcessOverrider_OnPressedEscapeKey()
 		{
+			if (!awaitInstanceOperation) return;
 			awaitInstanceOperation = false;
 			isCancel = true;
 		}
@@ -128,6 +142,6 @@ public class StrategyMainPanel_OperationCardRoot : PanelItemComponent, IShowHide
 	{
 		if (showInstanceOperationGuide.IsNullRef()) return;
 
-		showInstanceOperationGuide.SetActive(true);
+		showInstanceOperationGuide.SetActive(show);
 	}
 }
