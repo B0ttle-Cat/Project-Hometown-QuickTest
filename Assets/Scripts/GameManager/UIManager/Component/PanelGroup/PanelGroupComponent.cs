@@ -15,11 +15,11 @@ namespace GameUI
 		public abstract void Insert(int index, IPanelItem item);
 		public abstract bool Remove(IPanelItem item);
 		public abstract bool Contains(IPanelItem item);
-		internal abstract void AddItem(ITargetToPanelAPI item, bool addLast = true);
-		internal abstract bool RemoveItem(ITargetToPanelAPI item);
+		internal abstract void AddItem(ITargetToPanelAPI item, RectTransform slot = null);
+		internal abstract bool RemoveItem(ITargetToPanelAPI item, RectTransform slot = null);
 	}
 	public abstract class PanelGroupComponent<T> : PanelGroupComponent, IPanelGroup<T>, IShowHideAsync
-		where T : class , IPanelItem
+		where T : class, IPanelItem
 	{
 
 		#region IPanelGroup<T>
@@ -198,12 +198,14 @@ namespace GameUI
 				return;
 			}
 		}
-		internal override void AddItem(ITargetToPanelAPI item, bool addLast = true)
+		internal override void AddItem(ITargetToPanelAPI item, RectTransform slot = null)
 		{
 			if (!PrefabIsUsable) return;
 			if (PanelPrefab is not PanelItemComponent PanelComponentPrefab) return;
 
 			if (item.IsNullRef() || Contains(item)) return;
+
+			Transform parent = slot.IsNotNullRef() ? slot :  PanelParent.IsNotNullRef() ? PanelParent : transform;
 
 			while (PoolStack != null && PoolStack.Count > 0 && PoolStack.TryPop(out PanelItemComponent pop))
 			{
@@ -211,10 +213,21 @@ namespace GameUI
 				if (pop.IsNullRef()) continue;
 				if (pop is not T tPanel) return;
 				if (pop.ThisPanel.IsNullRef()) continue;
+				pop.gameObject.SetActive(true);
 				var thisRect = pop.ThisPanel.ThisRect;
 				if (thisRect.IsNullRef()) continue;
-				if (addLast) thisRect.transform.SetAsLastSibling();
-				else thisRect.transform.SetAsFirstSibling();
+				if (slot.IsNotNullRef())
+				{
+					thisRect.parent = parent;
+					thisRect.anchoredPosition = Vector2.zero;
+					thisRect.anchorMin = Vector2.zero;
+					thisRect.anchorMax = Vector2.one;
+					thisRect.sizeDelta = Vector2.zero;
+					thisRect.pivot = Vector2.one * 0.5f;
+				}
+				//Transform popSiblingTarget = slot.IsNotNullRef() ? slot : thisRect;
+				//if (addLast) popSiblingTarget.SetAsLastSibling();
+				//else popSiblingTarget.SetAsFirstSibling();
 				if (pop is ISetTargetPanel setPop && setPop.SetTarget(item))
 				{
 					Add(tPanel);
@@ -226,9 +239,18 @@ namespace GameUI
 				return;
 			}
 
-			var newPanel = Instantiate(PanelComponentPrefab, PanelParent.IsNullRef() ? transform : PanelParent);
+			var newPanel = Instantiate(PanelComponentPrefab, parent);
 			if (newPanel.IsNullRef()) return;
-
+			if (slot.IsNotNullRef())
+			{
+				var thisRect = newPanel.ThisPanel.ThisRect;
+				thisRect.parent = parent;
+				thisRect.anchoredPosition = Vector2.zero;
+				thisRect.anchorMin = Vector2.zero;
+				thisRect.anchorMax = Vector2.one;
+				thisRect.sizeDelta = Vector2.zero;
+				thisRect.pivot = Vector2.one * 0.5f;
+			}
 			if (newPanel is not T tNewPanel)
 			{
 				GameObject.Destroy(newPanel.gameObject);
@@ -242,18 +264,18 @@ namespace GameUI
 				return;
 			}
 
-			if (addLast)
-			{
-				newPanel.transform.SetAsLastSibling();
-				Add(tNewPanel);
-			}
-			else
-			{
-				newPanel.transform.SetAsFirstSibling();
-				Insert(0, tNewPanel);
-			}
+			//if (addLast)
+			//{
+			//	siblingTarget.SetAsLastSibling();
+			Add(tNewPanel);
+			//}
+			//else
+			//{
+			//	siblingTarget.SetAsFirstSibling();
+			//	Insert(0, tNewPanel);
+			//}
 		}
-		internal override bool RemoveItem(ITargetToPanelAPI item)
+		internal override bool RemoveItem(ITargetToPanelAPI item, RectTransform slot = null)
 		{
 			if (!PrefabIsUsable) return false;
 			if (item.IsNullRef()) return false;
@@ -261,26 +283,31 @@ namespace GameUI
 			int length = Count;
 			for (int i = 0 ; i < length ; i++)
 			{
-				if (Contains(item))
+				var panel = this[i];
+				if (panel.IsNullRef()) continue;
+				if (panel is not ISetTargetPanel setPanel) continue;
+				if (setPanel.Target != item) continue;
+			
+				if (panel is PanelItemComponent panelComponent)
 				{
-					var panel = this[i];
-					if(panel is PanelItemComponent panelComponent)
+					if (Remove(panel))
 					{
-						if (Remove(panel))
-						{
-							PoolStack ??= new Stack<PanelItemComponent>();
-							PoolStack.Push(panelComponent);
-						}
-						else
-						{
-							GameObject.Destroy(panelComponent.gameObject);	
-						}
+						PoolStack ??= new Stack<PanelItemComponent>();
+						PoolStack.Push(panelComponent);
+						panelComponent.transform.parent = transform;
+						panelComponent.gameObject.SetActive(false);
 					}
-					else 
+					else
 					{
-						Remove(panel);
+						GameObject.Destroy(panelComponent.gameObject);
 					}
 				}
+				else
+				{
+					Remove(panel);
+				}
+				length = Count;
+				i--;
 			}
 			return false;
 		}
@@ -317,7 +344,7 @@ namespace GameUI
 				GameObject.Destroy(item.gameObject);
 			}
 			PoolStack.Clear();
-			if(poolingDataContainer != null)
+			if (poolingDataContainer != null)
 			{
 				poolingDataContainer.ClearData();
 			}

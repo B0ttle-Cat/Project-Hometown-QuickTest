@@ -56,17 +56,17 @@ namespace GameUI
 		}
 
 
-		protected void AddItem(ITargetToPanelAPI target, bool addLast = true)
+		protected void AddItem(ITargetToPanelAPI target, RectTransform slot = null)
 		{
 			if (target.IsNullRef()) return;
 			if (targetComponent.IsNullRef()) return;
-			targetComponent.AddItem(target, addLast);
+			targetComponent.AddItem(target, slot);
 		}
-		protected void RemoveItem(ITargetToPanelAPI target)
+		protected void RemoveItem(ITargetToPanelAPI target, RectTransform slot = null)
 		{
 			if (target.IsNullRef()) return;
 			if (targetComponent.IsNullRef()) return;
-			targetComponent.RemoveItem(target);
+			targetComponent.RemoveItem(target, slot);
 		}
 	}
 }

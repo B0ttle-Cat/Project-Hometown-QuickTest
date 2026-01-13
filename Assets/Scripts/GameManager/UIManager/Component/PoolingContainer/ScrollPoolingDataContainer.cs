@@ -9,275 +9,179 @@ namespace GameUI
 {
 	public class ScrollPoolingDataContainer : PoolingDataContainer
 	{
+		[Title("References")]
 		[SerializeField, Required]
-		private RectTransform poolItemRect;
+		private RectTransform poolItemRect; // 슬롯의 크기 및 프리팹 참조용
 
-
-		[SerializeField, ReadOnly, Required]
+		[SerializeField, ReadOnly]
 		private ScrollRect scrollRect;
-		[SerializeField, ReadOnly, Required]
+		[SerializeField, ReadOnly]
+		private RectTransform viewport;
+		[SerializeField, ReadOnly]
 		private RectTransform content;
-		[SerializeField, ReadOnly, Required]
-		private LayoutGroup layoutGroup;
 
-		[Header("Settings")]
-		[SerializeField]
-		private int viewBufferCount = 2;
+		[Title("Settings")]
+		[SerializeField, Min(0)]
+		private int viewBufferCount = 1;
 
-		[SerializeField,ReadOnly,HorizontalGroup]
-		private int minIndex = -1;
-		[SerializeField,ReadOnly,HorizontalGroup]
-		private int maxIndex = -1;
+		// 실제 데이터를 가진 아이템 관리 (Index -> Data)
+		private Dictionary<int, ITargetToPanelAPI> activeItems = new Dictionary<int, ITargetToPanelAPI>();
 
-		public ScrollRect ScrollRect
-		{
-			get
-			{
-				if (scrollRect.IsNullRef())
-					scrollRect = GetComponentInChildren<ScrollRect>(true);
-				return scrollRect;
-			}
-		}
-		public RectTransform Content
-		{
-			get
-			{
-				if (content.IsNullRef())
-				{
-					scrollRect = ScrollRect;
-					if (scrollRect.IsNullRef()) return null;
-					content = ScrollRect.content;
-				}
-				return content;
-			}
-		}
-		public LayoutGroup LayoutGroup
-		{
-			get
-			{
-				if (layoutGroup.IsNullRef())
-				{
-					content = Content;
-					if (content.IsNullRef()) return null;
-					layoutGroup = content.GetComponentInChildren<LayoutGroup>(true);
-				}
-				return layoutGroup;
-			}
-		}
-
-		private void Reset()
-		{
-			OnValidate();
-		}
+		// 모든 데이터에 대응하는 빈 슬롯 리스트
+		private List<RectTransform> proxySlots = new List<RectTransform>();
 
 		protected override void OnValidate()
 		{
-			scrollRect = ScrollRect;
-			content = Content;
 			base.OnValidate();
-			layoutGroup = LayoutGroup;
+			InitializeReferences();
 		}
 
 		protected override void Awake()
 		{
 			base.Awake();
+			InitializeReferences();
 			if (scrollRect != null)
 			{
 				scrollRect.onValueChanged.AddListener(OnScrollValueChanged);
 			}
 		}
 
-		public override void InitData(IEnumerable<ITargetToPanelAPI> cardElements) 
+		private void InitializeReferences()
 		{
+			if (scrollRect == null) scrollRect = GetComponentInChildren<ScrollRect>(true);
+			if (scrollRect != null)
+			{
+				viewport = scrollRect.viewport;
+				content = scrollRect.content;
+			}
+		}
+
+		public override void InitData(IEnumerable<ITargetToPanelAPI> elements)
+		{
+			// 1. 기존 데이터 및 슬롯 제거
+			ClearData();
+
+			// 2. 데이터 리스트 확보
+			dataList.AddRange(elements);
+
+			// 3. 데이터 개수만큼 빈 슬롯(Proxy Slot) 생성
+			CreateProxySlots();
+
+			// 4. 초기 화면 갱신
+			Refresh();
+		}
+
+		private void CreateProxySlots()
+		{
+			if (content == null || poolItemRect == null) return;
+
+			for (int i = 0 ; i < dataList.Count ; i++)
+			{
+				GameObject slotGo = new GameObject($"Slot_{i}", typeof(RectTransform));
+				RectTransform slotRect = slotGo.GetComponent<RectTransform>();
+
+				slotRect.SetParent(content, false);
+				slotRect.localScale = Vector3.one;
+				// 참조용 프리팹과 동일한 크기 설정
+				slotRect.sizeDelta = poolItemRect.sizeDelta;
+
+				proxySlots.Add(slotRect);
+			}
+
+			// LayoutGroup이 새 자식들을 인식하도록 강제 갱신
+			LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+		}
+
+		public override void ClearData()
+		{
+			// 실제 아이템 제거
+			foreach (var kvp in activeItems)
+			{
+				RemoveItem(kvp.Value, proxySlots[kvp.Key]);
+			}
+			activeItems.Clear();
+
+			// 슬롯 오브젝트 파괴
+			foreach (var slot in proxySlots)
+			{
+				if (slot != null) Destroy(slot.gameObject);
+			}
+			proxySlots.Clear();
 			dataList.Clear();
-			foreach (var item in cardElements)
-			{
-				dataList.Add(item);
-			}
-			Refresh();
 		}
-		public override void ClearData() { 
-			dataList.Clear(); 
-		}
-		public override void AddData(ITargetToPanelAPI item)
-		{
-			dataList.Add(item);
-			Refresh();
-		}
-		public override void RemoveData(ITargetToPanelAPI item) 
-		{
-			dataList.Remove(item);
-			Refresh();
-		}
-		public override void AddData(IEnumerable<ITargetToPanelAPI> cardElements) 
-		{
-			foreach (var item in cardElements)
-			{
-				dataList.Add(item);
-			}
-			Refresh();
-		}
-		public override void RemoveData(IEnumerable<ITargetToPanelAPI> cardElements)
-		{
-			foreach (var item in cardElements)
-			{
-				dataList.Remove(item);
-			}
-			Refresh();
-		}
-		private void OnScrollValueChanged(Vector2 value)
+
+		private void OnScrollValueChanged(Vector2 pos)
 		{
 			UpdateVisibleRange();
 		}
-		[Button] public void Refresh()
+
+		[Button]
+		public void Refresh()
 		{
-			minIndex = -1;
-			maxIndex = -1;
 			UpdateVisibleRange();
 		}
+
 		private void UpdateVisibleRange()
 		{
-			if (scrollRect == null || content == null || layoutGroup == null || dataList.Count == 0) return;
+			if (scrollRect == null || viewport == null || proxySlots.Count == 0) return;
 
-			Rect viewportRect = ((RectTransform)scrollRect.transform).rect;
-			Vector2 contentPos = content.anchoredPosition;
+			// 뷰포트의 세계 좌표 범위를 가져옴
+			Vector3[] viewWorldCorners = new Vector3[4];
+			viewport.GetWorldCorners(viewWorldCorners);
+			Rect viewWorldRect = new Rect(viewWorldCorners[0], viewWorldCorners[2] - viewWorldCorners[0]);
 
-			int currentMinIndex = 0;
-			int currentMaxIndex = 0;
+			// 버퍼 영역 확장을 위한 마진 계산 (상하좌우 버퍼 추가)
+			if (viewBufferCount < 0) viewBufferCount = 0;
+			float bufferMargin = (scrollRect.vertical ? poolItemRect.rect.height : poolItemRect.rect.width) * viewBufferCount;
 
-			if (layoutGroup is GridLayoutGroup grid)
+			for (int i = 0 ; i < proxySlots.Count ; i++)
 			{
-				float cellSizeX = grid.cellSize.x + grid.spacing.x;
-				float cellSizeY = grid.cellSize.y + grid.spacing.y;
-				int constraintCount = grid.constraintCount;
+				RectTransform slot = proxySlots[i];
+				bool isVisible = IsRectVisibleInViewport(slot, viewWorldRect, bufferMargin);
 
-				if (scrollRect.vertical)
+				if (isVisible)
 				{
-					float startY = contentPos.y - grid.padding.top;
-					int minRow = Mathf.FloorToInt(startY / cellSizeY);
-					int maxRow = Mathf.CeilToInt((startY + viewportRect.height) / cellSizeY);
-					currentMinIndex = minRow * constraintCount;
-					currentMaxIndex = (maxRow * constraintCount) - 1;
-				}
-				else
-				{
-					float startX = -contentPos.x - grid.padding.left;
-					int minCol = Mathf.FloorToInt(startX / cellSizeX);
-					int maxCol = Mathf.CeilToInt((startX + viewportRect.width) / cellSizeX);
-					currentMinIndex = minCol * constraintCount;
-					currentMaxIndex = (maxCol * constraintCount) - 1;
-				}
-			}
-			else if (layoutGroup is HorizontalOrVerticalLayoutGroup linear)
-			{
-				float spacing = linear.spacing;
-				float currentOffset = 0;
-
-				if (scrollRect.vertical)
-				{
-					currentOffset = contentPos.y - linear.padding.top;
-					float totalSize = 0;
-					bool minFound = false;
-					for (int i = 0 ; i < dataList.Count ; i++)
+					// 보여야 하는데 아직 없는 경우 생성
+					if (!activeItems.ContainsKey(i))
 					{
-						// 리니어 레이아웃은 모든 요소의 크기가 같다고 가정하거나 별도 측정이 필요하나
-						// 일반적으로 동일 프리팹을 사용하므로 첫 번째 자식의 크기를 기준으로 계산
-						float itemSize = GetItemSize(linear);
-						if (!minFound && totalSize + itemSize >= currentOffset)
-						{
-							currentMinIndex = i;
-							minFound = true;
-						}
-						if (totalSize >= currentOffset + viewportRect.height)
-						{
-							currentMaxIndex = i;
-							break;
-						}
-						totalSize += (itemSize + spacing);
-						currentMaxIndex = i;
+						ITargetToPanelAPI data = dataList[i];
+						activeItems.Add(i, data);
+						AddItem(data, slot); // 슬롯을 매개변수로 전달
 					}
 				}
 				else
 				{
-					currentOffset = -contentPos.x - linear.padding.left;
-					float totalSize = 0;
-					bool minFound = false;
-					for (int i = 0 ; i < dataList.Count ; i++)
+					// 안 보여야 하는데 있는 경우 제거
+					if (activeItems.ContainsKey(i))
 					{
-						float itemSize = GetItemSize(linear);
-						if (!minFound && totalSize + itemSize >= currentOffset)
-						{
-							currentMinIndex = i;
-							minFound = true;
-						}
-						if (totalSize >= currentOffset + viewportRect.width)
-						{
-							currentMaxIndex = i;
-							break;
-						}
-						totalSize += (itemSize + spacing);
-						currentMaxIndex = i;
+						RemoveItem(activeItems[i], slot); // 슬롯을 매개변수로 전달
+						activeItems.Remove(i);
 					}
 				}
 			}
-
-			// 버퍼 및 범위 보정
-			int bufferAmount = (layoutGroup is GridLayoutGroup g) ? g.constraintCount * viewBufferCount : viewBufferCount;
-			currentMinIndex = Mathf.Clamp(currentMinIndex - bufferAmount, 0, dataList.Count - 1);
-			currentMaxIndex = Mathf.Clamp(currentMaxIndex + bufferAmount, 0, dataList.Count - 1);
-
-			if (minIndex != currentMinIndex || maxIndex != currentMaxIndex)
-			{
-				ApplyIndexChanges(currentMinIndex, currentMaxIndex);
-			}
 		}
-		private float GetItemSize(HorizontalOrVerticalLayoutGroup layout)
+
+		private bool IsRectVisibleInViewport(RectTransform target, Rect viewWorldRect, float margin)
 		{
-			var cardRect = poolItemRect.IsNullRef()? default : poolItemRect.rect;
-			if (cardRect.size == Vector2.zero)
-			{
-				if (layout.transform.childCount == 0) return 1;
-				RectTransform child = layout.transform.GetChild(0) as RectTransform;
-				return (layout is VerticalLayoutGroup) ? child.rect.height : child.rect.width;
-			}
-			else
-			{
-				return (layout is VerticalLayoutGroup) ? cardRect.height : cardRect.width;
-			}
-		}
-		private void ApplyIndexChanges(int newMin, int newMax)
-		{
-			if (minIndex != -1 && maxIndex != -1)
-			{
-				for (int i = minIndex ; i <= maxIndex ; i++)
-				{
-					if (i < newMin || i > newMax)
-					{
-						RemoveItem(dataList[i]);
-					}
-				}
-			}
+			Vector3[] corners = new Vector3[4];
+			target.GetWorldCorners(corners);
+			Rect targetRect = new Rect(corners[0], corners[2] - corners[0]);
 
-			for (int i = newMin ; i <= newMax ; i++)
-			{
-				if (i < minIndex || i > maxIndex)
-				{
-					// 리니어 레이아웃의 경우 순서가 중요하므로 인덱스에 맞춰 삽입 로직 분기 가능
-					if (i < minIndex) AddItem(dataList[i], false);
-					else AddItem(dataList[i], true);
-				}
-			}
+			// 마진 적용
+			Rect expandedViewRect = new Rect(
+				viewWorldRect.x - margin,
+				viewWorldRect.y - margin,
+				viewWorldRect.width + margin * 2,
+				viewWorldRect.height + margin * 2);
 
-			minIndex = newMin;
-			maxIndex = newMax;
+			return expandedViewRect.Overlaps(targetRect);
 		}
+
 
 		private void OnDestroy()
 		{
 			if (scrollRect != null)
-			{
 				scrollRect.onValueChanged.RemoveListener(OnScrollValueChanged);
-			}
 		}
 	}
 }

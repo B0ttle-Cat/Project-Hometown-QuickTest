@@ -222,11 +222,9 @@ MonoBehaviour:
   targetComponent: {fileID: 4796104}
   poolItemRect: {fileID: 7333357138829244404, guid: be8e9e2cc169223428ce8f62b5617d95, type: 3}
   scrollRect: {fileID: 1421464715}
+  viewport: {fileID: 1103826510}
   content: {fileID: 560685280}
-  layoutGroup: {fileID: 560685282}
-  viewBufferCount: 2
-  minIndex: -1
-  maxIndex: -1
+  viewBufferCount: 0
 --- !u!1 &35174509
 GameObject:
   m_ObjectHideFlags: 0
@@ -443,11 +441,9 @@ MonoBehaviour:
   targetComponent: {fileID: 58857482}
   poolItemRect: {fileID: 7333357138829244404, guid: ea01ae432f06d5b41859d7ecc4386b23, type: 3}
   scrollRect: {fileID: 806062829}
+  viewport: {fileID: 627432496}
   content: {fileID: 44458275}
-  layoutGroup: {fileID: 44458276}
   viewBufferCount: 2
-  minIndex: -1
-  maxIndex: -1
 --- !u!1 &69116205
 GameObject:
   m_ObjectHideFlags: 0
@@ -6072,11 +6068,9 @@ MonoBehaviour:
   targetComponent: {fileID: 721551567}
   poolItemRect: {fileID: 7333357138829244404, guid: 4cdf249ee6155a84d8b99407b1b9b79b, type: 3}
   scrollRect: {fileID: 721551565}
+  viewport: {fileID: 1998975074}
   content: {fileID: 1307337658}
-  layoutGroup: {fileID: 1307337660}
   viewBufferCount: 2
-  minIndex: -1
-  maxIndex: -1
 --- !u!114 &721551567
 MonoBehaviour:
   m_ObjectHideFlags: 0

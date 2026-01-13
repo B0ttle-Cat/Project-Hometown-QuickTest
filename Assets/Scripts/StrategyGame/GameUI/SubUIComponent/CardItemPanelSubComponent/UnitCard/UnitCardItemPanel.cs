@@ -47,7 +47,7 @@ public class UnitCardItemPanel : CardItemPanelComponent
 		}
 		if (referrer.IsNotNullRef())
 		{
-
+			referrer.Clear();
 			referrer = null;
 		}
 	}

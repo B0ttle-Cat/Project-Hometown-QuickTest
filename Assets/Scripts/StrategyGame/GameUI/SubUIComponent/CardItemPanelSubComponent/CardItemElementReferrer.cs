@@ -142,10 +142,20 @@ public class CardItemElementReferrer : MonoBehaviour
 			electricIcon.SetProgress(Ratio(value, max));
 		}
 	}
-
 	private float Ratio(int value, int max)
 	{
 		if (max <= 0) return 0f;
 		return (float)value / (float)max;
+	}
+
+	internal void Clear()
+	{
+		SetTItleText("");
+		SetTitleImage(null);
+		OnClickRemoveAllListeners();
+		SetShildFillAmount(0, 0);
+		SetPersonnelFillAmount(0, 0);
+		SetMaterialFillAmount(0, 0);
+		SetElectricFillAmount(0, 0);
 	}
 }

@@ -42,7 +42,7 @@ namespace StrategyManagerModule
 			for (int i = 0 ; i < length ; i++)
             {
 				var start = Items[i];
-
+				// TODO
 
 			}
         }
