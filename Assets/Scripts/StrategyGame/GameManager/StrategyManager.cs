@@ -231,6 +231,7 @@ public class StrategyManager : MonoBehaviour
 		key2Sprite = Key2Sprite;
 		key2UnitInfo = Key2Unit;
 		key2Projectile = Key2Projectile;
+		IsGameManagerReady = true;
 		#endregion
 
 		#region 이 구역 순서에 주의할 것: 각 항목은 초기화를 위해 이전 항목의 정보를 요구 할 수 있음
@@ -258,7 +259,6 @@ public class StrategyManager : MonoBehaviour
 		setter.OnStartSetter_Mission(mission);
 		#endregion
 
-		IsGameManagerReady = true;
 		// Awaitable.NextFrameAsync 를 하는 이유는...
 		// 어떠한 경우라도 OnStartGame 는 현재 활성화 되어 있는 모든 오브젝트들의 Awake 와 OnEnable 다음에 호출 되도록 하기 위하여.
 		// 또한 IsGameManagerReady 를 통해 대기중이던 로직이 실행될 시간을 벌어주기 위하여.

@@ -24,6 +24,7 @@ namespace StrategyManagerModule
 		}
 		private void OnDestroy()
 		{
+			if (hashSetProcess == null) return;
 			hashSetProcess.Clear();
 			hashSetProcess = null;
 		}

@@ -23,8 +23,9 @@ public class OperationLabelGroupPanel : PanelGroupComponent<OperationLabelItemPa
 	{
 		InitObjects(StrategyManager.Collector.GetList<OperationObject>()
 			.Convert<ITargetToPanelAPI>(i => i as ITargetToPanelAPI));
-		playerFaction.AddChangeOperation(ChangeValue, false);
-		InitObjects(playerFaction.OperationList.ForPanel);
+		StrategyManager.Collector.AddChangeListener<OperationObject>(ChangeValue, false);
+		//InitObjects(playerFaction.OperationList.ForPanel);
+		//playerFaction.AddChangeOperation(ChangeValue, false);
 	}
 	private void Deinit()
 	{
