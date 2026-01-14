@@ -14,7 +14,8 @@ namespace StrategyManagerModule
 		public IStrategyProcess ThisProcess => this;
 		public List<ProcessOverrider> OverriderList { get; } = new List<ProcessOverrider>();
 
-		public List<SelectComputer> selectComputers;
+		[SerializeField,ReadOnly]
+		private SelectComputer selectComputer;
 		private HashSet<ISelectable> selectItemList;
 		private HashSet<ISelectable> addSelectBuffer;
 		private HashSet<ISelectable> removeSelectBuffer;
@@ -33,7 +34,7 @@ namespace StrategyManagerModule
 
 		void IStrategyProcess.OnInit()
 		{
-			selectComputers = new List<SelectComputer>(GetComponentsInChildren<SelectComputer>());
+			selectComputer = GetComponentInChildren<SelectComputer>();
 
 			selectItemList = new HashSet<ISelectable>();
 			addSelectBuffer = new HashSet<ISelectable>();
@@ -44,17 +45,11 @@ namespace StrategyManagerModule
 		}
 		void IStrategyProcess.OnStart()
 		{
-			foreach (var item in selectComputers)
-			{
-				item.Init(this);
-			}
+			selectComputer.Init(this);
 		}
 		void IStrategyProcess.OnStop()
 		{
-			foreach (var item in selectComputers)
-			{
-				item.Deinit();
-			}
+			selectComputer.Deinit();
 
 			if (selectItemList != null)
 			{
@@ -69,13 +64,10 @@ namespace StrategyManagerModule
 		}
 		void IStrategyProcess.Update()
 		{
-			foreach (var item in selectComputers)
+			if (selectComputer.IsNotNullRef() &&  selectComputer.IsVaild())
 			{
-				if (item.IsVaild())
-				{
-					item.InputUpdate();
-					item.Compute();
-				}
+				selectComputer.InputUpdate();
+				selectComputer.Compute();
 			}
 
 			changeThisFrame = false;

@@ -61,6 +61,7 @@ namespace StrategyManagerModule
 
         internal void OpenGameSystemMenu()
         {
+			Debug.Log("TODO :: OpenGameSystemMenu");
         }
     } 
 }

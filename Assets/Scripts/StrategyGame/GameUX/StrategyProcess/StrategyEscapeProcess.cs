@@ -7,9 +7,13 @@ namespace StrategyManagerModule
 {
 	public partial class StrategyEscapeProcess : MonoBehaviour, IStrategyProcess
 	{
+		internal static StrategyEscapeProcess EscapeProcess;
 		public IStrategyProcess ThisProcess => this;
 		public List<ProcessOverrider> OverriderList { get; set; } = new List<ProcessOverrider>();
-
+		void IStrategyProcess.OnInit() 
+		{
+			EscapeProcess = this;
+		}
 		void IStrategyProcess.OnStart()
 		{
 		}
@@ -35,30 +39,6 @@ namespace StrategyManagerModule
 
 			StrategyManager.GameUI.OpenGameSystemMenu();
 		}
-	}
-
-    public partial class StrategyGameUX
-	{
-		private IStrategyProcess escapeProcess;
-		public IStrategyProcess EscapeProcess
-		{
-			get
-			{
-				if (escapeProcess.IsNullRef())
-				{
-					escapeProcess = new StrategyEscapeProcess();
-					ProcessList.Add(escapeProcess);
-				}
-				return escapeProcess;
-			}
-			private set
-			{
-				escapeProcess = value;
-			}
-		}
-
-
-
 	}
 
 }
