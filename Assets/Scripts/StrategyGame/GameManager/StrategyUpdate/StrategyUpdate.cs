@@ -241,6 +241,10 @@ namespace StrategyManagerModule
 		}
 		private void Update()
 		{
+			if (StrategyManager.IsNotReadyPlaying) return;
+
+			StrategyManager.GameUX.UXUpdate();
+
 			if (ThisTime != null) ThisTime.TimeUpdate();
 			float deltaTime = Time.deltaTime;
 			foreach ((UpdateLogicSort type, IStrategyUpdater updater) in updateList)

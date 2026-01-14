@@ -1,17 +1,17 @@
 ﻿using UnityEngine;
 
-public partial class UnitObject : IMouseSelectable
+public partial class UnitObject : IMapSelectable
 {
 	partial void DeselectSelf()
 	{
 		(this as ISelectable).SelfDeselect();
 	}
 
-	Vector3 IMouseSelectable.SelectCenter => transform.position;
-	void IMouseSelectable.OnPointEnter()
+	Vector3 IMapSelectable.SelectCenter => transform.position;
+	void IMapSelectable.OnPointEnter()
 	{
 	}
-	void IMouseSelectable.OnPointExit()
+	void IMapSelectable.OnPointExit()
 	{
 	}
 	void ISelectable.OnSelect()

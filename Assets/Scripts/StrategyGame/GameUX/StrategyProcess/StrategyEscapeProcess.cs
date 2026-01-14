@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace StrategyManagerModule
 {
-	public partial class StrategyEscapeProcess : IStrategyProcess
+	public partial class StrategyEscapeProcess : MonoBehaviour, IStrategyProcess
 	{
 		public IStrategyProcess ThisProcess => this;
 		public List<ProcessOverrider> OverriderList { get; set; } = new List<ProcessOverrider>();
@@ -52,7 +53,7 @@ namespace StrategyManagerModule
 			}
 			private set
 			{
-				pointingProcess = value;
+				escapeProcess = value;
 			}
 		}
 

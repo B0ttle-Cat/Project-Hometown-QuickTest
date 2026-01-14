@@ -303,10 +303,18 @@ namespace StrategyManagerModule
 			(MouseState.Drag, true) => new DragSelecter(this),
 			_ => null
 		};
-		private void AddInSelectItemList(ISelectable target) => Selecter.AddInSelectItemList(target);
-		private void RemoveInSelectItemList(ISelectable target) => Selecter.RemoveInSelectItemList(target);
+		private void OnSelectItem(ISelectable target) => Selecter.OnSelectItem(target);
+		private void OnDeselectItem(ISelectable target) => Selecter.OnDeselectItem(target);
 		private void ClearInSelectItemList() => Selecter.ClearInSelectItemList();
 		private void OnPointingTarget(ISelectable target) => Selecter.OnPointingTarget(target);
+		private void OnSelectingEmptyGround(Vector3 mapPointing)
+		{
+			Selecter.OnSelectingEmptyGround(mapPointing);
+		}
+		private void OnPointingEmptyGround(Vector3 mapPointing)
+		{
+			Selecter.OnPointingEmptyGround(mapPointing);
+		}
 	}
 	public partial class StrategyMouseSelectComputer
 	{
@@ -331,32 +339,43 @@ namespace StrategyManagerModule
 			public abstract bool Valid();
 			public abstract void Pressed();
 			public abstract void Released();
-			protected IMouseSelectable GetTargetUnderMouse(in Vector2 mousePosition)
+			protected IMapSelectable GetTargetUnderMouse(in Vector2 mousePosition, out Vector3 mapPointing)
 			{
+				mapPointing = Vector3.positiveInfinity;
 				if (StrategyManager.MainCamera == null) return null;
 				if (MainEventSystem.IsPointerOverGameObject()) return null;
 
 				Ray ray = StrategyManager.MainCamera.ScreenPointToRay(mousePosition);
 				RaycastHit[] hits = Physics.RaycastAll(ray, Mathf.Infinity, LayerMask != 0 ? LayerMask : -1);
-				if (hits.Length == 0) return null;
+				if (hits.Length == 0)
+				{
+					GetMouseWorldPosition(ray, out mapPointing);
+					return null;
+				}
 
 				if (hits.Length > 1)
+				{
+					mapPointing = hits[^1].point;
 					Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
-
+				}
 				foreach (var hit in hits)
 				{
-					var target = hit.collider.GetComponentInParent<IMouseSelectable>();
+					var target = hit.collider.GetComponentInParent<IMapSelectable>();
 					if (target != null) return target;
 				}
 				return null;
 			}
-			protected virtual void OnSelect(IMouseSelectable target)
+			protected virtual void OnEmpty(Vector3 target)
 			{
-				Selecter.AddInSelectItemList(target);
+				Selecter.OnSelectingEmptyGround(target);
 			}
-			protected virtual void Deselect(IMouseSelectable target)
+			protected virtual void OnSelect(IMapSelectable target)
 			{
-				Selecter.RemoveInSelectItemList(target);
+				Selecter.OnSelectItem(target);
+			}
+			protected virtual void Deselect(IMapSelectable target)
+			{
+				Selecter.OnDeselectItem(target);
 			}
 			protected virtual void ClearSelect()
 			{
@@ -367,19 +386,42 @@ namespace StrategyManagerModule
 			{
 				OnDeinit();
 			}
+
+			protected Vector3 GetMouseWorldPosition(Vector3 screenPos)
+			{
+				// XZ 평면(Y=0)과의 교점을 계산하여 정확한 월드 좌표 추출
+				Ray ray = StrategyManager.MainCamera.ScreenPointToRay(screenPos);
+				if (GetMouseWorldPosition(ray, out Vector3 worldPosition))
+				{
+					return worldPosition;
+				}
+				return StrategyManager.MainCamera.ScreenToWorldPoint(screenPos);
+			}
+			protected bool GetMouseWorldPosition(Ray ray, out Vector3 worldPosition)
+			{
+				// XZ 평면(Y=0)과의 교점을 계산하여 정확한 월드 좌표 추출
+				Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+				if (groundPlane.Raycast(ray, out float distance))
+				{
+					worldPosition = ray.GetPoint(distance);
+					return true;
+				}
+				worldPosition = Vector3.zero;
+				return false;
+			}
 		}
 
 		[Serializable]
 		public class ClickSelecter : BaseSelecter
 		{
-			protected IMouseSelectable mouseDownTarget;
+			protected IMapSelectable mouseDownTarget;
 			public ClickSelecter(StrategyMouseSelectComputer selecter) : base(selecter)
 			{
 				mouseDownTarget = null;
 			}
 			public override void Start()
 			{
-				mouseDownTarget = GetTargetUnderMouse(InputData.leftMouseDownPosition);
+				mouseDownTarget = GetTargetUnderMouse(InputData.leftMouseDownPosition, out Vector3 mapPointing);
 			}
 			public override bool Valid()
 			{
@@ -397,7 +439,11 @@ namespace StrategyManagerModule
 				}
 				if (mouseDownTarget.IsNullRef()) return;
 
-				if (mouseDownTarget != GetTargetUnderMouse(InputData.mouseCurrPosition)) return;
+				if (mouseDownTarget != GetTargetUnderMouse(InputData.mouseCurrPosition, out Vector3 mapPointing))
+				{
+					OnEmpty(mapPointing);
+					return;
+				}
 
 				if (InputData.alt)
 				{
@@ -446,18 +492,6 @@ namespace StrategyManagerModule
 				ComputeEnterRect();
 			}
 
-			private Vector3 GetMouseWorldPosition(Vector3 screenPos)
-			{
-				// XZ 평면(Y=0)과의 교점을 계산하여 정확한 월드 좌표 추출
-				Ray ray = StrategyManager.MainCamera.ScreenPointToRay(screenPos);
-				Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
-				if (groundPlane.Raycast(ray, out float distance))
-				{
-					return ray.GetPoint(distance);
-				}
-				return StrategyManager.MainCamera.ScreenToWorldPoint(screenPos);
-			}
-
 			private void ComputeEnterRect()
 			{
 				if (StrategyManager.MainCamera == null) return;
@@ -476,11 +510,12 @@ namespace StrategyManagerModule
 
 				Vector3 size = new Vector3(Mathf.Abs(localStart.x - localEnd.x), 2000f, Mathf.Abs(localStart.z - localEnd.z));
 
+				bool isInAny = false;
 				foreach (IList list in StrategyManager.Collector.GetAllElementLists())
 				{
 					foreach (var item in list)
 					{
-						if (item is not IMouseSelectable target) continue;
+						if (item is not IMapSelectable target) continue;
 
 						// 대상의 위치를 선택 영역 로컬 공간으로 변환
 						Vector3 targetPos = target.SelectCenter;
@@ -491,11 +526,14 @@ namespace StrategyManagerModule
 						if (Mathf.Abs(localTargetPos.x) <= size.x * 0.5f &&
 							Mathf.Abs(localTargetPos.z) <= size.z * 0.5f)
 						{
+							isInAny = true;
 							if (InputData.alt) Deselect(target);
 							else OnSelect(target);
 						}
 					}
 				}
+				if (isInAny) return;
+				OnEmpty(center);
 			}
 
 			// 디버깅용 기즈모 그리기
@@ -524,14 +562,14 @@ namespace StrategyManagerModule
 		[Serializable]
 		public class RightPointer : BaseSelecter
 		{
-			protected IMouseSelectable mouseDownTarget;
+			protected IMapSelectable mouseDownTarget;
 			public RightPointer(StrategyMouseSelectComputer selecter) : base(selecter)
 			{
 				mouseDownTarget = null;
 			}
 			public override void Start()
 			{
-				mouseDownTarget = GetTargetUnderMouse(InputData.rightMouseDownPosition);
+				mouseDownTarget = GetTargetUnderMouse(InputData.rightMouseDownPosition, out Vector3 mapPointing);
 			}
 			public override bool Valid()
 			{
@@ -545,13 +583,21 @@ namespace StrategyManagerModule
 			{
 				if (mouseDownTarget.IsNullRef()) return;
 
-				if (mouseDownTarget != GetTargetUnderMouse(InputData.mouseCurrPosition)) return;
+				if (mouseDownTarget != GetTargetUnderMouse(InputData.mouseCurrPosition, out Vector3 mapPointing))
+				{
+					OnEmpty(mapPointing);
+					return;
+				}
 
 				OnSelect(mouseDownTarget);
 			}
-			protected override void OnSelect(IMouseSelectable target)
+			protected override void OnSelect(IMapSelectable target)
 			{
 				Selecter.OnPointingTarget(target);
+			}
+			protected override void OnEmpty(Vector3 target)
+			{
+				Selecter.OnPointingEmptyGround(target);
 			}
 		}
 	}

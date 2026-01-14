@@ -5,9 +5,10 @@ namespace StrategyManagerModule
 	public interface IStrategyProcess
 	{
 		IStrategyProcess ThisProcess { get; }
-		void OnStart();
-		void OnStop();
-		void Update();
+		void OnInit() { }
+		void OnStart() { }
+		void OnStop() { }
+		void Update() { }
 		List<ProcessOverrider> OverriderList { get; }
 		void OnRemoveProcessOverride(ProcessOverrider processOverride)
 		{

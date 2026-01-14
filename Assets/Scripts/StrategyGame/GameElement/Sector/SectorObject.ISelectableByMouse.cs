@@ -1,15 +1,15 @@
 ﻿using UnityEngine;
 
-public partial class SectorObject : IMouseSelectable
+public partial class SectorObject : IMapSelectable
 {
 	public Vector3 clickCenter => visibilityGroup == null ? transform.position : visibilityGroup.VisibleWorldBounds.center;
-	Vector3 IMouseSelectable.SelectCenter => clickCenter;
+	Vector3 IMapSelectable.SelectCenter => clickCenter;
 
 
-    void IMouseSelectable.OnPointEnter()
+    void IMapSelectable.OnPointEnter()
 	{
 	}
-	void IMouseSelectable.OnPointExit()
+	void IMapSelectable.OnPointExit()
 	{
 
 	}

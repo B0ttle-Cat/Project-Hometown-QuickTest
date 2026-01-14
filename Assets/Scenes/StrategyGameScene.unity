@@ -8383,12 +8383,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 972331936}
+  - component: {fileID: 972331942}
   - component: {fileID: 972331940}
   - component: {fileID: 972331939}
-  - component: {fileID: 972331938}
-  - component: {fileID: 972331937}
+  - component: {fileID: 972331941}
   m_Layer: 0
-  m_Name: StrategySelecter
+  m_Name: StrategyGameUX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8409,30 +8409,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1572051156}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &972331937
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 972331935}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5e20f7d67a3d576479ffd1d624f17a4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::StrategyUnitSelecter
---- !u!114 &972331938
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 972331935}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d113120c58c62ca40a706a93c44e1350, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::StrategySectorSelecter
 --- !u!114 &972331939
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8485,12 +8461,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f08fc28f9d15ec54daab4b678973eae9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StrategySelecter
-  SelectFlag: -1
   selectComputers:
   - {fileID: 972331939}
-  selectCollectors:
-  - {fileID: 972331938}
-  - {fileID: 972331937}
+--- !u!114 &972331941
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 972331935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3aac43c064c216439417f9835c571dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StrategyManagerModule.StrategyEscapeProcess
+--- !u!114 &972331942
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 972331935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dea0a5107bc824f458dcbf03c1b2ed77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StrategyGameUX
 --- !u!1 &984942361
 GameObject:
   m_ObjectHideFlags: 0
@@ -11449,50 +11445,6 @@ MonoBehaviour:
   PanelPrefab: {fileID: -1730813350621981111, guid: 6b2c095af3e60bc48a9e690c1663c47e, type: 3}
   PanelParent: {fileID: 1623927634}
   poolingDataContainer: {fileID: 1623927635}
---- !u!1 &1626657480
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1626657482}
-  - component: {fileID: 1626657481}
-  m_Layer: 0
-  m_Name: StrategyGameUX
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1626657481
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1626657480}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dea0a5107bc824f458dcbf03c1b2ed77, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::StrategyGameUX
---- !u!4 &1626657482
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1626657480}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1643173476
 GameObject:
   m_ObjectHideFlags: 0
@@ -14641,7 +14593,6 @@ SceneRoots:
   m_Roots:
   - {fileID: 1572051156}
   - {fileID: 638566036}
-  - {fileID: 1626657482}
   - {fileID: 781089590}
   - {fileID: 330585546}
   - {fileID: 410087041}

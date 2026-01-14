@@ -9,10 +9,12 @@ using static StrategyGamePlayData;
 public class StrategyManager : MonoBehaviour
 {
 	public static StrategyManager Manager;
-	public static bool IsReadyManager => IsReadyScene && Manager.IsGameManagerReady;
 	public static bool IsReadyScene => Manager != null && Manager.didAwake && Manager.IsGameSceneReady;
+	public static bool IsReadyManager => IsReadyScene && Manager.IsGameManagerReady;
+	public static bool IsReadyPlaying => IsReadyManager && Manager.IsGamePlayReady;
 	public static bool IsNotReadyScene => !IsReadyScene;
 	public static bool IsNotReadyManager => !IsReadyManager;
+	public static bool IsNotReadyPlaying => !IsReadyPlaying;
 	public static bool IsDestroy => Manager == null;
 	public static Camera MainCamera => Manager == null ? null : Manager.mainCamera;
 	public static StrategyGameUI GameUI => Manager == null ? null : Manager.gameUI;
@@ -47,6 +49,7 @@ public class StrategyManager : MonoBehaviour
 	//public static 
 	public bool IsGameSceneReady { get; private set; }
 	public bool IsGameManagerReady { get; private set; }
+	public bool IsGamePlayReady { get; private set; }
 
 	[SerializeField]
 	private Camera mainCamera;
@@ -72,6 +75,7 @@ public class StrategyManager : MonoBehaviour
 	{
 		IsGameSceneReady = false;
 		IsGameManagerReady = false;
+		IsGamePlayReady = false;
 		Manager = this;
 		mainCamera = mainCamera == null ? Camera.main : mainCamera;
 		gameUI = FindAnyObjectByType<StrategyGameUI>();
@@ -93,6 +97,7 @@ public class StrategyManager : MonoBehaviour
 
 		IsGameSceneReady = false;
 		IsGameManagerReady = false;
+		IsGamePlayReady = false;
 
 		Manager = null;
 
@@ -285,6 +290,8 @@ public class StrategyManager : MonoBehaviour
 		#endregion
 
 		OnStartGame();
+
+		IsGamePlayReady = true;
 	}
 
 	public void GamePause()

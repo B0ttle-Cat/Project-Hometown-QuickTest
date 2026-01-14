@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-public interface IMouseSelectable : ISelectable
+public interface IMapSelectable : ISelectable
 {
 	Vector3 SelectCenter { get; }
 	void OnPointEnter() { }

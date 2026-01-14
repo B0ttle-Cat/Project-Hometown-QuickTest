@@ -76,7 +76,7 @@ public class StrategyMainPanel_OperationCardRoot : PanelItemComponent, IShowHide
 
 		awaitInstanceOperation = true;
 		{
-			using var pointingAtSector =  new ProcessOverrider_PointingAtSector(OnProcessOverrider_PointingAtSector);
+			using var onPointingTarget =  new ProcessOverrider_OnPointingTarget(ProcessOverrider_OnPointingTarget);
 			using var onPressedEscapeKey = new ProcessOverrider_OnPressedEscapeKey(OnProcessOverrider_OnPressedEscapeKey);
 
 			while (awaitInstanceOperation)
@@ -96,11 +96,13 @@ public class StrategyMainPanel_OperationCardRoot : PanelItemComponent, IShowHide
 			OnShowCardGroupButton();
 		}
 
-		void OnProcessOverrider_PointingAtSector(SectorObject pointing)
+		void ProcessOverrider_OnPointingTarget(ISelectable pointing)
 		{
+			if (pointing is not SectorObject pointingSector) return;
+
 			if (!awaitInstanceOperation) return;
 			awaitInstanceOperation = false;
-			StrategyElementFactory.Instantiate(pointing, in spawnTroopsInfo);
+			StrategyElementFactory.Instantiate(pointingSector, in spawnTroopsInfo);
 			isCancel = false;
 		}
 		void OnProcessOverrider_OnPressedEscapeKey()
