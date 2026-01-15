@@ -24,24 +24,23 @@ public class UnitLabelGroupPanel : PanelGroupComponent<UnitLabelItemPanel>
 
 	private void Init()
 	{
-		InitObjects(StrategyManager.Collector.GetList<UnitObject>()
-			.Convert<ITargetToPanelAPI>(i => i as ITargetToPanelAPI));
+		InitObjects(StrategyManager.Collector.GetList<UnitObject>().Convert(i => i as ITargetToPanelAPI));
+		StrategyManager.Collector.AddChangeListener<UnitObject>(ChangeValue, false);
 	}
 	private void Deinit()
 	{
+		StrategyManager.Collector.RemoveChangeListener<UnitObject>(ChangeValue);
 		Clear();
 	}
-	private void ChangeValue(IStrategyElement element, bool added)
+	private void ChangeValue(UnitObject element, bool added)
 	{
-		if (element is not UnitObject sector) return;
-
         if (added)
         {
-			AddObject(sector);
+			AddObject(element);
         }
 		else 
 		{
-			RemoveObject(sector);
+			RemoveObject(element);
 		}
 	}
 	protected override bool SetPanelObject(UnitLabelItemPanel newPanel, ITargetToPanelAPI item)

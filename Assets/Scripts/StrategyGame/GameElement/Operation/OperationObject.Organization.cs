@@ -48,7 +48,7 @@ public partial class OperationObject : IUnitOrganization
 
 		OnChangeUnitList?.Invoke(this);
 	}
-	partial void DeInitOrganization()
+	partial void DeinitOrganization()
 	{
 		ThisOrganization.RelaseAndDestroyAllUnit();
 		UnitOrganizationList.Dispose();

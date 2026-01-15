@@ -51,26 +51,30 @@ public partial class OperationObject : MonoBehaviour  // Main
 		InitMovement();
 		InitNearby();
 		InitFSM();
+		InitBoundary();
 	}
 	partial void InitOrganization(in List<int> unitList);
 	partial void InitMovement();
 	partial void InitFSM();
 	partial void InitNearby();
+	partial void InitBoundary();
 	public void DeInit()
 	{
 		if (FactionID >= 0)
 		{
 			Faction.RemoveOperation(this);
 		}
-		DeInitOrganization();
+		DeinitOrganization();
 		DeselectSelf();
 		DeinitFSM();
-		DeInitNearby();
+		DeinitNearby();
+		DeinitBoundary();
 	}
-	partial void DeInitOrganization();
+	partial void DeinitOrganization();
 	partial void DeselectSelf();
 	partial void DeinitFSM();
-	partial void DeInitNearby();
+	partial void DeinitNearby();
+	partial void DeinitBoundary();
 }
 public partial class OperationObject // StatsData
 {
@@ -381,4 +385,25 @@ public partial class OperationObject : IOperationToPanelAPI
 		}
 	}
 	#endregion
+}
+
+public partial class OperationObject : ITargetBoundary
+{
+	private ITargetBoundary _boundaryComputer;
+
+	partial void InitBoundary()
+	{
+		if (!TryGetComponent<BoundaryComputer>(out var boundaryComputer))
+		{
+			boundaryComputer = gameObject.AddComponent<BoundaryComputer>();
+			boundaryComputer.IsEllipticWithOnScreen = true;
+		}
+		_boundaryComputer = boundaryComputer;
+	}
+	partial void DeinitBoundary()
+	{
+		_boundaryComputer = null;
+	}
+	Bounds ITargetBoundary.GetWorldBounds() => _boundaryComputer.IsNotNullRef() ? _boundaryComputer.GetWorldBounds() : default;
+	Rect ITargetBoundary.GetScreenRect(Camera camera) => _boundaryComputer.IsNotNullRef() ? _boundaryComputer.GetScreenRect(camera.IsNullRef() ? StrategyManager.MainCamera : camera) : default;
 }

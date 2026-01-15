@@ -9,6 +9,5 @@ namespace GameUI
 		public Color GetLabelAccentColor() => Color.white;
 		public Color GetLabelTextColor() => Color.black;
 		public Vector3 LabelWorldPosition();
-
 	}
 }

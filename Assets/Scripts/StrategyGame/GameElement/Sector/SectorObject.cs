@@ -34,6 +34,7 @@ public partial class SectorObject : MonoBehaviour
 	public void Awake()
 	{
 		visibilityGroup = GetComponent<CameraVisibilityGroupInStrategy>();
+		InitBoundary();
 	}
 	public void Init(in StrategyStartSetterData.SectorData data)
 	{
@@ -44,6 +45,12 @@ public partial class SectorObject : MonoBehaviour
 	{
 		sectorRuntimeData.InitCaptureData(data);
 	}
+	public void OnDestroy()
+	{
+		DeinitBoundary();
+	}
+	partial void InitBoundary();
+	partial void DeinitBoundary();
 }
 public partial class SectorObject // Getter
 {
@@ -258,4 +265,24 @@ public partial class SectorObject : IChangeOrderFaction
 	}
 
 	public event Action<IStrategyElement, int> OnChangeFaction;
+}
+public partial class SectorObject : ITargetBoundary
+{
+	private ITargetBoundary _boundaryComputer;
+
+	partial void InitBoundary()
+	{
+		if (!TryGetComponent<BoundaryComputer>(out var boundaryComputer))
+		{
+			boundaryComputer = gameObject.AddComponent<BoundaryComputer>();
+			boundaryComputer.IsEllipticWithOnScreen = true;
+		}
+		_boundaryComputer = boundaryComputer;
+	}
+	partial void DeinitBoundary()
+	{
+		_boundaryComputer = null;
+	}
+	Bounds ITargetBoundary.GetWorldBounds() => _boundaryComputer.IsNotNullRef() ? _boundaryComputer.GetWorldBounds() : default;
+	Rect ITargetBoundary.GetScreenRect(Camera camera) => _boundaryComputer.IsNotNullRef() ? _boundaryComputer.GetScreenRect(camera.IsNullRef() ? StrategyManager.MainCamera : camera) : default;
 }

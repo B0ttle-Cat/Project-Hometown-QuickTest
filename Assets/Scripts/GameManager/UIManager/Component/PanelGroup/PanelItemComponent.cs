@@ -18,7 +18,10 @@ namespace GameUI
 		[ShowInInspector,PropertyOrder(-9999), ReadOnly, HideInEditorMode]
 		bool IShowHide.IsShow { get; set; } = false;
 
+		protected virtual void Reset()
+		{
 
+		}
 		protected virtual void Awake()
 		{
 			try

@@ -61,6 +61,7 @@ public partial class UnitObject : MonoBehaviour
 		InitNearby();
 		InitCombat();
 		InitAttack();
+		InitBoundary();
 	}
 	partial void InitCaptureTag();
 	private void InitDebugRender()
@@ -75,7 +76,7 @@ public partial class UnitObject : MonoBehaviour
 	partial void InitNearby();
 	partial void InitCombat();
 	partial void InitAttack();
-
+	partial void InitBoundary();
 	public void Deinit()
 	{
 		DeselectSelf();
@@ -85,6 +86,7 @@ public partial class UnitObject : MonoBehaviour
 		DeinitCombat();
 		DeinitMovement();
 		DeinitAttack();
+		DeinitBoundary();
 	}
 	partial void DeinitCaptureTag();
 	partial void DeselectSelf();
@@ -93,6 +95,7 @@ public partial class UnitObject : MonoBehaviour
 	partial void DeinitCombat();
 	partial void DeinitMovement();
 	partial void DeinitAttack();
+	partial void DeinitBoundary();
 }
 
 public partial class UnitObject // UnitCaptureTag
@@ -125,8 +128,6 @@ public partial class UnitObject // UnitCaptureTag
 		}
 	}
 }
-
-
 public partial class UnitObject : IUnitToPanelAPI
 {
 	#region ITargetToLabelAPI
@@ -182,7 +183,7 @@ public partial class UnitObject : IUnitToPanelAPI
 		int max = ThisStatsValue.GetStatsValue(StatsType.시설_내구도_최대);
 		int total = ThisStatsValue.GetStatsValue(StatsType.시설_내구도_현재);
 		return (total, max);
-	}	 
+	}
 	public string GetShieldValueText(bool simpleText = false)
 	{
 		if (simpleText)

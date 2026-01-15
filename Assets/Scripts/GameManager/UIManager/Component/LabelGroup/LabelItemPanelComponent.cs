@@ -10,7 +10,17 @@ namespace GameUI
 		public ITargetToPanelAPI Target { get; set; }
 		public ITargetToLabelAPI LabelAPI { get; set; }
 
-		public Vector2 labelOffset;
+		[SerializeField, HorizontalGroup, HideLabel, Header("Offset")]
+		private Vector2 labelOffset = Vector2.zero;
+		[SerializeField, HorizontalGroup, HideLabel, Header("Pivot")]
+		private Vector2 labelPivot = Vector2.one * 0.5f;
+
+		protected override void Reset()
+		{
+			base.Reset();
+			labelOffset = Vector2.zero;
+			labelPivot = Vector2.one * 0.5f;
+		}
 		public LabelPositionItem PositionItem { get; set; }
 
 		protected override void Awake()
@@ -44,8 +54,8 @@ namespace GameUI
 			{
 				LabelAPI = target as ITargetToLabelAPI;
 			}
-			
-			if(PositionItem.IsNullRef() && TryGetComponent<LabelPositionItem>(out var positionItem))
+
+			if (PositionItem.IsNullRef() && TryGetComponent<LabelPositionItem>(out var positionItem))
 			{
 				PositionItem = positionItem;
 			}
@@ -64,17 +74,34 @@ namespace GameUI
 			if (LabelAPI.IsNullRef()) return;
 			if (camera.IsNullRef()) return;
 
-			Vector3 labelWorldPosition = LabelAPI.LabelWorldPosition();
-			Vector2 screenPoint = camera.WorldToScreenPoint(labelWorldPosition);
-			screenPoint += labelOffset;
+			Vector2 finalScreenPos;
 
-			if(PositionItem.IsNotNullRef())
+			if (Target is ITargetBoundary boundary)
 			{
-				PositionItem.SetOriginalPosition(screenPoint);
+				Rect targetRect = boundary.GetScreenRect(camera);
+
+				float anchorX = Mathf.Lerp(targetRect.xMax, targetRect.xMin, labelPivot.x);
+				float anchorY = Mathf.Lerp(targetRect.yMax, targetRect.yMin, labelPivot.y);
+
+				finalScreenPos = new Vector2(anchorX, anchorY);
 			}
 			else
 			{
-				ThisPanel.ThisRect.anchoredPosition = screenPoint;
+				Vector3 labelWorldPosition = LabelAPI.LabelWorldPosition();
+				finalScreenPos = (Vector2)camera.WorldToScreenPoint(labelWorldPosition);
+			}
+
+			finalScreenPos += labelOffset;
+
+			if (PositionItem.IsNotNullRef() && PositionItem.enabled)
+			{
+				ThisPanel.ThisRect.pivot = labelPivot;
+				PositionItem.SetOriginalPosition(finalScreenPos);
+			}
+			else
+			{
+				ThisPanel.ThisRect.pivot = labelPivot;
+				ThisPanel.ThisRect.anchoredPosition = finalScreenPos;
 			}
 		}
 

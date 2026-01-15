@@ -16,7 +16,7 @@ public class StrategyManager : MonoBehaviour
 	public static bool IsNotReadyManager => !IsReadyManager;
 	public static bool IsNotReadyPlaying => !IsReadyPlaying;
 	public static bool IsDestroy => Manager == null;
-	public static Camera MainCamera => Manager == null ? null : Manager.mainCamera;
+	public static Camera MainCamera => Manager == null || Manager.mainCamera.IsNullRef() ? Camera.main : Manager.mainCamera;
 	public static StrategyGameUI GameUI => Manager == null ? null : Manager.gameUI;
 	public static StrategyGameUX GameUX => Manager == null ? null : Manager.gameUX;
 	public static StrategyPopupPanelUI PopupUI => GameUI.PopupPanelUI;

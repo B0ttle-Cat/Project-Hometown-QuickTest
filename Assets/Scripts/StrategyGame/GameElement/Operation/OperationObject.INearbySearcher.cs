@@ -27,7 +27,7 @@ public partial class OperationObject // INearbySearcher
 		actionRangeSearcher = new OperationActionRangeSearcher(this);
 	}
 
-    partial void DeInitNearby()
+    partial void DeinitNearby()
     {
 		visionRangeSearcher?.Dispose();
 		actionRangeSearcher?.Dispose();
