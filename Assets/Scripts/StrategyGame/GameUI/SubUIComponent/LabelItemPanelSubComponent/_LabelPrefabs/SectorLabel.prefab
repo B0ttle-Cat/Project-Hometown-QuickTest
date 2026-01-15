@@ -205,3 +205,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SectorLabelItemPanel
   labelOffset: {x: 0, y: 0}
+  labelPivot: {x: 0.5, y: 1}
