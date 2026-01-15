@@ -56,8 +56,6 @@ public class StrategyMapPanelUI : GameUIController
 		if (unitLabelGroup.IsNotNullRef())
 			unitLabelGroup.SetPlayerFaction(null);
 	}
-
-
 	private void LateUpdate()
 	{
 		if (uiCamera.IsNullRef()) return;

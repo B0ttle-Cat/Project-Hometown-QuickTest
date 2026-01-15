@@ -160,19 +160,20 @@ namespace GameUI
 				return poolingDataContainer;
 			}
 		}
-		protected bool PoolingUIObject => PoolingData.IsNotNullRef() && PrefabIsUsable;
+		protected bool PoolingUIObject => poolingDataContainer.IsNotNullRef() && PrefabIsUsable;
 
 		[ShowInInspector, ShowIf("PoolingUIObject")]
 		[HideInEditorMode]
 		protected Stack<PanelItemComponent> PoolStack;
-
+		[SerializeField, ShowIf("PoolingUIObject"), Tooltip("0보다 작으면 무제한, 0 과 일치할 경우 Stack 에 저장 안함")]
+		private int limitPoolStackCount = -1;
 		protected virtual void InitObjects(IEnumerable<ITargetToPanelAPI> targets)
 		{
 			Clear();
-
+			poolingDataContainer = PoolingData;
 			if (PoolingUIObject)
 			{
-				PoolingData.InitData(targets);
+				poolingDataContainer.InitData(targets);
 				return;
 			}
 
@@ -184,17 +185,19 @@ namespace GameUI
 		}
 		public void AddObject(ITargetToPanelAPI item)
 		{
+			poolingDataContainer = PoolingData;
 			if (PoolingUIObject)
 			{
-				PoolingData.AddData(item);
+				poolingDataContainer.AddData(item);
 				return;
 			}
 		}
 		public void RemoveObject(ITargetToPanelAPI item)
 		{
+			poolingDataContainer = PoolingData;
 			if (PoolingUIObject)
 			{
-				PoolingData.RemoveData(item);
+				poolingDataContainer.RemoveData(item);
 				return;
 			}
 		}
@@ -264,16 +267,7 @@ namespace GameUI
 				return;
 			}
 
-			//if (addLast)
-			//{
-			//	siblingTarget.SetAsLastSibling();
 			Add(tNewPanel);
-			//}
-			//else
-			//{
-			//	siblingTarget.SetAsFirstSibling();
-			//	Insert(0, tNewPanel);
-			//}
 		}
 		internal override bool RemoveItem(ITargetToPanelAPI item, RectTransform slot = null)
 		{
@@ -290,12 +284,19 @@ namespace GameUI
 			
 				if (panel is PanelItemComponent panelComponent)
 				{
-					if (Remove(panel))
+					if (Remove(panel) && limitPoolStackCount != 0)
 					{
 						PoolStack ??= new Stack<PanelItemComponent>();
-						PoolStack.Push(panelComponent);
-						panelComponent.transform.parent = transform;
-						panelComponent.gameObject.SetActive(false);
+						if (limitPoolStackCount < 0 || PoolStack.Count < limitPoolStackCount)
+						{
+							PoolStack.Push(panelComponent);
+							panelComponent.transform.parent = transform;
+							panelComponent.gameObject.SetActive(false);
+						}
+						else
+						{
+							GameObject.Destroy(panelComponent.gameObject);
+						}
 					}
 					else
 					{

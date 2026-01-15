@@ -17,7 +17,6 @@ namespace StrategyManagerModule
 		void IStrategyProcess.OnStart()
 		{
 		}
-
 		void IStrategyProcess.OnStop()
 		{
 		}

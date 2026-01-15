@@ -123,17 +123,18 @@ public static class StrategyElementFactory
 
 		var newObject = new GameObject();
 		var newOperation = newObject.AddComponent<OperationObject>();
-		StrategyManager.Collector.Add<OperationObject>(newOperation);
-
-		newObject.name = $"OperationObject_{newOperation.OperationID}";
-		newObject.transform.position = sectorCenter;
-		if (string.IsNullOrWhiteSpace(teamName))
+		StrategyManager.Collector.Add<OperationObject>(newOperation, BeforeCallback);
+		void BeforeCallback()
 		{
-			teamName = $"{newOperation.OperationID}";
+			newObject.name = $"OperationObject_{newOperation.OperationID}";
+			newObject.transform.position = sectorCenter;
+			if (string.IsNullOrWhiteSpace(teamName))
+			{
+				teamName = $"{newOperation.OperationID}";
+			}
+			newOperation.Init(factionID, teamName);
 		}
-		newOperation.Init(spawnTroopsInfo.factionID, teamName);
 		float radius = newOperation.OperationRadius;
-
 
 		List<int> spawnUnitIds = new List<int>(length);
 		for (int i = 0 ; i < length ; i++)

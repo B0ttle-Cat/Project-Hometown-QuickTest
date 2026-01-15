@@ -2,9 +2,13 @@
 
 using Sirenix.Utilities;
 
+using UnityEngine;
+
 public class OperationLabelGroupPanel : PanelGroupComponent<OperationLabelItemPanel>
 {
 	Faction playerFaction;
+	[SerializeField]
+	private int positionItemPriority;
 
 	internal void SetPlayerFaction(Faction faction)
 	{
@@ -43,5 +47,19 @@ public class OperationLabelGroupPanel : PanelGroupComponent<OperationLabelItemPa
 		{
 			RemoveObject(operation);
 		}
+	}
+	protected override bool SetPanelObject(OperationLabelItemPanel newPanel, ITargetToPanelAPI item)
+	{
+		if (base.SetPanelObject(newPanel, item))
+		{
+			if (!newPanel.gameObject.TryGetComponent<LabelPositionItem>(out var positionItem))
+			{
+				positionItem = newPanel.gameObject.AddComponent<LabelPositionItem>();
+			}
+			newPanel.PositionItem = positionItem;
+			positionItem.Priority = positionItemPriority;
+			return true;
+		}
+		return false;
 	}
 }

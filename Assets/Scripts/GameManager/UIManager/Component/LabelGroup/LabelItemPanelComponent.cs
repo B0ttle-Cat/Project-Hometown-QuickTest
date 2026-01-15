@@ -11,6 +11,7 @@ namespace GameUI
 		public ITargetToLabelAPI LabelAPI { get; set; }
 
 		public Vector2 labelOffset;
+		public LabelPositionItem PositionItem { get; set; }
 
 		protected override void Awake()
 		{
@@ -43,6 +44,11 @@ namespace GameUI
 			{
 				LabelAPI = target as ITargetToLabelAPI;
 			}
+			
+			if(PositionItem.IsNullRef() && TryGetComponent<LabelPositionItem>(out var positionItem))
+			{
+				PositionItem = positionItem;
+			}
 			OnAttachUI(target);
 		}
 		void ISetTargetPanel.OnUpdateUI()
@@ -62,7 +68,14 @@ namespace GameUI
 			Vector2 screenPoint = camera.WorldToScreenPoint(labelWorldPosition);
 			screenPoint += labelOffset;
 
-			ThisPanel.ThisRect.anchoredPosition = screenPoint;
+			if(PositionItem.IsNotNullRef())
+			{
+				PositionItem.SetOriginalPosition(screenPoint);
+			}
+			else
+			{
+				ThisPanel.ThisRect.anchoredPosition = screenPoint;
+			}
 		}
 
 

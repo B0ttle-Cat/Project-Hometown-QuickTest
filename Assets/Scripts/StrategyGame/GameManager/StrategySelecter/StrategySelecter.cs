@@ -89,7 +89,6 @@ namespace StrategyManagerModule
 				}
 				addSelectBuffer.Clear();
 			}
-
 			if (changeThisFrame)
 			{
 				int selectCount = selectItemList.Count;

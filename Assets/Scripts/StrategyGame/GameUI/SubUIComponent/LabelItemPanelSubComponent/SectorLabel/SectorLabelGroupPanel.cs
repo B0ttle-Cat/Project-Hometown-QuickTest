@@ -6,12 +6,9 @@ using UnityEngine;
 
 public class SectorLabelGroupPanel : PanelGroupComponent<SectorLabelItemPanel>
 {
-	[SerializeField]
-	private Camera uiCamera;
-
-
 	Faction playerFaction;
-
+	[SerializeField]
+	private int positionItemPriority;
 	internal void SetPlayerFaction(Faction faction)
 	{
 		if (playerFaction.IsNotNullRef())
@@ -38,14 +35,29 @@ public class SectorLabelGroupPanel : PanelGroupComponent<SectorLabelItemPanel>
 	{
 		if (element is not SectorObject sector) return;
 
-        if (added)
-        {
+		if (added)
+		{
 			AddObject(sector);
-        }
-		else 
+		}
+		else
 		{
 			RemoveObject(sector);
 		}
 	}
 
+
+	protected override bool SetPanelObject(SectorLabelItemPanel newPanel, ITargetToPanelAPI item)
+	{
+		if (base.SetPanelObject(newPanel, item))
+		{
+			if (!newPanel.gameObject.TryGetComponent<LabelPositionItem>(out var positionItem))
+			{
+				positionItem = newPanel.gameObject.AddComponent<LabelPositionItem>();
+			}
+			newPanel.PositionItem = positionItem;
+			positionItem.Priority = positionItemPriority;
+			return true;
+		}
+		return false;
+	}
 }

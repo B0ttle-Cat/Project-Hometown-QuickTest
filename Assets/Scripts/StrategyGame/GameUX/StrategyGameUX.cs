@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace StrategyManagerModule
 {
-	[DefaultExecutionOrder(-1)]
 	public partial class StrategyGameUX : MonoBehaviour, IStrategyStartGame
 	{
 		HashSet<IStrategyProcess> hashSetProcess;
