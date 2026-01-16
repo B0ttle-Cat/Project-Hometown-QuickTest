@@ -2590,7 +2590,6 @@ GameObject:
   m_Component:
   - component: {fileID: 331655811}
   - component: {fileID: 331655813}
-  - component: {fileID: 331655816}
   m_Layer: 5
   m_Name: MapPanelUI
   m_TagString: Untagged
@@ -2644,19 +2643,6 @@ MonoBehaviour:
     Key: UnitLabelGroup
     Target: {fileID: 1623927633}
   uiCamera: {fileID: 330585545}
---- !u!114 &331655816
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 331655810}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2bc398c2aa712d41ae898e964d80495, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: GameUI::GameUI.LabelOverlapController
-  GlobalPushMode: 15
 --- !u!1 &331986538
 GameObject:
   m_ObjectHideFlags: 0
@@ -4534,7 +4520,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 703982105805597499, guid: 470324ede2bd26f48a2d17dd52c4b3fb, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.62
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1203174180150286056, guid: 470324ede2bd26f48a2d17dd52c4b3fb, type: 3}
       propertyPath: m_text
@@ -4778,7 +4764,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8604149292018359083, guid: 470324ede2bd26f48a2d17dd52c4b3fb, type: 3}
       propertyPath: m_text
-      value: 62  / 100
+      value: 0  / 100
       objectReference: {fileID: 0}
     - target: {fileID: 8604149292018359083, guid: 470324ede2bd26f48a2d17dd52c4b3fb, type: 3}
       propertyPath: m_fontSize
@@ -4810,7 +4796,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8792449486086988568, guid: 470324ede2bd26f48a2d17dd52c4b3fb, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
@@ -6353,7 +6339,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 1
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -8913,7 +8899,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!1 &1043851290
 GameObject:
@@ -11542,7 +11528,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_TargetDisplay: 0
 --- !u!1 &1643173476
 GameObject:
@@ -14214,7 +14200,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 703982105805597499, guid: 470324ede2bd26f48a2d17dd52c4b3fb, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1357556554418833216, guid: 470324ede2bd26f48a2d17dd52c4b3fb, type: 3}
       propertyPath: m_Pivot.x
@@ -14298,11 +14284,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2120288162521527677, guid: 470324ede2bd26f48a2d17dd52c4b3fb, type: 3}
       propertyPath: valueRange.x
-      value: 25
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2120288162521527677, guid: 470324ede2bd26f48a2d17dd52c4b3fb, type: 3}
       propertyPath: valueRange.y
-      value: 50
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2141363026566301926, guid: 470324ede2bd26f48a2d17dd52c4b3fb, type: 3}
       propertyPath: m_Enabled
@@ -14318,7 +14304,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2708456163740271502, guid: 470324ede2bd26f48a2d17dd52c4b3fb, type: 3}
       propertyPath: valueRange.y
-      value: 25
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3517850278438154802, guid: 470324ede2bd26f48a2d17dd52c4b3fb, type: 3}
       propertyPath: m_Color.a
@@ -14374,7 +14360,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4766205803685275760, guid: 470324ede2bd26f48a2d17dd52c4b3fb, type: 3}
       propertyPath: valueRange.x
-      value: 50
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4827742696137070059, guid: 470324ede2bd26f48a2d17dd52c4b3fb, type: 3}
       propertyPath: m_Color.a
@@ -14394,7 +14380,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4827742696137070059, guid: 470324ede2bd26f48a2d17dd52c4b3fb, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6236706798877374006, guid: 470324ede2bd26f48a2d17dd52c4b3fb, type: 3}
       propertyPath: m_AnchorMax.x
@@ -14454,7 +14440,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8604149292018359083, guid: 470324ede2bd26f48a2d17dd52c4b3fb, type: 3}
       propertyPath: m_text
-      value: 25 (+25) / 100
+      value: 0  / 100
       objectReference: {fileID: 0}
     - target: {fileID: 8604149292018359083, guid: 470324ede2bd26f48a2d17dd52c4b3fb, type: 3}
       propertyPath: m_fontSize
@@ -14486,7 +14472,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8792449486086988568, guid: 470324ede2bd26f48a2d17dd52c4b3fb, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9012348140520221065, guid: 470324ede2bd26f48a2d17dd52c4b3fb, type: 3}
       propertyPath: m_Color.a

@@ -1,6 +1,7 @@
 ﻿using GameUI;
 
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 
 public class UnitLabelItemPanel : LabelItemPanelComponent
@@ -8,7 +9,7 @@ public class UnitLabelItemPanel : LabelItemPanelComponent
 	private LabelItemElementReferrer referrer;
 	public LabelItemElementReferrer Referrer => referrer.IsNotNullRef() ? referrer : TryGetComponent<LabelItemElementReferrer>(out referrer) ? referrer : null;
 	public UnitObject Unit { get; private set; }
-
+	private bool? isShowDetail;
 	protected override void OnReleaseUI()
 	{
 		if (Unit.IsNotNullRef())
@@ -57,6 +58,8 @@ public class UnitLabelItemPanel : LabelItemPanelComponent
 		referrer.SetPersonnelFillAmount(0, -1);
 		referrer.SetMaterialFillAmount(0, -1);
 		referrer.SetElectricFillAmount(0, -1);
+		isShowDetail = true;
+		referrer.ShowDetailElement();
 	}
 	private void OnClickLabel()
 	{
@@ -68,13 +71,38 @@ public class UnitLabelItemPanel : LabelItemPanelComponent
 		float max = durability.MaxDurability;
 		float current = durability.CurrentDurability;
 		float ratio = max <= 0 ? 0 : (current /max);
-		referrer.SetShieldFillAmount(Mathf.Clamp01(ratio));
+		ratio = Mathf.Clamp01(ratio);
+		referrer.SetShieldFillAmount(ratio);
+		referrer.SetSimpleFillAmount(ratio);
 	}
-
-	protected override void OnUpdateUI()
+	protected override void OnChangedUI()
 	{
 		if (Unit.IsNullRef()) return;
 
 		OnChangeDurability(Unit);
+	}
+	protected virtual void LateUpdate()
+	{
+		if (Unit.IsNullRef()) return;
+		if (referrer.IsNullRef()) return;
+
+		bool showSimpleKey = Keyboard.current.altKey.isPressed;
+		
+		if (StrategyManager.PlayerFactionID == Unit.FactionID || showSimpleKey)
+		{
+			if (!(isShowDetail ?? false))
+			{
+				isShowDetail = true;
+				referrer.ShowDetailElement();
+			}
+		}
+		else
+		{
+			if (isShowDetail ?? true)
+			{
+				isShowDetail = false;
+				referrer.ShowSimpleElement();
+			}
+		}
 	}
 }

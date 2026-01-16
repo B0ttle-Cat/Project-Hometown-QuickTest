@@ -1,6 +1,7 @@
 ﻿using GameUI;
 
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 
 [RequireComponent(typeof(LabelItemElementReferrer))]
@@ -9,6 +10,7 @@ public class OperationLabelItemPanel : LabelItemPanelComponent
 	private LabelItemElementReferrer referrer;
 	public LabelItemElementReferrer Referrer => referrer.IsNotNullRef() ? referrer : TryGetComponent<LabelItemElementReferrer>(out referrer) ? referrer : null;
 	public OperationObject Operation { get; private set; }
+	private bool? isShowDetail;
 
 	protected override void OnReleaseUI()
 	{
@@ -49,6 +51,8 @@ public class OperationLabelItemPanel : LabelItemPanelComponent
 		referrer.SetPersonnelFillAmount(0, -1);
 		referrer.SetMaterialFillAmount(0, -1);
 		referrer.SetElectricFillAmount(0, -1);
+		isShowDetail = true;
+		referrer.ShowDetailElement();
 	}
 
 	private void OnClickLabel()
@@ -56,7 +60,31 @@ public class OperationLabelItemPanel : LabelItemPanelComponent
 
 	}
 
-	protected override void OnUpdateUI()
+	protected override void OnChangedUI()
     {
-    }
+	}
+	protected virtual void LateUpdate()
+	{
+		if (Operation.IsNullRef()) return;
+		if (referrer.IsNullRef()) return;
+
+		bool showSimpleKey = Keyboard.current.altKey.isPressed;
+
+		if (StrategyManager.PlayerFactionID == Operation.FactionID || showSimpleKey)
+		{
+			if (!(isShowDetail ?? false))
+			{
+				isShowDetail = true;
+				referrer.ShowDetailElement();
+			}
+		}
+		else
+		{
+			if (isShowDetail ?? true)
+			{
+				isShowDetail = false;
+				referrer.ShowSimpleElement();
+			}
+		}
+	}
 }

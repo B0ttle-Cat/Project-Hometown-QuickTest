@@ -52,12 +52,6 @@ public class OperationLabelGroupPanel : PanelGroupComponent<OperationLabelItemPa
 	{
 		if (base.SetPanelObject(newPanel, item))
 		{
-			if (!newPanel.gameObject.TryGetComponent<LabelPositionItem>(out var positionItem))
-			{
-				positionItem = newPanel.gameObject.AddComponent<LabelPositionItem>();
-			}
-			newPanel.PositionItem = positionItem;
-			positionItem.Priority = positionItemPriority;
 			return true;
 		}
 		return false;

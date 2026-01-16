@@ -72,32 +72,57 @@ public class LabelItemElementReferrer : MonoBehaviour
 		}
 	}
 
-	[SerializeField] private Image mainIcon;
-	[SerializeField] private Image subIcon;
 	[Space]
-	[SerializeField] private Button select;
+	[SerializeField] private RectTransform showDetailRect;
+#if UNITY_EDITOR
+	private bool is_showDetailRect => showDetailRect.IsNotNullRef();
+#endif
+	[SerializeField,BoxGroup("DetailRect", VisibleIf ="is_showDetailRect")]  private Image mainIcon;
+	[SerializeField,BoxGroup("DetailRect")] private Image subIcon;
 	[Space]
-	[SerializeField] private TMP_Text displayText;
+	[SerializeField,BoxGroup("DetailRect")] private Button select;
 	[Space]
-	[SerializeField] private ValueToFillAPI FillShild;
-	[SerializeField] private ValueToFillAPI FillPersonnel;
-	[SerializeField] private ValueToFillAPI FillMaterial;
-	[SerializeField] private ValueToFillAPI FillElectric;
+	[SerializeField,BoxGroup("DetailRect")] private TMP_Text displayText;
 	[Space]
-	[SerializeField] private HorizontalLayoutGroup effectIconGroup;
-	private Dictionary<StatusEffectsFlag,GameObject> effectIcons;
-	[SerializeField] private HorizontalLayoutGroup guideIconPrefab;
-	private Dictionary<StatusEffectsFlag,GameObject> guideIcons;
+	[SerializeField,BoxGroup("DetailRect")] private ValueToFillAPI FillShild;
+	[SerializeField,BoxGroup("DetailRect")] private ValueToFillAPI FillPersonnel;
+	[SerializeField,BoxGroup("DetailRect")] private ValueToFillAPI FillMaterial;
+	[SerializeField,BoxGroup("DetailRect")] private ValueToFillAPI FillElectric;
+	[Space]
+	[SerializeField, InlineProperty, BoxGroup("DetailRect/Accent Color Target"), HideLabel]
+	private ColorTarget accentColorTarget;
+	[SerializeField, InlineProperty, BoxGroup("DetailRect/Text Color Target"), HideLabel]
+	private ColorTarget textColorTarget;
 
 	[Space]
-	[SerializeField, InlineProperty, BoxGroup("Accent Color Target"), HideLabel]
-	private ColorTarget accentColorTarget;
-	[SerializeField, InlineProperty, BoxGroup("Text Color Target"), HideLabel]
-	private ColorTarget textColorTarget;
+	[SerializeField] private RectTransform showSimpleRect;
+#if UNITY_EDITOR
+	private bool is_showSimpleRect => showSimpleRect.IsNotNullRef();
+#endif
+	[SerializeField,BoxGroup("SimpleRect", VisibleIf = "is_showSimpleRect")] private ValueToFillAPI fillSimple;
+	[SerializeField,BoxGroup("SimpleRect")] private Color simpleFillRectColor;
+	[SerializeField,BoxGroup("SimpleRect")] private Color simpleFillBGColor;
+
+	[Space]
+	[SerializeField,BoxGroup("IconGroup")] private HorizontalLayoutGroup effectIconGroup;
+	private Dictionary<StatusEffectsFlag,GameObject> effectIcons;
+	[SerializeField,BoxGroup("IconGroup")] private HorizontalLayoutGroup guideIconPrefab;
+	private Dictionary<StatusEffectsFlag,GameObject> guideIcons;
+
 	public void Awake()
 	{
 		accentColorTarget.ColorUpdate();
 		textColorTarget.ColorUpdate();
+	}
+	public void ShowSimpleElement()
+	{
+		showDetailRect.gameObject.SetActive(false);
+		showSimpleRect.gameObject.SetActive(true);
+	}
+	public void ShowDetailElement()
+	{
+		showSimpleRect.gameObject.SetActive(false);
+		showDetailRect.gameObject.SetActive(true);
 	}
 	public void SetMainIcon(Sprite sprite)
 	{
@@ -147,6 +172,12 @@ public class LabelItemElementReferrer : MonoBehaviour
 		FillElectric.gameObject.SetActive(index >= 0);
 		FillElectric.SetValue(fillAmount, index);
 	}
+	public void SetSimpleFillAmount(float fillAmount, int index = 0)
+	{
+		if (fillSimple.IsNullRef()) return;
+		fillSimple.gameObject.SetActive(index >= 0);
+		fillSimple.SetValue(fillAmount, index);
+	}
 	public void SetEffectIcon(StatusEffectsFlag effectFlag)
 	{
 
@@ -169,14 +200,5 @@ public class LabelItemElementReferrer : MonoBehaviour
 	{
 		if (select.IsNullRef()) return;
 		select.onClick.RemoveAllListeners();
-	}
-
-	public void ShowSimpleElement()
-	{
-
-	}
-	public void ShowDetailElement()
-	{
-
 	}
 }

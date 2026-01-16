@@ -1,6 +1,7 @@
 ﻿using GameUI;
 
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 using static StrategyGamePlayData;
 
@@ -10,6 +11,7 @@ public class SectorLabelItemPanel : LabelItemPanelComponent
 	private LabelItemElementReferrer referrer;
 	public LabelItemElementReferrer Referrer => referrer.IsNotNullRef() ? referrer : TryGetComponent<LabelItemElementReferrer>(out referrer) ? referrer : null;
 	public SectorObject Sector { get; private set; }
+	private bool? isShowDetail;
 
 	protected override void OnReleaseUI()
 	{
@@ -37,7 +39,6 @@ public class SectorLabelItemPanel : LabelItemPanelComponent
 			referrer = null;
 		}
 	}
-
 	protected override void OnAttachUI(ITargetToPanelAPI target)
 	{
 		if (target is not SectorObject sector) return;
@@ -76,6 +77,8 @@ public class SectorLabelItemPanel : LabelItemPanelComponent
 			changeOrderFaction.OnChangeFaction -= OnChangeFaction;
 			changeOrderFaction.OnChangeFaction += OnChangeFaction;
 		}
+		isShowDetail = true;
+		referrer.ShowDetailElement();
 	}
 	private void OnClickLabel()
 	{
@@ -95,7 +98,6 @@ public class SectorLabelItemPanel : LabelItemPanelComponent
 			referrer.ShowSimpleElement();
 		}
 	}
-
 	private void OnChangeDurability(IDurabilityValue durability)
 	{
 		if (durability.IsNullRef()) return;
@@ -103,9 +105,10 @@ public class SectorLabelItemPanel : LabelItemPanelComponent
 		float current = durability.CurrentDurability;
 		float max = durability.MaxDurability;
 		float ratio = max <= 0 ? 0 : (current / max);
-		referrer.SetShieldFillAmount(Mathf.Clamp01(ratio));
+		float shield = Mathf.Clamp01(ratio);
+		referrer.SetShieldFillAmount(shield);
+		referrer.SetSimpleFillAmount(shield);
 	}
-
 	private void UpdateSupplyStats(ISupplyStats supplyStats)
 	{
 		if (supplyStats.IsNullRef()) return;
@@ -120,7 +123,7 @@ public class SectorLabelItemPanel : LabelItemPanelComponent
 			return Mathf.Clamp01(ratio);
 		}
 	}
-	protected override void OnUpdateUI()
+	protected override void OnChangedUI()
 	{
 		if (Sector.IsNullRef()) return;
 		if (referrer.IsNullRef()) return;
@@ -129,6 +132,28 @@ public class SectorLabelItemPanel : LabelItemPanelComponent
 		UpdateSupplyStats(Sector);
 		OnChangeFaction(Sector, Sector.CaptureFactionID);
 	}
+	protected virtual void LateUpdate()
+	{
+		if (Sector.IsNullRef()) return;
+		if (referrer.IsNullRef()) return;
 
+		bool showSimpleKey = Keyboard.current.altKey.isPressed;
 
+		if (StrategyManager.PlayerFactionID == Sector.CaptureFactionID || showSimpleKey)
+		{
+			if (!(isShowDetail ?? false))
+			{
+				isShowDetail = true;
+				referrer.ShowDetailElement();
+			}
+		}
+		else
+		{
+			if (isShowDetail ?? true)
+			{
+				isShowDetail = false;
+				referrer.ShowSimpleElement();
+			}
+		}
+	}
 }

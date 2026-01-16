@@ -7,17 +7,17 @@
 		{
 			if (Contains(item))
 			{
-				OnUpdateUI();
+				OnChangedUI();
 				return true;
 			}
 			OnReleaseUI();
 			OnAttachUI(item);
-			OnUpdateUI();
+			OnChangedUI();
 			return true;
 		}
 		protected bool Contains(ITargetToPanelAPI item);
 		public void OnReleaseUI();
 		public void OnAttachUI(ITargetToPanelAPI target);
-		public void OnUpdateUI();
+		public void OnChangedUI();
 	}
 }

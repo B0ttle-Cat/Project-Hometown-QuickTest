@@ -36,7 +36,7 @@
 			}
 			OnAttachUI(target);
 		}
-		void ISetTargetPanel.OnUpdateUI()
+		void ISetTargetPanel.OnChangedUI()
 		{
 			if (Target.IsNullRef()) return;
 			OnUpdateUI();

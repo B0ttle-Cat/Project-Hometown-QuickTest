@@ -1,6 +1,7 @@
 ﻿using Sirenix.OdinInspector;
 
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace GameUI
 {
@@ -14,7 +15,8 @@ namespace GameUI
 		private Vector2 labelOffset = Vector2.zero;
 		[SerializeField, HorizontalGroup, HideLabel, Header("Pivot")]
 		private Vector2 labelPivot = Vector2.one * 0.5f;
-
+		[SerializeField]
+		private LayoutElement rootLayoutElement;
 		protected override void Reset()
 		{
 			base.Reset();
@@ -28,6 +30,7 @@ namespace GameUI
 			base.Awake();
 			ThisShowHide.PairingShowHide();
 		}
+
 		protected override void OnDestroy()
 		{
 			base.OnDestroy();
@@ -61,14 +64,14 @@ namespace GameUI
 			}
 			OnAttachUI(target);
 		}
-		void ISetTargetPanel.OnUpdateUI()
+		void ISetTargetPanel.OnChangedUI()
 		{
 			if (Target.IsNullRef()) return;
-			OnUpdateUI();
+			OnChangedUI();
 		}
 		protected abstract void OnReleaseUI();
 		protected abstract void OnAttachUI(ITargetToPanelAPI target);
-		protected abstract void OnUpdateUI();
+		protected abstract void OnChangedUI();
 		public virtual void UpdateLabelPosition(Camera camera)
 		{
 			if (LabelAPI.IsNullRef()) return;
@@ -84,6 +87,11 @@ namespace GameUI
 				float anchorY = Mathf.Lerp(targetRect.yMax, targetRect.yMin, labelPivot.y);
 
 				finalScreenPos = new Vector2(anchorX, anchorY);
+
+				if (rootLayoutElement.IsNotNullRef())
+				{
+					rootLayoutElement.minWidth = targetRect.width;
+				}
 			}
 			else
 			{
@@ -103,6 +111,8 @@ namespace GameUI
 				ThisPanel.ThisRect.pivot = labelPivot;
 				ThisPanel.ThisRect.anchoredPosition = finalScreenPos;
 			}
+			
+		
 		}
 
 
@@ -112,7 +122,7 @@ namespace GameUI
 			var temp = Target;
 			OnReleaseUI();
 			OnAttachUI(temp);
-			OnUpdateUI();
+			OnChangedUI();
 		}
 	}
 }

@@ -7,8 +7,8 @@ namespace GameUI
 	{
 		[Header("Settings")]
 		public int Priority = 0;
-		// x: Left, y: Right, z: Top, w: Bottom 추가 여백
-		public Vector4 MarginOffset = new Vector4(5f, 5f, 5f, 5f);
+		public Rigidbody2D labelRigidbody2D;
+		public CapsuleCollider2D labelCapsuleCollider2D;
 		public float SmoothSpeed = 15f;
 
 		public RectTransform RectTransform { get; private set; }
@@ -22,6 +22,8 @@ namespace GameUI
 		{
 			RectTransform = GetComponent<RectTransform>();
 			_controller = GetComponentInParent<LabelOverlapController>();
+			labelRigidbody2D = GetComponent<Rigidbody2D>();
+			labelCapsuleCollider2D = GetComponent<CapsuleCollider2D>();
 		}
 
 		private void OnEnable()
@@ -43,6 +45,13 @@ namespace GameUI
 		{
 			OriginalScreenPos = pos;
 			CurrentOffset = Vector2.zero;
+			var size = RectTransform.rect.size;
+			size = RectTransform.rect.size;
+			Vector2 pivot =  RectTransform.pivot;
+			Vector2 offset = size * 0.5f;
+			offset -= size * pivot;
+			labelCapsuleCollider2D.offset = offset;
+			labelCapsuleCollider2D.size = size;
 		}
 
 		public void ApplySmoothPosition()
