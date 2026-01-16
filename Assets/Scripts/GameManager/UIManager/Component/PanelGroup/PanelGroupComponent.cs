@@ -130,12 +130,16 @@ namespace GameUI
 		}
 
 		#region PoolingDataContainer
-
+#if UNITY_EDITOR
+		private bool TIsMono => typeof(T).IsSubclassOf(typeof(MonoBehaviour));
+#endif
 
 		[SerializeField]
 		[InfoBox("@TypeErrorMessage", VisibleIf ="NotPrefabIsUsable", InfoMessageType = InfoMessageType.Error)]
+		[ShowIf("TIsMono")]
 		protected T PanelPrefab;
 		[SerializeField]
+		[ShowIf("TIsMono")]
 		protected RectTransform PanelParent;
 		private bool PrefabIsUsable => PanelPrefab.IsNotNullRef() && PanelPrefab is PanelItemComponent and ISetTargetPanel and T;
 #if UNITY_EDITOR
@@ -143,7 +147,7 @@ namespace GameUI
 		private string TypeErrorMessage =>
 			PanelPrefab.IsNullRef() ? "PanelPrefab 이 Null 입니다. 정상동작을 위해 값을 세팅해 주세요." :
 			$"사용 가능한 컴퍼넌트를 가지고 있지 않습니다.\n\"{nameof(T)}\"티압을 상속받은 컴퍼넌트가 필요합니다.";
-		private bool ShowPoolingField => PrefabIsUsable && PanelParent.IsNotNullRef();
+		private bool ShowPoolingField => TIsMono && PrefabIsUsable && PanelParent.IsNotNullRef();
 #endif
 
 		[SerializeField, ShowIf("ShowPoolingField")]

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using GameUI;
+
 using Sirenix.OdinInspector;
 
 using TMPro;
@@ -23,9 +25,9 @@ public class LabelItemElementReferrer : MonoBehaviour
 		[SerializeField, InlineProperty]
 		private TargetGraphic[] targetGraphics;
 
-        public Color TargetColor { get => targetColor; set { targetColor = value; ColorUpdate(); } }
+		public Color TargetColor { get => targetColor; set { targetColor = value; ColorUpdate(); } }
 
-        [Serializable]
+		[Serializable]
 		public class TargetGraphic
 		{
 			public Graphic iamge;
@@ -47,7 +49,7 @@ public class LabelItemElementReferrer : MonoBehaviour
 				}
 			}
 #endif
-			public void SetColor(float h , float s , float v, float a)
+			public void SetColor(float h, float s, float v, float a)
 			{
 				if (iamge.IsNullRef()) return;
 				var targetColor = Color.HSVToRGB(h, s * saturation, v * brightness);
@@ -77,10 +79,10 @@ public class LabelItemElementReferrer : MonoBehaviour
 	[Space]
 	[SerializeField] private TMP_Text displayText;
 	[Space]
-	[SerializeField] private Image FillShild;
-	[SerializeField] private Image FillPersonnel;
-	[SerializeField] private Image FillMaterial;
-	[SerializeField] private Image FillElectric;
+	[SerializeField] private ValueToFillAPI FillShild;
+	[SerializeField] private ValueToFillAPI FillPersonnel;
+	[SerializeField] private ValueToFillAPI FillMaterial;
+	[SerializeField] private ValueToFillAPI FillElectric;
 	[Space]
 	[SerializeField] private HorizontalLayoutGroup effectIconGroup;
 	private Dictionary<StatusEffectsFlag,GameObject> effectIcons;
@@ -92,12 +94,12 @@ public class LabelItemElementReferrer : MonoBehaviour
 	private ColorTarget accentColorTarget;
 	[SerializeField, InlineProperty, BoxGroup("Text Color Target"), HideLabel]
 	private ColorTarget textColorTarget;
-    public void Awake()
-    {
+	public void Awake()
+	{
 		accentColorTarget.ColorUpdate();
 		textColorTarget.ColorUpdate();
 	}
-    public void SetMainIcon(Sprite sprite)
+	public void SetMainIcon(Sprite sprite)
 	{
 		if (mainIcon.IsNotNullRef())
 			mainIcon.sprite = sprite;
@@ -121,25 +123,29 @@ public class LabelItemElementReferrer : MonoBehaviour
 		if (this.displayText.IsNotNullRef())
 			this.displayText.text = displayText;
 	}
-	public void SetShieldFillAmount(float fillAmount)
+	public void SetShieldFillAmount(float fillAmount, int index = 0)
 	{
-		if (FillShild.IsNotNullRef())
-			FillShild.fillAmount = fillAmount;
+		if (FillShild.IsNullRef()) return;
+		FillShild.gameObject.SetActive(index >= 0);
+		FillShild.SetValue(fillAmount, index);
 	}
-	public void SetPersonnelFillAmount(float fillAmount)
+	public void SetPersonnelFillAmount(float fillAmount, int index = 0)
 	{
-		if (FillPersonnel.IsNotNullRef())
-			FillPersonnel.fillAmount = fillAmount;
+		if (FillPersonnel.IsNullRef()) return;
+		FillPersonnel.gameObject.SetActive(index >= 0);
+		FillPersonnel.SetValue(fillAmount, index);
 	}
-	public void SetMaterialFillAmount(float fillAmount)
+	public void SetMaterialFillAmount(float fillAmount, int index = 0)
 	{
-		if (FillMaterial.IsNotNullRef())
-			FillMaterial.fillAmount = fillAmount;
+		if (FillMaterial.IsNullRef()) return;
+		FillMaterial.gameObject.SetActive(index >= 0);
+		FillMaterial.SetValue(fillAmount, index);
 	}
-	public void SetElectricFillAmount(float fillAmount)
+	public void SetElectricFillAmount(float fillAmount, int index = 0)
 	{
-		if (FillElectric.IsNotNullRef())
-			FillElectric.fillAmount = fillAmount;
+		if (FillElectric.IsNullRef()) return;
+		FillElectric.gameObject.SetActive(index >= 0);
+		FillElectric.SetValue(fillAmount, index);
 	}
 	public void SetEffectIcon(StatusEffectsFlag effectFlag)
 	{

@@ -54,9 +54,9 @@ public class UnitLabelItemPanel : LabelItemPanelComponent
 			durability.OnChangeDurability += OnChangeDurability;
 		}
 
-		referrer.SetPersonnelFillAmount(0);
-		referrer.SetMaterialFillAmount(0);
-		referrer.SetElectricFillAmount(0);
+		referrer.SetPersonnelFillAmount(0, -1);
+		referrer.SetMaterialFillAmount(0, -1);
+		referrer.SetElectricFillAmount(0, -1);
 	}
 	private void OnClickLabel()
 	{
@@ -68,7 +68,7 @@ public class UnitLabelItemPanel : LabelItemPanelComponent
 		float max = durability.MaxDurability;
 		float current = durability.CurrentDurability;
 		float ratio = max <= 0 ? 0 : (current /max);
-		referrer.SetShieldFillAmount(Mathf.Clamp01(ratio * 0.5f));
+		referrer.SetShieldFillAmount(Mathf.Clamp01(ratio));
 	}
 
 	protected override void OnUpdateUI()

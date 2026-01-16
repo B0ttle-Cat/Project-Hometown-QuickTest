@@ -103,21 +103,21 @@ public class SectorLabelItemPanel : LabelItemPanelComponent
 		float current = durability.CurrentDurability;
 		float max = durability.MaxDurability;
 		float ratio = max <= 0 ? 0 : (current / max);
-		referrer.SetShieldFillAmount(Mathf.Clamp01(ratio * 0.5f));
+		referrer.SetShieldFillAmount(Mathf.Clamp01(ratio));
 	}
 
 	private void UpdateSupplyStats(ISupplyStats supplyStats)
 	{
 		if (supplyStats.IsNullRef()) return;
 		if (referrer.IsNullRef()) return;
-		referrer.SetPersonnelFillAmount(FillAmount(supplyStats.GetPersonnelSimpleValue(), 0.5f));
-		referrer.SetMaterialFillAmount(FillAmount(supplyStats.GetMaterialSimpleValue(), 0.5f));
-		referrer.SetElectricFillAmount(FillAmount(supplyStats.GetElectricSimpleValue(), 0.5f));
+		referrer.SetPersonnelFillAmount(FillAmount(supplyStats.GetPersonnelSimpleValue()));
+		referrer.SetMaterialFillAmount(FillAmount(supplyStats.GetMaterialSimpleValue()));
+		referrer.SetElectricFillAmount(FillAmount(supplyStats.GetElectricSimpleValue()));
 
-		float FillAmount((float total, float max) value, float fillScale)
+		float FillAmount((float total, float max) value)
 		{
 			float ratio = value.max <= 0 ? 0 : (value.total / value.max);
-			return Mathf.Clamp01(ratio * fillScale);
+			return Mathf.Clamp01(ratio);
 		}
 	}
 	protected override void OnUpdateUI()

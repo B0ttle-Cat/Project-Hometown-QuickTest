@@ -45,10 +45,10 @@ public class OperationLabelItemPanel : LabelItemPanelComponent
 			referrer.SetTextColor(labelAPI.GetLabelTextColor());
 		}
 
-		referrer.SetShieldFillAmount(0);
-		referrer.SetPersonnelFillAmount(0);
-		referrer.SetMaterialFillAmount(0);
-		referrer.SetElectricFillAmount(0);
+		referrer.SetShieldFillAmount(0,-1);
+		referrer.SetPersonnelFillAmount(0, -1);
+		referrer.SetMaterialFillAmount(0, -1);
+		referrer.SetElectricFillAmount(0, -1);
 	}
 
 	private void OnClickLabel()
