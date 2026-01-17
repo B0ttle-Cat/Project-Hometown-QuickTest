@@ -57,7 +57,10 @@ public class OperationLabelItemPanel : LabelItemPanelComponent
 
 	private void OnClickLabel()
 	{
+		if (Operation.IsNullRef()) return;
+		if (Operation is not ISelectable selectable) return;
 
+		StrategyManager.Selecter.OnSystemSelectObject(selectable);
 	}
 
 	protected override void OnChangedUI()

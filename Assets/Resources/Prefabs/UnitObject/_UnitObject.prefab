@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: 8354607733487220838}
   - component: {fileID: 2901930974435275700}
   - component: {fileID: 4095390130698782152}
+  - component: {fileID: 8342475028849305821}
   m_Layer: 21
   m_Name: _UnitObject
   m_TagString: Untagged
@@ -54,7 +55,67 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1b2a1e7433a36d439b76c62a58bde5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Unit
-  debugRender: {fileID: 933335122341834021}
+  statsData:
+    cost:
+      DeploymentCostPersonnel: 0
+      DeploymentCostMaterial: 0
+      DeploymentCostElectric: 0
+      AttackCostMaterial: 0
+      AttackCostElectric: 0
+    common:
+      MaxDurability: 0
+      HealingPower: 0
+      RecoveryPower: 0
+      MovementSpeed: 0
+      CaptureScore: 0
+    range:
+      AttackRange: {x: 0, y: 0, z: 0, w: 0}
+      ActionRange: 0
+      VisionRange: 0
+    cycle:
+      AimDelayTime: 0
+      ContinuousAttackDelayTime: 0
+      ReattackDelayTime: 0
+      ReloadTime: 0
+    ammo:
+      AmmunitionCapacity: 0
+      ConcurrentAttackCount: 0
+      ContinuousAttackCount: 0
+    offense:
+      projectileKey: 0
+      AttackPower: 0
+      CriticalAttackPower: 0
+      CriticalDamageRatio: 0
+      PenetrationLevel: 0
+      EMPImpactLevel: 0
+      StatusPotencyLevel: 0
+      HitChanceScore: 0
+      CriticalChanceScore: 0
+    defense:
+      protectType: 0
+      AntiAttackPower: 0
+      AntiCriticalAttackPower: 0
+      AntiPenetrationLevel: 0
+      AntiEMPImpactLevel: 0
+      AntiStatusPotencyLevel: 0
+      AntiHitChanceScore: 0
+      AntiCriticalChanceScore: 0
+  runtimeData:
+    CurrentDurability: 0
+    AmmunitionUsed: 0
+    Status: 0
+    DynamicKeyStatsList:
+      values: []
+  instanceData:
+    unitKey: 0
+    displayName: 
+    unitIconSprite: {fileID: 0}
+    unitFullBodySprite: {fileID: 0}
+    unitPortraitSprite: {fileID: 0}
+    unitID: 0
+    factionID: 0
+    lastVisiteSectorID: 0
+    currVisiteSectorID: 0
   operationObject: {fileID: 0}
 --- !u!114 &7748264205117504606
 MonoBehaviour:
@@ -268,6 +329,23 @@ MonoBehaviour:
   raycastOffset: {x: 0, y: 0, z: 0}
   useGraphRaycasting: 1
   quality: 1
+--- !u!114 &8342475028849305821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2460545361625872358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38a0023bfda4a3f4b9aa39f2b4c83e26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnitSelectVisualizer
+  useCullingMasks: 0
+  targetPositionOffset: {x: 0, y: 0.01, z: 0}
+  targetThickness: 2
+  selectRadiusOffset: 0.5
+  pointRadiusOffset: 1
 --- !u!1 &2609880498311265087
 GameObject:
   m_ObjectHideFlags: 0
@@ -357,6 +435,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &933335122341834021
 MonoBehaviour:

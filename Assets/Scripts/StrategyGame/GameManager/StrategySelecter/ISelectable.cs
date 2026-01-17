@@ -1,5 +1,6 @@
 ﻿public interface ISelectable
 {
+	ISelectable ThisSelectable => this;
 	bool CanSelect() => true;
 	bool HasPassthrough(out ISelectable pass)
 	{

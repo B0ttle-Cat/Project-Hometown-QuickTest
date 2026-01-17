@@ -206,15 +206,15 @@ namespace StrategyManagerModule
 			[ListDrawerSettings(ShowFoldout = false)]
 			public FacilityInfo[] facilitiesInfo;
 
-			[FoldoutGroup("@SectorName/Support Point"),LabelText("잔여 지원 점수")]
+			[FoldoutGroup("@SectorName/Support PointUp"),LabelText("잔여 지원 점수")]
 			public int remainingPoint;
-			[FoldoutGroup("@SectorName/Support Point"),LabelText("공격 지원 점수")]
+			[FoldoutGroup("@SectorName/Support PointUp"),LabelText("공격 지원 점수")]
 			public int offensivePoint;
-			[FoldoutGroup("@SectorName/Support Point"),LabelText("방어 지원 점수")]
+			[FoldoutGroup("@SectorName/Support PointUp"),LabelText("방어 지원 점수")]
 			public int defensivePoint;
-			[FoldoutGroup("@SectorName/Support Point"),LabelText("보급 지원 점수")]
+			[FoldoutGroup("@SectorName/Support PointUp"),LabelText("보급 지원 점수")]
 			public int supplyPoint;
-			[FoldoutGroup("@SectorName/Support Point"),LabelText("시설 지원 점수")]
+			[FoldoutGroup("@SectorName/Support PointUp"),LabelText("시설 지원 점수")]
 			public int facilityPoint;
 
 			[FoldoutGroup("@SectorName")]

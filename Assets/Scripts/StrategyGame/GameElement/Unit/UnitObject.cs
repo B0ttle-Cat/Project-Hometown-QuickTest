@@ -62,6 +62,7 @@ public partial class UnitObject : MonoBehaviour
 		InitCombat();
 		InitAttack();
 		InitBoundary();
+		InitSelect();
 	}
 	partial void InitCaptureTag();
 	private void InitDebugRender()
@@ -77,6 +78,7 @@ public partial class UnitObject : MonoBehaviour
 	partial void InitCombat();
 	partial void InitAttack();
 	partial void InitBoundary();
+	partial void InitSelect();
 	public void Deinit()
 	{
 		DeselectSelf();
@@ -87,6 +89,7 @@ public partial class UnitObject : MonoBehaviour
 		DeinitMovement();
 		DeinitAttack();
 		DeinitBoundary();
+		DeinitDelect();
 	}
 	partial void DeinitCaptureTag();
 	partial void DeselectSelf();
@@ -96,6 +99,7 @@ public partial class UnitObject : MonoBehaviour
 	partial void DeinitMovement();
 	partial void DeinitAttack();
 	partial void DeinitBoundary();
+	partial void DeinitDelect();
 }
 
 public partial class UnitObject // UnitCaptureTag

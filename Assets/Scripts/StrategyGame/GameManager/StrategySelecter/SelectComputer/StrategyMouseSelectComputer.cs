@@ -23,7 +23,7 @@ namespace StrategyManagerModule
 			Click,          // 일반적인 마우스 클릭
 			Drag,           // 마우스 드래그로 범위 선택
 		}
-		public StrategySelecter Selecter { get; private set; }
+		public StrategyGameSelecter Selecter { get; private set; }
 
 		[SerializeField, ReadOnly] private Mouse mouse;
 		[SerializeField, ReadOnly] private Keyboard keyboard;
@@ -38,7 +38,7 @@ namespace StrategyManagerModule
 		[SerializeField, ReadOnly] private MouseState rightSelecterState;
 		[SerializeField, ReadOnly] private BaseSelecter rightCurrentSelecter;
 		public InputData GetInputData => inputData;
-
+		public override bool IsKeyHold_MultiSelect => inputData.shift;
 		public MouseState LeftSelecterState => leftSelecterState;
 		public MouseState RightSelecterState => rightSelecterState;
 
@@ -75,7 +75,7 @@ namespace StrategyManagerModule
 			public bool rightIsDrag;
 		}
 
-		public override void Init(StrategySelecter selecter)
+		public override void Init(StrategyGameSelecter selecter)
 		{
 			Selecter = selecter;
 
@@ -601,7 +601,7 @@ namespace StrategyManagerModule
 			}
 		}
 	}
-	public partial class StrategySelecter
+	public partial class StrategyGameSelecter
 	{
 		private StrategyMouseSelectComputer mouse;
 		public StrategyMouseSelectComputer Mouse

@@ -82,7 +82,8 @@ public class SectorLabelItemPanel : LabelItemPanelComponent
 	}
 	private void OnClickLabel()
 	{
-		if(Sector is not ISelectable selectable) return;
+		if (Sector.IsNullRef()) return;
+		if (Sector is not ISelectable selectable) return;
 
 		StrategyManager.Selecter.OnSystemSelectObject(selectable);
 	}

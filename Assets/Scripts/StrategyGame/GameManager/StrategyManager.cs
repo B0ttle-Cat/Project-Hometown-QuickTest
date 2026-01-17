@@ -27,7 +27,7 @@ public class StrategyManager : MonoBehaviour
 	public static StrategyStatistics Statistics => Manager == null ? null : Manager.statistics;
 	public static StrategyTime Time => Manager == null ? null : Manager.time;
 	public static StrategyUpdate Updater => Manager == null ? null : Manager.updater;
-	public static StrategySelecter Selecter => Manager == null ? null : Manager.selecter;
+	public static StrategyGameSelecter Selecter => Manager == null ? null : Manager.selecter;
 	public static StrategyPathfinding Pathfinding => Manager == null ? null : Manager.pathfinding;
 	public static StrategyViewAndControlModeChanger ViewAndControl => Manager == null ? null : Manager.viewAndControl;
 	public static StrategyFactionRelation FactionRelation => Manager == null ? null : Manager.factionRelation;
@@ -45,6 +45,7 @@ public class StrategyManager : MonoBehaviour
 		: Manager.key2Projectile;
 
 	public static int PlayerFactionID;
+	public static Faction PlayerFaction => FactionAPI.ID2Faction(PlayerFactionID);
 	public static GameStartingData PreparedData;
 	//public static 
 	public bool IsGameSceneReady { get; private set; }
@@ -62,7 +63,7 @@ public class StrategyManager : MonoBehaviour
 	private StrategyStatistics statistics;
 	private StrategyTime time;
 	private StrategyUpdate updater;
-	private StrategySelecter selecter;
+	private StrategyGameSelecter selecter;
 	private StrategyPathfinding pathfinding;
 	private StrategyViewAndControlModeChanger viewAndControl;
 	private StrategyFactionRelation factionRelation;
@@ -86,7 +87,7 @@ public class StrategyManager : MonoBehaviour
 		mission = GetComponentInChildren<StrategyMissionTree>();
 		statistics = GetComponentInChildren<StrategyStatistics>();
 		updater = GetComponentInChildren<StrategyUpdate>();
-		selecter = GetComponentInChildren<StrategySelecter>();
+		selecter = GetComponentInChildren<StrategyGameSelecter>();
 		pathfinding = GetComponentInChildren<StrategyPathfinding>();
 		viewAndControl = GetComponentInChildren<StrategyViewAndControlModeChanger>();
 		factionRelation = GetComponentInChildren<StrategyFactionRelation>();
@@ -167,7 +168,7 @@ public class StrategyManager : MonoBehaviour
 		{
 			updater.enabled = false;
 		}
-		if ((selecter = selecter != null ? selecter : GetComponentInChildren<StrategySelecter>()) != null)
+		if ((selecter = selecter != null ? selecter : GetComponentInChildren<StrategyGameSelecter>()) != null)
 		{
 			selecter.enabled = false;
 		}
@@ -279,7 +280,7 @@ public class StrategyManager : MonoBehaviour
 		if (updater == null) updater = gameObject.AddComponent<StrategyUpdate>();
 		else updater.enabled = true;
 
-		if (selecter == null) selecter = gameObject.AddComponent<StrategySelecter>();
+		if (selecter == null) selecter = gameObject.AddComponent<StrategyGameSelecter>();
 		else selecter.enabled = true;
 
 		if (time != null)

@@ -1,7 +1,5 @@
 ﻿using GameUI;
 
-using Sirenix.Utilities;
-
 using UnityEngine;
 
 public class OperationLabelGroupPanel : PanelGroupComponent<OperationLabelItemPanel>
@@ -25,9 +23,11 @@ public class OperationLabelGroupPanel : PanelGroupComponent<OperationLabelItemPa
 
 	private void Init()
 	{
-		InitObjects(StrategyManager.Collector.GetList<OperationObject>()
-			.Convert<ITargetToPanelAPI>(i => i as ITargetToPanelAPI));
-		StrategyManager.Collector.AddChangeListener<OperationObject>(ChangeValue, false);
+		var player = StrategyManager.PlayerFaction;
+
+		InitObjects(player.OperationList.ForPanel);
+		player.AddChangeOperation(ChangeValue, false);
+		//StrategyManager.Collector.AddChangeListener<OperationObject>(ChangeValue, false);
 		//InitObjects(playerFaction.OperationList.ForPanel);
 		//playerFaction.AddChangeOperation(ChangeValue, false);
 	}

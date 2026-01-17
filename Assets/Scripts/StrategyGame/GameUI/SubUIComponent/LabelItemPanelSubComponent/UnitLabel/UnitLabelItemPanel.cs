@@ -63,7 +63,10 @@ public class UnitLabelItemPanel : LabelItemPanelComponent
 	}
 	private void OnClickLabel()
 	{
+		if (Unit.IsNullRef()) return;
+		if (Unit is not ISelectable selectable) return;
 
+		StrategyManager.Selecter.OnSystemSelectObject(Unit);
 	}
 	private void OnChangeDurability(IDurabilityValue durability)
 	{
@@ -87,7 +90,7 @@ public class UnitLabelItemPanel : LabelItemPanelComponent
 		if (referrer.IsNullRef()) return;
 
 		bool showSimpleKey = Keyboard.current.altKey.isPressed;
-		
+
 		if (StrategyManager.PlayerFactionID == Unit.FactionID || showSimpleKey)
 		{
 			if (!(isShowDetail ?? false))
