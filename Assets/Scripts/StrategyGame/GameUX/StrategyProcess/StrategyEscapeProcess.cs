@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -39,5 +40,11 @@ namespace StrategyManagerModule
 			StrategyManager.GameUI.OpenGameSystemMenu();
 		}
 	}
-
+	public record ProcessOverrider_OnPressedEscapeKey : ProcessOverriderAction
+	{
+		public override IStrategyProcess OriginalProcess => StrategyEscapeProcess.EscapeProcess;
+		public ProcessOverrider_OnPressedEscapeKey(Action action) : base(action)
+		{
+		}
+	}
 }

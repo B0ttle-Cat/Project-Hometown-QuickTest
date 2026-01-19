@@ -1,7 +1,6 @@
 ﻿using GameUI;
 
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 
 public class UnitLabelItemPanel : LabelItemPanelComponent
@@ -9,7 +8,8 @@ public class UnitLabelItemPanel : LabelItemPanelComponent
 	private LabelItemElementReferrer referrer;
 	public LabelItemElementReferrer Referrer => referrer.IsNotNullRef() ? referrer : TryGetComponent<LabelItemElementReferrer>(out referrer) ? referrer : null;
 	public UnitObject Unit { get; private set; }
-	private bool? isShowDetail;
+	private bool isShow;
+	private bool isShowDetail;
 	protected override void OnReleaseUI()
 	{
 		if (Unit.IsNotNullRef())
@@ -58,8 +58,10 @@ public class UnitLabelItemPanel : LabelItemPanelComponent
 		referrer.SetPersonnelFillAmount(0, -1);
 		referrer.SetMaterialFillAmount(0, -1);
 		referrer.SetElectricFillAmount(0, -1);
-		isShowDetail = true;
-		referrer.ShowDetailElement();
+		isShow = false;
+		isShowDetail = false;
+		ThisShowHide.OnHideImmediate();
+		referrer.ShowSimpleElement();
 	}
 	private void OnClickLabel()
 	{
@@ -84,28 +86,70 @@ public class UnitLabelItemPanel : LabelItemPanelComponent
 
 		OnChangeDurability(Unit);
 	}
+
+	private bool IsShowLabel()
+	{
+		if (StrategyManager.PlayerFactionID == Unit.FactionID)
+		{
+			if (Unit.OperationID < 0)
+			{
+				return false;
+			}
+			else if (Unit.ThisDestroyer.IsDestroy)
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	private bool IsShowDetail()
+	{
+		if (StrategyManager.PlayerFactionID == Unit.FactionID)
+		{
+			if (StrategyManager.GameUX.OnKey_ShowDetail)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 	protected virtual void LateUpdate()
 	{
 		if (Unit.IsNullRef()) return;
 		if (referrer.IsNullRef()) return;
 
-		bool showSimpleKey = Keyboard.current.altKey.isPressed;
+		bool nextShow = IsShowLabel();
 
-		if (StrategyManager.PlayerFactionID == Unit.FactionID || showSimpleKey)
+		if (isShow == nextShow)
 		{
-			if (!(isShowDetail ?? false))
+			if (!isShow)
 			{
-				isShowDetail = true;
-				referrer.ShowDetailElement();
+				return;
 			}
 		}
 		else
 		{
-			if (isShowDetail ?? true)
+			isShow = nextShow;
+			if (isShow)
 			{
-				isShowDetail = false;
-				referrer.ShowSimpleElement();
+				ThisShowHide.OnShow();
 			}
+			else
+			{
+				ThisShowHide.OnHide();
+			}
+		}
+
+		bool nextShowDetail = IsShowDetail();
+		if (isShowDetail == nextShowDetail)
+		{
+			return;
+		}
+		else
+		{
+			isShowDetail = nextShowDetail;
+			if (isShowDetail) referrer.ShowDetailElement();
+			else referrer.ShowSimpleElement();
 		}
 	}
 }
