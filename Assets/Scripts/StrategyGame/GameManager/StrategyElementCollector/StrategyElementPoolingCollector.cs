@@ -122,7 +122,7 @@ namespace StrategyManagerModule
 				eventWithType?.Invoke(item.gameObject, true);
 			}
 		}
-		public void Add<T>(T[] addObjects, Action<T> beforeCallback = null) where T : class, IStrategyPoolingElement
+		public void Add<T>(T[] addObjects, Action<T,int> beforeCallback = null) where T : class, IStrategyPoolingElement
 		{
 			if(addObjects.Length == 0) return;
 			var prefabObject = addObjects[0].PrefabReference;
@@ -142,7 +142,7 @@ namespace StrategyManagerModule
 				else
 					store.PoolList.Add(item, () =>
 					{
-						beforeCallback.Invoke(item);
+						beforeCallback.Invoke(item, i);
 					});
 
 				onAnyElementChanged?.Invoke(item.gameObject, true);

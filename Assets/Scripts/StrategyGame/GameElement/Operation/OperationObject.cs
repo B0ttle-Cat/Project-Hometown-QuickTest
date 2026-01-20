@@ -42,7 +42,7 @@ public partial class OperationObject : MonoBehaviour  // Main
 			Faction.AddOperation(this);
 		}
 	}
-	public void Init(in List<int> unitList)
+	public void InitUnit(in List<int> unitList)
 	{
 		InitOrganization(in unitList);
 	}

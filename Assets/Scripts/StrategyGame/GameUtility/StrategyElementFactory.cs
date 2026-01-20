@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using StrategyManagerModule;
 
@@ -6,44 +7,38 @@ using UnityEngine;
 
 using static StrategyGamePlayData;
 
+using Random = UnityEngine.Random;
+
 public static class StrategyElementFactory
 {
 	#region UnitObject
-	public static UnitObject Instantiate(in StrategyStartSetterData.UnitData setterData, bool enterThis = true)
+	public static UnitObject Instantiate(StrategyStartSetterData.UnitData setterData, Action<UnitObject> beforeCallback = null)
 	{
 		var unitKey = setterData.unitKey;
-		int factionId = setterData.factionID;
-		Vector3 position = setterData.position;
-		Quaternion rotation = Quaternion.Euler(setterData.rotation);
-
-		UnitObject newUnit = Instantiate(unitKey, factionId, setterData.belongedOperation, position, rotation, false);
-		newUnit.Init(setterData);
-		if (enterThis)
-		{
-			AddCollector(newUnit);
-			SetOperationBelong(setterData.belongedOperation);
-		}
-		return newUnit;
-
-		void SetOperationBelong(int belongedOperation)
-		{
-			if (belongedOperation < 0) return;
-
-			var operation = StrategyManager.Collector.Find<OperationObject>(belongedOperation);
-			if (operation.IsNullRef()) return;
-
-			operation.ThisOrganization.AddUnitObject(newUnit);
-		}
-	}
-	public static UnitObject Instantiate(UnitKey unitKey, int factionID = -1, int belongedOperation = -1, Vector3? position = null, Quaternion? rotation = null, bool enterThis = true)
-	{
 		if (StrategyManager.Key2Unit.TryGetAsset(unitKey, out var info))
 		{
-			return Instantiate(info.UnitProfileObject, factionID, belongedOperation, position, rotation, enterThis);
+			int factionId = setterData.factionID;
+			Vector3 position = setterData.position;
+			Quaternion rotation = Quaternion.Euler(setterData.rotation);
+			return Instantiate(info.UnitProfileObject, factionId, setterData.belongedOperation, position, rotation, (newUnit) =>
+			{
+				newUnit.Init(setterData);
+				beforeCallback?.Invoke(newUnit);
+			});
 		}
 		return null;
 	}
-	public static UnitObject Instantiate(UnitProfileObject profile, int factionID = -1, int belongedOperation = -1, Vector3? position = null, Quaternion? rotation = null, bool enterThis = true)
+	public static UnitObject Instantiate(UnitKey unitKey, int factionID = -1, int belongedOperation = -1,
+		Vector3? position = null, Quaternion? rotation = null, Action<UnitObject> beforeCallback = null)
+	{
+		if (StrategyManager.Key2Unit.TryGetAsset(unitKey, out var info))
+		{
+			return Instantiate(info.UnitProfileObject, factionID, belongedOperation, position, rotation, beforeCallback);
+		}
+		return null;
+	}
+	public static UnitObject Instantiate(UnitProfileObject profile, int factionID = -1, int belongedOperation = -1,
+		Vector3? position = null, Quaternion? rotation = null, Action<UnitObject> beforeCallback = null)
 	{
 		if (profile.IsNullRef()) return null;
 		var prefab = profile.prefab;
@@ -56,18 +51,20 @@ public static class StrategyElementFactory
 			GameObject.Destroy(newObject);
 			return null;
 		}
+
 		unitObject.Init(profile, factionID);
 		unitObject.name = $"{profile.displayName}";
+		StrategyManager.Collector.Add<UnitObject>(unitObject, () =>
+		{
+			beforeCallback?.Invoke(unitObject);
+			SetOperationBelong(belongedOperation);
+			unitObject.InitOther();
+			unitObject.name = $"{unitObject.name}_{unitObject.UnitID:00}";
+		});
 		if (StrategyManager.Collector.TryFind<Faction>(factionID, out var faction))
 		{
 			faction.API_UnitCounter(profile.stats.DeploymentCostPersonnel);
 		}
-		if (enterThis)
-		{
-			AddCollector(unitObject);
-			SetOperationBelong(belongedOperation);
-		}
-
 		return unitObject;
 
 		void SetOperationBelong(int belongedOperation)
@@ -79,14 +76,6 @@ public static class StrategyElementFactory
 
 			operation.ThisOrganization.AddUnitObject(unitObject);
 		}
-	}
-	private static void AddCollector(UnitObject unitObject)
-	{
-		StrategyManager.Collector.Add<UnitObject>(unitObject, () =>
-		{
-			unitObject.InitOther();
-			unitObject.name = $"{unitObject.name}_{unitObject.UnitID:00}";
-		});
 	}
 	public static void Destroy(UnitObject unitObject)
 	{
@@ -133,24 +122,27 @@ public static class StrategyElementFactory
 				teamName = $"{newOperation.OperationID}";
 			}
 			newOperation.Init(factionID, teamName);
+			newOperation.InitOther();
 		}
+		int belongedOperation = newOperation.OperationID;
 		float radius = newOperation.OperationRadius;
 
 		List<int> spawnUnitIds = new List<int>(length);
 		for (int i = 0 ; i < length ; i++)
 		{
-			(UnitKey key, int count) = organizations[i];
-			if (key == UnitKey.None || count <= 0) continue;
+			(UnitKey unitKey, int count) = organizations[i];
+			if (unitKey == UnitKey.None || count <= 0) continue;
 			for (int ii = 0 ; ii < count ; ii++)
 			{
-				UnitObject unit = Instantiate(key, factionID);
-				Vector2 randomPos = Random.insideUnitCircle * radius;
-				unit.transform.position = sectorCenter + new Vector3(randomPos.x, 0f, randomPos.y);
+				Vector3 randomValue = Random.onUnitSphere * radius;
+				var position = sectorCenter + new Vector3(randomValue.x, 0f, randomValue.z);
+				var rotation = Quaternion.Euler(0,randomValue.y * 180f,0);
+				UnitObject unit = Instantiate(unitKey, factionID, belongedOperation, position, rotation);
 				spawnUnitIds.Add(unit.UnitID);
 			}
 		}
-		newOperation.Init(in spawnUnitIds);
-		newOperation.InitOther();
+		newOperation.InitUnit(in spawnUnitIds);
+
 		return newOperation;
 	}
 
@@ -181,51 +173,49 @@ public static class StrategyElementFactory
 			}
 		}
 	}
-	public static async Awaitable<ProjectileObject[]> Instantiate(StrategyStartSetterData.ProjectileData setterData, bool enterThis = true)
+	public static async Awaitable<ProjectileObject[]> Instantiate(StrategyStartSetterData.ProjectileData setterData,
+		Action<ProjectileObject, int> beforeCallback = null)
 	{
-		var projectilKey = setterData.projectilKey;
 		int newCount = setterData.count;
-		if (newCount == 0) return null;
-
-		var newProjectiles = await Instantiate(projectilKey, null,null, newCount, false);
-
-		for (int i = 0 ; i < newCount ; i++)
+		if (newCount > 0 &&  StrategyManager.Key2Projectile.TryGetAsset(setterData.projectilKey, out var info))
 		{
-			newProjectiles[i].Init(setterData[i]);
-			if (enterThis)
+			return await Instantiate(info.ProjectileProfileObject, null, null, newCount, (newProjectil, index) =>
 			{
-				ICombatHandler order = StrategyManager.Collector.Find<UnitObject>(setterData[i].orderInSetterIndex);
-				ITargetableCombatant target = StrategyManager.Collector.Find<UnitObject>(setterData[i].targetInSetterIndex);
-				AddCollector(order, target, newProjectiles[i]);
-			}
-		}
-		return newProjectiles;
-	}
-	public static async Awaitable<ProjectileObject[]> Instantiate(ProjectileKey projectileKey, ICombatHandler order, ITargetableCombatant target, int newCount = 1, bool enterThis = true)
-	{
-		if (StrategyManager.Key2Projectile.TryGetAsset(projectileKey, out var info))
-		{
-			return await Instantiate(info.ProjectileProfileObject, order, target, newCount, enterThis);
+				var data = setterData[index];
+				newProjectil.Init(data);
+				//ICombatHandler order = StrategyManager.Collector.Find<UnitObject>(data.orderInSetterIndex);
+				//ITargetableCombatant target = StrategyManager.Collector.Find<UnitObject>(data.targetInSetterIndex);
+				beforeCallback?.Invoke(newProjectil, index);
+			});
 		}
 		return null;
 	}
-	public static async Awaitable<ProjectileObject[]> Instantiate(ProjectileProfileObject profile, ICombatHandler order, ITargetableCombatant target, int newCount = 1, bool enterThis = true)
+	public static async Awaitable<ProjectileObject[]> Instantiate(ProjectileKey projectileKey, ICombatHandler order, ITargetableCombatant target, int newCount = 1,
+		Action<ProjectileObject, int> beforeCallback = null)
+	{
+		if (newCount > 0 && StrategyManager.Key2Projectile.TryGetAsset(projectileKey, out var info))
+		{
+			return await Instantiate(info.ProjectileProfileObject, order, target, newCount, beforeCallback);
+		}
+		return null;
+	}
+	public static async Awaitable<ProjectileObject[]> Instantiate(ProjectileProfileObject profile, ICombatHandler order, ITargetableCombatant target, int newCount = 1, Action<ProjectileObject, int> beforeCallback = null)
 	{
 		GameObject prefab = profile.prefab;
 		ProjectileObject projectilePrefab = prefab.GetComponent<ProjectileObject>();
 
 		ProjectileObject[] newProjectiles = await StrategyManager.Pooling.Acquires<ProjectileObject>(prefab,newCount, NewInstantiateProjectile);
-
-		for (int i = 0 ; i < newCount ; i++)
+		StrategyManager.Pooling.Add<ProjectileObject>(newProjectiles, (newProjectile, index) =>
 		{
-			newProjectiles[i].Init();
-			newProjectiles[i].Init(profile);
-		}
-		if (enterThis)
-		{
-			AddCollector(order, target, newProjectiles);
-		}
-
+			newProjectile.Init();
+			newProjectile.Init(profile);
+			beforeCallback?.Invoke(newProjectile, index);
+			newProjectile.InitOther();
+			if (order != null && target != null)
+			{
+				newProjectile.SetTarget(order, target);
+			}
+		});
 		return newProjectiles;
 
 		async Awaitable<ProjectileObject[]> NewInstantiateProjectile(int instantCount)
@@ -233,6 +223,7 @@ public static class StrategyElementFactory
 			return await GameObject.InstantiateAsync<ProjectileObject>(projectilePrefab, instantCount);
 		}
 	}
+	
 	public static void Destroy(ProjectileObject projectile)
 	{
 		if (projectile.IsNullRef()) return;
@@ -240,28 +231,6 @@ public static class StrategyElementFactory
 
 		projectile.DeInit();
 		StrategyManager.Pooling.Release(projectile);
-	}
-	private static void AddCollector(ICombatHandler order, ITargetableCombatant target, ProjectileObject projectile)
-	{
-		StrategyManager.Pooling.Add<ProjectileObject>(projectile, () =>
-		{
-			projectile.InitOther();
-			if (order != null && target != null)
-			{
-				projectile.SetTarget(order, target);
-			}
-		});
-	}
-	private static void AddCollector(ICombatHandler order, ITargetableCombatant target, ProjectileObject[] projectiles)
-	{
-		StrategyManager.Pooling.Add<ProjectileObject>(projectiles, (projectile) =>
-		{
-			projectile.InitOther();
-			if (order != null && target != null)
-			{
-				projectile.SetTarget(order, target);
-			}
-		});
 	}
 	#endregion
 }

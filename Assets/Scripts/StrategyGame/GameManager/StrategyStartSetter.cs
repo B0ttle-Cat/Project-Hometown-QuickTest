@@ -150,8 +150,7 @@ namespace StrategyManagerModule
 			int dataLength = unitDatas.Length;
 			for (int i = 0 ; i < dataLength ; i++)
 			{
-				var unitData = unitDatas[i];
-				UnitObject unitObject = StrategyElementFactory.Instantiate(in unitData);
+				UnitObject unitObject = StrategyElementFactory.Instantiate(unitDatas[i]);
 				if (unitObject == null) continue;
 				collector.Add(unitObject);
 			}
