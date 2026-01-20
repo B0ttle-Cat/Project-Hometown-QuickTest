@@ -35,7 +35,7 @@ public class SectorLabelItemPanel : LabelItemPanelComponent
 
 		if (referrer.IsNotNullRef())
 		{
-			referrer.OnClickRemoveListener(OnClickLabel);
+			referrer.Clear();
 			referrer = null;
 		}
 	}
@@ -87,7 +87,7 @@ public class SectorLabelItemPanel : LabelItemPanelComponent
 		if (Sector.IsNullRef()) return;
 		if (Sector is not ISelectable selectable) return;
 
-		StrategyManager.Selecter.OnSystemSelectObject(selectable);
+		StrategyManager.Selecter.OnSystemSelectToggleObject(selectable);
 	}
 	private void OnChangeFaction(IStrategyElement element, int factionID)
 	{

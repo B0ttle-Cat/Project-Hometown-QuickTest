@@ -39,7 +39,7 @@ namespace StrategyManagerModule
 			selectItemList = new HashSet<ISelectable>();
 			addSelectBuffer = new HashSet<ISelectable>();
 			removeSelectBuffer = new HashSet<ISelectable>();
-			
+
 			changeThisFrame = false;
 			selectAny = false;
 		}
@@ -64,7 +64,7 @@ namespace StrategyManagerModule
 		}
 		void IStrategyProcess.Update()
 		{
-			if (selectComputer.IsNotNullRef() &&  selectComputer.IsVaild())
+			if (selectComputer.IsNotNullRef() && selectComputer.IsVaild())
 			{
 				selectComputer.InputUpdate();
 				selectComputer.Compute();
@@ -107,11 +107,11 @@ namespace StrategyManagerModule
 
 #if UNITY_EDITOR
 
-		[ShowInInspector,LabelWidth(100)]
+		[ShowInInspector, LabelWidth(100)]
 		[InlineButton("Test_OnSystemClearSelectList", "Clear")]
 		[InlineButton("Test_OnSystemSelectObject", "Deelect")]
 		[InlineButton("Test_OnSystemDeselectObject", "Select")]
-		[InlineButton("Test_OnSystemPointingTarget","Pointing")]
+		[InlineButton("Test_OnSystemPointingTarget", "Pointing")]
 		private ISelectable testTarget { get; set; }
 		private void Test_OnSystemSelectObject()
 		{
@@ -130,6 +130,17 @@ namespace StrategyManagerModule
 			OnSystemPointingTarget(testTarget);
 		}
 #endif
+		public void OnSystemSelectToggleObject(ISelectable target, bool clearOldSelect)
+		{
+			if (target.IsNullRef()) return;
+			if (clearOldSelect) ClearInSelectItemList();
+			if (HasItem(target)) OnDeselectItem(target);
+			else OnSelectItem(target);
+		}
+		public void OnSystemSelectToggleObject(ISelectable target)
+		{
+			OnSystemSelectToggleObject(target, !selectComputer.IsKeyHold_MultiSelect);
+		}
 		public void OnSystemSelectObject(ISelectable target, bool clearOldSelect)
 		{
 			if (target.IsNullRef()) return;
@@ -169,6 +180,36 @@ namespace StrategyManagerModule
 
 			removeSelectBuffer.Remove(selectable);
 			addSelectBuffer.Add(selectable);
+		}
+		internal bool HasItem(ISelectable selectable)
+		{
+			if (selectable.IsNullRef())
+			{
+				return false;
+			}
+			GetPassthrough(ref selectable);
+
+			if (!selectable.CanSelect())
+			{
+				return false;
+			}
+
+			if (selectItemList.Contains(selectable))
+			{
+				if (removeSelectBuffer.Contains(selectable))
+				{
+					return false;
+				}
+				return true;
+			}
+			else
+			{
+				if(addSelectBuffer.Contains(selectable))
+				{
+					return true;
+				}
+				return false;
+			}
 		}
 		private void OnSelectItemInList(ISelectable selectable)
 		{
@@ -265,11 +306,11 @@ namespace StrategyManagerModule
 		private void OnSelectAny()
 		{
 			if (pressedEscapeKey == null)
-				pressedEscapeKey =  new ProcessOverrider_OnPressedEscapeKey(OnSystemClearSelectList);
+				pressedEscapeKey = new ProcessOverrider_OnPressedEscapeKey(OnSystemClearSelectList);
 		}
 		private void OnSelectNothing()
 		{
-			if(pressedEscapeKey != null)
+			if (pressedEscapeKey != null)
 			{
 				pressedEscapeKey.Dispose();
 				pressedEscapeKey = null;

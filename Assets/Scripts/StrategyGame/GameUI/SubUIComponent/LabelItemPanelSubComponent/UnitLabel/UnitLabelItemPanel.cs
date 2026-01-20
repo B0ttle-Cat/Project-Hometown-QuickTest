@@ -24,7 +24,7 @@ public class UnitLabelItemPanel : LabelItemPanelComponent
 
 		if (referrer.IsNotNullRef())
 		{
-			referrer.OnClickRemoveListener(OnClickLabel);
+			referrer.Clear();
 			referrer = null;
 		}
 	}
@@ -68,7 +68,7 @@ public class UnitLabelItemPanel : LabelItemPanelComponent
 		if (Unit.IsNullRef()) return;
 		if (Unit is not ISelectable selectable) return;
 
-		StrategyManager.Selecter.OnSystemSelectObject(Unit);
+		StrategyManager.Selecter.OnSystemSelectToggleObject(Unit);
 	}
 	private void OnChangeDurability(IDurabilityValue durability)
 	{

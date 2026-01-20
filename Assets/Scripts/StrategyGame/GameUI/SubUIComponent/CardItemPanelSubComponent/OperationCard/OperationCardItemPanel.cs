@@ -32,7 +32,7 @@ public class OperationCardItemPanel : CardItemPanelComponent
 		referrer = Referrer;
 		if (referrer.IsNullRef()) return;
 
-
+		referrer.OnClickAddListener(OnClickCard);
 
 		if (CardTarget is ITargetToCardAPI cardAPI)
 		{
@@ -48,7 +48,13 @@ public class OperationCardItemPanel : CardItemPanelComponent
 		referrer.SetMaterialFillAmount(0, 0);
 		referrer.SetElectricFillAmount(0, 0);
 	}
+	private void OnClickCard()
+	{
+		if (CardTarget.IsNullRef()) return;
+		if (CardTarget is not ISelectable selectable) return;
 
+		StrategyManager.Selecter.OnSystemSelectToggleObject(CardTarget);
+	}
 	private void OnChangePersonnel(IPersonnelStats personnel)
 	{
 		if (personnel.IsNullRef()) return;

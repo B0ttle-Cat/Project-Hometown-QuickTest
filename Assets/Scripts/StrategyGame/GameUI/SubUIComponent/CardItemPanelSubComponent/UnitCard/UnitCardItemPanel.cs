@@ -16,7 +16,7 @@ public class UnitCardItemPanel : CardItemPanelComponent
 		referrer = Referrer;
 		if (referrer.IsNullRef()) return;
 
-
+		referrer.OnClickAddListener(OnClickCard);
 
 		if (CardTarget is ITargetToCardAPI cardAPI)
 		{
@@ -43,6 +43,7 @@ public class UnitCardItemPanel : CardItemPanelComponent
 			{
 				durability.OnChangeDurability -= OnChangeDurability;
 			}
+			
 			CardTarget = null;
 		}
 		if (referrer.IsNotNullRef())
@@ -51,7 +52,13 @@ public class UnitCardItemPanel : CardItemPanelComponent
 			referrer = null;
 		}
 	}
+	private void OnClickCard()
+	{
+		if (CardTarget.IsNullRef()) return;
+		if (CardTarget is not ISelectable selectable) return;
 
+		StrategyManager.Selecter.OnSystemSelectToggleObject(CardTarget);
+	}
 	private void OnChangeDurability(IDurabilityValue durability)
 	{
 		if (durability.IsNullRef()) return;

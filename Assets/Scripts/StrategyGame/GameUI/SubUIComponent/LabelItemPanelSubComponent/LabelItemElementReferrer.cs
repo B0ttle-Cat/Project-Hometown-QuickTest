@@ -201,4 +201,19 @@ public class LabelItemElementReferrer : MonoBehaviour
 		if (select.IsNullRef()) return;
 		select.onClick.RemoveAllListeners();
 	}
+
+
+
+	internal void Clear()
+	{
+		SetMainIcon(null);
+		SetSubIcon(null);
+		SetDisplayText("");
+		SetGuideIcon(StatusEffectsFlag.None);
+		SetEffectIcon(StatusEffectsFlag.None);
+		OnClickRemoveAllListeners();		 
+		SetPersonnelFillAmount(0, 0);
+		SetMaterialFillAmount(0, 0);
+		SetElectricFillAmount(0, 0);
+	}
 }

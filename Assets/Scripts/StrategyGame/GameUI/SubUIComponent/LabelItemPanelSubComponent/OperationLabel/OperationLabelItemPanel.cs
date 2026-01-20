@@ -22,7 +22,7 @@ public class OperationLabelItemPanel : LabelItemPanelComponent
 
 		if (referrer.IsNotNullRef())
 		{
-			referrer.OnClickRemoveListener(OnClickLabel);
+			referrer.Clear();
 			referrer = null;
 		}
 	}
@@ -63,7 +63,7 @@ public class OperationLabelItemPanel : LabelItemPanelComponent
 		if (Operation.IsNullRef()) return;
 		if (Operation is not ISelectable selectable) return;
 
-		StrategyManager.Selecter.OnSystemSelectObject(selectable);
+		StrategyManager.Selecter.OnSystemSelectToggleObject(selectable);
 	}
 
 	protected override void OnChangedUI()
