@@ -8,21 +8,14 @@ using UnityEngine;
 public interface IFSMController<T> where T : Enum
 {
 	GameObject gameObject { get; }
-	IFSMController<T> FSMController { get; }
+	IFSMController<T> FSMController => this;
 	IFSMInterface<T> FSMInterface { get; set; }
-	IFSMInterface<T> GetFSM()
-	{
-		if(FSMInterface == null)
-			return FSMInterface = gameObject.GetComponent<FiniteStateMachine<T>>();
-		return FSMInterface;
-	}
-
-	public T CurrentStateType => GetFSM().CurrentStateType;
+	public T CurrentStateType => FSMInterface.CurrentStateType;
 	void InitState(Action<T> OnStateEnterCallback, Action<T> OnStateExitCallback, T initState, params IState<T>[] state)
-		=> GetFSM().InitState(OnStateEnterCallback, OnStateExitCallback, initState, state);
-	IState<T>[] GetStateList() => GetFSM().GetStateList();
-	void DeinitState() => GetFSM().DeinitState();
-	void ForceChangeImmediate(T nextState) => GetFSM().ForceChangeImmediate(nextState);
+		=> FSMInterface.InitState(OnStateEnterCallback, OnStateExitCallback, initState, state);
+	IState<T>[] GetStateList() => FSMInterface.GetStateList();
+	void DeinitState() => FSMInterface.DeinitState();
+	void ForceChangeImmediate(T nextState) => FSMInterface.ForceChangeImmediate(nextState);
 }
 public interface IFSMInterface<T> where T : Enum
 {
@@ -47,9 +40,9 @@ public interface IState<T> where T : Enum
 
 public abstract class FiniteStateMachine<T> : MonoBehaviour, IFSMInterface<T>, IFSMUpdater where T : Enum
 {
-	[ShowInInspector,HideIf("@currentState == null")]
+	[ShowInInspector]
 	public T CurrentStateType => currentState == null ? default : currentState.ThisType;
-	private IState<T> currentState;
+	protected IState<T> currentState;
 
 	[SerializeField]
 	private bool testPause;
@@ -109,6 +102,7 @@ public abstract class FiniteStateMachine<T> : MonoBehaviour, IFSMInterface<T>, I
 		}
 	}
 	public virtual bool IsCanStateUpdate() { return true; }
+	public void StateUpdate() => StateUpdate(Time.deltaTime);
 	public void StateUpdate(in float deltaTime)
 	{
 #if UNITY_EDITOR
@@ -134,9 +128,12 @@ public abstract class FiniteStateMachine<T> : MonoBehaviour, IFSMInterface<T>, I
 	{
 		private readonly FiniteStateMachine<T> fsm;
 		private readonly T type;
+		[ShowInInspector]
 		private bool isAwake;
+		[ShowInInspector]
 		private bool isStart;
 		public FiniteStateMachine<T> Fsm => fsm;
+		[ShowInInspector]
 		public T ThisType => type;
 
 		public BaseState(FiniteStateMachine<T> fsm, T type)

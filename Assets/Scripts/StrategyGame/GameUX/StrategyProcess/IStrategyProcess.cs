@@ -42,6 +42,44 @@ namespace StrategyManagerModule
 			processOverrider = null;
 			return false;
 		}
+		bool HasProcessOverride<T>()
+		{
+			int length = OverriderList == null ? 0 : OverriderList.Count;
+			for (int i = 0 ; i < length ; i++)
+			{
+				var item = OverriderList[i];
+				if (item.IsNullRef()) continue;
+				if (item is not T tItem) continue;
+				return true;
+			}
+			return false;
+		}
+
+		void OnClaerAll()
+		{
+			if(OverriderList == null || OverriderList.Count == 0) return;
+			OverriderList.Clear();
+		}
+		void OnClaerType<T>(bool equalType = false)
+		{
+			int length = OverriderList == null ? 0 : OverriderList.Count;
+			for (int i = 0 ; i < length ; i++)
+			{
+				var item = OverriderList[i];
+				if (item.IsNullRef()) continue;
+				if (equalType)
+				{
+					if (item.GetType() != typeof(T)) continue;
+				}
+				else
+				{
+					if (item is not T) continue;
+				}
+				OverriderList.RemoveAt(i);
+				--length;
+				--i;
+			}
+		}
 	}
 
 }

@@ -8381,6 +8381,7 @@ GameObject:
   - component: {fileID: 972331936}
   - component: {fileID: 972331942}
   - component: {fileID: 972331940}
+  - component: {fileID: 972331944}
   - component: {fileID: 972331939}
   - component: {fileID: 972331941}
   - component: {fileID: 972331943}
@@ -8496,6 +8497,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1201a26309cddee44b87960ea318da1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StrategyManagerModule.StrategyShowDetailProcess
+--- !u!114 &972331944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 972331935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e5b0ae3148f25245becceb7a448ca86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StrategyElementSelectProcess
+  testPause: 0
 --- !u!1 &984942361
 GameObject:
   m_ObjectHideFlags: 0

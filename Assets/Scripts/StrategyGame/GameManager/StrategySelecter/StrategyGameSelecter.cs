@@ -11,6 +11,7 @@ namespace StrategyManagerModule
 {
 	public partial class StrategyGameSelecter : MonoBehaviour, IStrategyProcess
 	{
+		
 		public IStrategyProcess ThisProcess => this;
 		public List<ProcessOverrider> OverriderList { get; } = new List<ProcessOverrider>();
 
@@ -19,7 +20,6 @@ namespace StrategyManagerModule
 		private HashSet<ISelectable> selectItemList;
 		private HashSet<ISelectable> addSelectBuffer;
 		private HashSet<ISelectable> removeSelectBuffer;
-
 
 		public event Action<ISelectable, bool> OnSelectChange;
 		public event Action<ISelectable> OnPointing;
@@ -31,11 +31,12 @@ namespace StrategyManagerModule
 		private bool selectAny;
 
 		private ProcessOverrider pressedEscapeKey;
+		private StrategyElementSelectProcess strategyElementSelectProcess;
 
 		void IStrategyProcess.OnInit()
 		{
 			selectComputer = GetComponentInChildren<SelectComputer>();
-
+			strategyElementSelectProcess = GetComponentInChildren<StrategyElementSelectProcess>();
 			selectItemList = new HashSet<ISelectable>();
 			addSelectBuffer = new HashSet<ISelectable>();
 			removeSelectBuffer = new HashSet<ISelectable>();
@@ -181,6 +182,17 @@ namespace StrategyManagerModule
 			removeSelectBuffer.Remove(selectable);
 			addSelectBuffer.Add(selectable);
 		}
+		internal void OnDeselectItem(ISelectable selectable)
+		{
+			if (selectable.IsNullRef())
+			{
+				return;
+			}
+			GetPassthrough(ref selectable);
+
+			addSelectBuffer.Remove(selectable);
+			removeSelectBuffer.Add(selectable);
+		}
 		internal bool HasItem(ISelectable selectable)
 		{
 			if (selectable.IsNullRef())
@@ -211,6 +223,7 @@ namespace StrategyManagerModule
 				return false;
 			}
 		}
+		
 		private void OnSelectItemInList(ISelectable selectable)
 		{
 			if (ThisProcess.TryGetProcessOverrider<ProcessOverrider_OnSelectTarget>(out var processOverrider))
@@ -224,19 +237,9 @@ namespace StrategyManagerModule
 				return;
 			}
 
-			selectable.OnSelect();
+			if (selectable is IStrategyElement && strategyElementSelectProcess.IsNotNullRef()) strategyElementSelectProcess.OnSelect(selectable);
+			else selectable.OnSelect();
 			OnSelectChange?.Invoke(selectable, true);
-		}
-		internal void OnDeselectItem(ISelectable selectable)
-		{
-			if (selectable.IsNullRef())
-			{
-				return;
-			}
-			GetPassthrough(ref selectable);
-
-			addSelectBuffer.Remove(selectable);
-			removeSelectBuffer.Add(selectable);
 		}
 		private void OnDeselectItemInList(ISelectable selectable)
 		{
@@ -249,7 +252,9 @@ namespace StrategyManagerModule
 			{
 				return;
 			}
-			selectable.OnDeselect();
+
+			if(selectable is IStrategyElement && strategyElementSelectProcess.IsNotNullRef()) strategyElementSelectProcess.OnDeselect(selectable);
+			else selectable.OnDeselect();
 			OnSelectChange?.Invoke(selectable, false);
 		}
 		internal void ClearInSelectItemList()
@@ -265,6 +270,7 @@ namespace StrategyManagerModule
 				removeSelectBuffer.Add(selectable);
 			}
 		}
+		
 		internal void OnPointingTarget(ISelectable selectable)
 		{
 			if (selectable.IsNullRef())
@@ -282,7 +288,10 @@ namespace StrategyManagerModule
 				processOverrider.InvokeOverrider(selectable);
 				return;
 			}
-			selectable.OnPointing();
+
+			if (selectable is IStrategyElement && strategyElementSelectProcess.IsNotNullRef()) strategyElementSelectProcess.OnPointing(selectable);
+			else selectable.OnPointing();
+
 			OnPointing?.Invoke(selectable);
 		}
 		internal void OnSelectingEmptyGround(Vector3 mousePoint)
@@ -292,6 +301,8 @@ namespace StrategyManagerModule
 				processOverrider.InvokeOverrider(mousePoint);
 				return;
 			}
+
+			if (strategyElementSelectProcess.IsNotNullRef()) strategyElementSelectProcess.OnSelectingEmptyGround(mousePoint);
 			OnSelectingEmpty?.Invoke(mousePoint);
 		}
 		internal void OnPointingEmptyGround(Vector3 mousePoint)
@@ -301,6 +312,8 @@ namespace StrategyManagerModule
 				processOverrider.InvokeOverrider(mousePoint);
 				return;
 			}
+
+			if (strategyElementSelectProcess.IsNotNullRef()) strategyElementSelectProcess.OnPointingEmptyGround(mousePoint);
 			OnPointingEmpty?.Invoke(mousePoint);
 		}
 		private void OnSelectAny()
